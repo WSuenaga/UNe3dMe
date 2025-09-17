@@ -19,14 +19,17 @@ def train_nerfstudio(dataset, outputs_dir, method_name, extra_args):
         "conda", "run", "-n", "nerfstudio",
         "ns-train",
         method_name,
-        "--data", dataset_path,
         "--output-dir", outdir,
         "--timestamp", "results",
+        "--vis", "viewer",
         "--viewer.quit-on-train-completion", "True"
     ]
     # 追加オプションを適用
     if extra_args:
         cmd.extend(extra_args)
+    cmd.extend([
+        "nerfstudio-data",
+        "--data", dataset_path])
 
     # subbprocess.runを用いてns-trainを実行
     print("Running:", " ".join(cmd))
@@ -93,7 +96,7 @@ def train_nerfstudio(dataset, outputs_dir, method_name, extra_args):
 NeRF
 """
 # 実行メソッド
-def reconnerf(dataset, out_dir):
+def recon_nerf(dataset, out_dir):
     extra_args = []
     return train_nerfstudio(dataset, out_dir, "vanilla-nerf", extra_args)
 
@@ -110,7 +113,7 @@ mip-NeRF
 """
 # 実行メソッド
 def recon_mipNeRF(dataset, out_dir):
-    extra_args = []
+    extra_args = ["--wandb.disable", "True"]
     return train_nerfstudio(dataset, out_dir, "mipnerf", extra_args)
 
 """

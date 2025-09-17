@@ -422,40 +422,47 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                      current_dataset_mds,
                                      current_dataset_vgg])
         run_nscolmap_btn1.click(fn=run_nscolmap,
-                        inputs=dataset,
-                        outputs=[result_nscolmap1, train_nerf_col])
+                                inputs=dataset,
+                                outputs=[result_nscolmap1, train_nerf_col])
         run_nscolmap_btn2.click(fn=run_nscolmap,
-                               inputs=dataset,
-                               outputs=[result_nscolmap2, train_nerfacto_col])
+                                inputs=dataset,
+                                outputs=[result_nscolmap2, train_nerfacto_col])
         run_nscolmap_btn3.click(fn=run_nscolmap,
-                               inputs=dataset,
-                               outputs=[result_nscolmap3, train_mipnerf_col])
+                                inputs=dataset,
+                                outputs=[result_nscolmap3, train_mipnerf_col])
         run_nscolmap_btn4.click(fn=run_nscolmap,
-                               inputs=dataset,
-                               outputs=[result_nscolmap4, train_stnerf_col])
+                                inputs=dataset,
+                                outputs=[result_nscolmap4, train_stnerf_col])
         run_gscolmap_btn.click(fn=run_gscolmap,
-                             inputs=dataset,
-                             outputs=[result_gscolmap, train_3dgs_col])
-        recon_nerf_btn
+                               inputs=dataset,
+                               outputs=[result_gscolmap, train_3dgs_col])
+        recon_nerf_btn.click(fn=methods.recon_nerf,
+                             inputs=[dataset, outputsdir_state],
+                             outputs=[run_time_nerf, result_recon_nerf, output_recon_nerf, outmodel_nerf])
         recon_nerfacto_btn.click(fn=methods.recon_nerfacto,
-                                       inputs=[dataset, outputsdir_state],
-                                       outputs=[run_time_nerfacto, result_recon_nerfacto, output_recon_nerfacto, outmodel_nerfacto])
+                                 inputs=[dataset, outputsdir_state],
+                                 outputs=[run_time_nerfacto, result_recon_nerfacto, output_recon_nerfacto, outmodel_nerfacto])
+        recon_mipnerf_btn.click(fn=methods.recon_mipNeRF,
+                             inputs=[dataset, outputsdir_state],
+                             outputs=[run_time_mipnerf, result_recon_mipnerf, output_recon_mipnerf, outmodel_mipnerf])
+        recon_stnerf_btn.click(fn=methods.recon_seathruNerf,
+                             inputs=[dataset, outputsdir_state],
+                             outputs=[run_time_stnerf, result_recon_stnef, output_recon_stnerf, outmodel_stnerf])
         recon_3dgs_btn.click(fn=methods.recon_3dgs, 
-                           inputs=[dataset, outputsdir_state, sh_degree, data_device, lambda_dssim, iter_3dgs,
-                                   test_iter1_3dgs, test_iter2_3dgs, save_iter1_3dgs, save_iter2_3dgs, feature_lr,
-                                   opacity_lr, scaling_lr, rotation_lr, position_lr_init, position_lr_final,
-                                   position_lr_delay_mult, densify_from_iter, densify_until_iter, densify_grad_threshold,
-                                   densification_interval, opacity_rest_interval, percent_dense], 
-                           outputs=[run_time_3dgs, result_recon_3dgs, output_recon_3dgs, outmodel1_3dgs, outmodel2_3dgs, render_3dgs_col ])
+                             inputs=[dataset, outputsdir_state, sh_degree, data_device, lambda_dssim, iter_3dgs,
+                                     test_iter1_3dgs, test_iter2_3dgs, save_iter1_3dgs, save_iter2_3dgs, feature_lr,
+                                     opacity_lr, scaling_lr, rotation_lr, position_lr_init, position_lr_final,
+                                     position_lr_delay_mult, densify_from_iter, densify_until_iter, densify_grad_threshold,
+                                     densification_interval, opacity_rest_interval, percent_dense], 
+                                     outputs=[run_time_3dgs, result_recon_3dgs, output_recon_3dgs, outmodel1_3dgs, outmodel2_3dgs, render_3dgs_col ])
         eval_3dgs_btn.click(fn=methods.eval_3dgs,
-                              inputs=[output_recon_3dgs, skip_train, skip_test],
-                              outputs=[result_render_3dgs, eval_3dgs, gallery_3dgs])
+                            inputs=[output_recon_3dgs, skip_train, skip_test],
+                            outputs=[result_render_3dgs, eval_3dgs, gallery_3dgs])
         recon_dust3r_btn.click(fn=methods.recon_dust3r,
-                             inputs=[dataset, outputsdir_state, schedule, niter, min_conf_thr, as_pointcloud,
-                                     mask_sky, clean_depth, transparent_cams, cam_size,scenegraph_type, winsize, refid], 
-                             outputs=[run_time_dust3r, result_recon_dust3r, output_recon_dust3r, outmodel_dust3r, outimgs_dust3r]).success(
-                                 fn=get_imagelist,
-                                 inputs=outimgs_dust3r,
-                                 outputs=gallery_dust3r)
+                               inputs=[dataset, outputsdir_state, schedule, niter, min_conf_thr, as_pointcloud,mask_sky, clean_depth, transparent_cams, cam_size,scenegraph_type, winsize, refid], 
+                               outputs=[run_time_dust3r, result_recon_dust3r, output_recon_dust3r, outmodel_dust3r, outimgs_dust3r]).success(
+                                           fn=get_imagelist,
+                                           inputs=outimgs_dust3r,
+                                           outputs=gallery_dust3r)
             
     demo.launch()
