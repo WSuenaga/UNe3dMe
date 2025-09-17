@@ -440,7 +440,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         recon_nerfacto_btn.click(fn=methods.recon_nerfacto,
                                        inputs=[dataset, outputsdir_state],
                                        outputs=[run_time_nerfacto, result_recon_nerfacto, output_recon_nerfacto, outmodel_nerfacto])
-        recon_3dgs_btn.click(fn=methods.recons_3dgs, 
+        recon_3dgs_btn.click(fn=methods.recon_3dgs, 
                            inputs=[dataset, outputsdir_state, sh_degree, data_device, lambda_dssim, iter_3dgs,
                                    test_iter1_3dgs, test_iter2_3dgs, save_iter1_3dgs, save_iter2_3dgs, feature_lr,
                                    opacity_lr, scaling_lr, rotation_lr, position_lr_init, position_lr_final,
