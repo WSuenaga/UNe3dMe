@@ -5,8 +5,9 @@ import shutil
 import random
 import string
 import remove_similar_images
-import models
+import methods
 import gradio as gr
+
 
 # 指定したフォルダ内の画像パスをリスト化するメソッド
 def get_imagelist(folder):
@@ -80,7 +81,7 @@ def run_nscolmap(dataset):
     ]
 
     print("Running:", " ".join(cmd))
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
 
     # 標準出力とエラーを結合
     error_output = result.stderr.strip()
@@ -200,6 +201,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         # NeRF系
         with gr.Tab("NeRF"):
             current_dataset_nerf = gr.Textbox(label="現在セットされているデータセット")
+            # NeRF
             with gr.Tab("NeRF"):
                 gr.Markdown("# 1. 前処理")
                 gr.Markdown("データセットをNeRFで扱えるように前処理を行う必要があります．")
@@ -209,7 +211,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     gr.Markdown("# 2.学習")
                     with gr.Accordion("オプション", open=False):
                         gr.Markdown()
-                    reconstruct_nerf_btn = gr.Button("学習実行")
+                    recon_nerf_btn = gr.Button("学習実行")
                     run_time_nerf = gr.Textbox(label="実行時間")
                     result_recon_nerf = gr.Textbox(label="実行結果")
                     output_recon_nerf = gr.Textbox(label="学習結果保存先")
@@ -226,7 +228,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     gr.Markdown("# 2.学習")
                     with gr.Accordion("オプション", open=False):
                         gr.Markdown()
-                    reconstruct_nerfacto_btn = gr.Button("学習実行")
+                    recon_nerfacto_btn = gr.Button("学習実行")
                     run_time_nerfacto = gr.Textbox(label="実行時間")
                     result_recon_nerfacto = gr.Textbox(label="実行結果")
                     output_recon_nerfacto = gr.Textbox(label="学習結果保存先")
@@ -243,7 +245,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     gr.Markdown("# 2.学習")
                     with gr.Accordion("オプション", open=False):
                         gr.Markdown()
-                    reconstruct_mipnerf_btn = gr.Button("学習実行")
+                    recon_mipnerf_btn = gr.Button("学習実行")
                     run_time_mipnerf = gr.Textbox(label="実行時間")
                     result_recon_mipnerf = gr.Textbox(label="実行結果")
                     output_recon_mipnerf = gr.Textbox(label="学習結果保存先")
@@ -260,7 +262,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     gr.Markdown("# 2.学習")
                     with gr.Accordion("オプション", open=False):
                         gr.Markdown()
-                    reconstruct_stnerf_btn = gr.Button("学習実行")
+                    recon_stnerf_btn = gr.Button("学習実行")
                     run_time_stnerf = gr.Textbox(label="実行時間")
                     result_recon_stnef = gr.Textbox(label="実行結果")
                     output_recon_stnerf = gr.Textbox(label="学習結果保存先")
@@ -312,7 +314,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 densification_interval = gr.Slider(value=100, minimum=0, maximum=10000, step=100, label="Densificationを行う間隔")
                                 opacity_rest_interval = gr.Slider(value=3000, minimum=0, maximum=10000, step=100, label="不透明度リセットの間隔")
                                 percent_dense = gr.Slider(value=0.01, minimum=0, maximum=1, step=0.001, label="シーンの大きさに対する比率．この値を超える3D gaussianは強制的にDensificationを行う．")
-                    reconstruct_3dgs_btn = gr.Button("学習実行")
+                    recon_3dgs_btn = gr.Button("学習実行")
                     run_time_3dgs = gr.Textbox(label="実行時間")
                     result_recon_3dgs = gr.Textbox(label="実行結果")
                     output_recon_3dgs = gr.Textbox(interactive=False, label="学習結果保存先")
@@ -359,7 +361,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         transparent_cams = gr.Checkbox(label="Transparent cameras", value=False)
 
 
-                reconstruct_dust3r_btn = gr.Button("推論実行")
+                recon_dust3r_btn = gr.Button("推論実行")
                 run_time_dust3r = gr.Textbox(label="実行時間")
                 result_recon_dust3r = gr.Textbox(label="実行結果")
                 output_recon_dust3r = gr.Textbox(label="推論結果保存先")
@@ -434,20 +436,21 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         run_gscolmap_btn.click(fn=run_gscolmap,
                              inputs=dataset,
                              outputs=[result_gscolmap, train_3dgs_col])
-        reconstruct_nerfacto_btn.click(fn=models.reconstruct_nerfacto,
+        recon_nerf_btn
+        recon_nerfacto_btn.click(fn=methods.recon_nerfacto,
                                        inputs=[dataset, outputsdir_state],
                                        outputs=[run_time_nerfacto, result_recon_nerfacto, output_recon_nerfacto, outmodel_nerfacto])
-        reconstruct_3dgs_btn.click(fn=models.reconstruct_3dgs, 
+        recon_3dgs_btn.click(fn=methods.recons_3dgs, 
                            inputs=[dataset, outputsdir_state, sh_degree, data_device, lambda_dssim, iter_3dgs,
                                    test_iter1_3dgs, test_iter2_3dgs, save_iter1_3dgs, save_iter2_3dgs, feature_lr,
                                    opacity_lr, scaling_lr, rotation_lr, position_lr_init, position_lr_final,
                                    position_lr_delay_mult, densify_from_iter, densify_until_iter, densify_grad_threshold,
                                    densification_interval, opacity_rest_interval, percent_dense], 
                            outputs=[run_time_3dgs, result_recon_3dgs, output_recon_3dgs, outmodel1_3dgs, outmodel2_3dgs, render_3dgs_col ])
-        eval_3dgs_btn.click(fn=models.eval_3dgs,
+        eval_3dgs_btn.click(fn=methods.eval_3dgs,
                               inputs=[output_recon_3dgs, skip_train, skip_test],
                               outputs=[result_render_3dgs, eval_3dgs, gallery_3dgs])
-        reconstruct_dust3r_btn.click(fn=models.reconstruct_dust3r,
+        recon_dust3r_btn.click(fn=methods.recon_dust3r,
                              inputs=[dataset, outputsdir_state, schedule, niter, min_conf_thr, as_pointcloud,
                                      mask_sky, clean_depth, transparent_cams, cam_size,scenegraph_type, winsize, refid], 
                              outputs=[run_time_dust3r, result_recon_dust3r, output_recon_dust3r, outmodel_dust3r, outimgs_dust3r]).success(
