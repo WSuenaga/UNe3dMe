@@ -6,6 +6,52 @@ import time
 import json
 import gradio as gr
 
+def run_subprocess(cmd, workdir=None):
+    """
+    subprocess.run を共通化したメソッド
+    Args:
+        cmd (list[str]): 実行コマンド（リスト形式）
+        workdir (str): 実行ディレクトリ
+    Returns:
+        run_time (str): 実行時間 (xx時間xx分xx秒)
+        success (bool): 成功したかどうか
+        log (str): ステータス＋標準出力/標準エラーをまとめたログ
+        stdout (str): 標準出力
+        stderr (str): 標準エラー
+    """
+    print("Running:", " ".join(map(str, cmd)))
+    start_time = time.time()
+
+    try:
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            cwd=workdir,
+            errors="replace"  # 文字化け回避
+        )
+    except Exception as e:
+        return "0時間0分0秒", False, f"実行に失敗しました: {e}", "", ""
+
+    end_time = time.time()
+    run_seconds = int(end_time - start_time)
+    hours, remainder = divmod(run_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    run_time = f"{hours}時間{minutes}分{seconds}秒"
+
+    success = (result.returncode == 0)
+    status = "✅ 成功" if success else f"❌ 失敗 (returncode={result.returncode})"
+
+    log = (
+        f"[コマンド]\n{' '.join(cmd)}\n\n"
+        f"[ステータス] {status}\n"
+        f"[STDOUT]\n{result.stdout.strip()}\n\n"
+        f"[STDERR]\n{result.stderr.strip()}"
+    )
+
+    return run_time, success, log
+    
 # ns-train呼び出しメソッド
 def train_nerfstudio(dataset, outputs_dir, method_name, extra_args):
     # COLMAPでの前処理済みのデータセットへのパス
@@ -20,6 +66,7 @@ def train_nerfstudio(dataset, outputs_dir, method_name, extra_args):
         "ns-train",
         method_name,
         "--output-dir", outdir,
+        "--experiment-name", "results",
         "--timestamp", "results",
         "--vis", "viewer",
         "--viewer.quit-on-train-completion", "True"
@@ -31,46 +78,23 @@ def train_nerfstudio(dataset, outputs_dir, method_name, extra_args):
         "nerfstudio-data",
         "--data", dataset_path])
 
-    # subbprocess.runを用いてns-trainを実行
-    print("Running:", " ".join(cmd))
-    start_time = time.time()
-    try:
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            encoding="utf-8"
-        )
-    except Exception as e:
-        return "0時間0分0秒", f"実行に失敗しました: {e}", outdir
-    end_time = time.time()
-
-    # 学習時間の算出
-    run_seconds = int(end_time - start_time)
-    hours, remainder = divmod(run_seconds, 3600)
-    minutes, seconds = divmod(remainder, 60)
-    run_time = f"{hours}時間{minutes}分{seconds}秒"
-
-    # 学習結果の出力
-    if result.returncode == 0:
-        log = "学習に成功しました"
-    else:
-        stderr_output = result.stderr.strip()
-        log = f"学習に失敗しました\n\nエラー内容:\n{stderr_output}"
-
-    # 点群の出力
-    config_path = os.path.join(outdir, "ns", method_name, "results", "config.yml")
-    cmd = [
-        "conda", "run", "-n", "nerfstudio",
-        "ns-export",
-        "pointcloud",
-        "--load-config", config_path,
-        "--output-dir", outdir
-    ]
-    subprocess.run(cmd)
+    # 共通 subprocess 実行
+    run_time, success, log = run_subprocess(cmd)
+    # 成功時のみ ns-export 実行
+    if success:
+        config_path = os.path.join(outdir, "ns", method_name, "results", "config.yml")
+        export_cmd = [
+            "conda", "run", "-n", "nerfstudio",
+            "ns-export",
+            "pointcloud",
+            "--load-config", config_path,
+            "--output-dir", outdir
+        ]
+        run_subprocess(export_cmd)
 
     # nerfstudioのデフォルト出力のフラット化
-    results_dir = os.path.join(outdir, "ns", method_name, "results")
+    results_dir = os.path.join(outdir, "results", method_name, "results")
+
     if os.path.exists(results_dir):
         for item in os.listdir(results_dir):
             src = os.path.join(results_dir, item)
@@ -81,10 +105,15 @@ def train_nerfstudio(dataset, outputs_dir, method_name, extra_args):
                 else:
                     os.remove(dst)
             shutil.move(src, dst)
-        # 空になったネストディレクトリを削除
-        nested_dir = os.path.join(outdir, "ns")
-        if os.path.exists(nested_dir):
-            shutil.rmtree(nested_dir)
+
+        # 空になった中間ディレクトリを削除
+        nested_dirs = [
+            os.path.join(outdir, "results", method_name),
+            os.path.join(outdir, "results")
+        ]
+        for d in nested_dirs:
+            if os.path.exists(d) and not os.listdir(d):
+                shutil.rmtree(d)
 
     # 3Dモデルへのパス
     model_path = os.path.join(outdir, "point_cloud.ply")
