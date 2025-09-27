@@ -1,140 +1,7 @@
-import os
-import glob
-import subprocess
-import shutil
-import random
-import string
-import remove_similar_images
+import preprocess
 import methods
 import test
 import gradio as gr
-
-
-# 指定したフォルダ内の画像パスをリスト化するメソッド
-def get_imagelist(folder):
-    exts = ["*.png", "*.jpg", "*.jpeg", "*.webp"]
-    return sorted([f for ext in exts for f in glob.glob(os.path.join(folder, ext))])
-
-# 入力画像を1つのディレクトリにまとめるメソッド
-def copy_images(image_paths, parent_path, name):
-    if name == "":
-        # 英数字8文字のランダム文字列
-        name = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-    
-    # 出力ディレクトリの作成
-    output_path = os.path.join(parent_path, name)
-    os.makedirs(output_path, exist_ok=True)
-
-    for img_path in image_paths:
-        basename = os.path.basename(img_path)
-        dst_path = os.path.join(output_path, basename)
-
-        if os.path.exists(dst_path):
-            print(f"{dst_path} は既に存在します")
-            continue
-        shutil.copy(img_path, dst_path)
-    
-    imagelist = get_imagelist(output_path)
-    return output_path, gr.Column(visible=True), output_path, imagelist
-
-# ffmpegによるフレーム抽出メソッド
-def extract_frames(video, parent_path, fps):
-    # 動画名の取得
-    video_name = os.path.splitext(os.path.basename(video))[0]
-    # 出力ディレクトリの作成(datasets/<動画名>)
-    output_path = os.path.join(parent_path, video_name)
-    os.makedirs(output_path, exist_ok=True)
-
-    # ffmpegで画像抽出を実行
-    command = [
-        "ffmpeg",
-        "-i", video,
-        "-vf", f"fps={fps}",
-        os.path.join(output_path, "%04d.png")
-    ]
-    subprocess.run(command, check=True)
-
-    return output_path
-
-# フレーム抽出およびオプションで画像群の冗長性を無くすメソッド
-def extract_frames_with_filter(video, parent_path, fps, remove_similar, ssim_threshold):
-    output_path = extract_frames(video, parent_path, fps)
-    if remove_similar:
-        remove_similar_images.main(output_path, output_path, ssim_threshold)
-    imagelist = get_imagelist(output_path)
-    print(output_path)
-    return output_path, gr.Column(visible=True), output_path, imagelist
-
-# ---nerfstudio_COLMAP実行メソッド---
-def run_nscolmap(dataset):
-    if dataset == "":
-        return "データセットがセットされていません", gr.Column(visible=False)
-    
-    # nsフォルダを作成
-    ns_dir = os.path.join(dataset, "ns")
-    os.makedirs(ns_dir, exist_ok=True)
-
-    # COLMAP実行コマンド
-    cmd = [
-        "conda", "run", "-n", "nerfstudio", "ns-process-data", "images",
-        "--data", dataset,
-        "--output-dir", ns_dir   # 出力先を ns_dir に変更
-    ]
-
-    print("Running:", " ".join(cmd))
-    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
-
-    # 標準出力とエラーを結合
-    error_output = result.stderr.strip()
-
-    # returncodeが0以外ならエラー
-    if result.returncode != 0:
-        log = f"前処理に失敗しました\n\nエラー内容:\n{error_output}"
-        return log, gr.Column(visible=False)
-
-    log = "前処理が完了しました"
-
-    return log, gr.Column(visible=True)
-
-# ---3dgs_COLMAP実行メソッド---
-def run_gscolmap(dataset):
-    if dataset == "":
-        return "データセットがセットされていません" 
-    
-    # gsフォルダを作成
-    gs_dir = os.path.join(dataset, "gs")
-    os.makedirs(gs_dir, exist_ok=True)
-
-    # input フォルダ作成
-    input_dir = os.path.join(gs_dir, "input")
-    os.makedirs(input_dir, exist_ok=True)
-
-    # dataset直下の画像を input にコピー
-    for file in os.listdir(dataset):
-        file_path = os.path.join(dataset, file)
-        if os.path.isfile(file_path) and file.lower().endswith((".jpg", ".jpeg", ".png")):
-            shutil.copy2(file_path, os.path.join(input_dir, file))
-
-    # COLMAP実行コマンド
-    script_path = "./models/gaussian-splatting/convert.py"
-    cmd = [
-        "conda", "run", "-n", "gaussian_splatting", "python", script_path,
-        "--source_path", gs_dir,
-        "--resize"
-    ]
-
-    print("Running:", " ".join(cmd))
-    result = subprocess.run(cmd, capture_output=True, text=True)
-    # 標準出力とエラーを結合
-    error_output = result.stderr.strip()
-
-    # returncode が 0 以外ならエラーとして返す
-    if result.returncode != 0:
-        log = f"前処理に失敗しました\n\nエラー内容:\n{error_output}"
-        return log, gr.Column(visible=False)
-    log = "前処理が完了しました"
-
-    return log, gr.Column(visible=True)
 
 # Stateの値取得メソッド（データセットタブで得たパスを各タブに渡す）
 def get_state_value(state):
@@ -190,14 +57,21 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr. Column(visible=False) as video_col:
                 gr.Markdown("# 2.動画を入力してください")
                 video = gr.Video(label="推論に使用する動画を選択してください.")
-                with gr.Row(equal_height=True):
-                    fps = gr.Slider(value=3, minimum=1, maximum=5, step=1, label="1秒間に切り出すフレーム数")
-                    rsi = gr.Checkbox(value=True, label="重複画像を削除する")
-                    ssim = gr.Slider(value=0.8, minimum=0, maximum=1, label="SSIMの閾値（値が小さいほどデータセットは圧縮されます）")
+                fps = gr.Slider(value=3, minimum=1, maximum=5, step=1, label="1秒間に切り出すフレーム数")
+                with gr.Accordion("オプション", open=False):
+                    gr.Markdown("## データセットの圧縮")
+                    gr.Markdown("重複している画像を削除し，計算リソースの節約を行います．")
+                    gr.Markdown("- データセットの圧縮を行いますか？")
+                    rsi = gr.Checkbox(value=True, label="圧縮する")
+                    gr.Markdown("- SSIMの閾値を設定してください．値が小さいほどデータセットは圧縮されます．")
+                    ssim = gr.Slider(value=0.8, minimum=0, maximum=1, label="SSIMの閾値")
                 run_ffmpeg_btn = gr.Button("データセット作成")
                 with gr.Column(visible=False) as vresult_col:
                     gr.Markdown("# 3.データセットが作成されました")
                     output_video = gr.Textbox(label="データセット保存先")
+                    with gr.Row(equal_height=True):
+                        comp_rate = gr.Textbox(label="圧縮率")
+                        del_images_num = gr.Textbox(label="削除画像枚数")
                     gallery_vide = gr.Gallery(label="抽出された画像", columns=4, height="auto")
         # NeRF系
         with gr.Tab("NeRF"):
@@ -211,7 +85,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as train_nerf_col:
                     gr.Markdown("# 2.学習")
                     with gr.Accordion("オプション", open=False):
-                        gr.Markdown()
+                        iter_nerf = gr.Slider(value=1000000, minimum=0, maximum=2000000, step=20000, label="総イテレーション数")
                     recon_nerf_btn = gr.Button("学習実行")
                     run_time_nerf = gr.Textbox(label="実行時間")
                     result_recon_nerf = gr.Textbox(label="実行結果")
@@ -228,7 +102,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as train_nerfacto_col:
                     gr.Markdown("# 2.学習")
                     with gr.Accordion("オプション", open=False):
-                        gr.Markdown()
+                        iter_nerfacto = gr.Slider(value=100000, minimum=0, maximum=200000, step=2000, label="総イテレーション数")
                     recon_nerfacto_btn = gr.Button("学習実行")
                     run_time_nerfacto = gr.Textbox(label="実行時間")
                     result_recon_nerfacto = gr.Textbox(label="実行結果")
@@ -245,7 +119,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as train_mipnerf_col:
                     gr.Markdown("# 2.学習")
                     with gr.Accordion("オプション", open=False):
-                        gr.Markdown()
+                        iter_mipnerf = gr.Slider(value=1000000, minimum=0, maximum=2000000, step=20000, label="総イテレーション数")
                     recon_mipnerf_btn = gr.Button("学習実行")
                     run_time_mipnerf = gr.Textbox(label="実行時間")
                     result_recon_mipnerf = gr.Textbox(label="実行結果")
@@ -262,7 +136,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as train_stnerf_col:
                     gr.Markdown("# 2.学習")
                     with gr.Accordion("オプション", open=False):
-                        gr.Markdown()
+                        iter_stnerf = gr.Slider(value=100000, minimum=0, maximum=200000, step=2000, label="総イテレーション数")
                     recon_stnerf_btn = gr.Button("学習実行")
                     run_time_stnerf = gr.Textbox(label="実行時間")
                     result_recon_stnef = gr.Textbox(label="実行結果")
@@ -394,13 +268,13 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab("VGGT"):
                 gr.Markdown()
             with gr.Tab("VGGSfM"):
-                gr.Markdown()
+                gr.Model3D()
 
         #イベントリスナ
         radio.change(fn=display_media_ui, 
                      inputs=radio, 
                      outputs=[image_col, video_col])
-        run_copy_btn.click(fn=copy_images,
+        run_copy_btn.click(fn=preprocess.copy_images,
                        inputs=[images, datasetsdir_state, name],
                        outputs=[dataset, iresult_col, output_image, gallery_image]
                        ).success(
@@ -411,9 +285,9 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                     current_dataset_3sters,
                                     current_dataset_mds,
                                     current_dataset_vgg])
-        run_ffmpeg_btn.click(fn=extract_frames_with_filter, 
+        run_ffmpeg_btn.click(fn=preprocess.extract_frames_with_filter, 
                          inputs=[video, datasetsdir_state, fps, rsi, ssim], 
-                         outputs=[dataset, vresult_col, output_video, gallery_vide]
+                         outputs=[dataset, vresult_col, output_video, comp_rate, del_images_num, gallery_vide]
                         ).success(
                             fn=get_state_values, 
                             inputs=dataset, 
@@ -422,47 +296,47 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                      current_dataset_3sters,
                                      current_dataset_mds,
                                      current_dataset_vgg])
-        run_nscolmap_btn1.click(fn=run_nscolmap,
+        run_nscolmap_btn1.click(fn=preprocess.run_nscolmap,
                                 inputs=dataset,
                                 outputs=[result_nscolmap1, train_nerf_col])
-        run_nscolmap_btn2.click(fn=run_nscolmap,
+        run_nscolmap_btn2.click(fn=preprocess.run_nscolmap,
                                 inputs=dataset,
                                 outputs=[result_nscolmap2, train_nerfacto_col])
-        run_nscolmap_btn3.click(fn=run_nscolmap,
+        run_nscolmap_btn3.click(fn=preprocess.run_nscolmap,
                                 inputs=dataset,
                                 outputs=[result_nscolmap3, train_mipnerf_col])
-        run_nscolmap_btn4.click(fn=run_nscolmap,
+        run_nscolmap_btn4.click(fn=preprocess.run_nscolmap,
                                 inputs=dataset,
                                 outputs=[result_nscolmap4, train_stnerf_col])
-        run_gscolmap_btn.click(fn=run_gscolmap,
+        run_gscolmap_btn.click(fn=preprocess.run_gscolmap,
                                inputs=dataset,
                                outputs=[result_gscolmap, train_3dgs_col])
-        recon_nerf_btn.click(fn=test.recon_nerf,
-                             inputs=[dataset, outputsdir_state],
+        recon_nerf_btn.click(fn=methods.recon_nerf,
+                             inputs=[dataset, outputsdir_state, iter_nerf],
                              outputs=[run_time_nerf, result_recon_nerf, output_recon_nerf, outmodel_nerf])
-        recon_nerfacto_btn.click(fn=test.recon_nerfacto,
-                                 inputs=[dataset, outputsdir_state],
+        recon_nerfacto_btn.click(fn=methods.recon_nerfacto,
+                                 inputs=[dataset, outputsdir_state, iter_nerfacto],
                                  outputs=[run_time_nerfacto, result_recon_nerfacto, output_recon_nerfacto, outmodel_nerfacto])
-        recon_mipnerf_btn.click(fn=test.recon_mipNeRF,
-                             inputs=[dataset, outputsdir_state],
+        recon_mipnerf_btn.click(fn=methods.recon_mipNeRF,
+                             inputs=[dataset, outputsdir_state, iter_mipnerf],
                              outputs=[run_time_mipnerf, result_recon_mipnerf, output_recon_mipnerf, outmodel_mipnerf])
-        recon_stnerf_btn.click(fn=test.recon_seathruNerf,
-                             inputs=[dataset, outputsdir_state],
+        recon_stnerf_btn.click(fn=methods.recon_seathruNerf,
+                             inputs=[dataset, outputsdir_state, iter_stnerf],
                              outputs=[run_time_stnerf, result_recon_stnef, output_recon_stnerf, outmodel_stnerf])
-        recon_3dgs_btn.click(fn=test.recon_3dgs, 
+        recon_3dgs_btn.click(fn=methods.recon_3dgs, 
                              inputs=[dataset, outputsdir_state, sh_degree, data_device, lambda_dssim, iter_3dgs,
                                      test_iter1_3dgs, test_iter2_3dgs, save_iter1_3dgs, save_iter2_3dgs, feature_lr,
                                      opacity_lr, scaling_lr, rotation_lr, position_lr_init, position_lr_final,
                                      position_lr_delay_mult, densify_from_iter, densify_until_iter, densify_grad_threshold,
                                      densification_interval, opacity_rest_interval, percent_dense], 
                                      outputs=[run_time_3dgs, result_recon_3dgs, output_recon_3dgs, outmodel1_3dgs, outmodel2_3dgs, render_3dgs_col ])
-        eval_3dgs_btn.click(fn=test.eval_3dgs,
+        eval_3dgs_btn.click(fn=methods.eval_3dgs,
                             inputs=[output_recon_3dgs, skip_train, skip_test],
                             outputs=[result_render_3dgs, eval_3dgs, gallery_3dgs])
-        recon_dust3r_btn.click(fn=test.recon_dust3r,
+        recon_dust3r_btn.click(fn=methods.recon_dust3r,
                                inputs=[dataset, outputsdir_state, schedule, niter, min_conf_thr, as_pointcloud,mask_sky, clean_depth, transparent_cams, cam_size,scenegraph_type, winsize, refid], 
                                outputs=[run_time_dust3r, result_recon_dust3r, output_recon_dust3r, outmodel_dust3r, outimgs_dust3r]).success(
-                                           fn=get_imagelist,
+                                           fn=preprocess.get_imagelist,
                                            inputs=outimgs_dust3r,
                                            outputs=gallery_dust3r)
             
