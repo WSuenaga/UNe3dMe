@@ -10,11 +10,15 @@ def get_state_values(state):
     return state, state, state, state, state
 
 # メディアUI切り替えメソッド
-# 戻り値 {画像入力UI, 動画入力UI}
 def display_media_ui(choice):
     if choice == "画像":
         return gr.Column(visible=True), gr.Column(visible=False)
     elif choice == "動画":
+        return gr.Column(visible=False), gr.Column(visible=True)
+def display_dataset_ui(choice):
+    if choice == "作成したデータセット":
+        return gr.Column(visible=True), gr.Column(visible=False)
+    elif choice == "処理済データセット":
         return gr.Column(visible=False), gr.Column(visible=True)
 
 # GradioUI
@@ -32,19 +36,19 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         # データセット作成UI
         with gr.Tab("データセットの作成"):
             gr.Markdown("# 1.ファイルの種類を選択")
-            radio = gr.Radio(["画像","動画"], label = "ファイルの種類を選択してください")
+            media_radio = gr.Radio(["画像","動画"], label = "ファイルの種類を選択してください")
 
             # 画像入力UI
             with gr.Column(visible=False) as image_col:
                 gr.Markdown("# 2.データセットの作成")
                 gr.Markdown("""
                             ## 2.1.画像を入力してください
-                            画像以外も選択できるため注意．
+                            - 画像以外も選択できてしまうため注意してください．
                             """)
                 images = gr.File(file_count="multiple")
                 gr.Markdown("""
                             ## 2.2.任意のデータセットの名前を入力してください
-                            入力が無い場合，ランダムな名前がデータセットに付与されます．
+                            - 入力が無い場合，ランダムな名前がデータセットに付与されます．
                             """)
                 name = gr.Textbox(label="データセットの名前")
                 run_copy_btn = gr.Button("データセット作成")
@@ -54,7 +58,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     gallery_image = gr.Gallery(label="入力された画像", columns=4, height="auto")
 
             # 動画入力UI
-            with gr. Column(visible=False) as video_col:
+            with gr.Column(visible=False) as video_col:
                 gr.Markdown("# 2.動画を入力してください")
                 video = gr.Video(label="推論に使用する動画を選択してください.")
                 fps = gr.Slider(value=3, minimum=1, maximum=5, step=1, label="1秒間に切り出すフレーム数")
@@ -78,12 +82,25 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             current_dataset_nerf = gr.Textbox(label="現在セットされているデータセット")
             # NeRF
             with gr.Tab("NeRF"):
-                gr.Markdown("# 1. 前処理")
-                gr.Markdown("データセットをNeRFで扱えるように前処理を行う必要があります．")
-                run_nscolmap_btn1 = gr.Button("前処理実行")
-                result_nscolmap1 = gr.Textbox(label="実行結果")
+                gr.Markdown("# 1. データセットの種類を選択")
+                nerf_radio = gr.Radio(["作成したデータセット","処理済データセット"], label = "3次元再構築に用いるデータセットを選択してください．")
+                with gr.Column(visible=False) as pre_nerf_col:
+                    gr.Markdown("""
+                                # 2.前処理
+                                - データセットをNeRFで扱えるように前処理を行う必要があります．
+                                - 作成したデータセット以外が現在セットされていないか注意してください．
+                                """)
+                    run_nscolmap_btn1 = gr.Button("前処理実行")
+                    result_nscolmap1 = gr.Textbox(label="実行結果")
+                with gr.Column(visible=False) as ex_nerf_col:
+                    gr.Markdown("""
+                                # 2.データセットのアップロード
+                                - ZIP圧縮を行ってからアップロードしてください．
+                                - ZIPファイル以外も選択できてしまうため注意してください．
+                                """)
+                    ex_dataset_nerf = gr.File(label="データセットを選択してください")
                 with gr.Column(visible=False) as train_nerf_col:
-                    gr.Markdown("# 2.学習")
+                    gr.Markdown("# 3.学習")
                     with gr.Accordion("オプション", open=False):
                         iter_nerf = gr.Slider(value=1000000, minimum=0, maximum=2000000, step=20000, label="総イテレーション数")
                     recon_nerf_btn = gr.Button("学習実行")
@@ -95,12 +112,25 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             
             # Nerfacto
             with gr.Tab("Nerfacto"):
-                gr.Markdown("# 1. 前処理")
-                gr.Markdown("データセットをNerfactoで扱えるように前処理を行う必要があります．")
-                run_nscolmap_btn2 = gr.Button("前処理実行")
-                result_nscolmap2 = gr.Textbox(label="実行結果")
+                gr.Markdown("# 1. データセットの種類を選択")
+                nerfacto_radio = gr.Radio(["作成したデータセット","処理済データセット"], label = "3次元再構築に用いるデータセットを選択してください．")
+                with gr.Column(visible=False) as pre_nerfacto_col:
+                    gr.Markdown("""
+                                # 2.前処理
+                                - データセットをNefactoで扱えるように前処理を行う必要があります．
+                                - 作成したデータセット以外が現在セットされていないか注意してください．
+                                """)
+                    run_nscolmap_btn2 = gr.Button("前処理実行")
+                    result_nscolmap2 = gr.Textbox(label="実行結果")
+                with gr.Column(visible=False) as ex_nerfacto_col:
+                    gr.Markdown("""
+                                # 2.データセットのアップロード
+                                - ZIP圧縮を行ってからアップロードしてください．
+                                - ZIPファイル以外も選択できてしまうため注意してください．
+                                """)
+                    ex_dataset_nerfacto = gr.File(label="データセットを選択してください")
                 with gr.Column(visible=False) as train_nerfacto_col:
-                    gr.Markdown("# 2.学習")
+                    gr.Markdown("# 3.学習")
                     with gr.Accordion("オプション", open=False):
                         iter_nerfacto = gr.Slider(value=100000, minimum=0, maximum=200000, step=2000, label="総イテレーション数")
                     recon_nerfacto_btn = gr.Button("学習実行")
@@ -112,12 +142,25 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             
             # mip-NeRF
             with gr.Tab("mip-NeRF"):
-                gr.Markdown("# 1. 前処理")
-                gr.Markdown("データセットをmip-NeRFで扱えるように前処理を行う必要があります．")
-                run_nscolmap_btn3 = gr.Button("前処理実行")
-                result_nscolmap3 = gr.Textbox(label="実行結果")
+                gr.Markdown("# 1. データセットの種類を選択")
+                mipnerf_radio = gr.Radio(["作成したデータセット","処理済データセット"], label = "3次元再構築に用いるデータセットを選択してください．")
+                with gr.Column(visible=False) as pre_mipnerf_col:
+                    gr.Markdown("""
+                                # 2.前処理
+                                - データセットをmip-NeRFで扱えるように前処理を行う必要があります．
+                                - 作成したデータセット以外が現在セットされていないか注意してください．
+                                """)
+                    run_nscolmap_btn3 = gr.Button("前処理実行")
+                    result_nscolmap3 = gr.Textbox(label="実行結果")
+                with gr.Column(visible=False) as ex_mipnerf_col:
+                    gr.Markdown("""
+                                # 2.データセットのアップロード
+                                - ZIP圧縮を行ってからアップロードしてください．
+                                - ZIPファイル以外も選択できてしまうため注意してください．
+                                """)
+                    ex_dataset_mipnerf = gr.File(label="データセットを選択してください")
                 with gr.Column(visible=False) as train_mipnerf_col:
-                    gr.Markdown("# 2.学習")
+                    gr.Markdown("# 3.学習")
                     with gr.Accordion("オプション", open=False):
                         iter_mipnerf = gr.Slider(value=1000000, minimum=0, maximum=2000000, step=20000, label="総イテレーション数")
                     recon_mipnerf_btn = gr.Button("学習実行")
@@ -129,12 +172,25 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             
             # SeaThru-NeRF
             with gr.Tab("SeaThru-NeRF"):
-                gr.Markdown("# 1. 前処理")
-                gr.Markdown("データセットをSeaThru-NeRFで扱えるように前処理を行う必要があります．")
-                run_nscolmap_btn4 = gr.Button("前処理実行")
-                result_nscolmap4 = gr.Textbox(label="実行結果")
+                gr.Markdown("# 1. データセットの種類を選択")
+                stnerf_radio = gr.Radio(["作成したデータセット","処理済データセット"], label = "3次元再構築に用いるデータセットを選択してください．")
+                with gr.Column(visible=False) as pre_stnerf_col:
+                    gr.Markdown("""
+                                # 2.前処理
+                                - データセットをSeaThru-NeRFで扱えるように前処理を行う必要があります．
+                                - 作成したデータセット以外が現在セットされていないか注意してください．
+                                """)
+                    run_nscolmap_btn4 = gr.Button("前処理実行")
+                    result_nscolmap4 = gr.Textbox(label="実行結果")
+                with gr.Column(visible=False) as ex_stnerf_col:
+                    gr.Markdown("""
+                                # 2.データセットのアップロード
+                                - ZIP圧縮を行ってからアップロードしてください．
+                                - ZIPファイル以外も選択できてしまうため注意してください．
+                                """)
+                    ex_dataset_stnerf = gr.File(label="データセットを選択してください")
                 with gr.Column(visible=False) as train_stnerf_col:
-                    gr.Markdown("# 2.学習")
+                    gr.Markdown("# 3.学習")
                     with gr.Accordion("オプション", open=False):
                         iter_stnerf = gr.Slider(value=100000, minimum=0, maximum=200000, step=2000, label="総イテレーション数")
                     recon_stnerf_btn = gr.Button("学習実行")
@@ -270,10 +326,27 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab("VGGSfM"):
                 gr.Model3D()
 
-        #イベントリスナ
-        radio.change(fn=display_media_ui, 
-                     inputs=radio, 
-                     outputs=[image_col, video_col])
+        """
+        イベントリスナ
+        """
+        # UI切り替え
+        media_radio.change(fn=display_media_ui, 
+                           inputs=media_radio, 
+                           outputs=[image_col, video_col])
+        nerf_radio.change(fn=display_dataset_ui,
+                          inputs=nerf_radio,
+                          outputs=[pre_nerf_col, ex_nerf_col])
+        nerfacto_radio.change(fn=display_dataset_ui,
+                          inputs=nerfacto_radio,
+                          outputs=[pre_nerfacto_col, ex_nerfacto_col])
+        mipnerf_radio.change(fn=display_dataset_ui,
+                          inputs=mipnerf_radio,
+                          outputs=[pre_mipnerf_col, ex_mipnerf_col])
+        stnerf_radio.change(fn=display_dataset_ui,
+                          inputs=stnerf_radio,
+                          outputs=[pre_stnerf_col, ex_stnerf_col])
+        
+        # データセット作成
         run_copy_btn.click(fn=preprocess.copy_images,
                        inputs=[images, datasetsdir_state, name],
                        outputs=[dataset, iresult_col, output_image, gallery_image]
@@ -296,6 +369,32 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                      current_dataset_3sters,
                                      current_dataset_mds,
                                      current_dataset_vgg])
+        ex_dataset_nerf.upload(fn=preprocess.unzip2dataset,
+                               inputs=[ex_dataset_nerf, datasetsdir_state],
+                               outputs=[dataset, train_nerf_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_nerf)
+        ex_dataset_nerfacto.upload(fn=preprocess.unzip2dataset,
+                               inputs=[ex_dataset_nerfacto, datasetsdir_state],
+                               outputs=[dataset, train_nerfacto_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_nerf)
+        ex_dataset_mipnerf.upload(fn=preprocess.unzip2dataset,
+                               inputs=[ex_dataset_mipnerf, datasetsdir_state],
+                               outputs=[dataset, train_mipnerf_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_nerf)
+        ex_dataset_stnerf.upload(fn=preprocess.unzip2dataset,
+                               inputs=[ex_dataset_stnerf, datasetsdir_state],
+                               outputs=[dataset, train_stnerf_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_nerf)   
+        
+        # 前処理
         run_nscolmap_btn1.click(fn=preprocess.run_nscolmap,
                                 inputs=dataset,
                                 outputs=[result_nscolmap1, train_nerf_col])
@@ -311,6 +410,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         run_gscolmap_btn.click(fn=preprocess.run_gscolmap,
                                inputs=dataset,
                                outputs=[result_gscolmap, train_3dgs_col])
+        
+        # 三次元再構築，レンダリング・評価
         recon_nerf_btn.click(fn=methods.recon_nerf,
                              inputs=[dataset, outputsdir_state, iter_nerf],
                              outputs=[run_time_nerf, result_recon_nerf, output_recon_nerf, outmodel_nerf])

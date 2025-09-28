@@ -1,12 +1,14 @@
-import os
+# 標準ライブラリ
 import glob
+import os
 import random
-import string
 import shutil
+import string
 import subprocess
-import gradio as gr
+import zipfile
+# サードパーティライブラリ
 import cv2
-import numpy as np
+import gradio as gr
 from skimage.metrics import structural_similarity as ssim
 from tqdm import tqdm
 
@@ -83,18 +85,32 @@ def remove_similar_images(input_dir: str, ssim_threshold: float = 0.95):
 def extract_frames_with_filter(video, parent_path, fps, remove_similar, ssim_threshold):
     video_name = os.path.splitext(os.path.basename(video))[0]
     output_path = os.path.join(parent_path, video_name)
-    os.makedirs(output_path, exist_ok=True)
+    
+    # ディレクトリが既に存在し、画像が存在する場合はスキップ
+    existing_images = sorted([
+        f for f in os.listdir(output_path) if f.endswith(".png")
+    ]) if os.path.exists(output_path) else []
 
-    command = [
-        "ffmpeg",
-        "-i", video,
-        "-vf", f"fps={fps}",
-        os.path.join(output_path, "%04d.png")
-    ]
-    subprocess.run(command, check=True)
+    if existing_images:
+        print(f"ディレクトリ {output_path} は既に存在します。抽出済みの画像を使用します。")
+        comp_rate, del_images_num = "100%", "0枚"  # 過去結果の概算（必要に応じて変更）
+    else:
+        os.makedirs(output_path, exist_ok=True)
 
-    if remove_similar:
-        comp_rate, del_images_num = remove_similar_images(output_path, ssim_threshold)
+        command = [
+            "ffmpeg",
+            "-i", video,
+            "-vf", f"fps={fps}",
+            os.path.join(output_path, "%04d.png")
+        ]
+        subprocess.run(command, check=True)
+
+        if remove_similar:
+            comp_rate, del_images_num = remove_similar_images(output_path, ssim_threshold)
+        else:
+            # 削除しない場合の値
+            comp_rate = "100%"
+            del_images_num = "0枚"
 
     # フルパスで返す
     imagelist = sorted([
@@ -103,6 +119,22 @@ def extract_frames_with_filter(video, parent_path, fps, remove_similar, ssim_thr
     ])
 
     return output_path, gr.Column(visible=True), output_path, comp_rate, del_images_num, imagelist
+
+def unzip2dataset(zip_file, datasets_parent):
+    # zipファイル名（拡張子なし）をデータセット名にする
+    basename = os.path.splitext(os.path.basename(zip_file.name))[0]
+    output_path = os.path.join(datasets_parent, basename)
+    
+    if os.path.exists(output_path) and os.listdir(output_path):
+        print(f"既に展開済み: {output_path}")
+        return output_path, gr.Column(visible=True)
+
+    # 解凍
+    with zipfile.ZipFile(zip_file.name, "r") as zip_ref:
+        zip_ref.extractall(output_path)
+    print(f"解凍しました: {output_path}")
+
+    return output_path, gr.Column(visible=True)
 
 # ---nerfstudio_COLMAP実行メソッド---
 def run_nscolmap(dataset):
