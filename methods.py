@@ -61,7 +61,7 @@ def train_nerfstudio(dataset, outputs_dir, method_name, train_args, export_args)
     os.makedirs(outdir, exist_ok=True)
 
     # 共通ns-trainコマンド
-    cmd = [
+    train_cmd = [
         "conda", "run", "-n", "nerfstudio",
         "ns-train",
         method_name,
@@ -73,13 +73,14 @@ def train_nerfstudio(dataset, outputs_dir, method_name, train_args, export_args)
     ]
     # 追加オプションを適用
     if train_args:
-        cmd.extend(train_args)
-    cmd.extend([
+        train_cmd.extend(train_args)
+    train_cmd.extend([
         "nerfstudio-data",
         "--data", dataset_path])
 
     # 共通 subprocess 実行
-    run_time, success, log = run_subprocess(cmd)
+    run_time, success, log = run_subprocess(train_cmd)
+
     # 成功時のみ ns-export 実行
     if success:
         print("ns-export\n")
@@ -94,7 +95,7 @@ def train_nerfstudio(dataset, outputs_dir, method_name, train_args, export_args)
         ]
         # 追加オプションを適用
         if export_args:
-            cmd.extend(export_args)
+            export_cmd.extend(export_args)
         run_time1, success1, log1= run_subprocess(export_cmd)
         
         log = log + "\n\n" + log1
@@ -153,8 +154,7 @@ mip-NeRF
 """
 # 実行メソッド
 def recon_mipNeRF(dataset, out_dir, iter):
-    train_args = ["--max-num-iterations", f"{iter}",  
-                  "--wandb.disable", "True"]
+    train_args = ["--max-num-iterations", f"{iter}"]
     export_args = ["--rgb-output-name", "rgb_fine", 
                    "--depth-output-name", "depth_fine"]
     return train_nerfstudio(dataset, out_dir, "mipnerf", train_args, export_args)
@@ -165,8 +165,7 @@ SeaThru-NeRF
 # 実行メソッド
 def recon_seathruNerf(dataset, out_dir, iter):
     train_args = ["--max-num-iterations", f"{iter}"]
-    export_args = ["--rgb-output-name", "rgb", 
-                   "--depth-output-name", "depth"]
+    export_args = []
     return train_nerfstudio(dataset, out_dir, "seathru-nerf", train_args, export_args)
 
 """
