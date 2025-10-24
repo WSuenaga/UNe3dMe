@@ -4,9 +4,13 @@ import shutil
 import subprocess
 import time
 import json
+import sys 
+root = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.join(root, "models/vggt"))
+sys.path.append(os.path.join(root, "models/monst3r"))
 import gradio as gr
 
-def run_subprocess(cmd, workdir=None):
+def run_subprocess(cmd):
     """
     subprocess.run を共通化したメソッド
     Args:
@@ -14,8 +18,8 @@ def run_subprocess(cmd, workdir=None):
         workdir (str): 実行ディレクトリ
     Returns:
         run_time (str): 実行時間 (xx時間xx分xx秒)
-        success (bool): 成功したかどうか
-        log (str): ステータス＋標準出力/標準エラーをまとめたログ
+        status (str): 実行ステータス（✅ 成功 / ❌ 失敗(returncode=xx)）
+        log (str): コマンド＋標準出力/標準エラーをまとめたログ
         stdout (str): 標準出力
         stderr (str): 標準エラー
     """
@@ -28,11 +32,10 @@ def run_subprocess(cmd, workdir=None):
             capture_output=True,
             text=True,
             encoding="utf-8",
-            cwd=workdir,
             errors="replace"
         )
     except Exception as e:
-        return "0時間0分0秒", False, f"実行に失敗しました: {e}", "", ""
+        return "0時間0分0秒", "❌ 失敗 (Exception)", f"実行に失敗しました: {e}", "", ""
 
     end_time = time.time()
     run_seconds = int(end_time - start_time)
@@ -40,27 +43,25 @@ def run_subprocess(cmd, workdir=None):
     minutes, seconds = divmod(remainder, 60)
     run_time = f"{hours}時間{minutes}分{seconds}秒"
 
-    success = (result.returncode == 0)
-    status = "✅ 成功" if success else f"❌ 失敗 (returncode={result.returncode})"
+    # ログの出力
+    if result.returncode == 0:
+        status = "✅ 成功"
+        log = f"{result.stdout.strip()}"
+    else:
+        status = "❌ 失敗"
+        log = f"{result.stderr.strip()}"
 
-    log = (
-        f"[コマンド]\n{' '.join(cmd)}\n\n"
-        f"[ステータス] {status}\n"
-        f"[STDOUT]\n{result.stdout.strip()}\n\n"
-        f"[STDERR]\n{result.stderr.strip()}"
-    )
-
-    return run_time, success, log
+    return run_time, status, log
     
 # ns-train呼び出しメソッド
-def train_nerfstudio(dataset, outputs_dir, method_name, train_args, export_args):
-    # COLMAPでの前処理済みのデータセットへのパス
+def train_nerfstudio(dataset, outputs_dir, method_name, train_args=None):
+    """
+    Nerfstudio モデルを学習する関数
+    """
     dataset_path = os.path.join(dataset, "ns")
-    # 出力ディレクトリの作成
     outdir = os.path.join(outputs_dir, method_name, os.path.basename(dataset))
     os.makedirs(outdir, exist_ok=True)
 
-    # 共通ns-trainコマンド
     train_cmd = [
         "conda", "run", "-n", "nerfstudio",
         "ns-train",
@@ -71,38 +72,39 @@ def train_nerfstudio(dataset, outputs_dir, method_name, train_args, export_args)
         "--vis", "viewer",
         "--viewer.quit-on-train-completion", "True"
     ]
-    # 追加オプションを適用
     if train_args:
         train_cmd.extend(train_args)
     train_cmd.extend([
         "nerfstudio-data",
-        "--data", dataset_path])
+        "--data", dataset_path
+    ])
 
-    # 共通 subprocess 実行
-    run_time, success, log = run_subprocess(train_cmd)
+    runtime, status, log = run_subprocess(train_cmd)
 
-    # 成功時のみ ns-export 実行
-    if success:
-        print("ns-export\n")
-        config_path = os.path.join(outdir, "results", method_name, "results", "config.yml")
-        export_cmd = [
-            "conda", "run", "-n", "nerfstudio",
-            "ns-export",
-            "pointcloud",
-            "--load-config", config_path,
-            "--output-dir", outdir,
-            "--normal-method", "open3d",
-        ]
-        # 追加オプションを適用
-        if export_args:
-            export_cmd.extend(export_args)
-        run_time1, success1, log1= run_subprocess(export_cmd)
-        
-        log = log + "\n\n" + log1
+    return outdir, runtime, status, log, gr.Column(visible=True)
 
-    # nerfstudioのデフォルト出力のフラット化
+# ns-export呼び出しメソッド
+def export_nerfstudio(dataset, outputs_dir, method_name, filetype, export_args=None):
+    """
+    Nerfstudio モデルをエクスポートする関数 (学習済みの config.yml 必須)
+    """
+    outdir = os.path.join(outputs_dir, method_name, os.path.basename(dataset))
+    config_path = os.path.join(outdir, "results", method_name, "results", "config.yml")
+
+    export_cmd = [
+        "conda", "run", "-n", "nerfstudio",
+        "ns-export", filetype,
+        "--load-config", config_path,
+        "--output-dir", outdir,
+        "--normal-method", "open3d",
+    ]
+    if export_args:
+        export_cmd.extend(export_args)
+
+    run_time, success, log = run_subprocess(export_cmd)
+
+    # 出力整理（フラット化）
     results_dir = os.path.join(outdir, "results", method_name, "results")
-
     if os.path.exists(results_dir):
         for item in os.listdir(results_dir):
             src = os.path.join(results_dir, item)
@@ -114,59 +116,73 @@ def train_nerfstudio(dataset, outputs_dir, method_name, train_args, export_args)
                     os.remove(dst)
             shutil.move(src, dst)
 
-        # 空になった中間ディレクトリを削除
+        # 空ディレクトリ削除
         nested_dirs = [
             os.path.join(outdir, "results", method_name),
-            os.path.join(outdir, "results")
+            os.path.join(outdir, "results"),
         ]
         for d in nested_dirs:
             if os.path.exists(d) and not os.listdir(d):
                 shutil.rmtree(d)
+    return outdir, run_time, success, log
 
-    # 3Dモデルへのパス
-    model_path = os.path.join(outdir, "point_cloud.ply")
-    outimgs = os.path.join(outdir, "render")
-
-    return run_time, log, outdir, model_path
-
+def render_nerfstudio():
+    return
 """
 NeRF
 """
-# 実行メソッド
+# 学習メソッド
 def recon_nerf(dataset, out_dir, iter):
-    train_args = ["--max-num-iterations", f"{iter}"]
+    train_args = ["--max-num-iterations", f"{iter}",
+                  "--viewer.websocket-port-default", "7007"]
+    return train_nerfstudio(dataset, out_dir, "vanilla-nerf", train_args)
+# 点群出力メソッド
+def export_nerf(dataset, out_dir):
     export_args = ["--rgb-output-name", "rgb_fine", 
                    "--depth-output-name", "depth_fine"]
-    return train_nerfstudio(dataset, out_dir, "vanilla-nerf", train_args, export_args)
+    return export_nerfstudio(dataset, out_dir, "vanilla-nerf", "pointcloud", export_args)
 
 """
 Nerfacto
 """
-# 実行メソッド
+# 学習メソッド
 def recon_nerfacto(dataset, out_dir, iter):
-    train_args = ["--max-num-iterations", f"{iter}"]
+    train_args = ["--max-num-iterations", f"{iter}",
+                  "--viewer.websocket-port-default", "7008"]
+    return train_nerfstudio(dataset, out_dir, "nerfacto", train_args)
+# 点群出力メソッド
+def export_nerfacto(dataset, out_dir):
     export_args = ["--rgb-output-name", "rgb", 
                    "--depth-output-name", "depth"]
-    return train_nerfstudio(dataset, out_dir, "nerfacto", train_args, export_args)
+    return export_nerfstudio(dataset, out_dir, "nerfacto", "pointcloud", export_args)
 
 """
 mip-NeRF
 """
-# 実行メソッド
-def recon_mipNeRF(dataset, out_dir, iter):
-    train_args = ["--max-num-iterations", f"{iter}"]
+# 学習メソッド
+def recon_mipnerf(dataset, out_dir, iter):
+    train_args = ["--max-num-iterations", f"{iter}",
+                  "--viewer.websocket-port-default", "7009"]
+    return train_nerfstudio(dataset, out_dir, "mipnerf", train_args)
+# 点群出力メソッド
+def export_mipnerf(dataset, out_dir):
     export_args = ["--rgb-output-name", "rgb_fine", 
                    "--depth-output-name", "depth_fine"]
-    return train_nerfstudio(dataset, out_dir, "mipnerf", train_args, export_args)
+    return export_nerfstudio(dataset, out_dir, "mipnerf", "pointcloud", export_args)
 
 """
 SeaThru-NeRF
 """
-# 実行メソッド
-def recon_seathruNerf(dataset, out_dir, iter):
-    train_args = ["--max-num-iterations", f"{iter}"]
-    export_args = []
-    return train_nerfstudio(dataset, out_dir, "seathru-nerf", train_args, export_args)
+# 学習メソッド
+def recon_stnerf(dataset, out_dir, iter):
+    train_args = ["--max-num-iterations", f"{iter}",
+                  "--viewer.websocket-port-default", "7010"]
+    return train_nerfstudio(dataset, out_dir, "seathru-nerf", train_args)
+# 点群出力メソッド
+def export_stnerf(dataset, out_dir):
+    export_args = ["--rgb-output-name", "rgb", 
+                   "--depth-output-name", "depth"]
+    return export_nerfstudio(dataset, out_dir, "seathru-nerf", "pointcloud", export_args)
 
 """
 3DGS
@@ -198,12 +214,13 @@ def recon_3dgs(dataset, outputs_dir, sh_degree, data_device, lambde_dsiim, itera
     result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
     end_time = time.time() 
 
-    #ログの取得
-    #output_log = result.stdout.strip()
-    error_output = result.stderr.strip()
-    if result.returncode != 0:
-        log = f"学習に失敗しました\n\nエラー内容:\n{error_output}"
-    log = "学習に成功しました"
+    # ログの出力
+    if result.returncode == 0:
+        status = "✅ 成功"
+        log = f"{result.stdout.strip()}"
+    else:
+        status = "❌ 失敗"
+        log = f"{result.stderr.strip()}"
 
     # 出力モデルパス
     model_path1 = os.path.join(outdir, "point_cloud", f"iteration_{save_iteration1}", "point_cloud.ply")
@@ -231,7 +248,7 @@ def _get_latest_iteration(model_path):
     return latest.split("_")[1]
 
 # レンダリング&評価メソッド
-def eval_3dgs(model_path, skip_train, skip_test, iteration=None):
+def render_eval_3dgs(model_path, skip_train, skip_test, iteration=None):
     # レンダリング
     render_script_path = "./models/gaussian-splatting/render.py"
     render_cmd = [
@@ -302,94 +319,107 @@ def eval_3dgs(model_path, skip_train, skip_test, iteration=None):
 Mip-Splatting
 """
 # 実行メソッド
-def recon_mipSplatting():
-    return 
-
-"""
-Splatfacto
-"""
-# 実行メソッド
-def recon_splatfacto(dataset, outputs_dir):
-    # COLMAPでの前処理済みのデータセットへのパス
-    dataset_path = os.path.join(dataset, "ns")
-    # 出力ディレクトリの作成
-    outdir = os.path.join(outputs_dir, os.path.basename(dataset))
+def recon_mipSplatting(dataset, outputs_dir, save_iteration1, save_iteration2):
+    # 入力パスの指定
+    inpdir = os.path.join(dataset, "ms")
+    # 出力先の作成
+    outdir = os.path.join(outputs_dir, "mip-splatting", os.path.basename(dataset))
     os.makedirs(outdir, exist_ok=True)
 
-    # 学習コマンド
+    # subprocessコマンド
+    script_path ="train.py"  
     cmd = [
-        "conda", "run", "-n", "nerfstudio", "ns-train", "splatfacto-big",
-        "--data", dataset_path,
-        "--output-dir", outdir,
-        "--timestamp", "results",
-        "--viewer.quit-on-train-completion", "True"
+        "conda", "run", "-n", "mip-splatting", "python", script_path,
+        "-s", inpdir,
+        "-m", outdir,
+        "--save_iterations", str(save_iteration1), str(save_iteration2)
     ]
 
-    # subbprocess.runを用いてns-trainを実行
+    # 実行
     print("Running:", " ".join(cmd))
     start_time = time.time()
-    try:
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            encoding="utf-8"
-        )
-    except Exception as e:
-        return "0時間0分0秒", f"実行に失敗しました: {e}", outdir
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", cwd = "./models/mip-splatting")
     end_time = time.time()
 
-    # 学習時間の算出
+    # 学習時間の取得
     run_seconds = int(end_time - start_time)
     hours, remainder = divmod(run_seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
     run_time = f"{hours}時間{minutes}分{seconds}秒"
 
-    # 学習結果の出力
+    # ログの出力
     if result.returncode == 0:
-        log = "学習に成功しました"
+        status = "✅ 成功"
+        log = f"{result.stdout.strip()}"
     else:
-        stderr_output = result.stderr.strip()
-        log = f"学習に失敗しました\n\nエラー内容:\n{stderr_output}"
+        status = "❌ 失敗"
+        log = f"{result.stderr.strip()}"
 
-    # 点群の出力
-    config_path = os.path.join(outdir, "ns", "splatfacto-big", "results", "config.yml")
-    cmd = [
-        "conda", "run", "-n", "nerfstudio", "ns-export", "gaussian-splat",
-        "--load-config", config_path,
-        "--output-dir", outdir
-    ]
-    subprocess.run(cmd)
+    # 出力の取得
+    model_path1 = os.path.join(outdir, "point_cloud", f"iteration_{save_iteration1}", "point_cloud.ply")
+    model_path2 = os.path.join(outdir, "point_cloud", f"iteration_{save_iteration2}", "point_cloud.ply")
 
-    # nerfstudioのデフォルト出力のフラット化
-    results_dir = os.path.join(outdir, "ns", "gaussian-splat", "results")
-    if os.path.exists(results_dir):
-        for item in os.listdir(results_dir):
-            src = os.path.join(results_dir, item)
-            dst = os.path.join(outdir, item)
-            if os.path.exists(dst):
-                if os.path.isdir(dst):
-                    shutil.rmtree(dst)
-                else:
-                    os.remove(dst)
-            shutil.move(src, dst)
-        # 空になったネストディレクトリを削除
-        nested_dir = os.path.join(outdir, "ns")
-        if os.path.exists(nested_dir):
-            shutil.rmtree(nested_dir)
+    return outdir, run_time, status, log, model_path1, model_path2
 
-    # 3Dモデルへのパス
-    model_path = os.path.join(outdir, "point_cloud.ply")
-    outimgs = os.path.join(outdir, "render")
-
-    return run_time, log, outdir
+"""
+Splatfacto
+"""
+# 学習メソッド
+def recon_sfacto(dataset, out_dir, iter):
+    train_args = ["--max-num-iterations", f"{iter}",
+                  "--viewer.websocket-port-default", "7011"]
+    return train_nerfstudio(dataset, out_dir, "splatfacto-big", train_args)
+# 点群出力メソッド
+def export_sfacto(dataset, out_dir):
+    export_args = ["--rgb-output-name", "rgb", 
+                   "--depth-output-name", "depth"]
+    return export_nerfstudio(dataset, out_dir, "splatfacto-big", "gaussian-splat", export_args)
 
 """
 4D-Gaussians
 """
 # 実行メソッド
-def recon_4dGaussians():
-    return 
+def recon_4dGaussians(dataset, outputs_dir, save_iteration1, save_iteration2):
+    # 入力パスの指定
+    inpdir = os.path.join(dataset, "4dgs")
+    # 出力先の作成
+    outdir = os.path.join(outputs_dir, "4D-Gaussians", os.path.basename(dataset))
+    os.makedirs(outdir, exist_ok=True)
+
+    # subprocessコマンド
+    script_path ="train.py"  
+    cmd = [
+        "conda", "run", "-n", "Gaussians4D", "python", script_path,
+        "--source_path", inpdir,
+        "--model_path", outdir,
+        "--save_iterations", str(save_iteration1), str(save_iteration2)
+    ]
+
+    # 実行
+    print("Running:", " ".join(cmd))
+    start_time = time.time()
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", cwd = "./models/4DGaussians")
+    end_time = time.time()
+
+    # 学習時間の取得
+    run_seconds = int(end_time - start_time)
+    hours, remainder = divmod(run_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    run_time = f"{hours}時間{minutes}分{seconds}秒"
+
+    # ログの出力
+    if result.returncode == 0:
+        status = "✅ 成功"
+        log = f"{result.stdout.strip()}"
+    else:
+        status = "❌ 失敗"
+        log = f"{result.stderr.strip()}"
+
+    # 出力の取得
+    model_path1 = os.path.join(outdir, "point_cloud", f"iteration_{save_iteration1}", "point_cloud.ply")
+    model_path2 = os.path.join(outdir, "point_cloud", f"iteration_{save_iteration2}", "point_cloud.ply")
+
+    return outdir, run_time, status, log, model_path1, model_path2
 
 """
 DUSt3R
@@ -436,14 +466,16 @@ def recon_dust3r(dataset, outputs_dir, schedule, niter, min_conf_thr, as_pointcl
     # 実行
     print("Running:", " ".join(cmd))
     start_time = time.time()
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
     end_time = time.time()
 
-    #output_log = result.stdout.strip()
-    error_output = result.stderr.strip()
-    if result.returncode != 0:
-        log = f"学習に失敗しました\n\nエラー内容:\n{error_output}"
-    log = "学習に成功しました"
+    # ログの出力
+    if result.returncode == 0:
+        status = "✅ 成功"
+        log = f"{result.stdout.strip()}"
+    else:
+        status = "❌ 失敗"
+        log = f"{result.stderr.strip()}"
 
     # 出力の取得
     model_path = os.path.join(outdir, "scene.glb")
@@ -455,67 +487,428 @@ def recon_dust3r(dataset, outputs_dir, schedule, niter, min_conf_thr, as_pointcl
     minutes, seconds = divmod(remainder, 60)
     run_time = f"{hours}時間{minutes}分{seconds}秒"
 
-    return run_time, log, outdir, model_path, outimgs
+    return outdir, run_time, status, log, model_path, outimgs
 
 """
 MASt3R
 """
 # 実行メソッド
-def recon_mast3r():
-    return 
+def recon_mast3r(dataset, outputs_dir):
+    # 出力先の作成
+    outdir = os.path.join(outputs_dir, "mast3r", os.path.basename(dataset))
+    os.makedirs(outdir, exist_ok=True)
+
+    # 使用モデル
+    model = "MASt3R_ViTLarge_BaseDecoder_512_catmlpdpt_metric"
+
+    from preprocess import get_imagelist
+    filelist = get_imagelist(dataset)
+
+    # subprocessコマンド
+    script_path ="recon_mast3r.py"  
+    cmd = [
+        "conda", "run", "-n", "mast3r", "python", script_path,
+        "--filelist", str(filelist),
+        "--outdir", outdir,
+        "--model_name", model,
+        "--as_pointcloud"
+    ]
+
+    # 実行
+    print("Running:", " ".join(cmd))
+    start_time = time.time()
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    end_time = time.time()
+
+    # 学習時間の取得
+    run_seconds = int(end_time - start_time)
+    hours, remainder = divmod(run_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    run_time = f"{hours}時間{minutes}分{seconds}秒"
+
+    # ログの出力
+    if result.returncode == 0:
+        status = "✅ 成功"
+        log = f"{result.stdout.strip()}"
+    else:
+        status = "❌ 失敗"
+        log = f"{result.stderr.strip()}"
+
+    # 出力の取得
+    model_path = os.path.join(outdir, "scene.glb")
+
+    return outdir, run_time, status, log, model_path
+
+"""
+MonST3R
+"""
+# 実行メソッド
+def recon_monst3r(dataset, outputs_dir):
+    name = os.path.basename(dataset)
+    # 出力先の作成
+    outdir = os.path.join(outputs_dir, "mast3r")
+    os.makedirs(outdir, exist_ok=True)
+
+    # subprocessコマンド
+    script_path ="demo.py"  
+    cmd = [
+        "conda", "run", "-n", "monst3r", "python", script_path,
+        "--input_dir", dataset,
+        "--output_dir", outdir,
+        "--seq_name", name
+    ]
+
+    # 実行
+    print("Running:", " ".join(cmd))
+    start_time = time.time()
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", cwd="./models/monst3r")
+    end_time = time.time()
+
+    # 学習時間の取得
+    run_seconds = int(end_time - start_time)
+    hours, remainder = divmod(run_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    run_time = f"{hours}時間{minutes}分{seconds}秒"
+
+    # ログの出力
+    if result.returncode == 0:
+        status = "✅ 成功"
+        log = f"{result.stdout.strip()}"
+    else:
+        status = "❌ 失敗"
+        log = f"{result.stderr.strip()}"
+
+    # 出力の取得
+    model_path = os.path.join(outdir, name, "scene.glb")
+
+    return outdir, run_time, status, log, model_path
 
 """
 Easi3R
 """
 # 実行メソッド
-def recon_easi3r():
-    return 
+def recon_easi3r(dataset, outputs_dir):
+    name = os.path.basename(dataset)
+    # 出力先の作成
+    outdir = os.path.join(outputs_dir, "easi3r")
+    os.makedirs(outdir, exist_ok=True)
+
+    # subprocessコマンド
+    script_path ="demo.py"  
+    cmd = [
+        "conda", "run", "-n", "easi3r", "python", script_path,
+        "--input_dir", dataset,
+        "--output_dir", outdir,
+        "--seq_name", name
+    ]
+
+    # 実行
+    print("Running:", " ".join(cmd))
+    start_time = time.time()
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", cwd="./models/easi3r")
+    end_time = time.time()
+
+    # 学習時間の取得
+    run_seconds = int(end_time - start_time)
+    hours, remainder = divmod(run_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    run_time = f"{hours}時間{minutes}分{seconds}秒"
+
+    # ログの出力
+    if result.returncode == 0:
+        status = "✅ 成功"
+        log = f"{result.stdout.strip()}"
+    else:
+        status = "❌ 失敗"
+        log = f"{result.stderr.strip()}"
+
+    # 出力の取得
+    model_path = os.path.join(outdir, name, "scene.glb")
+
+    return outdir, run_time, status, log, model_path
 
 """
 MUSt3R
 """
 # 実行メソッド
-def recon_must3r():
-    return 
+def recon_must3r(dataset, outputs_dir):
+    name = os.path.basename(dataset)
+    # 出力先の作成
+    outdir = os.path.join(outputs_dir, "must3r", name)
+    os.makedirs(outdir, exist_ok=True)
+
+    # subprocessコマンド
+    script_path ="get_reconstruction.py"  
+    cmd = [
+        "micromamba", "run", "-n", "must3r", "python", script_path,
+        "--image_dir", dataset,
+        "--output", outdir,
+        "--weights", "ckpt/MUSt3R_512.pth",
+        "--retrieval", "ckpt/MUSt3R_512_retrieval_trainingfree.pth",
+        "--image_size", "512",
+        "--file_type", "glb"
+    ]
+
+    # 実行
+    print("Running:", " ".join(cmd))
+    start_time = time.time()
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", cwd="./models/must3r")
+    end_time = time.time()
+
+    # 学習時間の取得
+    run_seconds = int(end_time - start_time)
+    hours, remainder = divmod(run_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    run_time = f"{hours}時間{minutes}分{seconds}秒"
+
+    # ログの出力
+    if result.returncode == 0:
+        status = "✅ 成功"
+        log = f"{result.stdout.strip()}"
+    else:
+        status = "❌ 失敗"
+        log = f"{result.stderr.strip()}"
+
+    # 出力の取得
+    model_path = os.path.join(outdir, "scene_1.05.glb")
+
+    return outdir, run_time, status, log, model_path
 
 """
 Fast3R
 """
 # 実行メソッド
-def recon_fast3r():
-    return 
+def recon_fast3r(dataset, outputs_dir):
+    name = os.path.basename(dataset)
+    # 出力先の作成
+    outdir = os.path.join(outputs_dir, "fast3r", name)
+    os.makedirs(outdir, exist_ok=True)
+
+    # subprocessコマンド
+    script_path ="recon_fast3r.py"  
+    cmd = [
+        "conda", "run", "-n", "fast3r", "python", script_path,
+        "--inpdir", dataset,
+        "--outdir", outdir,
+    ]
+
+    # 実行
+    print("Running:", " ".join(cmd))
+    start_time = time.time()
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    end_time = time.time()
+
+    # 学習時間の取得
+    run_seconds = int(end_time - start_time)
+    hours, remainder = divmod(run_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    run_time = f"{hours}時間{minutes}分{seconds}秒"
+
+    # ログの出力
+    if result.returncode == 0:
+        status = "✅ 成功"
+        log = f"{result.stdout.strip()}"
+    else:
+        status = "❌ 失敗"
+        log = f"{result.stderr.strip()}"
+
+    # 出力の取得
+    model_path = os.path.join(outdir, "scene.glb")
+
+    return outdir, run_time, status, log, model_path
 
 """
 Splatt3R
 """
 # 実行メソッド
-def recon_splatt3r():
-    return 
+def recon_splatt3r(dataset, outputs_dir):
+    # 出力先の作成
+    name = os.path.splitext(os.path.basename(dataset))[0]
+    outdir = os.path.join(outputs_dir, "splatt3r", name)
+    os.makedirs(outdir, exist_ok=True)
+
+    script_path = "recon_splatt3r.py"
+    cmd = [
+        "conda", "run", "-n", "splatt3r", "python", script_path,
+        "--image1", dataset, 
+        "--outdir", outdir
+    ]
+
+    # 推論実行
+    print("Running:", " ".join(cmd))
+    start_time = time.time()
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", cwd = "./models/splatt3r")
+    end_time = time.time()
+
+    # 実行時間の計算
+    run_seconds = int(end_time - start_time)
+    hours, remainder = divmod(run_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    runtime = f"{hours}時間{minutes}分{seconds}秒"
+
+    # ログの出力
+    if result.returncode == 0:
+        status = "✅ 成功"
+        log = f"{result.stdout.strip()}"
+    else:
+        status = "❌ 失敗"
+        log = f"{result.stderr.strip()}"
+
+    model_path = os.path.join(outdir, "gaussians.ply") 
+
+    return outdir, runtime, status, log, model_path
 
 """
 MoGe
 """
 # 実行メソッド
-def recon_moge():
-    return 
+def recon_moge(dataset, outputs_dir, img_type):
+    # 出力先の作成
+    base_name = os.path.splitext(os.path.basename(dataset))[0]
+    outdir = os.path.join(outputs_dir, "moge")
+    os.makedirs(outdir, exist_ok=True)
+
+    if img_type=="標準画像":
+        script_path = "./models/MoGe/moge/scripts/infer.py"
+    elif img_type=="パノラマ画像":
+        script_path = "./models/MoGe/moge/scripts/infer_panorama.py"
+
+    # コマンドを組み立て（数値・文字列・フラグを適切に区別）
+    cmd = [
+        "conda", "run", "-n", "MoGe", "python", script_path,
+        "-i", dataset, 
+        "-o", outdir,
+        "--maps",
+        "--glb",
+        "--ply"
+    ]
+
+    # 推論実行
+    print("Running:", " ".join(cmd))
+    start_time = time.time()
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    end_time = time.time()
+
+    # 実行時間の計算
+    run_seconds = int(end_time - start_time)
+    hours, remainder = divmod(run_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    runtime = f"{hours}時間{minutes}分{seconds}秒"
+
+    # ログの出力
+    if result.returncode == 0:
+        status = "✅ 成功"
+        log = f"{result.stdout.strip()}"
+    else:
+        status = "❌ 失敗"
+        log = f"{result.stderr.strip()}"
+
+    model_path = os.path.join(outdir, base_name, "mesh.glb") 
+
+    return outdir, runtime, status, log, model_path
 
 """
 UniK3D
 """
 # 実行メソッド
-def recon_unik3d():
-    return 
+def recon_unik3d(dataset, outputs_dir):
+    # 出力先の作成
+    outdir = os.path.join(outputs_dir, "unik3d")
+    os.makedirs(outdir, exist_ok=True)
+
+    script_path = "models/UniK3D/scripts/infer.py"
+    config_path = "models/UniK3D/configs/eval/vitl.json"
+
+    # コマンドを組み立て（数値・文字列・フラグを適切に区別）
+    cmd = [
+        "conda", "run", "-n", "UniK3D", "python", script_path,
+        "--input", dataset, 
+        "--output", outdir,
+        "--config-file", config_path,
+        "--save",
+        "--save-ply"
+    ]
+
+    # 推論実行
+    print("Running:", " ".join(cmd))
+    start_time = time.time()
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    end_time = time.time()
+
+    # 実行時間の計算
+    run_seconds = int(end_time - start_time)
+    hours, remainder = divmod(run_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    runtime = f"{hours}時間{minutes}分{seconds}秒"
+
+    # ログの出力
+    if result.returncode == 0:
+        status = "✅ 成功"
+        log = f"{result.stdout.strip()}"
+    else:
+        status = "❌ 失敗"
+        log = f"{result.stderr.strip()}"
+
+    #base_name = os.path.splitext(os.path.basename(dataset))[0]
+    #model_path = os.path.join(outdir, base_name, "mesh.glb") 
+
+    return outdir, runtime, status, log
 
 """
-VGGD3D
+VGGT
 """
 # 実行メソッド
-def recon_vgg3d():
-    return
+def recon_vggt(dataset, outputs_dir):
+    # 出力先の作成
+    outdir = os.path.join(outputs_dir, "vggt", os.path.basename(dataset))
+    os.makedirs(outdir, exist_ok=True)
 
+    # スクリプトパス
+    script_path = "recon_vgg.py"
+
+    # コマンドを組み立て（数値・文字列・フラグを適切に区別）
+    cmd = [
+        "conda", "run", "-n", "dust3r", "python", script_path,
+        "--image-dir", dataset,
+        "--out-dir", outdir,
+        "--conf-thres", "3.0",
+        "--frame-filter", "All",
+        "--prediction-mode", "Pointmap Regression",
+        "--mode", "crop",
+        "--device", "cuda",
+        "--show-cam"
+    ]
+
+    # 推論実行
+    print("Running:", " ".join(cmd))
+    start_time = time.time()
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    end_time = time.time()
+
+    # 実行時間の計算
+    run_seconds = int(end_time - start_time)
+    hours, remainder = divmod(run_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    runtime = f"{hours}時間{minutes}分{seconds}秒"
+
+    # ログの出力
+    if result.returncode == 0:
+        status = "✅ 成功"
+        log = f"{result.stdout.strip()}"
+    else:
+        status = "❌ 失敗"
+        log = f"{result.stderr.strip()}"
+
+    model_path = os.path.join(outdir, "scene.glb")
+
+    return outdir, runtime, status, log, model_path
 """
 VGGDSfM
 """
 # 実行メソッド
 def recon_vggdsfm():
+
+    cmd = []
+
+
     return 

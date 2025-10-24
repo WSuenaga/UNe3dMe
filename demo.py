@@ -1,7 +1,8 @@
+import os
+from PIL import Image
+import gradio as gr
 import preprocess
 import methods
-import test
-import gradio as gr
 
 # Stateの値取得メソッド（データセットタブで得たパスを各タブに渡す）
 def get_state_value(state):
@@ -20,18 +21,16 @@ def display_dataset_ui(choice):
         return gr.Column(visible=True), gr.Column(visible=False)
     elif choice == "処理済データセット":
         return gr.Column(visible=False), gr.Column(visible=True)
+def col_change():
+    return gr.Column(visible=True)
 
 # GradioUI
 def main_demo(tmpdir, datasetsdir, outputsdir):
-
-
     with gr.Blocks(theme=gr.themes.Soft()) as demo:
         tmpdir_state = gr.State(tmpdir)
         datasetsdir_state = gr.State(datasetsdir)
         outputsdir_state = gr.State(outputsdir)
         dataset = gr.State("")
-
-        outimgs_dust3r = gr.State()
 
         # データセット作成UI
         with gr.Tab("データセットの作成"):
@@ -50,7 +49,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                             ## 2.2.任意のデータセットの名前を入力してください
                             - 入力が無い場合，ランダムな名前がデータセットに付与されます．
                             """)
-                name = gr.Textbox(label="データセットの名前")
+                dataset_name = gr.Textbox(label="データセットの名前")
                 run_copy_btn = gr.Button("データセット作成")
                 with gr.Column(visible=False) as iresult_col:
                     gr.Markdown("# 3.データセットが作成されました")
@@ -102,13 +101,21 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as train_nerf_col:
                     gr.Markdown("# 3.学習")
                     with gr.Accordion("オプション", open=False):
-                        iter_nerf = gr.Slider(value=1000000, minimum=0, maximum=2000000, step=20000, label="総イテレーション数")
+                        iter_nerf = gr.Slider(value=1000000, minimum=25000, maximum=2000000, step=25000, label="総イテレーション数")
                     recon_nerf_btn = gr.Button("学習実行")
-                    run_time_nerf = gr.Textbox(label="実行時間")
+                    gr.Markdown("[viewer](http://127.0.0.1:7007)")
+                    outdir_recon_nerf = gr.Textbox(label="実行結果保存場所")
+                    runtime_recon_nerf = gr.Textbox(label="実行時間")
                     result_recon_nerf = gr.Textbox(label="実行結果")
-                    output_recon_nerf = gr.Textbox(label="学習結果保存先")
-                    outmodel_nerf = gr.Model3D(label="三次元再構築結果")
-                    gallery_nerfacto = gr.Gallery(label="入力画像・深度マップ・信頼度マップ", columns=3, height="auto")
+                    log_recon_nerf = gr.Textbox(label="実行ログ")
+                with gr.Column(visible=False) as export_nerf_col:
+                    gr.Markdown("# 4.点群出力")
+                    export_nerf_btn = gr.Button("点群出力実行")
+                    outdir_export_nerf = gr.Textbox(label="実行結果保存場所")
+                    runtime_export_nerf = gr.Textbox(label="実行時間")
+                    result_export_nerf = gr.Textbox(label="実行結果")
+                    log_export_nerf = gr.Textbox(label="実行ログ")
+                    gallery_nerf = gr.Gallery(label="入力画像・レンダリング画像", columns=2, height="auto")
             
             # Nerfacto
             with gr.Tab("Nerfacto"):
@@ -132,13 +139,21 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as train_nerfacto_col:
                     gr.Markdown("# 3.学習")
                     with gr.Accordion("オプション", open=False):
-                        iter_nerfacto = gr.Slider(value=100000, minimum=0, maximum=200000, step=2000, label="総イテレーション数")
+                        iter_nerfacto = gr.Slider(value=100000, minimum=25000, maximum=200000, step=25000, label="総イテレーション数")
                     recon_nerfacto_btn = gr.Button("学習実行")
-                    run_time_nerfacto = gr.Textbox(label="実行時間")
+                    gr.Markdown("[viewer](http://127.0.0.1:7008)")
+                    outdir_recon_nerfacto = gr.Textbox(label="実行結果保存場所")
+                    runtime_recon_nerfacto = gr.Textbox(label="実行時間")
                     result_recon_nerfacto = gr.Textbox(label="実行結果")
-                    output_recon_nerfacto = gr.Textbox(label="学習結果保存先")
-                    outmodel_nerfacto = gr.Model3D(label="三次元再構築結果")
-                    gallery_nerfacto = gr.Gallery(label="入力画像・深度マップ・信頼度マップ", columns=3, height="auto")
+                    log_recon_nerfacto = gr.Textbox(label="実行ログ")
+                with gr.Column(visible=False) as export_nerfacto_col:
+                    gr.Markdown("# 4.点群出力")
+                    export_nerfacto_btn = gr.Button("点群出力実行")
+                    outdir_export_nerfacto = gr.Textbox(label="実行結果保存場所")
+                    runtime_export_nerfacto = gr.Textbox(label="実行時間")
+                    result_export_nerfacto = gr.Textbox(label="実行結果")
+                    log_export_nerfacto = gr.Textbox(label="実行ログ")
+                    gallery_nerfacto = gr.Gallery(label="入力画像・レンダリング画像", columns=2, height="auto")
             
             # mip-NeRF
             with gr.Tab("mip-NeRF"):
@@ -162,13 +177,21 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as train_mipnerf_col:
                     gr.Markdown("# 3.学習")
                     with gr.Accordion("オプション", open=False):
-                        iter_mipnerf = gr.Slider(value=1000000, minimum=0, maximum=2000000, step=20000, label="総イテレーション数")
+                        iter_mipnerf = gr.Slider(value=1000000, minimum=25000, maximum=2000000, step=25000, label="総イテレーション数")
                     recon_mipnerf_btn = gr.Button("学習実行")
-                    run_time_mipnerf = gr.Textbox(label="実行時間")
+                    gr.Markdown("[viewer](http://127.0.0.1:7009)")
+                    outdir_recon_mipnerf = gr.Textbox(label="実行結果保存場所")
+                    runtime_recon_mipnerf = gr.Textbox(label="実行時間")
                     result_recon_mipnerf = gr.Textbox(label="実行結果")
-                    output_recon_mipnerf = gr.Textbox(label="学習結果保存先")
-                    outmodel_mipnerf = gr.Model3D(label="三次元再構築結果")
-                    gallery_mipnerf = gr.Gallery(label="入力画像・深度マップ・信頼度マップ", columns=3, height="auto")
+                    log_recon_mipnerf = gr.Textbox(label="実行ログ")
+                with gr.Column(visible=False) as export_mipnerf_col:
+                    gr.Markdown("# 4.点群出力")
+                    export_mipnerf_btn = gr.Button("点群出力実行")
+                    outdir_export_mipnerf = gr.Textbox(label="実行結果保存場所")
+                    runtime_export_mipnerf = gr.Textbox(label="実行時間")
+                    result_export_mipnerf = gr.Textbox(label="実行結果")
+                    log_export_mipnerf = gr.Textbox(label="実行ログ")
+                    gallery_mipnerf = gr.Gallery(label="入力画像・レンダリング画像", columns=2, height="auto")
             
             # SeaThru-NeRF
             with gr.Tab("SeaThru-NeRF"):
@@ -192,13 +215,21 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as train_stnerf_col:
                     gr.Markdown("# 3.学習")
                     with gr.Accordion("オプション", open=False):
-                        iter_stnerf = gr.Slider(value=100000, minimum=0, maximum=200000, step=2000, label="総イテレーション数")
+                        iter_stnerf = gr.Slider(value=100000, minimum=25000, maximum=200000, step=25000, label="総イテレーション数")
                     recon_stnerf_btn = gr.Button("学習実行")
-                    run_time_stnerf = gr.Textbox(label="実行時間")
-                    result_recon_stnef = gr.Textbox(label="実行結果")
-                    output_recon_stnerf = gr.Textbox(label="学習結果保存先")
-                    outmodel_stnerf = gr.Model3D(label="三次元再構築結果")
-                    gallery_stnerf = gr.Gallery(label="入力画像・深度マップ・信頼度マップ", columns=3, height="auto")
+                    gr.Markdown("[viewer](http://127.0.0.1:7010)")
+                    outdir_recon_stnerf = gr.Textbox(label="実行結果保存場所")
+                    runtime_recon_stnerf = gr.Textbox(label="実行時間")
+                    result_recon_stnerf = gr.Textbox(label="実行結果")
+                    log_recon_stnerf = gr.Textbox(label="実行ログ")
+                with gr.Column(visible=False) as export_stnerf_col:
+                    gr.Markdown("# 4.点群出力")
+                    export_stnerf_btn = gr.Button("点群出力実行")
+                    outdir_export_stnerf = gr.Textbox(label="実行結果保存場所")
+                    runtime_export_stnerf = gr.Textbox(label="実行時間")
+                    result_export_stnerf = gr.Textbox(label="実行結果")
+                    log_export_stnerf = gr.Textbox(label="実行ログ")
+                    gallery_stnerf = gr.Gallery(label="入力画像・レンダリング画像", columns=2, height="auto")
 
         # GaussianSplatting系            
         with gr.Tab("GS"):
@@ -262,11 +293,75 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     gallery_3dgs = gr.Gallery(label="Ground Truth・レンダリングされた画像", columns=2, height="auto")
 
             with gr.Tab("Mip-Splatting"):
-                gr.Markdown
+                gr.Markdown("# 1. 前処理")
+                gr.Markdown("データセットをMip-splattingで扱えるように前処理を行う必要があります．")
+                run_mscolmap_btn = gr.Button("前処理実行")
+                result_mscolmap = gr.Textbox(label="実行結果")
+                with gr.Column(visible=False) as train_mips_col:
+                    gr.Markdown("# 2. 学習")
+                    with gr.Accordion("オプション", open=False):
+                        save_iter1_mips = gr.Slider(value=7000, minimum=0, maximum=50000, step=100, label="モデルを保存するイテレーション数（1回目）")
+                        save_iter2_mips = gr.Slider(value=30000, minimum=0, maximum=50000, step=100, label="モデルを保存するイテレーション数（2回目）")     
+                    recon_mips_btn = gr.Button("学習実行")
+                    outdir_recon_mips = gr.Textbox(label="学習結果保存先")
+                    runtime_recon_mips = gr.Textbox(label="実行時間")
+                    result_recon_mips = gr.Textbox(label="実行結果")
+                    log_recon_mips = gr.Textbox(label="実行ログ")
+                    outmodel1_mips = gr.Model3D("1回目のセーブポイント")
+                    outmodel2_mips = gr.Model3D("2回目のセーブポイント")
             with gr.Tab("Splatfacto"):
-                gr.Markdown()
+                gr.Markdown("# 1. データセットの種類を選択")
+                sfacto_radio = gr.Radio(["作成したデータセット","処理済データセット"], label = "3次元再構築に用いるデータセットを選択してください．")
+                with gr.Column(visible=False) as pre_sfacto_col:
+                    gr.Markdown("""
+                                # 2.前処理
+                                - データセットをmip-NeRFで扱えるように前処理を行う必要があります．
+                                - 作成したデータセット以外が現在セットされていないか注意してください．
+                                """)
+                    run_nscolmap_btn5 = gr.Button("前処理実行")
+                    result_nscolmap5 = gr.Textbox(label="実行結果")
+                with gr.Column(visible=False) as ex_sfacto_col:
+                    gr.Markdown("""
+                                # 2.データセットのアップロード
+                                - ZIP圧縮を行ってからアップロードしてください．
+                                - ZIPファイル以外も選択できてしまうため注意してください．
+                                """)
+                    ex_dataset_sfacto = gr.File(label="データセットを選択してください")
+                with gr.Column(visible=False) as train_sfacto_col:
+                    gr.Markdown("# 3.学習")
+                    with gr.Accordion("オプション", open=False):
+                        iter_sfacto = gr.Slider(value=30000, minimum=0, maximum=50000, step=2000, label="総イテレーション数")
+                    recon_sfacto_btn = gr.Button("学習実行")
+                    gr.Markdown("[viewer](http://127.0.0.1:7011)")
+                    outdir_recon_sfacto = gr.Textbox(label="実行結果保存場所")
+                    runtime_recon_sfacto = gr.Textbox(label="実行時間")
+                    result_recon_sfacto = gr.Textbox(label="実行結果")
+                    log_recon_sfacto = gr.Textbox(label="実行ログ")
+                with gr.Column(visible=False) as export_sfacto_col:
+                    gr.Markdown("# 4.点群出力")
+                    export_sfacto_btn = gr.Button("点群出力実行")
+                    outdir_export_sfacto = gr.Textbox(label="実行結果保存場所")
+                    runtime_export_sfacto = gr.Textbox(label="実行時間")
+                    result_export_sfacto = gr.Textbox(label="実行結果")
+                    log_export_sfacto = gr.Textbox(label="実行ログ")
+                    gallery_sfacto = gr.Gallery(label="入力画像・レンダリング画像", columns=2, height="auto")
             with gr.Tab("4D-Gaussians"):
-                gr.Markdown()
+                gr.Markdown("# 1. 前処理")
+                gr.Markdown("データセットをMip-splattingで扱えるように前処理を行う必要があります．")
+                run_4dgscolmap_btn = gr.Button("前処理実行")
+                result_4dgscolmap = gr.Textbox(label="実行結果")
+                with gr.Column(visible=False) as train_4dgs_col:
+                    gr.Markdown("# 2. 学習")
+                    with gr.Accordion("オプション", open=False):
+                        save_iter1_4dgs = gr.Slider(value=15000, minimum=0, maximum=50000, step=100, label="モデルを保存するイテレーション数（1回目）")
+                        save_iter2_4dgs = gr.Slider(value=30000, minimum=0, maximum=50000, step=100, label="モデルを保存するイテレーション数（2回目）")     
+                    recon_4dgs_btn = gr.Button("学習実行")
+                    outdir_recon_4dgs = gr.Textbox(label="学習結果保存先")
+                    runtime_recon_4dgs = gr.Textbox(label="実行時間")
+                    result_recon_4dgs = gr.Textbox(label="実行結果")
+                    log_recon_4dgs = gr.Textbox(label="実行ログ")
+                    outmodel1_4dgs = gr.Model3D("1回目のセーブポイント")
+                    outmodel2_4dgs = gr.Model3D("2回目のセーブポイント")
 
         with gr.Tab("3sters"):
             current_dataset_3sters = gr.Textbox(label="現在セットされているデータセット")
@@ -290,39 +385,143 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         mask_sky = gr.Checkbox(label="Mask sky", value=False)
                         clean_depth = gr.Checkbox(label="Clean depth", value=True)
                         transparent_cams = gr.Checkbox(label="Transparent cameras", value=False)
-
-
                 recon_dust3r_btn = gr.Button("推論実行")
-                run_time_dust3r = gr.Textbox(label="実行時間")
+                outdir_recon_dust3r = gr.Textbox(label="推論結果保存先")
+                runtime_recon_dust3r = gr.Textbox(label="実行時間")
                 result_recon_dust3r = gr.Textbox(label="実行結果")
-                output_recon_dust3r = gr.Textbox(label="推論結果保存先")
+                log_recon_dust3r = gr.Textbox(label="実行ログ")
                 outmodel_dust3r = gr.Model3D(label="三次元再構築結果")
+                outimgs_dust3r = gr.State()
                 gallery_dust3r = gr.Gallery(label="入力画像・深度マップ・信頼度マップ", columns=3, height="auto")
 
             with gr.Tab("MASt3R"):
-                gr.Markdown()
+                gr.Markdown("# 1.推論")
+                with gr.Accordion("オプション", open=False):
+                    gr.Markdown()
+                recon_mast3r_btn = gr.Button("推論実行")
+                outdir_recon_mast3r = gr.Textbox(label="推論結果保存先")
+                runtime_recon_mast3r = gr.Textbox(label="実行時間")
+                result_recon_mast3r = gr.Textbox(label="実行結果")
+                log_recon_mast3r = gr.Textbox(label="実行ログ")
+                outmodel_mast3r = gr.Model3D(label="三次元再構築結果")
             with gr.Tab("MonST3R"):
-                gr.Markdown()
+                gr.Markdown("# 1.推論")
+                with gr.Accordion("オプション", open=False):
+                    gr.Markdown()
+                recon_monst3r_btn = gr.Button("推論実行")
+                outdir_recon_monst3r = gr.Textbox(label="推論結果保存先")
+                runtime_recon_monst3r = gr.Textbox(label="実行時間")
+                result_recon_monst3r = gr.Textbox(label="実行結果")
+                log_recon_monst3r = gr.Textbox(label="実行ログ")
+                outmodel_monst3r = gr.Model3D(label="三次元再構築結果")
             with gr.Tab("Easi3R"):
-                gr.Markdown()
+                gr.Markdown("# 1.推論")
+                with gr.Accordion("オプション", open=False):
+                    gr.Markdown()
+                recon_easi3r_btn = gr.Button("推論実行")
+                outdir_recon_easi3r = gr.Textbox(label="推論結果保存先")
+                runtime_recon_easi3r = gr.Textbox(label="実行時間")
+                result_recon_easi3r = gr.Textbox(label="実行結果")
+                log_recon_easi3r = gr.Textbox(label="実行ログ")
+                outmodel_easi3r = gr.Model3D(label="三次元再構築結果")
             with gr.Tab("MUSt3R"):
-                gr.Markdown()
+                gr.Markdown("# 1.推論")
+                with gr.Accordion("オプション", open=False):
+                    gr.Markdown()
+                recon_must3r_btn = gr.Button("推論実行")
+                outdir_recon_must3r = gr.Textbox(label="推論結果保存先")
+                runtime_recon_must3r = gr.Textbox(label="実行時間")
+                result_recon_must3r = gr.Textbox(label="実行結果")
+                log_recon_must3r = gr.Textbox(label="実行ログ")
+                outmodel_must3r = gr.Model3D(label="三次元再構築結果")
             with gr.Tab("Fast3R"):
-                gr.Markdown()
+                gr.Markdown("# 1.推論")
+                with gr.Accordion("オプション", open=False):
+                    gr.Markdown()
+                recon_fast3r_btn = gr.Button("推論実行")
+                outdir_recon_fast3r = gr.Textbox(label="推論結果保存先")
+                runtime_recon_fast3r = gr.Textbox(label="実行時間")
+                result_recon_fast3r = gr.Textbox(label="実行結果")
+                log_recon_fast3r = gr.Textbox(label="実行ログ")
+                outmodel_fast3r = gr.Model3D(label="三次元再構築結果")
             with gr.Tab("Splatt3R"):
-                gr.Markdown()
+                gr.Markdown(
+                    """
+                    # 1.画像の選択
+                    - 推論に使用する画像を選択してください．
+                    """)
+                img_splatt3r = gr.Image(type="filepath", label="画像を1枚選択してください")
+                # 推論UI
+                with gr.Column(visible=False) as inference_splatt3r_col:
+                    gr.Markdown("# 2.推論")
+                    with gr.Accordion("オプション", open=False):
+                        gr.Markdown()
+                    recon_splatt3r_btn = gr.Button("推論実行")
+                    outdir_recon_splatt3r = gr.Textbox(label="実行結果保存場所")
+                    runtime_recon_splatt3r = gr.Textbox(label="実行時間")
+                    result_recon_splatt3r = gr.Textbox(label="実行結果")
+                    log_recon_splatt3r = gr.Textbox(label="実行ログ")
+                    outmodel_splatt3r = gr.Model3D(label = "三次元再構築結果", clear_color=[1.0, 1.0, 1.0, 0.0])
 
         with gr.Tab("mds"):
             current_dataset_mds = gr.Textbox(label="現在セットされているデータセット")
             with gr.Tab("MoGe"):
-                gr.Markdown()
+                gr.Markdown(
+                    """
+                    # 1.画像の選択
+                    - 推論に使用する画像を選択してください．
+                    """)
+                img_moge = gr.Image(type="filepath", label="画像を選択してください")
+                # 推論UI
+                with gr.Column(visible=False) as inference_moge_col:
+                    gr.Markdown("# 2.推論")
+                    with gr.Accordion("オプション", open=False):
+                        img_type_moge = gr.Radio(choices=["標準画像", "パノラマ画像"], value="標準画像")
+                    recon_moge_btn = gr.Button("推論実行")
+                    outdir_recon_moge = gr.Textbox(label="実行結果保存場所")
+                    runtime_recon_moge = gr.Textbox(label="実行時間")
+                    result_recon_moge = gr.Textbox(label="実行結果")
+                    log_recon_moge = gr.Textbox(label="実行ログ")
+                    outmodel_moge = gr.Model3D("三次元再構築結果")
             with gr.Tab("UniK3D"):
-                gr.Markdown()
+                gr.Markdown(
+                    """
+                    # 1.画像の選択
+                    - 推論に使用する画像を選択してください．
+                    """)
+                img_unik3d = gr.Image(type="filepath", label="画像を選択してください")
+                # 推論UI
+                with gr.Column(visible=False) as inference_unik3d_col:
+                    gr.Markdown("# 2.推論")
+                    with gr.Accordion("オプション", open=False):
+                        gr.Markdown()
+                    recon_unik3d_btn = gr.Button("推論実行")
+                    outdir_recon_unik3d = gr.Textbox(label="実行結果保存場所")
+                    runtime_recon_unik3d = gr.Textbox(label="実行時間")
+                    result_recon_unik3d = gr.Textbox(label="実行結果")
+                    log_recon_unik3d = gr.Textbox(label="実行ログ")
+                    outmodel_unik3d = gr.Model3D("三次元再構築結果")
         
         with gr.Tab("VGG"):
             current_dataset_vgg = gr.Textbox(label="現在セットされているデータセット")
             with gr.Tab("VGGT"):
-                gr.Markdown()
+                gr.Markdown(
+                    """
+                    # 1.前処理
+                    - データセットをVGGTで扱えるように前処理を行う必要があります．
+                    """)
+                run_preprocess_vggt_btn = gr.Button("前処理実行")
+                result_preprocess_vggt = gr.Textbox(label="実行結果")
+                with gr.Column(visible=False) as inference_vggt_col:
+                    gr.Markdown("# 2.推論")
+                    with gr.Accordion("オプション", open=False):
+                        mode_vgg = gr.Radio(choices=["crop","pad"], value="crop", label = "モードを選択してください")
+                    recon_vggt_btn = gr.Button("推論実行")
+                    outdir_recon_vggt = gr.Textbox(label="実行結果保存場所")
+                    runtime_recon_vggt = gr.Textbox(label="実行時間")
+                    result_recon_vggt = gr.Textbox(label="実行結果")
+                    log_recon_vggt = gr.Textbox(label="実行ログ")
+                    outmodel_vggt = gr.Model3D("三次元再構築結果")
             with gr.Tab("VGGSfM"):
                 gr.Model3D()
 
@@ -345,10 +544,16 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         stnerf_radio.change(fn=display_dataset_ui,
                           inputs=stnerf_radio,
                           outputs=[pre_stnerf_col, ex_stnerf_col])
+        sfacto_radio.change(fn=display_dataset_ui,
+                          inputs=sfacto_radio,
+                          outputs=[pre_sfacto_col, ex_sfacto_col])
+        img_splatt3r.change(fn=col_change, outputs=inference_splatt3r_col)
+        img_moge.change(fn=col_change, outputs=inference_moge_col)
+        img_unik3d.change(fn=col_change, outputs=inference_unik3d_col)
         
         # データセット作成
         run_copy_btn.click(fn=preprocess.copy_images,
-                       inputs=[images, datasetsdir_state, name],
+                       inputs=[images, datasetsdir_state, dataset_name],
                        outputs=[dataset, iresult_col, output_image, gallery_image]
                        ).success(
                            fn=get_state_values, 
@@ -369,30 +574,36 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                      current_dataset_3sters,
                                      current_dataset_mds,
                                      current_dataset_vgg])
-        ex_dataset_nerf.upload(fn=preprocess.unzip2dataset,
+        ex_dataset_nerf.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_nerf, datasetsdir_state],
                                outputs=[dataset, train_nerf_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_nerf)
-        ex_dataset_nerfacto.upload(fn=preprocess.unzip2dataset,
+        ex_dataset_nerfacto.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_nerfacto, datasetsdir_state],
                                outputs=[dataset, train_nerfacto_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_nerf)
-        ex_dataset_mipnerf.upload(fn=preprocess.unzip2dataset,
+        ex_dataset_mipnerf.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_mipnerf, datasetsdir_state],
                                outputs=[dataset, train_mipnerf_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_nerf)
-        ex_dataset_stnerf.upload(fn=preprocess.unzip2dataset,
+        ex_dataset_stnerf.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_stnerf, datasetsdir_state],
                                outputs=[dataset, train_stnerf_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
-                                   outputs=current_dataset_nerf)   
+                                   outputs=current_dataset_nerf)
+        ex_dataset_sfacto.upload(fn=preprocess.unzip_dataset,
+                               inputs=[ex_dataset_sfacto, datasetsdir_state],
+                               outputs=[dataset, train_sfacto_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_gs)
         
         # 前処理
         run_nscolmap_btn1.click(fn=preprocess.run_nscolmap,
@@ -407,23 +618,35 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         run_nscolmap_btn4.click(fn=preprocess.run_nscolmap,
                                 inputs=dataset,
                                 outputs=[result_nscolmap4, train_stnerf_col])
+        run_nscolmap_btn5.click(fn=preprocess.run_nscolmap,
+                                inputs=dataset,
+                                outputs=[result_nscolmap5, train_sfacto_col])
         run_gscolmap_btn.click(fn=preprocess.run_gscolmap,
                                inputs=dataset,
                                outputs=[result_gscolmap, train_3dgs_col])
+        run_mscolmap_btn.click(fn=preprocess.run_mscolmap,
+                        inputs=dataset,
+                        outputs=[result_mscolmap, train_mips_col])
+        run_4dgscolmap_btn.click(fn=preprocess.run_4dgscolmap,
+                        inputs=dataset,
+                        outputs=[result_4dgscolmap, train_4dgs_col])
+        run_preprocess_vggt_btn.click(fn=preprocess.create_images_dir,
+                                      inputs=[dataset],
+                                      outputs=[result_preprocess_vggt, inference_vggt_col])
         
-        # 三次元再構築，レンダリング・評価
+        # 三次元再構築
         recon_nerf_btn.click(fn=methods.recon_nerf,
                              inputs=[dataset, outputsdir_state, iter_nerf],
-                             outputs=[run_time_nerf, result_recon_nerf, output_recon_nerf, outmodel_nerf])
+                             outputs=[outdir_recon_nerf, runtime_recon_nerf, result_recon_nerf, log_recon_nerf, export_nerf_col])
         recon_nerfacto_btn.click(fn=methods.recon_nerfacto,
                                  inputs=[dataset, outputsdir_state, iter_nerfacto],
-                                 outputs=[run_time_nerfacto, result_recon_nerfacto, output_recon_nerfacto, outmodel_nerfacto])
-        recon_mipnerf_btn.click(fn=methods.recon_mipNeRF,
+                                 outputs=[outdir_recon_nerfacto, runtime_recon_nerfacto, result_recon_nerfacto, log_recon_nerfacto, export_nerfacto_col])
+        recon_mipnerf_btn.click(fn=methods.recon_mipnerf,
                              inputs=[dataset, outputsdir_state, iter_mipnerf],
-                             outputs=[run_time_mipnerf, result_recon_mipnerf, output_recon_mipnerf, outmodel_mipnerf])
-        recon_stnerf_btn.click(fn=methods.recon_seathruNerf,
+                             outputs=[outdir_recon_mipnerf, runtime_recon_mipnerf, result_recon_mipnerf, log_recon_mipnerf, export_mipnerf_col])
+        recon_stnerf_btn.click(fn=methods.recon_stnerf,
                              inputs=[dataset, outputsdir_state, iter_stnerf],
-                             outputs=[run_time_stnerf, result_recon_stnef, output_recon_stnerf, outmodel_stnerf])
+                             outputs=[outdir_recon_stnerf, runtime_recon_stnerf, result_recon_stnerf, log_recon_stnerf, export_stnerf_col])
         recon_3dgs_btn.click(fn=methods.recon_3dgs, 
                              inputs=[dataset, outputsdir_state, sh_degree, data_device, lambda_dssim, iter_3dgs,
                                      test_iter1_3dgs, test_iter2_3dgs, save_iter1_3dgs, save_iter2_3dgs, feature_lr,
@@ -431,14 +654,69 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                      position_lr_delay_mult, densify_from_iter, densify_until_iter, densify_grad_threshold,
                                      densification_interval, opacity_rest_interval, percent_dense], 
                                      outputs=[run_time_3dgs, result_recon_3dgs, output_recon_3dgs, outmodel1_3dgs, outmodel2_3dgs, render_3dgs_col ])
-        eval_3dgs_btn.click(fn=methods.eval_3dgs,
-                            inputs=[output_recon_3dgs, skip_train, skip_test],
-                            outputs=[result_render_3dgs, eval_3dgs, gallery_3dgs])
+        recon_mips_btn.click(fn=methods.recon_mipSplatting, 
+                             inputs=[dataset, outputsdir_state, save_iter1_mips, save_iter2_mips], 
+                             outputs=[outdir_recon_mips, runtime_recon_mips, result_recon_mips, log_recon_mips, outmodel1_mips, outmodel2_mips])
+        recon_sfacto_btn.click(fn=methods.recon_sfacto,
+                             inputs=[dataset, outputsdir_state, iter_sfacto],
+                             outputs=[outdir_recon_sfacto, runtime_recon_sfacto, result_recon_sfacto, log_recon_sfacto, export_sfacto_col])
+        recon_4dgs_btn.click(fn=methods.recon_4dGaussians, 
+                             inputs=[dataset, outputsdir_state, save_iter1_4dgs, save_iter2_4dgs], 
+                             outputs=[outdir_recon_4dgs, runtime_recon_4dgs, result_recon_4dgs, log_recon_4dgs, outmodel1_4dgs, outmodel2_4dgs])
         recon_dust3r_btn.click(fn=methods.recon_dust3r,
                                inputs=[dataset, outputsdir_state, schedule, niter, min_conf_thr, as_pointcloud,mask_sky, clean_depth, transparent_cams, cam_size,scenegraph_type, winsize, refid], 
-                               outputs=[run_time_dust3r, result_recon_dust3r, output_recon_dust3r, outmodel_dust3r, outimgs_dust3r]).success(
+                               outputs=[outdir_recon_dust3r, runtime_recon_dust3r, result_recon_dust3r, log_recon_dust3r, outmodel_dust3r, outimgs_dust3r]).success(
                                            fn=preprocess.get_imagelist,
                                            inputs=outimgs_dust3r,
                                            outputs=gallery_dust3r)
+        recon_mast3r_btn.click(fn=methods.recon_mast3r,
+                        inputs=[dataset, outputsdir_state], 
+                        outputs=[outdir_recon_mast3r, runtime_recon_mast3r, result_recon_mast3r, log_recon_mast3r, outmodel_mast3r])
+        recon_monst3r_btn.click(fn=methods.recon_monst3r,
+                        inputs=[dataset, outputsdir_state], 
+                        outputs=[outdir_recon_monst3r, runtime_recon_monst3r, result_recon_monst3r, log_recon_monst3r, outmodel_monst3r])
+        recon_easi3r_btn.click(fn=methods.recon_easi3r,
+                        inputs=[dataset, outputsdir_state], 
+                        outputs=[outdir_recon_easi3r, runtime_recon_easi3r, result_recon_easi3r, log_recon_easi3r, outmodel_easi3r])
+        recon_must3r_btn.click(fn=methods.recon_must3r,
+                        inputs=[dataset, outputsdir_state], 
+                        outputs=[outdir_recon_must3r, runtime_recon_must3r, result_recon_must3r, log_recon_must3r, outmodel_must3r])
+        recon_fast3r_btn.click(fn=methods.recon_fast3r,
+                        inputs=[dataset, outputsdir_state], 
+                        outputs=[outdir_recon_fast3r, runtime_recon_fast3r, result_recon_fast3r, log_recon_fast3r, outmodel_fast3r])
+        recon_splatt3r_btn.click(fn=methods.recon_splatt3r,
+                        inputs=[img_splatt3r, outputsdir_state], 
+                        outputs=[outdir_recon_splatt3r, runtime_recon_splatt3r, result_recon_splatt3r, log_recon_splatt3r, outmodel_splatt3r])
+        recon_moge_btn.click(fn=methods.recon_moge,
+                        inputs=[img_moge, outputsdir_state, img_type_moge], 
+                        outputs=[outdir_recon_moge, runtime_recon_moge, result_recon_moge, log_recon_moge, outmodel_moge])
+        recon_unik3d_btn.click(fn=methods.recon_unik3d,
+                        inputs=[img_unik3d, outputsdir_state], 
+                        outputs=[outdir_recon_unik3d, runtime_recon_unik3d, result_recon_unik3d, log_recon_unik3d])
+        recon_vggt_btn.click(fn=methods.recon_vggt,
+                        inputs=[dataset, outputsdir_state], 
+                        outputs=[outdir_recon_vggt, runtime_recon_vggt, result_recon_vggt, log_recon_vggt, outmodel_vggt])
+        
+        # 点群出力（Nerfstudio）
+        export_nerf_btn.click(fn=methods.export_nerf,
+                              inputs=[dataset, outputsdir_state],
+                              outputs=[outdir_export_nerf, runtime_export_nerf, result_export_nerf, log_export_nerf])
+        export_nerfacto_btn.click(fn=methods.export_nerfacto,
+                                  inputs=[dataset, outputsdir_state],
+                                  outputs=[outdir_export_nerfacto, runtime_export_nerfacto, result_export_nerfacto, log_export_nerfacto])
+        export_mipnerf_btn.click(fn=methods.export_mipnerf,
+                                 inputs=[dataset, outputsdir_state],
+                                 outputs=[outdir_export_mipnerf, runtime_export_mipnerf, result_export_mipnerf, log_export_mipnerf])
+        export_stnerf_btn.click(fn=methods.export_stnerf,
+                                inputs=[dataset, outputsdir_state],
+                                outputs=[outdir_export_stnerf, runtime_export_stnerf, result_export_stnerf, log_export_stnerf])
+        export_sfacto_btn.click(fn=methods.export_sfacto,
+                                inputs=[dataset, outputsdir_state],
+                                outputs=[outdir_export_sfacto, runtime_export_sfacto, result_export_sfacto, log_export_sfacto])
+
+        # レンダリング・評価
+        eval_3dgs_btn.click(fn=methods.render_eval_3dgs,
+                    inputs=[output_recon_3dgs, skip_train, skip_test],
+                    outputs=[result_render_3dgs, eval_3dgs, gallery_3dgs])
             
     demo.launch()
