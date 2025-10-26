@@ -254,11 +254,9 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 gr.Markdown("学習スケジュールの設定")
                                 iter_3dgs = gr.Slider(label="総イテレーション数")
                                 with gr.Column():
-                                    test_iter1_3dgs = gr.Slider(value=7000, minimum=0, maximum=50000, step=100, label="テストを実行するイテレーション数（1回目）")
-                                    test_iter2_3dgs = gr.Slider(value=30000, minimum=0, maximum=50000, step=100, label="テストを実行するイテレーション数（2回目）")
+                                    test_iter_3dgs = gr.Slider(value=30000, minimum=0, maximum=50000, step=100, label="テストを実行するイテレーション数")
                                 with gr.Column():    
-                                    save_iter1_3dgs = gr.Slider(value=7000, minimum=0, maximum=50000, step=100, label="モデルを保存するイテレーション数（1回目）")
-                                    save_iter2_3dgs = gr.Slider(value=30000, minimum=0, maximum=50000, step=100, label="モデルを保存するイテレーション数（2回目）")
+                                    save_iter_3dgs = gr.Slider(value=30000, minimum=0, maximum=50000, step=100, label="モデルを保存するイテレーション数")
                             with gr.Column():
                                 gr.Markdown("学習率の設定")
                                 feature_lr = gr.Slider(value=0.0025, minimum=0, maximum=1, step=0.0001, label="球面調和関数の学習率")
@@ -277,11 +275,11 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 opacity_rest_interval = gr.Slider(value=3000, minimum=0, maximum=10000, step=100, label="不透明度リセットの間隔")
                                 percent_dense = gr.Slider(value=0.01, minimum=0, maximum=1, step=0.001, label="シーンの大きさに対する比率．この値を超える3D gaussianは強制的にDensificationを行う．")
                     recon_3dgs_btn = gr.Button("学習実行")
-                    run_time_3dgs = gr.Textbox(label="実行時間")
+                    outdir_recon_3dgs = gr.Textbox(interactive=False, label="学習結果保存先")
+                    runtime_3dgs = gr.Textbox(label="実行時間")
                     result_recon_3dgs = gr.Textbox(label="実行結果")
-                    output_recon_3dgs = gr.Textbox(interactive=False, label="学習結果保存先")
-                    outmodel1_3dgs = gr.Model3D("1回目のセーブポイント")
-                    outmodel2_3dgs = gr.Model3D("2回目のセーブポイント")
+                    log_recon_3dgs = gr.Textbox(label="実行ログ")
+                    outmodel_3dgs = gr.Model3D("三次元再構築結果")
                 with gr.Column(visible=False) as render_3dgs_col:            
                     gr.Markdown("# 3.レンダリング・評価")
                     with gr.Row():
@@ -649,11 +647,11 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                              outputs=[outdir_recon_stnerf, runtime_recon_stnerf, result_recon_stnerf, log_recon_stnerf, export_stnerf_col])
         recon_3dgs_btn.click(fn=methods.recon_3dgs, 
                              inputs=[dataset, outputsdir_state, sh_degree, data_device, lambda_dssim, iter_3dgs,
-                                     test_iter1_3dgs, test_iter2_3dgs, save_iter1_3dgs, save_iter2_3dgs, feature_lr,
+                                     test_iter_3dgs, save_iter_3dgs, feature_lr,
                                      opacity_lr, scaling_lr, rotation_lr, position_lr_init, position_lr_final,
                                      position_lr_delay_mult, densify_from_iter, densify_until_iter, densify_grad_threshold,
                                      densification_interval, opacity_rest_interval, percent_dense], 
-                                     outputs=[run_time_3dgs, result_recon_3dgs, output_recon_3dgs, outmodel1_3dgs, outmodel2_3dgs, render_3dgs_col ])
+                                     outputs=[outdir_recon_3dgs, runtime_3dgs, result_recon_3dgs, log_recon_3dgs, outmodel_3dgs, render_3dgs_col ])
         recon_mips_btn.click(fn=methods.recon_mipSplatting, 
                              inputs=[dataset, outputsdir_state, save_iter1_mips, save_iter2_mips], 
                              outputs=[outdir_recon_mips, runtime_recon_mips, result_recon_mips, log_recon_mips, outmodel1_mips, outmodel2_mips])
@@ -716,7 +714,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
 
         # レンダリング・評価
         eval_3dgs_btn.click(fn=methods.render_eval_3dgs,
-                    inputs=[output_recon_3dgs, skip_train, skip_test],
+                    inputs=[outdir_recon_3dgs, skip_train, skip_test],
                     outputs=[result_render_3dgs, eval_3dgs, gallery_3dgs])
             
     demo.launch()
