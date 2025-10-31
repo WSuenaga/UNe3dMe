@@ -1,10 +1,9 @@
-import os
-from PIL import Image
 import gradio as gr
+
 import preprocess
 import methods
 
-# Stateの値取得メソッド（データセットタブで得たパスを各タブに渡す）
+# State_value代入メソッド
 def get_state_value(state):
     return state
 def get_state_values(state):
@@ -236,10 +235,23 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             current_dataset_gs = gr.Textbox(label="現在セットされているデータセット")
             # 3DGS
             with gr.Tab("3DGS"):
-                gr.Markdown("# 1. 前処理")
-                gr.Markdown("データセットを3DGSで扱えるように前処理を行う必要があります．")
-                run_gscolmap_btn = gr.Button("前処理実行")
-                result_gscolmap = gr.Textbox(label="実行結果")
+                gr.Markdown("# 1. データセットの種類を選択")
+                gs3d_radio = gr.Radio(["作成したデータセット","処理済データセット"], label = "3次元再構築に用いるデータセットを選択してください．")
+                with gr.Column(visible=False) as pre_3dgs_col:
+                    gr.Markdown("""
+                                # 2.前処理
+                                - データセットを3DGSで扱えるように前処理を行う必要があります．
+                                - 作成したデータセット以外が現在セットされていないか注意してください．
+                                """)
+                    run_gscolmap_btn = gr.Button("前処理実行")
+                    result_gscolmap = gr.Textbox(label="実行結果")
+                with gr.Column(visible=False) as ex_3dgs_col:
+                    gr.Markdown("""
+                                # 2.データセットのアップロード
+                                - ZIP圧縮を行ってからアップロードしてください．
+                                - ZIPファイル以外も選択できてしまうため注意してください．
+                                """)
+                    ex_dataset_3dgs = gr.File(label="データセットを選択してください")
                 with gr.Column(visible=False) as train_3dgs_col:
                     gr.Markdown("# 2. 学習")
                     with gr.Accordion("オプション", open=False):
@@ -291,10 +303,23 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     gallery_3dgs = gr.Gallery(label="Ground Truth・レンダリングされた画像", columns=2, height="auto")
 
             with gr.Tab("Mip-Splatting"):
-                gr.Markdown("# 1. 前処理")
-                gr.Markdown("データセットをMip-splattingで扱えるように前処理を行う必要があります．")
-                run_mscolmap_btn = gr.Button("前処理実行")
-                result_mscolmap = gr.Textbox(label="実行結果")
+                gr.Markdown("# 1. データセットの種類を選択")
+                mips_radio = gr.Radio(["作成したデータセット","処理済データセット"], label = "3次元再構築に用いるデータセットを選択してください．")
+                with gr.Column(visible=False) as pre_mips_col:
+                    gr.Markdown("""
+                                # 2.前処理
+                                - データセットをMip-Splattingで扱えるように前処理を行う必要があります．
+                                - 作成したデータセット以外が現在セットされていないか注意してください．
+                                """)
+                    run_mscolmap_btn = gr.Button("前処理実行")
+                    result_mscolmap = gr.Textbox(label="実行結果")
+                with gr.Column(visible=False) as ex_mips_col:
+                    gr.Markdown("""
+                                # 2.データセットのアップロード
+                                - ZIP圧縮を行ってからアップロードしてください．
+                                - ZIPファイル以外も選択できてしまうため注意してください．
+                                """)
+                    ex_dataset_mips = gr.File(label="データセットを選択してください")
                 with gr.Column(visible=False) as train_mips_col:
                     gr.Markdown("# 2. 学習")
                     with gr.Accordion("オプション", open=False):
@@ -344,10 +369,23 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     log_export_sfacto = gr.Textbox(label="実行ログ")
                     gallery_sfacto = gr.Gallery(label="入力画像・レンダリング画像", columns=2, height="auto")
             with gr.Tab("4D-Gaussians"):
-                gr.Markdown("# 1. 前処理")
-                gr.Markdown("データセットをMip-splattingで扱えるように前処理を行う必要があります．")
-                run_4dgscolmap_btn = gr.Button("前処理実行")
-                result_4dgscolmap = gr.Textbox(label="実行結果")
+                gr.Markdown("# 1. データセットの種類を選択")
+                gs4d_radio = gr.Radio(["作成したデータセット","処理済データセット"], label = "3次元再構築に用いるデータセットを選択してください．")
+                with gr.Column(visible=False) as pre_4dgs_col:
+                    gr.Markdown("""
+                                # 2.前処理
+                                - データセットを4D-Gaussiansで扱えるように前処理を行う必要があります．
+                                - 作成したデータセット以外が現在セットされていないか注意してください．
+                                """)
+                    run_4dgscolmap_btn = gr.Button("前処理実行")
+                    result_4dgscolmap = gr.Textbox(label="実行結果")
+                with gr.Column(visible=False) as ex_4dgs_col:
+                    gr.Markdown("""
+                                # 2.データセットのアップロード
+                                - ZIP圧縮を行ってからアップロードしてください．
+                                - ZIPファイル以外も選択できてしまうため注意してください．
+                                """)
+                    ex_dataset_4dgs = gr.File(label="データセットを選択してください")
                 with gr.Column(visible=False) as train_4dgs_col:
                     gr.Markdown("# 2. 学習")
                     with gr.Accordion("オプション", open=False):
@@ -414,6 +452,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 outmodel_monst3r = gr.Model3D(label="三次元再構築結果")
             with gr.Tab("Easi3R"):
                 gr.Markdown("# 1.推論")
+                gr.Markdown("- 画像枚数が少ない場合，失敗する可能性があります．")
                 with gr.Accordion("オプション", open=False):
                     gr.Markdown()
                 recon_easi3r_btn = gr.Button("推論実行")
@@ -503,23 +542,15 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         with gr.Tab("VGG"):
             current_dataset_vgg = gr.Textbox(label="現在セットされているデータセット")
             with gr.Tab("VGGT"):
-                gr.Markdown(
-                    """
-                    # 1.前処理
-                    - データセットをVGGTで扱えるように前処理を行う必要があります．
-                    """)
-                run_preprocess_vggt_btn = gr.Button("前処理実行")
-                result_preprocess_vggt = gr.Textbox(label="実行結果")
-                with gr.Column(visible=False) as inference_vggt_col:
-                    gr.Markdown("# 2.推論")
-                    with gr.Accordion("オプション", open=False):
-                        mode_vgg = gr.Radio(choices=["crop","pad"], value="crop", label = "モードを選択してください")
-                    recon_vggt_btn = gr.Button("推論実行")
-                    outdir_recon_vggt = gr.Textbox(label="実行結果保存場所")
-                    runtime_recon_vggt = gr.Textbox(label="実行時間")
-                    result_recon_vggt = gr.Textbox(label="実行結果")
-                    log_recon_vggt = gr.Textbox(label="実行ログ")
-                    outmodel_vggt = gr.Model3D("三次元再構築結果")
+                gr.Markdown("# 1.推論")
+                with gr.Accordion("オプション", open=False):
+                    mode_vgg = gr.Radio(choices=["crop","pad"], value="crop", label = "モードを選択してください")
+                recon_vggt_btn = gr.Button("推論実行")
+                outdir_recon_vggt = gr.Textbox(label="実行結果保存場所")
+                runtime_recon_vggt = gr.Textbox(label="実行時間")
+                result_recon_vggt = gr.Textbox(label="実行結果")
+                log_recon_vggt = gr.Textbox(label="実行ログ")
+                outmodel_vggt = gr.Model3D("三次元再構築結果")
             with gr.Tab("VGGSfM"):
                 gr.Model3D()
 
@@ -542,9 +573,18 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         stnerf_radio.change(fn=display_dataset_ui,
                           inputs=stnerf_radio,
                           outputs=[pre_stnerf_col, ex_stnerf_col])
+        gs3d_radio.change(fn=display_dataset_ui,
+                          inputs=gs3d_radio,
+                          outputs=[pre_3dgs_col, ex_3dgs_col])
+        mips_radio.change(fn=display_dataset_ui,
+                          inputs=mips_radio,
+                          outputs=[pre_mips_col, ex_mips_col])
         sfacto_radio.change(fn=display_dataset_ui,
-                          inputs=sfacto_radio,
+                          inputs=gs3d_radio,
                           outputs=[pre_sfacto_col, ex_sfacto_col])
+        gs4d_radio.change(fn=display_dataset_ui,
+                          inputs=gs4d_radio,
+                          outputs=[pre_4dgs_col, ex_4dgs_col])
         img_splatt3r.change(fn=col_change, outputs=inference_splatt3r_col)
         img_moge.change(fn=col_change, outputs=inference_moge_col)
         img_unik3d.change(fn=col_change, outputs=inference_unik3d_col)
@@ -596,9 +636,27 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_nerf)
+        ex_dataset_3dgs.upload(fn=preprocess.unzip_dataset,
+                               inputs=[ex_dataset_3dgs, datasetsdir_state],
+                               outputs=[dataset, train_3dgs_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_gs)
+        ex_dataset_mips.upload(fn=preprocess.unzip_dataset,
+                               inputs=[ex_dataset_mips, datasetsdir_state],
+                               outputs=[dataset, train_mips_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_gs)
         ex_dataset_sfacto.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_sfacto, datasetsdir_state],
                                outputs=[dataset, train_sfacto_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_gs)
+        ex_dataset_4dgs.upload(fn=preprocess.unzip_dataset,
+                               inputs=[ex_dataset_4dgs, datasetsdir_state],
+                               outputs=[dataset, train_4dgs_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_gs)
@@ -622,15 +680,12 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         run_gscolmap_btn.click(fn=preprocess.run_gscolmap,
                                inputs=dataset,
                                outputs=[result_gscolmap, train_3dgs_col])
-        run_mscolmap_btn.click(fn=preprocess.run_mscolmap,
-                        inputs=dataset,
-                        outputs=[result_mscolmap, train_mips_col])
-        run_4dgscolmap_btn.click(fn=preprocess.run_4dgscolmap,
-                        inputs=dataset,
-                        outputs=[result_4dgscolmap, train_4dgs_col])
-        run_preprocess_vggt_btn.click(fn=preprocess.create_images_dir,
-                                      inputs=[dataset],
-                                      outputs=[result_preprocess_vggt, inference_vggt_col])
+        run_mscolmap_btn.click(fn=preprocess.run_gscolmap,
+                               inputs=dataset,
+                               outputs=[result_mscolmap, train_mips_col])
+        run_4dgscolmap_btn.click(fn=preprocess.run_gscolmap,
+                                 inputs=dataset,
+                                 outputs=[result_4dgscolmap, train_4dgs_col])
         
         # 三次元再構築
         recon_nerf_btn.click(fn=methods.recon_nerf,

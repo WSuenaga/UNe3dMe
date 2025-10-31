@@ -5,6 +5,7 @@ import json
 import time
 import shutil
 import subprocess
+import platform
 
 import gradio as gr
 
@@ -14,6 +15,9 @@ from preprocess import get_imagelist
 sys.path.append("models/vggt")
 sys.path.append("models/monst3r")
 
+# subprocessのshellフラグの設定
+SHELL_FLAG = platform.system() == "Windows"
+
 def run_subprocess(cmd, workdir):
     """
     subprocess.run を共通化したメソッド
@@ -21,11 +25,12 @@ def run_subprocess(cmd, workdir):
         cmd (list[str]): 実行コマンド（リスト形式）
         workdir (str): 実行ディレクトリ
     Returns:
-        run_time (str): 実行時間 (xx時間xx分xx秒)
+        run_time (str): 実行時間 (HHmmss)
         status (str): 実行ステータス（✅ 成功 / ❌ 失敗(returncode=xx)）
         log (str): コマンド＋標準出力/標準エラーをまとめたログ
     """
     # subprocess実行
+    global SHELL_FLAG
     print("Running:", " ".join(map(str, cmd)))
     start_time = time.time()
     try:
@@ -35,7 +40,8 @@ def run_subprocess(cmd, workdir):
             text=True,
             encoding="utf-8",
             errors="replace",
-            cwd = workdir
+            cwd=workdir,
+            shell=SHELL_FLAG
         )
     except Exception as e:
         return "0時間0分0秒", "❌ 失敗 (Exception)", f"実行に失敗しました: {e}"
@@ -83,7 +89,9 @@ def train_nerfstudio(dataset, outputs_dir, method_name, train_args=None):
         "--data", dataset_path
     ])
 
-    runtime, status, log = run_subprocess(train_cmd)
+    workdir = "./"
+
+    runtime, status, log = run_subprocess(train_cmd, workdir)
 
     return outdir, runtime, status, log, gr.Column(visible=True)
 
@@ -261,7 +269,7 @@ def render_eval_3dgs(model_path, skip_train, skip_test, iteration=None):
         render_cmd.extend(["--iteration", str(iteration)])
 
     print("Running:", " ".join(map(str, render_cmd)))
-    render_result = subprocess.run(render_cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    render_result = subprocess.run(render_cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", shell=SHELL_FLAG)
 
     if render_result.returncode != 0:
         error_output = render_result.stderr.strip()
@@ -275,7 +283,7 @@ def render_eval_3dgs(model_path, skip_train, skip_test, iteration=None):
     ]
 
     print("Running:", " ".join(map(str, eval_cmd)))
-    eval_result = subprocess.run(eval_cmd, capture_output=True, text=True)
+    eval_result = subprocess.run(eval_cmd, capture_output=True, text=True, shell=SHELL_FLAG)
 
     if eval_result.returncode != 0:
         error_output = eval_result.stderr.strip()
@@ -319,7 +327,7 @@ Mip-Splatting
 # --- 再構築メソッド ---
 def recon_mipSplatting(dataset, outputs_dir, save_iteration1, save_iteration2):
     # データセットのパス
-    dataset = os.path.join(dataset, "ms")
+    dataset = os.path.join(dataset, "gs")
 
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
@@ -370,7 +378,7 @@ def export_sfacto(dataset, out_dir):
 # --- 再構築メソッド ---
 def recon_4dGaussians(dataset, outputs_dir, save_iteration1, save_iteration2):
     # データセットのパス
-    dataset = os.path.join(dataset, "4dgs")
+    dataset = os.path.join(dataset, "gs")
 
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
@@ -412,7 +420,10 @@ def recon_dust3r(dataset, outputs_dir, schedule, niter, min_conf_thr, as_pointcl
     outdir = os.path.join(outputs_dir, "dust3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    
+
+    # データセットのパス
+    dataset = os.path.join(dataset, "images")
+
     # 使用モデル
     model_name = "DUSt3R_ViTLarge_BaseDecoder_512_dpt"
     # 変数の定義
@@ -466,8 +477,12 @@ MASt3R
 # --- 再構築メソッド ---
 def recon_mast3r(dataset, outputs_dir):
     # 出力ディレクトリの作成
-    outdir = os.path.join(outputs_dir, "mast3r", os.path.basename(dataset))
+    name = os.path.basename(dataset)
+    outdir = os.path.join(outputs_dir, "mast3r", name)
     os.makedirs(outdir, exist_ok=True)
+
+    # データセットのパス
+    dataset = os.path.join(dataset, "images")
 
     # 使用モデル
     model = "MASt3R_ViTLarge_BaseDecoder_512_catmlpdpt_metric"
@@ -509,6 +524,9 @@ def recon_monst3r(dataset, outputs_dir):
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
+    # データセットのパス
+    dataset = os.path.join(dataset, "images")
+
     # 再構築スクリプトパス
     script_path ="demo.py"
 
@@ -542,6 +560,9 @@ def recon_easi3r(dataset, outputs_dir):
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
+    # データセットのパス
+    dataset = os.path.join(dataset, "images")
+
     # 再構築スクリプトパス
     script_path ="demo.py"
 
@@ -574,6 +595,9 @@ def recon_must3r(dataset, outputs_dir):
     outdir = os.path.join(outputs_dir, "must3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
+
+    # データセットのパス
+    dataset = os.path.join(dataset, "images")
 
     # 再構築スクリプトパス
     script_path ="get_reconstruction.py"
@@ -610,6 +634,9 @@ def recon_fast3r(dataset, outputs_dir):
     outdir = os.path.join(outputs_dir, "fast3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
+
+    # データセットのパス
+    dataset = os.path.join(dataset, "images")
 
     # 再構築スクリプトパス
     script_path ="recon_fast3r.py"
@@ -675,6 +702,9 @@ def recon_moge(dataset, outputs_dir, img_type):
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
+    # データセットのパス
+    dataset = os.path.join(dataset, "images")
+
     # 再構築スクリプトパス
     if img_type=="標準画像":
         script_path = "./models/MoGe/moge/scripts/infer.py"
@@ -712,6 +742,9 @@ def recon_unik3d(dataset, outputs_dir):
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
+    # データセットのパス
+    dataset = os.path.join(dataset, "images")
+
     # 再構築スクリプトパス
     script_path = "models/UniK3D/scripts/infer.py"
     # configファイルパス
@@ -745,7 +778,8 @@ VGGT
 # --- 再構築メソッド ---
 def recon_vggt(dataset, outputs_dir):
     # 出力ディレクトリの作成
-    outdir = os.path.join(outputs_dir, "vggt", os.path.basename(dataset))
+    name = os.path.basename(dataset)
+    outdir = os.path.join(outputs_dir, "vggt", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 

@@ -5,12 +5,16 @@ import random
 import shutil
 import string
 import subprocess
+import platform
 import zipfile
 # サードパーティライブラリ
 import cv2
 import gradio as gr
 from skimage.metrics import structural_similarity as ssim
 from tqdm import tqdm
+
+# subprocessのshellフラグの設定
+SHELL_FLAG = platform.system() == "Windows"
 
 # 指定したディレクトリ内の画像パスをリスト化するメソッド
 def get_imagelist(dir):
@@ -25,7 +29,7 @@ def copy_images(image_paths, parent_path, name):
         name = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
     
     # 出力ディレクトリの作成
-    output_path = os.path.join(parent_path, name)
+    output_path = os.path.join(parent_path, name, "images")
     os.makedirs(output_path, exist_ok=True)
 
     for img_path in image_paths:
@@ -38,7 +42,10 @@ def copy_images(image_paths, parent_path, name):
         shutil.copy(img_path, dst_path)
     
     imagelist = get_imagelist(output_path)
-    return output_path, gr.Column(visible=True), output_path, imagelist
+
+    dataset_dir = output_path = os.path.join(parent_path, name)
+
+    return dataset_dir, gr.Column(visible=True), dataset_dir, imagelist
 
 def remove_similar_images(input_dir: str, ssim_threshold: float = 0.95):
     """
@@ -85,7 +92,7 @@ def remove_similar_images(input_dir: str, ssim_threshold: float = 0.95):
 
 def extract_frames_with_filter(video, parent_path, fps, remove_similar, ssim_threshold):
     video_name = os.path.splitext(os.path.basename(video))[0]
-    output_path = os.path.join(parent_path, video_name)
+    output_path = os.path.join(parent_path, video_name, "images")
     
     # ディレクトリが既に存在し、画像が存在する場合はスキップ
     existing_images = sorted([
@@ -98,13 +105,14 @@ def extract_frames_with_filter(video, parent_path, fps, remove_similar, ssim_thr
     else:
         os.makedirs(output_path, exist_ok=True)
 
+        global SHELL_FLAG
         command = [
             "ffmpeg",
             "-i", video,
             "-vf", f"fps={fps}",
             os.path.join(output_path, "%04d.png")
         ]
-        subprocess.run(command, check=True)
+        subprocess.run(command, check=True, shell=SHELL_FLAG)
 
         if remove_similar:
             comp_rate, del_images_num = remove_similar_images(output_path, ssim_threshold)
@@ -119,12 +127,14 @@ def extract_frames_with_filter(video, parent_path, fps, remove_similar, ssim_thr
         for f in os.listdir(output_path) if f.endswith(".png")
     ])
 
-    return output_path, gr.Column(visible=True), output_path, comp_rate, del_images_num, imagelist
+    dataset_dir = output_path = os.path.join(parent_path, video_name)
+
+    return dataset_dir, gr.Column(visible=True), dataset_dir, comp_rate, del_images_num, imagelist
 
 def unzip_dataset(zip_file, datasets_parent):
     # zipファイル名（拡張子なし）をデータセット名にする
     basename = os.path.splitext(os.path.basename(zip_file.name))[0]
-    output_path = os.path.join(datasets_parent, basename)
+    output_path = os.path.join(datasets_parent, basename, "colmap")
     
     if os.path.exists(output_path) and os.listdir(output_path):
         print(f"既に展開済み: {output_path}")
@@ -135,33 +145,9 @@ def unzip_dataset(zip_file, datasets_parent):
         zip_ref.extractall(output_path)
     print(f"解凍しました: {output_path}")
 
-    return output_path, gr.Column(visible=True)
+    dataset_dir = os.path.join(datasets_parent, basename)
 
-def create_images_dir(dataset):
-    if dataset == "":
-        return "データセットがセットされていません", gr.Column(visible=False)
-    
-    # imagesフォルダを作成
-    images_dir = os.path.join(dataset, "images")
-    if os.path.exists(images_dir):
-        return "前処理済みです", gr.Column(visible=True)
-    else:
-        os.makedirs(images_dir, exist_ok=True)
-
-    # dataset直下の画像を images にコピー
-    copied = 0
-    for file in os.listdir(dataset):
-        file_path = os.path.join(dataset, file)
-        if os.path.isfile(file_path) and file.lower().endswith((".jpg", ".jpeg", ".png")):
-            shutil.copy2(file_path, os.path.join(images_dir, file))
-            copied += 1
-
-    if copied == 0:
-        return "画像ファイルが見つかりませんでした", gr.Column(visible=False)
-
-    log = f"{copied} 枚の画像を images フォルダにコピーしました"
-
-    return log, gr.Column(visible=True)
+    return dataset_dir, gr.Column(visible=True)
 
 # ---nerfstudio_COLMAP実行メソッド---
 def run_nscolmap(dataset):
@@ -170,6 +156,7 @@ def run_nscolmap(dataset):
     
     # nsフォルダを作成
     ns_dir = os.path.join(dataset, "ns")
+    print(ns_dir)
     if os.path.exists(ns_dir):
         return "前処理済みです", gr.Column(visible=True)
     else:
@@ -181,9 +168,11 @@ def run_nscolmap(dataset):
         "--data", dataset,
         "--output-dir", ns_dir
     ]
+    print(cmd)
 
+    global SHELL_FLAG
     print("Running:", " ".join(cmd))
-    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", cwd="./", shell=SHELL_FLAG)
 
     # 標準出力とエラーを結合
     error_output = result.stderr.strip()
@@ -200,7 +189,7 @@ def run_nscolmap(dataset):
 # ---3dgs_COLMAP実行メソッド---
 def run_gscolmap(dataset):
     if dataset == "":
-        return "データセットがセットされていません" 
+        return "データセットがセットされていません", gr.Column(visible=False)
     
     # gsフォルダを作成
     gs_dir = os.path.join(dataset, "gs")
@@ -213,22 +202,31 @@ def run_gscolmap(dataset):
     input_dir = os.path.join(gs_dir, "input")
     os.makedirs(input_dir, exist_ok=True)
 
-    # dataset直下の画像を input にコピー
-    for file in os.listdir(dataset):
-        file_path = os.path.join(dataset, file)
+    # dataset/images 内の画像を input にコピー
+    images_dir = os.path.join(dataset, "images")
+    if not os.path.exists(images_dir):
+        return f"{images_dir} が存在しません", gr.Column(visible=False)
+
+    for file in os.listdir(images_dir):
+        file_path = os.path.join(images_dir, file)
         if os.path.isfile(file_path) and file.lower().endswith((".jpg", ".jpeg", ".png")):
             shutil.copy2(file_path, os.path.join(input_dir, file))
 
     # COLMAP実行コマンド
-    script_path = "./models/gaussian-splatting/convert.py"
+    script_path = "convert.py"
     cmd = [
         "conda", "run", "-n", "gaussian_splatting", "python", script_path,
         "--source_path", gs_dir,
         "--resize"
     ]
 
+    global SHELL_FLAG
     print("Running:", " ".join(cmd))
-    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    result = subprocess.run(
+        cmd, capture_output=True, text=True, encoding="utf-8", errors="replace",
+        cwd="./models/gaussian-splatting/", shell=SHELL_FLAG
+    )
+
     # 標準出力とエラーを結合
     error_output = result.stderr.strip()
 
@@ -236,92 +234,6 @@ def run_gscolmap(dataset):
     if result.returncode != 0:
         log = f"前処理に失敗しました\n\nエラー内容:\n{error_output}"
         return log, gr.Column(visible=False)
+
     log = "前処理が完了しました"
-
-    return log, gr.Column(visible=True)
-
-# ---mip-splatting_COLMAP実行メソッド---
-def run_mscolmap(dataset):
-    if dataset == "":
-        return "データセットがセットされていません" 
-    
-    # msフォルダを作成
-    ms_dir = os.path.join(dataset, "ms")
-    if os.path.exists(ms_dir):
-        return "前処理済みです", gr.Column(visible=True)
-    else:
-        os.makedirs(ms_dir, exist_ok=True)
-
-    # input フォルダ作成
-    input_dir = os.path.join(ms_dir, "input")
-    os.makedirs(input_dir, exist_ok=True)
-
-    # dataset直下の画像を input にコピー
-    for file in os.listdir(dataset):
-        file_path = os.path.join(dataset, file)
-        if os.path.isfile(file_path) and file.lower().endswith((".jpg", ".jpeg", ".png")):
-            shutil.copy2(file_path, os.path.join(input_dir, file))
-
-    # COLMAP実行コマンド
-    script_path = "./models/mip-splatting/convert.py"
-    cmd = [
-        "conda", "run", "-n", "mip-splatting", "python", script_path,
-        "--source_path", ms_dir,
-        "--resize"
-    ]
-
-    print("Running:", " ".join(cmd))
-    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
-    # 標準出力とエラーを結合
-    error_output = result.stderr.strip()
-
-    # returncode が 0 以外ならエラーとして返す
-    if result.returncode != 0:
-        log = f"前処理に失敗しました\n\nエラー内容:\n{error_output}"
-        return log, gr.Column(visible=False)
-    log = "前処理が完了しました"
-
-    return log, gr.Column(visible=True)
-
-# ---mip-splatting_COLMAP実行メソッド---
-def run_4dgscolmap(dataset):
-    if dataset == "":
-        return "データセットがセットされていません" 
-    
-    # msフォルダを作成
-    gs4d_dir = os.path.join(dataset, "4dgs")
-    if os.path.exists(gs4d_dir):
-        return "前処理済みです", gr.Column(visible=True)
-    else:
-        os.makedirs(gs4d_dir, exist_ok=True)
-
-    # input フォルダ作成
-    input_dir = os.path.join(gs4d_dir, "input")
-    os.makedirs(input_dir, exist_ok=True)
-
-    # dataset直下の画像を input にコピー
-    for file in os.listdir(dataset):
-        file_path = os.path.join(dataset, file)
-        if os.path.isfile(file_path) and file.lower().endswith((".jpg", ".jpeg", ".png")):
-            shutil.copy2(file_path, os.path.join(input_dir, file))
-
-    # COLMAP実行コマンド
-    script_path = "./models/4DGaussians/convert.py"
-    cmd = [
-        "conda", "run", "-n", "Gaussians4D", "python", script_path,
-        "--source_path", gs4d_dir,
-        "--resize"
-    ]
-
-    print("Running:", " ".join(cmd))
-    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
-    # 標準出力とエラーを結合
-    error_output = result.stderr.strip()
-
-    # returncode が 0 以外ならエラーとして返す
-    if result.returncode != 0:
-        log = f"前処理に失敗しました\n\nエラー内容:\n{error_output}"
-        return log, gr.Column(visible=False)
-    log = "前処理が完了しました"
-
     return log, gr.Column(visible=True)
