@@ -92,7 +92,7 @@ def remove_similar_images(input_dir: str, ssim_threshold: float = 0.95):
 
 def extract_frames_with_filter(video, parent_path, fps, remove_similar, ssim_threshold):
     video_name = os.path.splitext(os.path.basename(video))[0]
-    output_path = os.path.join(parent_path, video_name, "images")
+    output_path = os.path.join(parent_path, video_name, "input")
     
     # ディレクトリが既に存在し、画像が存在する場合はスキップ
     existing_images = sorted([
@@ -134,106 +134,100 @@ def extract_frames_with_filter(video, parent_path, fps, remove_similar, ssim_thr
 def unzip_dataset(zip_file, datasets_parent):
     # zipファイル名（拡張子なし）をデータセット名にする
     basename = os.path.splitext(os.path.basename(zip_file.name))[0]
-    output_path = os.path.join(datasets_parent, basename, "colmap")
+    dataset_path = os.path.join(datasets_parent, basename)
     
-    if os.path.exists(output_path) and os.listdir(output_path):
-        print(f"既に展開済み: {output_path}")
-        return output_path, gr.Column(visible=True)
+    if os.path.exists(dataset_path) and os.listdir(dataset_path):
+        print(f"既に展開済み: {dataset_path}")
+        return dataset_path, gr.Column(visible=True)
 
     # 解凍
     with zipfile.ZipFile(zip_file.name, "r") as zip_ref:
-        zip_ref.extractall(output_path)
-    print(f"解凍しました: {output_path}")
+        zip_ref.extractall(dataset_path)
+    print(f"解凍しました: {dataset_path}")
 
-    dataset_dir = os.path.join(datasets_parent, basename)
+    return dataset_path, gr.Column(visible=True)
 
-    return dataset_dir, gr.Column(visible=True)
-
-# ---nerfstudio_COLMAP実行メソッド---
-def run_nscolmap(dataset):
+# COLMAP実行メソッド
+def run_colmap(dataset):
     if dataset == "":
         return "データセットがセットされていません", gr.Column(visible=False)
-    
-    # nsフォルダを作成
-    ns_dir = os.path.join(dataset, "ns")
-    print(ns_dir)
-    if os.path.exists(ns_dir):
-        return "前処理済みです", gr.Column(visible=True)
-    else:
-        os.makedirs(ns_dir, exist_ok=True)
-
-    # COLMAP実行コマンド
-    cmd = [
-        "conda", "run", "-n", "nerfstudio", "ns-process-data", "images",
-        "--data", dataset,
-        "--output-dir", ns_dir
-    ]
-    print(cmd)
 
     global SHELL_FLAG
-    print("Running:", " ".join(cmd))
-    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", cwd="./", shell=SHELL_FLAG)
+    all_logs = []
 
-    # 標準出力とエラーを結合
-    error_output = result.stderr.strip()
-
-    # returncodeが0以外ならエラー
-    if result.returncode != 0:
-        log = f"前処理に失敗しました\n\nエラー内容:\n{error_output}"
-        return log, gr.Column(visible=False)
-
-    log = "前処理が完了しました"
-
-    return log, gr.Column(visible=True)
-
-# ---3dgs_COLMAP実行メソッド---
-def run_gscolmap(dataset):
-    if dataset == "":
-        return "データセットがセットされていません", gr.Column(visible=False)
-    
-    # gsフォルダを作成
-    gs_dir = os.path.join(dataset, "gs")
-    if os.path.exists(gs_dir):
-        return "前処理済みです", gr.Column(visible=True)
-    else:
-        os.makedirs(gs_dir, exist_ok=True)
-
-    # input フォルダ作成
-    input_dir = os.path.join(gs_dir, "input")
-    os.makedirs(input_dir, exist_ok=True)
-
-    # dataset/images 内の画像を input にコピー
-    images_dir = os.path.join(dataset, "images")
-    if not os.path.exists(images_dir):
-        return f"{images_dir} が存在しません", gr.Column(visible=False)
-
-    for file in os.listdir(images_dir):
-        file_path = os.path.join(images_dir, file)
-        if os.path.isfile(file_path) and file.lower().endswith((".jpg", ".jpeg", ".png")):
-            shutil.copy2(file_path, os.path.join(input_dir, file))
-
-    # COLMAP実行コマンド
+    # --- COLMAP実行 ---
     script_path = "convert.py"
-    cmd = [
+    cmd_colmap = [
         "conda", "run", "-n", "gaussian_splatting", "python", script_path,
-        "--source_path", gs_dir,
+        "--source_path", dataset,
         "--resize"
     ]
 
-    global SHELL_FLAG
-    print("Running:", " ".join(cmd))
+    print("Running:", " ".join(cmd_colmap))
     result = subprocess.run(
-        cmd, capture_output=True, text=True, encoding="utf-8", errors="replace",
-        cwd="./models/gaussian-splatting/", shell=SHELL_FLAG
+        cmd_colmap,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        cwd="./models/gaussian-splatting/",
+        shell=SHELL_FLAG
     )
 
-    # 標準出力とエラーを結合
-    error_output = result.stderr.strip()
+    stdout_colmap = result.stdout.strip()
+    stderr_colmap = result.stderr.strip()
+    all_logs.append("【COLMAP実行ログ】")
+    all_logs.append(stdout_colmap)
+    if stderr_colmap:
+        all_logs.append("【COLMAPエラー】")
+        all_logs.append(stderr_colmap)
 
-    # returncode が 0 以外ならエラーとして返す
     if result.returncode != 0:
-        log = f"前処理に失敗しました\n\nエラー内容:\n{error_output}"
-        return log, gr.Column(visible=False)
+        return (
+            "COLMAP変換に失敗しました\n\n" + "\n".join(all_logs),
+            gr.Column(visible=False)
+        )
 
-    log = "前処理が完了しました"
-    return log, gr.Column(visible=True)
+    # --- ns-process-data 実行 ---
+    input_path = os.path.join(dataset, "input")
+    colmap_model_path = os.path.join(dataset, "sparse", "0")
+    cmd_ns = [
+        "conda", "run", "-n", "nerfstudio",
+        "ns-process-data", "images",
+        "--data", input_path,
+        "--output-dir", dataset,
+        "--skip-colmap",
+        "--colmap-model-path", colmap_model_path,
+        "--skip-image-processing",
+        "--camera-type", "perspective",
+        "--same-dimensions"
+    ]
+
+    print("Running:", " ".join(cmd_ns))
+    result_ns = subprocess.run(
+        cmd_ns,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        cwd="./models/nerfstudio/",
+        shell=SHELL_FLAG
+    )
+
+    stdout_ns = result_ns.stdout.strip()
+    stderr_ns = result_ns.stderr.strip()
+    all_logs.append("\n【Nerfstudio変換ログ】")
+    all_logs.append(stdout_ns)
+    if stderr_ns:
+        all_logs.append("【Nerfstudioエラー】")
+        all_logs.append(stderr_ns)
+
+    if result_ns.returncode != 0:
+        return (
+            "ns-process-data images 実行に失敗しました\n\n" + "\n".join(all_logs),
+            gr.Column(visible=False)
+        )
+
+    # --- 成功時 ---
+    all_logs.append("\nすべての処理が正常に完了しました。")
+    return "\n".join(all_logs), gr.Column(visible=True)

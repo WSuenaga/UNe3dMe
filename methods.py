@@ -68,25 +68,25 @@ def train_nerfstudio(dataset, outputs_dir, method_name, train_args=None):
     """
     Nerfstudio モデルを学習する関数
     """
-    dataset_path = os.path.join(dataset, "ns")
-    outdir = os.path.join(outputs_dir, method_name, os.path.basename(dataset))
+    name = os.path.basename(dataset)
+    outdir = os.path.join(outputs_dir, method_name, name)
     os.makedirs(outdir, exist_ok=True)
 
     train_cmd = [
         "conda", "run", "-n", "nerfstudio",
-        "ns-train",
-        method_name,
+        "ns-train", method_name,
         "--output-dir", outdir,
         "--experiment-name", "results",
         "--timestamp", "results",
         "--vis", "viewer",
-        "--viewer.quit-on-train-completion", "True"
+        "--viewer.quit-on-train-completion", "False"
     ]
     if train_args:
         train_cmd.extend(train_args)
     train_cmd.extend([
         "nerfstudio-data",
-        "--data", dataset_path
+        "--data", dataset,
+        "--downscale-factor", "1"
     ])
 
     workdir = "./"
@@ -100,7 +100,8 @@ def export_nerfstudio(dataset, outputs_dir, method_name, filetype, export_args=N
     """
     Nerfstudio モデルをエクスポートする関数 (学習済みの config.yml 必須)
     """
-    outdir = os.path.join(outputs_dir, method_name, os.path.basename(dataset))
+    name = os.path.basename(dataset)
+    outdir = os.path.join(outputs_dir, method_name, name)
     config_path = os.path.join(outdir, "results", method_name, "results", "config.yml")
 
     export_cmd = [
@@ -208,9 +209,6 @@ def recon_3dgs(dataset, outputs_dir, sh_degree, data_device, lambde_dsiim, itera
              position_lr_final, position_lr_delay_mult, densify_from_iter,
              densify_until_iter, densify_grad_threshold, densification_interval,
              opacity_rest_interval, percent_dense):
-    # データセットのパス
-    dataset = os.path.join(dataset, "gs")
-
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "3dgs", name)
@@ -326,9 +324,6 @@ Mip-Splatting
 """
 # --- 再構築メソッド ---
 def recon_mipSplatting(dataset, outputs_dir, save_iteration1, save_iteration2):
-    # データセットのパス
-    dataset = os.path.join(dataset, "gs")
-
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "mip-splatting", name)
@@ -377,9 +372,6 @@ def export_sfacto(dataset, out_dir):
 """
 # --- 再構築メソッド ---
 def recon_4dGaussians(dataset, outputs_dir, save_iteration1, save_iteration2):
-    # データセットのパス
-    dataset = os.path.join(dataset, "gs")
-
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "4D-Gaussians", name)
@@ -422,7 +414,7 @@ def recon_dust3r(dataset, outputs_dir, schedule, niter, min_conf_thr, as_pointcl
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "images")
+    dataset = os.path.join(dataset, "inputs")
 
     # 使用モデル
     model_name = "DUSt3R_ViTLarge_BaseDecoder_512_dpt"
@@ -482,7 +474,7 @@ def recon_mast3r(dataset, outputs_dir):
     os.makedirs(outdir, exist_ok=True)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "images")
+    dataset = os.path.join(dataset, "inputs")
 
     # 使用モデル
     model = "MASt3R_ViTLarge_BaseDecoder_512_catmlpdpt_metric"
@@ -525,7 +517,7 @@ def recon_monst3r(dataset, outputs_dir):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "images")
+    dataset = os.path.join(dataset, "inputs")
 
     # 再構築スクリプトパス
     script_path ="demo.py"
@@ -561,7 +553,7 @@ def recon_easi3r(dataset, outputs_dir):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "images")
+    dataset = os.path.join(dataset, "inputs")
 
     # 再構築スクリプトパス
     script_path ="demo.py"
@@ -597,7 +589,7 @@ def recon_must3r(dataset, outputs_dir):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "images")
+    dataset = os.path.join(dataset, "inputs")
 
     # 再構築スクリプトパス
     script_path ="get_reconstruction.py"
@@ -636,7 +628,7 @@ def recon_fast3r(dataset, outputs_dir):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "images")
+    dataset = os.path.join(dataset, "inputs")
 
     # 再構築スクリプトパス
     script_path ="recon_fast3r.py"
@@ -703,7 +695,7 @@ def recon_moge(dataset, outputs_dir, img_type):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "images")
+    dataset = os.path.join(dataset, "inputs")
 
     # 再構築スクリプトパス
     if img_type=="標準画像":
@@ -743,7 +735,7 @@ def recon_unik3d(dataset, outputs_dir):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "images")
+    dataset = os.path.join(dataset, "inputs")
 
     # 再構築スクリプトパス
     script_path = "models/UniK3D/scripts/infer.py"
@@ -782,6 +774,9 @@ def recon_vggt(dataset, outputs_dir):
     outdir = os.path.join(outputs_dir, "vggt", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
+
+    # データセットのパス
+    dataset = os.path.join(dataset, "inputs")
 
     # 再構築スクリプトパス
     script_path = "recon_vgg.py"

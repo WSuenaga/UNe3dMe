@@ -88,8 +88,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 - データセットをNeRFで扱えるように前処理を行う必要があります．
                                 - 作成したデータセット以外が現在セットされていないか注意してください．
                                 """)
-                    run_nscolmap_btn1 = gr.Button("前処理実行")
-                    result_nscolmap1 = gr.Textbox(label="実行結果")
+                    run_colmap_nerf_btn = gr.Button("前処理実行")
+                    result_colmap_nerf = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_nerf_col:
                     gr.Markdown("""
                                 # 2.データセットのアップロード
@@ -126,8 +126,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 - データセットをNefactoで扱えるように前処理を行う必要があります．
                                 - 作成したデータセット以外が現在セットされていないか注意してください．
                                 """)
-                    run_nscolmap_btn2 = gr.Button("前処理実行")
-                    result_nscolmap2 = gr.Textbox(label="実行結果")
+                    run_colmap_nerfacto_btn = gr.Button("前処理実行")
+                    result_colmap_nerfacto = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_nerfacto_col:
                     gr.Markdown("""
                                 # 2.データセットのアップロード
@@ -164,8 +164,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 - データセットをmip-NeRFで扱えるように前処理を行う必要があります．
                                 - 作成したデータセット以外が現在セットされていないか注意してください．
                                 """)
-                    run_nscolmap_btn3 = gr.Button("前処理実行")
-                    result_nscolmap3 = gr.Textbox(label="実行結果")
+                    run_colmap_mipn_btn = gr.Button("前処理実行")
+                    result_colmap_mipn = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_mipnerf_col:
                     gr.Markdown("""
                                 # 2.データセットのアップロード
@@ -202,8 +202,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 - データセットをSeaThru-NeRFで扱えるように前処理を行う必要があります．
                                 - 作成したデータセット以外が現在セットされていないか注意してください．
                                 """)
-                    run_nscolmap_btn4 = gr.Button("前処理実行")
-                    result_nscolmap4 = gr.Textbox(label="実行結果")
+                    run_colmap_stnerf_btn = gr.Button("前処理実行")
+                    result_colmap_stnerf = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_stnerf_col:
                     gr.Markdown("""
                                 # 2.データセットのアップロード
@@ -243,8 +243,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 - データセットを3DGSで扱えるように前処理を行う必要があります．
                                 - 作成したデータセット以外が現在セットされていないか注意してください．
                                 """)
-                    run_gscolmap_btn = gr.Button("前処理実行")
-                    result_gscolmap = gr.Textbox(label="実行結果")
+                    run_colmap_3dgs_btn = gr.Button("前処理実行")
+                    result_colmap_3dgs = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_3dgs_col:
                     gr.Markdown("""
                                 # 2.データセットのアップロード
@@ -311,8 +311,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 - データセットをMip-Splattingで扱えるように前処理を行う必要があります．
                                 - 作成したデータセット以外が現在セットされていないか注意してください．
                                 """)
-                    run_mscolmap_btn = gr.Button("前処理実行")
-                    result_mscolmap = gr.Textbox(label="実行結果")
+                    run_colmap_mips_btn = gr.Button("前処理実行")
+                    result_colmap_mips = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_mips_col:
                     gr.Markdown("""
                                 # 2.データセットのアップロード
@@ -341,8 +341,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 - データセットをmip-NeRFで扱えるように前処理を行う必要があります．
                                 - 作成したデータセット以外が現在セットされていないか注意してください．
                                 """)
-                    run_nscolmap_btn5 = gr.Button("前処理実行")
-                    result_nscolmap5 = gr.Textbox(label="実行結果")
+                    run_colmap_sfacto_btn = gr.Button("前処理実行")
+                    result_colmap_sfacto = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_sfacto_col:
                     gr.Markdown("""
                                 # 2.データセットのアップロード
@@ -377,8 +377,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 - データセットを4D-Gaussiansで扱えるように前処理を行う必要があります．
                                 - 作成したデータセット以外が現在セットされていないか注意してください．
                                 """)
-                    run_4dgscolmap_btn = gr.Button("前処理実行")
-                    result_4dgscolmap = gr.Textbox(label="実行結果")
+                    run_colmap_4dgs_btn = gr.Button("前処理実行")
+                    result_colmap_4dgs = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_4dgs_col:
                     gr.Markdown("""
                                 # 2.データセットのアップロード
@@ -662,30 +662,30 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                    outputs=current_dataset_gs)
         
         # 前処理
-        run_nscolmap_btn1.click(fn=preprocess.run_nscolmap,
+        run_colmap_nerf_btn.click(fn=preprocess.run_colmap,
                                 inputs=dataset,
-                                outputs=[result_nscolmap1, train_nerf_col])
-        run_nscolmap_btn2.click(fn=preprocess.run_nscolmap,
+                                outputs=[result_colmap_nerf, train_nerf_col])
+        run_colmap_nerfacto_btn.click(fn=preprocess.run_colmap,
                                 inputs=dataset,
-                                outputs=[result_nscolmap2, train_nerfacto_col])
-        run_nscolmap_btn3.click(fn=preprocess.run_nscolmap,
+                                outputs=[result_colmap_nerfacto, train_nerfacto_col])
+        run_colmap_mipn_btn.click(fn=preprocess.run_colmap,
                                 inputs=dataset,
-                                outputs=[result_nscolmap3, train_mipnerf_col])
-        run_nscolmap_btn4.click(fn=preprocess.run_nscolmap,
+                                outputs=[result_colmap_mipn, train_mipnerf_col])
+        run_colmap_stnerf_btn.click(fn=preprocess.run_colmap,
                                 inputs=dataset,
-                                outputs=[result_nscolmap4, train_stnerf_col])
-        run_nscolmap_btn5.click(fn=preprocess.run_nscolmap,
-                                inputs=dataset,
-                                outputs=[result_nscolmap5, train_sfacto_col])
-        run_gscolmap_btn.click(fn=preprocess.run_gscolmap,
+                                outputs=[result_colmap_stnerf, train_stnerf_col])
+        run_colmap_3dgs_btn.click(fn=preprocess.run_colmap,
                                inputs=dataset,
-                               outputs=[result_gscolmap, train_3dgs_col])
-        run_mscolmap_btn.click(fn=preprocess.run_gscolmap,
+                               outputs=[result_colmap_3dgs, train_3dgs_col])
+        run_colmap_mips_btn.click(fn=preprocess.run_colmap,
                                inputs=dataset,
-                               outputs=[result_mscolmap, train_mips_col])
-        run_4dgscolmap_btn.click(fn=preprocess.run_gscolmap,
+                               outputs=[result_colmap_mips, train_mips_col])
+        run_colmap_sfacto_btn.click(fn=preprocess.run_colmap,
+                                inputs=dataset,
+                                outputs=[result_colmap_sfacto, train_sfacto_col])
+        run_colmap_4dgs_btn.click(fn=preprocess.run_colmap,
                                  inputs=dataset,
-                                 outputs=[result_4dgscolmap, train_4dgs_col])
+                                 outputs=[result_colmap_4dgs, train_4dgs_col])
         
         # 三次元再構築
         recon_nerf_btn.click(fn=methods.recon_nerf,
