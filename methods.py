@@ -79,7 +79,7 @@ def train_nerfstudio(dataset, outputs_dir, method_name, train_args=None):
         "--experiment-name", "results",
         "--timestamp", "results",
         "--vis", "viewer",
-        "--viewer.quit-on-train-completion", "False"
+        "--viewer.quit-on-train-completion", "True"
     ]
     if train_args:
         train_cmd.extend(train_args)
@@ -164,7 +164,7 @@ Nerfacto
 def recon_nerfacto(dataset, out_dir, iter):
     train_args = ["--max-num-iterations", f"{iter}",
                   "--viewer.websocket-port-default", "7008"]
-    return train_nerfstudio(dataset, out_dir, "nerfacto", train_args)
+    return train_nerfstudio(dataset, out_dir, "nerfacto-huge", train_args)
 # --- 点群出力メソッド ---
 def export_nerfacto(dataset, out_dir):
     export_args = ["--rgb-output-name", "rgb", 
