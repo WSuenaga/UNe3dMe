@@ -29,7 +29,7 @@ def copy_images(image_paths, parent_path, name):
         name = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
     
     # 出力ディレクトリの作成
-    output_path = os.path.join(parent_path, name, "images")
+    output_path = os.path.join(parent_path, name, "input")
     os.makedirs(output_path, exist_ok=True)
 
     for img_path in image_paths:

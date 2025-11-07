@@ -414,7 +414,7 @@ def recon_dust3r(dataset, outputs_dir, schedule, niter, min_conf_thr, as_pointcl
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "inputs")
+    dataset = os.path.join(dataset, "input")
 
     # 使用モデル
     model_name = "DUSt3R_ViTLarge_BaseDecoder_512_dpt"
@@ -474,7 +474,7 @@ def recon_mast3r(dataset, outputs_dir):
     os.makedirs(outdir, exist_ok=True)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "inputs")
+    dataset = os.path.join(dataset, "input")
 
     # 使用モデル
     model = "MASt3R_ViTLarge_BaseDecoder_512_catmlpdpt_metric"
@@ -517,7 +517,7 @@ def recon_monst3r(dataset, outputs_dir):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "inputs")
+    dataset = os.path.join(dataset, "input")
 
     # 再構築スクリプトパス
     script_path ="demo.py"
@@ -553,7 +553,7 @@ def recon_easi3r(dataset, outputs_dir):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "inputs")
+    dataset = os.path.join(dataset, "input")
 
     # 再構築スクリプトパス
     script_path ="demo.py"
@@ -589,7 +589,7 @@ def recon_must3r(dataset, outputs_dir):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "inputs")
+    dataset = os.path.join(dataset, "input")
 
     # 再構築スクリプトパス
     script_path ="get_reconstruction.py"
@@ -628,7 +628,7 @@ def recon_fast3r(dataset, outputs_dir):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "inputs")
+    dataset = os.path.join(dataset, "input")
 
     # 再構築スクリプトパス
     script_path ="recon_fast3r.py"
@@ -695,7 +695,7 @@ def recon_moge(dataset, outputs_dir, img_type):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "inputs")
+    dataset = os.path.join(dataset, "input")
 
     # 再構築スクリプトパス
     if img_type=="標準画像":
@@ -735,7 +735,7 @@ def recon_unik3d(dataset, outputs_dir):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "inputs")
+    dataset = os.path.join(dataset, "input")
 
     # 再構築スクリプトパス
     script_path = "models/UniK3D/scripts/infer.py"
@@ -776,7 +776,7 @@ def recon_vggt(dataset, outputs_dir):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "inputs")
+    dataset = os.path.join(dataset, "input")
 
     # 再構築スクリプトパス
     script_path = "recon_vgg.py"
