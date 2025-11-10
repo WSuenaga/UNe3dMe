@@ -88,6 +88,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 - データセットをNeRFで扱えるように前処理を行う必要があります．
                                 - 作成したデータセット以外が現在セットされていないか注意してください．
                                 """)
+                    with gr.Accordion("オプション", open=False):
+                        rebuilt_nerf = gr.Checkbox(label="前処理を再実行", value=False)
                     run_colmap_nerf_btn = gr.Button("前処理実行")
                     result_colmap_nerf = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_nerf_col:
@@ -126,6 +128,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 - データセットをNefactoで扱えるように前処理を行う必要があります．
                                 - 作成したデータセット以外が現在セットされていないか注意してください．
                                 """)
+                    with gr.Accordion("オプション", open=False):
+                        rebuilt_nerfacto = gr.Checkbox(label="前処理を再実行", value=False)
                     run_colmap_nerfacto_btn = gr.Button("前処理実行")
                     result_colmap_nerfacto = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_nerfacto_col:
@@ -164,6 +168,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 - データセットをmip-NeRFで扱えるように前処理を行う必要があります．
                                 - 作成したデータセット以外が現在セットされていないか注意してください．
                                 """)
+                    with gr.Accordion("オプション", open=False):
+                        rebuilt_mipn = gr.Checkbox(label="前処理を再実行", value=False)
                     run_colmap_mipn_btn = gr.Button("前処理実行")
                     result_colmap_mipn = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_mipnerf_col:
@@ -202,6 +208,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 - データセットをSeaThru-NeRFで扱えるように前処理を行う必要があります．
                                 - 作成したデータセット以外が現在セットされていないか注意してください．
                                 """)
+                    with gr.Accordion("オプション", open=False):
+                        rebuilt_stnerf = gr.Checkbox(label="前処理を再実行", value=False)
                     run_colmap_stnerf_btn = gr.Button("前処理実行")
                     result_colmap_stnerf = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_stnerf_col:
@@ -243,6 +251,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 - データセットを3DGSで扱えるように前処理を行う必要があります．
                                 - 作成したデータセット以外が現在セットされていないか注意してください．
                                 """)
+                    with gr.Accordion("オプション", open=False):
+                        rebuilt_3dgs = gr.Checkbox(label="前処理を再実行", value=False)
                     run_colmap_3dgs_btn = gr.Button("前処理実行")
                     result_colmap_3dgs = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_3dgs_col:
@@ -302,6 +312,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     eval_3dgs = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label="評価指標")
                     gallery_3dgs = gr.Gallery(label="Ground Truth・レンダリングされた画像", columns=2, height="auto")
 
+            # Mip-Splatting
             with gr.Tab("Mip-Splatting"):
                 gr.Markdown("# 1. データセットの種類を選択")
                 mips_radio = gr.Radio(["作成したデータセット","処理済データセット"], label = "3次元再構築に用いるデータセットを選択してください．")
@@ -311,6 +322,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 - データセットをMip-Splattingで扱えるように前処理を行う必要があります．
                                 - 作成したデータセット以外が現在セットされていないか注意してください．
                                 """)
+                    with gr.Accordion("オプション", open=False):
+                        rebuilt_mips = gr.Checkbox(label="前処理を再実行", value=False)
                     run_colmap_mips_btn = gr.Button("前処理実行")
                     result_colmap_mips = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_mips_col:
@@ -332,6 +345,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     log_recon_mips = gr.Textbox(label="実行ログ")
                     outmodel1_mips = gr.Model3D("1回目のセーブポイント")
                     outmodel2_mips = gr.Model3D("2回目のセーブポイント")
+
+            # Splatfacto
             with gr.Tab("Splatfacto"):
                 gr.Markdown("# 1. データセットの種類を選択")
                 sfacto_radio = gr.Radio(["作成したデータセット","処理済データセット"], label = "3次元再構築に用いるデータセットを選択してください．")
@@ -341,6 +356,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 - データセットをmip-NeRFで扱えるように前処理を行う必要があります．
                                 - 作成したデータセット以外が現在セットされていないか注意してください．
                                 """)
+                    with gr.Accordion("オプション", open=False):
+                        rebuilt_sfacto = gr.Checkbox(label="前処理を再実行", value=False)
                     run_colmap_sfacto_btn = gr.Button("前処理実行")
                     result_colmap_sfacto = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_sfacto_col:
@@ -368,6 +385,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     result_export_sfacto = gr.Textbox(label="実行結果")
                     log_export_sfacto = gr.Textbox(label="実行ログ")
                     gallery_sfacto = gr.Gallery(label="入力画像・レンダリング画像", columns=2, height="auto")
+
+            # 4D-Gaussians
             with gr.Tab("4D-Gaussians"):
                 gr.Markdown("# 1. データセットの種類を選択")
                 gs4d_radio = gr.Radio(["作成したデータセット","処理済データセット"], label = "3次元再構築に用いるデータセットを選択してください．")
@@ -377,6 +396,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 - データセットを4D-Gaussiansで扱えるように前処理を行う必要があります．
                                 - 作成したデータセット以外が現在セットされていないか注意してください．
                                 """)
+                    with gr.Accordion("オプション", open=False):
+                        rebuilt_4dgs = gr.Checkbox(label="前処理を再実行", value=False)
                     run_colmap_4dgs_btn = gr.Button("前処理実行")
                     result_colmap_4dgs = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_4dgs_col:
@@ -430,6 +451,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 outimgs_dust3r = gr.State()
                 gallery_dust3r = gr.Gallery(label="入力画像・深度マップ・信頼度マップ", columns=3, height="auto")
 
+            # MASt3R
             with gr.Tab("MASt3R"):
                 gr.Markdown("# 1.推論")
                 with gr.Accordion("オプション", open=False):
@@ -440,6 +462,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 result_recon_mast3r = gr.Textbox(label="実行結果")
                 log_recon_mast3r = gr.Textbox(label="実行ログ")
                 outmodel_mast3r = gr.Model3D(label="三次元再構築結果")
+
+            # MonST3R
             with gr.Tab("MonST3R"):
                 gr.Markdown("# 1.推論")
                 with gr.Accordion("オプション", open=False):
@@ -450,6 +474,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 result_recon_monst3r = gr.Textbox(label="実行結果")
                 log_recon_monst3r = gr.Textbox(label="実行ログ")
                 outmodel_monst3r = gr.Model3D(label="三次元再構築結果")
+            
+            # Easi3R
             with gr.Tab("Easi3R"):
                 gr.Markdown("# 1.推論")
                 gr.Markdown("- 画像枚数が少ない場合，失敗する可能性があります．")
@@ -461,6 +487,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 result_recon_easi3r = gr.Textbox(label="実行結果")
                 log_recon_easi3r = gr.Textbox(label="実行ログ")
                 outmodel_easi3r = gr.Model3D(label="三次元再構築結果")
+
+            # MUSt3R
             with gr.Tab("MUSt3R"):
                 gr.Markdown("# 1.推論")
                 with gr.Accordion("オプション", open=False):
@@ -471,6 +499,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 result_recon_must3r = gr.Textbox(label="実行結果")
                 log_recon_must3r = gr.Textbox(label="実行ログ")
                 outmodel_must3r = gr.Model3D(label="三次元再構築結果")
+
+            # Fast3R
             with gr.Tab("Fast3R"):
                 gr.Markdown("# 1.推論")
                 with gr.Accordion("オプション", open=False):
@@ -481,6 +511,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 result_recon_fast3r = gr.Textbox(label="実行結果")
                 log_recon_fast3r = gr.Textbox(label="実行ログ")
                 outmodel_fast3r = gr.Model3D(label="三次元再構築結果")
+
+            # Splatt3R
             with gr.Tab("Splatt3R"):
                 gr.Markdown(
                     """
@@ -502,6 +534,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
 
         with gr.Tab("mds"):
             current_dataset_mds = gr.Textbox(label="現在セットされているデータセット")
+
+            # MoGe
             with gr.Tab("MoGe"):
                 gr.Markdown(
                     """
@@ -520,6 +554,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     result_recon_moge = gr.Textbox(label="実行結果")
                     log_recon_moge = gr.Textbox(label="実行ログ")
                     outmodel_moge = gr.Model3D("三次元再構築結果")
+
+            # UniK3D
             with gr.Tab("UniK3D"):
                 gr.Markdown(
                     """
@@ -541,6 +577,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         
         with gr.Tab("VGG"):
             current_dataset_vgg = gr.Textbox(label="現在セットされているデータセット")
+            # VGGT
             with gr.Tab("VGGT"):
                 gr.Markdown("# 1.推論")
                 with gr.Accordion("オプション", open=False):
@@ -551,6 +588,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 result_recon_vggt = gr.Textbox(label="実行結果")
                 log_recon_vggt = gr.Textbox(label="実行ログ")
                 outmodel_vggt = gr.Model3D("三次元再構築結果")
+            
+            # VGGSfM
             with gr.Tab("VGGSfM"):
                 gr.Model3D()
 
@@ -663,29 +702,29 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         
         # 前処理
         run_colmap_nerf_btn.click(fn=preprocess.run_colmap,
-                                inputs=dataset,
-                                outputs=[result_colmap_nerf, train_nerf_col])
+                                  inputs=[dataset, rebuilt_nerf],
+                                  outputs=[result_colmap_nerf, train_nerf_col])
         run_colmap_nerfacto_btn.click(fn=preprocess.run_colmap,
-                                inputs=dataset,
-                                outputs=[result_colmap_nerfacto, train_nerfacto_col])
+                                      inputs=[dataset, rebuilt_nerfacto],
+                                      outputs=[result_colmap_nerfacto, train_nerfacto_col])
         run_colmap_mipn_btn.click(fn=preprocess.run_colmap,
-                                inputs=dataset,
-                                outputs=[result_colmap_mipn, train_mipnerf_col])
+                                  inputs=[dataset, rebuilt_mipn],
+                                  outputs=[result_colmap_mipn, train_mipnerf_col])
         run_colmap_stnerf_btn.click(fn=preprocess.run_colmap,
-                                inputs=dataset,
-                                outputs=[result_colmap_stnerf, train_stnerf_col])
+                                    inputs=[dataset, rebuilt_stnerf],
+                                    outputs=[result_colmap_stnerf, train_stnerf_col])
         run_colmap_3dgs_btn.click(fn=preprocess.run_colmap,
-                               inputs=dataset,
-                               outputs=[result_colmap_3dgs, train_3dgs_col])
+                                  inputs=[dataset, rebuilt_3dgs],
+                                  outputs=[result_colmap_3dgs, train_3dgs_col])
         run_colmap_mips_btn.click(fn=preprocess.run_colmap,
-                               inputs=dataset,
-                               outputs=[result_colmap_mips, train_mips_col])
+                                  inputs=[dataset, rebuilt_mips],
+                                  outputs=[result_colmap_mips, train_mips_col])
         run_colmap_sfacto_btn.click(fn=preprocess.run_colmap,
-                                inputs=dataset,
-                                outputs=[result_colmap_sfacto, train_sfacto_col])
+                                    inputs=[dataset, rebuilt_sfacto],
+                                    outputs=[result_colmap_sfacto, train_sfacto_col])
         run_colmap_4dgs_btn.click(fn=preprocess.run_colmap,
-                                 inputs=dataset,
-                                 outputs=[result_colmap_4dgs, train_4dgs_col])
+                                  inputs=[dataset, rebuilt_4dgs],
+                                  outputs=[result_colmap_4dgs, train_4dgs_col])
         
         # 三次元再構築
         recon_nerf_btn.click(fn=methods.recon_nerf,

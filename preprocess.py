@@ -148,12 +148,41 @@ def unzip_dataset(zip_file, datasets_parent):
     return dataset_path, gr.Column(visible=True)
 
 # COLMAP実行メソッド
-def run_colmap(dataset):
+def run_colmap(dataset, force_rebuild):
     if dataset == "":
         return "データセットがセットされていません", gr.Column(visible=False)
 
     global SHELL_FLAG
     all_logs = []
+
+    images_dir = os.path.join(dataset, "images")
+    transforms_path = os.path.join(dataset, "transforms.json")
+
+    # --- force_rebuild=True: input以外を削除 ---
+    if force_rebuild:
+        all_logs.append("再構築フラグが有効なため，input以外の既存データを削除して再実行します．")
+        for item in os.listdir(dataset):
+            item_path = os.path.join(dataset, item)
+
+            # inputディレクトリは削除しない
+            if os.path.basename(item_path) == "input":
+                all_logs.append(f"保持: {item_path}")
+                continue
+
+            try:
+                if os.path.isdir(item_path):
+                    shutil.rmtree(item_path)
+                    all_logs.append(f"削除: {item_path}")
+                else:
+                    os.remove(item_path)
+                    all_logs.append(f"削除: {item_path}")
+            except Exception as e:
+                all_logs.append(f"削除エラー: {item_path} ({e})")
+    # --- force_rebuild=Falseかつ処理済みの場合はスキップ ---
+    elif os.path.exists(images_dir) and os.path.exists(transforms_path):
+        msg = "既存の images/ および transforms.json が見つかったため，処理をスキップしました．"
+        all_logs.append(msg)
+        return "\n".join(all_logs), gr.Column(visible=True)
 
     # --- COLMAP実行 ---
     script_path = "convert.py"
@@ -228,6 +257,5 @@ def run_colmap(dataset):
             gr.Column(visible=False)
         )
 
-    # --- 成功時 ---
     all_logs.append("\nすべての処理が正常に完了しました。")
     return "\n".join(all_logs), gr.Column(visible=True)
