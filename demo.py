@@ -532,6 +532,30 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     log_recon_splatt3r = gr.Textbox(label="実行ログ")
                     outmodel_splatt3r = gr.Model3D(label = "三次元再構築結果", clear_color=[1.0, 1.0, 1.0, 0.0])
 
+            # CUT3R
+            with gr.Tab("CUT3R"):
+                gr.Markdown("# 1.推論")
+                with gr.Accordion("オプション", open=False):
+                    gr.Markdown()
+                recon_cut3r_btn = gr.Button("推論実行")
+                outdir_recon_cut3r = gr.Textbox(label="推論結果保存先")
+                runtime_recon_cut3r = gr.Textbox(label="実行時間")
+                result_recon_cut3r = gr.Textbox(label="実行結果")
+                log_recon_cut3r = gr.Textbox(label="実行ログ")
+                outmodel_cut3r = gr.Model3D(label="三次元再構築結果")
+
+            # WinT3R
+            with gr.Tab("WinT3R"):
+                gr.Markdown("# 1.推論")
+                with gr.Accordion("オプション", open=False):
+                    gr.Markdown()
+                recon_wint3r_btn = gr.Button("推論実行")
+                outdir_recon_wint3r = gr.Textbox(label="推論結果保存先")
+                runtime_recon_wint3r = gr.Textbox(label="実行時間")
+                result_recon_wint3r = gr.Textbox(label="実行結果")
+                log_recon_wint3r = gr.Textbox(label="実行ログ")
+                outmodel_wint3r = gr.Model3D(label="三次元再構築結果")
+
         with gr.Tab("mds"):
             current_dataset_mds = gr.Textbox(label="現在セットされているデータセット")
 
@@ -776,6 +800,12 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         recon_fast3r_btn.click(fn=methods.recon_fast3r,
                         inputs=[dataset, outputsdir_state], 
                         outputs=[outdir_recon_fast3r, runtime_recon_fast3r, result_recon_fast3r, log_recon_fast3r, outmodel_fast3r])
+        recon_cut3r_btn.click(fn=methods.recon_cut3r,
+                        inputs=[dataset, outputsdir_state], 
+                        outputs=[outdir_recon_cut3r, runtime_recon_cut3r, result_recon_cut3r, log_recon_cut3r, outmodel_cut3r])
+        recon_wint3r_btn.click(fn=methods.recon_wint3r,
+                        inputs=[dataset, outputsdir_state], 
+                        outputs=[outdir_recon_wint3r, runtime_recon_wint3r, result_recon_wint3r, log_recon_wint3r, outmodel_wint3r])
         recon_splatt3r_btn.click(fn=methods.recon_splatt3r,
                         inputs=[img_splatt3r, outputsdir_state], 
                         outputs=[outdir_recon_splatt3r, runtime_recon_splatt3r, result_recon_splatt3r, log_recon_splatt3r, outmodel_splatt3r])

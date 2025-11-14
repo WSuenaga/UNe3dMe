@@ -684,6 +684,88 @@ def recon_splatt3r(dataset, outputs_dir):
     return outdir, runtime, status, log, model_path
 
 """
+CUT3R
+"""
+# --- 再構築メソッド ---
+def recon_cut3r(dataset, outputs_dir):
+    # 出力ディレクトリの作成
+    name = os.path.basename(dataset)
+    outdir = os.path.join(outputs_dir, "cutt3r", name)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
+    # データセットのパス
+    dataset = os.path.join(dataset, "input")
+
+    # 再構築スクリプトパス
+    script_path = "recon_cut3r.py"
+
+    # 使用モデルパス
+    model_path = ".\models\CUT3R\src\cut3r_512_dpt_4_64.pth"
+
+    # 実行コマンド
+    cmd = [
+        "conda", "run", "-n", "cut3r", "python", script_path,
+        "--inpdir", dataset, 
+        "--outdir", outdir,
+        "--model_path", model_path,
+        "--image_size", "512",
+        "--vis_threshold", "1.5",
+        "--device", "cuda"
+    ]
+
+    # 実行ディレクトリ
+    workdir = "./"
+
+    # 推論実行
+    runtime, status, log = run_subprocess(cmd, workdir)
+
+    # 再構築結果のパス
+    model_path = os.path.join(outdir, "scene.glb") 
+
+    return outdir, runtime, status, log, model_path
+
+"""
+WinT3R
+"""
+# --- 再構築メソッド ---
+def recon_wint3r(dataset, outputs_dir):
+    # 出力ディレクトリの作成
+    name = os.path.basename(dataset)
+    outdir = os.path.join(outputs_dir, "wint3r", name)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
+    # データセットのパス
+    dataset = os.path.join(dataset, "input")
+    
+    # 再構築スクリプトパス
+    script_path = "recon.py"
+
+    # checkpointパス
+    ckpt_path = os.path.join("checkpoints", "pytorch_model.bin")
+
+    # 実行コマンド
+    cmd = [
+        "conda", "run", "-n", "wint3r", "python", script_path,
+        "--data_path", dataset, 
+        "--save_dir", outdir,
+        "--inference_mode", "offline",
+        "--ckpt", ckpt_path
+    ]
+
+    # 実行ディレクトリ
+    workdir = os.path.join("models", "WinT3R")
+
+    # 推論実行
+    runtime, status, log = run_subprocess(cmd, workdir)
+
+    # 再構築結果のパス
+    model_path = os.path.join(outdir, "recon.ply") 
+
+    return outdir, runtime, status, log, model_path
+
+"""
 MoGe
 """
 # --- 再構築メソッド ---
