@@ -11,9 +11,11 @@ import imageio.v2 as iio
 # =====================================
 # パス設定：CUT3Rをどこからでもインポート可能に
 # =====================================
-base_dir = os.path.dirname(__file__)
-sys.path.append(os.path.join(base_dir, "models", "CUT3R"))
-sys.path.append(os.path.join(base_dir, "models", "CUT3R", "src"))
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+sys.path.append(PROJECT_ROOT)
+sys.path.append(os.path.join(PROJECT_ROOT, "models", "CUT3R"))
+sys.path.append(os.path.join(PROJECT_ROOT, "models", "CUT3R", "src"))
 
 from models.CUT3R import demo
 from models.CUT3R.add_ckpt_path import add_path_to_dust3r

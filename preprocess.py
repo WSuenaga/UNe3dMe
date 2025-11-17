@@ -29,7 +29,7 @@ def copy_images(image_paths, parent_path, name):
         name = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
     
     # 出力ディレクトリの作成
-    output_path = os.path.join(parent_path, name, "input")
+    output_path = os.path.join(parent_path, name, "images")
     os.makedirs(output_path, exist_ok=True)
 
     for img_path in image_paths:
@@ -81,27 +81,33 @@ def remove_similar_images(input_dir: str, ssim_threshold: float = 0.95):
         else:
             os.remove(img_path)
 
-    remaining_count = len([f for f in os.listdir(input_dir) if f.endswith(".png")])
-    deleted_count = original_count - remaining_count
+    selected_count = len([f for f in os.listdir(input_dir) if f.endswith(".png")])
+    rejected_count = original_count - selected_count
 
     compression_rate = 0.0
     if original_count > 0:
-        compression_rate = (remaining_count / original_count) * 100
+        compression_rate = (selected_count / original_count) * 100
         compression_rate = float(f"{compression_rate:.3g}")
-    return f"{compression_rate}%", f"{deleted_count}枚", 
+
+    return f"{compression_rate}%", f"{selected_count}枚", f"{rejected_count}枚"
 
 def extract_frames_with_filter(video, parent_path, fps, remove_similar, ssim_threshold):
     video_name = os.path.splitext(os.path.basename(video))[0]
-    output_path = os.path.join(parent_path, video_name, "input")
+    output_path = os.path.join(parent_path, video_name, "images")
     
     # ディレクトリが既に存在し、画像が存在する場合はスキップ
-    existing_images = sorted([
-        f for f in os.listdir(output_path) if f.endswith(".png")
-    ]) if os.path.exists(output_path) else []
+    if os.path.exists(output_path):
+        existing_images = sorted([
+            f for f in os.listdir(output_path) if f.endswith(".png")
+        ])
+    else:
+        existing_images = []
 
     if existing_images:
         print(f"ディレクトリ {output_path} は既に存在します。抽出済みの画像を使用します。")
-        comp_rate, del_images_num = "100%", "0枚"  # 過去結果の概算（必要に応じて変更）
+        comp_rate = ""
+        sel_images_num = len(existing_images) 
+        rej_images_num = "" 
     else:
         os.makedirs(output_path, exist_ok=True)
 
@@ -114,12 +120,17 @@ def extract_frames_with_filter(video, parent_path, fps, remove_similar, ssim_thr
         ]
         subprocess.run(command, check=True, shell=SHELL_FLAG)
 
+        # フレーム抽出後の画像リスト
+        extracted_images = sorted([
+            f for f in os.listdir(output_path) if f.endswith(".png")
+        ])
+
         if remove_similar:
-            comp_rate, del_images_num = remove_similar_images(output_path, ssim_threshold)
+            comp_rate, sel_images_num, rej_images_num = remove_similar_images(output_path, ssim_threshold)
         else:
-            # 削除しない場合の値
             comp_rate = "100%"
-            del_images_num = "0枚"
+            sel_images_num = len(extracted_images)  
+            rej_images_num = "0枚"
 
     # フルパスで返す
     imagelist = sorted([
@@ -127,9 +138,9 @@ def extract_frames_with_filter(video, parent_path, fps, remove_similar, ssim_thr
         for f in os.listdir(output_path) if f.endswith(".png")
     ])
 
-    dataset_dir = output_path = os.path.join(parent_path, video_name)
+    dataset_dir = os.path.join(parent_path, video_name)
 
-    return dataset_dir, gr.Column(visible=True), dataset_dir, comp_rate, del_images_num, imagelist
+    return dataset_dir, gr.Column(visible=True), dataset_dir, comp_rate, sel_images_num, rej_images_num, imagelist
 
 def unzip_dataset(zip_file, datasets_parent):
     # zipファイル名（拡張子なし）をデータセット名にする
@@ -147,8 +158,43 @@ def unzip_dataset(zip_file, datasets_parent):
 
     return dataset_path, gr.Column(visible=True)
 
-# COLMAP実行メソッド
-def run_colmap(dataset, force_rebuild):
+def zip_dataset(dataset):
+    dataset_path = os.path.abspath(dataset)
+
+    if not os.path.isdir(dataset_path):
+        raise ValueError("dataset_path はディレクトリである必要があります")
+
+    # データセット名（ZIP の名前）
+    zip_path = dataset_path + ".zip"
+
+    # 含めるフォルダ（存在確認）
+    include_images = os.path.isdir(os.path.join(dataset_path, "images"))
+    include_colmap = os.path.isdir(os.path.join(dataset_path, "colmap"))
+
+    # ZIP 作成
+    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+
+        # images があれば追加
+        if include_images:
+            images_dir = os.path.join(dataset_path, "images")
+            for root, dirs, files in os.walk(images_dir):
+                for file in files:
+                    full = os.path.join(root, file)
+                    arcname = os.path.relpath(full, dataset_path)
+                    zipf.write(full, arcname)
+
+        # colmap があれば追加
+        if include_colmap:
+            colmap_dir = os.path.join(dataset_path, "colmap")
+            for root, dirs, files in os.walk(colmap_dir):
+                for file in files:
+                    full = os.path.join(root, file)
+                    arcname = os.path.relpath(full, dataset_path)
+                    zipf.write(full, arcname)
+
+    return zip_path
+
+def run_colmap(dataset, rebuild):
     if dataset == "":
         return "データセットがセットされていません", gr.Column(visible=False)
 
@@ -156,50 +202,44 @@ def run_colmap(dataset, force_rebuild):
     all_logs = []
 
     images_dir = os.path.join(dataset, "images")
-    transforms_path = os.path.join(dataset, "transforms.json")
+    out_dir = os.path. join(dataset, "colmap")
+    input_dir = os.path.join(out_dir, "input")
 
-    # --- force_rebuild=True: input以外を削除 ---
-    if force_rebuild:
-        all_logs.append("再構築フラグが有効なため，input以外の既存データを削除して再実行します．")
-        for item in os.listdir(dataset):
-            item_path = os.path.join(dataset, item)
-
-            # inputディレクトリは削除しない
-            if os.path.basename(item_path) == "input":
-                all_logs.append(f"保持: {item_path}")
-                continue
-
-            try:
-                if os.path.isdir(item_path):
-                    shutil.rmtree(item_path)
-                    all_logs.append(f"削除: {item_path}")
-                else:
-                    os.remove(item_path)
-                    all_logs.append(f"削除: {item_path}")
-            except Exception as e:
-                all_logs.append(f"削除エラー: {item_path} ({e})")
-    # --- force_rebuild=Falseかつ処理済みの場合はスキップ ---
-    elif os.path.exists(images_dir) and os.path.exists(transforms_path):
-        msg = "既存の images/ および transforms.json が見つかったため，処理をスキップしました．"
-        all_logs.append(msg)
+    # --- rebuild フラグに応じた colmap ディレクトリ処理 ---
+    if rebuild and os.path.exists(out_dir):
+        shutil.rmtree(out_dir)
+        all_logs.append("colmapディレクトリを削除しました．")
+    
+    if not rebuild and os.path.exists(out_dir):
+        all_logs.append("処理済みです．")
         return "\n".join(all_logs), gr.Column(visible=True)
+    
+    # colmap/input ディレクトリ作成
+    os.makedirs(input_dir, exist_ok=True)
+
+    for image_file in os.listdir(images_dir):
+        full_image_path = os.path.join(images_dir, image_file)
+        # ファイルかつ画像形式か確認
+        if os.path.isfile(full_image_path) and os.path.splitext(image_file)[1].lower() in [".jpg", ".jpeg", ".png", ".bmp", ".tiff"]:
+            shutil.copy(full_image_path, input_dir)
 
     # --- COLMAP実行 ---
     script_path = "convert.py"
     cmd_colmap = [
         "conda", "run", "-n", "gaussian_splatting", "python", script_path,
-        "--source_path", dataset,
+        "--source_path", out_dir,
         "--resize"
     ]
 
     print("Running:", " ".join(cmd_colmap))
+    cwd_colmap = os.path.join("models", "gaussian-splatting")
     result = subprocess.run(
         cmd_colmap,
         capture_output=True,
         text=True,
         encoding="utf-8",
         errors="replace",
-        cwd="./models/gaussian-splatting/",
+        cwd=cwd_colmap,
         shell=SHELL_FLAG
     )
 
@@ -212,19 +252,15 @@ def run_colmap(dataset, force_rebuild):
         all_logs.append(stderr_colmap)
 
     if result.returncode != 0:
-        return (
-            "COLMAP変換に失敗しました\n\n" + "\n".join(all_logs),
-            gr.Column(visible=False)
-        )
+        return "COLMAP変換に失敗しました\n\n" + "\n".join(all_logs), gr.Column(visible=False)
 
     # --- ns-process-data 実行 ---
-    input_path = os.path.join(dataset, "input")
-    colmap_model_path = os.path.join(dataset, "sparse", "0")
+    colmap_model_path = os.path.join(out_dir, "sparse", "0")
     cmd_ns = [
         "conda", "run", "-n", "nerfstudio",
         "ns-process-data", "images",
-        "--data", input_path,
-        "--output-dir", dataset,
+        "--data", input_dir,
+        "--output-dir", out_dir,
         "--skip-colmap",
         "--colmap-model-path", colmap_model_path,
         "--skip-image-processing",
@@ -233,13 +269,14 @@ def run_colmap(dataset, force_rebuild):
     ]
 
     print("Running:", " ".join(cmd_ns))
+    cwd_nerfstudio = os.path.join("models", "nerfstudio")
     result_ns = subprocess.run(
         cmd_ns,
         capture_output=True,
         text=True,
         encoding="utf-8",
         errors="replace",
-        cwd="./models/nerfstudio/",
+        cwd=cwd_nerfstudio,
         shell=SHELL_FLAG
     )
 
@@ -252,10 +289,6 @@ def run_colmap(dataset, force_rebuild):
         all_logs.append(stderr_ns)
 
     if result_ns.returncode != 0:
-        return (
-            "ns-process-data images 実行に失敗しました\n\n" + "\n".join(all_logs),
-            gr.Column(visible=False)
-        )
+        return "ns-process-data images 実行に失敗しました\n\n" + "\n".join(all_logs), gr.Column(visible=False)
 
-    all_logs.append("\nすべての処理が正常に完了しました。")
     return "\n".join(all_logs), gr.Column(visible=True)

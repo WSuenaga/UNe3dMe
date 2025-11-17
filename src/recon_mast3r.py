@@ -3,7 +3,10 @@ import ast
 import torch
 import argparse
 import sys 
-sys.path.append("models/mast3r")
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))  
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+sys.path.append(PROJECT_ROOT)      
+sys.path.append(os.path.join(PROJECT_ROOT, "models", "mast3r"))
 
 from models.mast3r.mast3r.model import AsymmetricMASt3R
 import models.mast3r.mast3r.demo as demo

@@ -11,10 +11,6 @@ import gradio as gr
 
 from preprocess import get_imagelist
 
-# モデルパスを追加
-sys.path.append("models/vggt")
-sys.path.append("models/monst3r")
-
 # subprocessのshellフラグの設定
 SHELL_FLAG = platform.system() == "Windows"
 
@@ -72,6 +68,8 @@ def train_nerfstudio(dataset, outputs_dir, method_name, train_args=None):
     outdir = os.path.join(outputs_dir, method_name, name)
     os.makedirs(outdir, exist_ok=True)
 
+    # データセットのパス
+    dataset =os.path.join(dataset, "colmap")
     train_cmd = [
         "conda", "run", "-n", "nerfstudio",
         "ns-train", method_name,
@@ -218,6 +216,8 @@ def recon_3dgs(dataset, outputs_dir, sh_degree, data_device, lambde_dsiim, itera
     # 再構築スクリプトパス
     script_path = "train.py"
 
+    # データセットのパス
+    dataset =os.path.join(dataset, "colmap")
     # 実行コマンド
     cmd = [
         "conda", "run", "-n", "gaussian_splatting", "python", script_path,
@@ -228,7 +228,7 @@ def recon_3dgs(dataset, outputs_dir, sh_degree, data_device, lambde_dsiim, itera
     ]
 
     # 実行ディレクトリ
-    workdir = "./models/gaussian-splatting/"
+    workdir = os.path.join("models", "gaussian-splatting")
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -254,7 +254,7 @@ def _get_latest_iteration(model_path):
 # --- レンダリング&評価メソッド ---
 def render_eval_3dgs(model_path, skip_train, skip_test, iteration=None):
     # レンダリング
-    render_script_path = "./models/gaussian-splatting/render.py"
+    render_script_path = os.path.join("models", "gaussian-splatting", "render.py")
     render_cmd = [
         "conda", "run", "-n", "gaussian_splatting", "python", render_script_path,
         "--model_path", model_path,
@@ -274,7 +274,7 @@ def render_eval_3dgs(model_path, skip_train, skip_test, iteration=None):
         return f"レンダリングに失敗しました\n\nエラー内容:\n{error_output}", []
     
     # 評価
-    eval_script_path = "./models/gaussian-splatting/metrics.py"
+    eval_script_path = os.path.join("models", "gaussian-splatting", "metrics.py")
     eval_cmd = [
         "conda", "run", "-n", "gaussian_splatting", "python", eval_script_path,
         "--model_path", model_path,
@@ -323,7 +323,7 @@ def render_eval_3dgs(model_path, skip_train, skip_test, iteration=None):
 Mip-Splatting
 """
 # --- 再構築メソッド ---
-def recon_mipSplatting(dataset, outputs_dir, save_iteration1, save_iteration2):
+def recon_mipSplatting(dataset, outputs_dir, save_iteration):
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "mip-splatting", name)
@@ -333,25 +333,27 @@ def recon_mipSplatting(dataset, outputs_dir, save_iteration1, save_iteration2):
     # 再構築スクリプトパス
     script_path ="train.py"
 
+    # データセットのパス
+    dataset =os.path.join(dataset, "colmap")
+
     # 実行コマンド
     cmd = [
         "conda", "run", "-n", "mip-splatting", "python", script_path,
         "-s", dataset,
         "-m", outdir,
-        "--save_iterations", str(save_iteration1), str(save_iteration2)
+        "--save_iterations", str(save_iteration)
     ]
 
     # 実行ディレクトリ
-    workdir = "./models/mip-splatting"
+    workdir = os.path.join("models", "mip-splatting")
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
 
     # 再構築結果のパス
-    model_path1 = os.path.join(outdir, "point_cloud", f"iteration_{save_iteration1}", "point_cloud.ply")
-    model_path2 = os.path.join(outdir, "point_cloud", f"iteration_{save_iteration2}", "point_cloud.ply")
+    model_path = os.path.join(outdir, "point_cloud", f"iteration_{save_iteration}", "point_cloud.ply")
 
-    return outdir, runtime, status, log, model_path1, model_path2
+    return outdir, runtime, status, log, model_path
 
 """
 Splatfacto
@@ -371,7 +373,7 @@ def export_sfacto(dataset, out_dir):
 4D-Gaussians
 """
 # --- 再構築メソッド ---
-def recon_4dGaussians(dataset, outputs_dir, save_iteration1, save_iteration2):
+def recon_4dGaussians(dataset, outputs_dir, save_iteration):
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "4D-Gaussians", name)
@@ -381,25 +383,27 @@ def recon_4dGaussians(dataset, outputs_dir, save_iteration1, save_iteration2):
     # 再構築スクリプトパス
     script_path ="train.py"
 
+    # データセットのパス
+    dataset =os.path.join(dataset, "colmap")
+
     # 実行コマンド
     cmd = [
         "conda", "run", "-n", "Gaussians4D", "python", script_path,
         "--source_path", dataset,
         "--model_path", outdir,
-        "--save_iterations", str(save_iteration1), str(save_iteration2)
+        "--save_iterations", str(save_iteration)
     ]
 
     # 実行ディレクトリ
-    workdir = "./models/4DGaussians"
+    workdir = os.path.join("models", "4DGaussians")
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
 
     # 再構築結果のパス
-    model_path1 = os.path.join(outdir, "point_cloud", f"iteration_{save_iteration1}", "point_cloud.ply")
-    model_path2 = os.path.join(outdir, "point_cloud", f"iteration_{save_iteration2}", "point_cloud.ply")
+    model_path = os.path.join(outdir, "point_cloud", f"iteration_{save_iteration}", "point_cloud.ply")
 
-    return outdir, runtime, status, log, model_path1, model_path2
+    return outdir, runtime, status, log, model_path
 
 """
 DUSt3R
@@ -414,7 +418,7 @@ def recon_dust3r(dataset, outputs_dir, schedule, niter, min_conf_thr, as_pointcl
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "input")
+    dataset = os.path.join(dataset, "images")
 
     # 使用モデル
     model_name = "DUSt3R_ViTLarge_BaseDecoder_512_dpt"
@@ -423,7 +427,7 @@ def recon_dust3r(dataset, outputs_dir, schedule, niter, min_conf_thr, as_pointcl
     device = "cuda"
 
     # 再構築スクリプト
-    script_path = "./models/dust3r/reconstruct.py"  
+    script_path = os.path.join("models", "dust3r", "reconstruct.py")
 
     # 実行コマンド
     cmd = [
@@ -474,7 +478,7 @@ def recon_mast3r(dataset, outputs_dir):
     os.makedirs(outdir, exist_ok=True)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "input")
+    dataset = os.path.join(dataset, "images")
 
     # 使用モデル
     model = "MASt3R_ViTLarge_BaseDecoder_512_catmlpdpt_metric"
@@ -483,7 +487,7 @@ def recon_mast3r(dataset, outputs_dir):
     filelist = get_imagelist(dataset)
 
     # 再構築スクリプトパス
-    script_path ="recon_mast3r.py"
+    script_path = os.path.join("src", "recon_mast3r.py")
 
     # 実行コマンド
     cmd = [
@@ -517,7 +521,7 @@ def recon_monst3r(dataset, outputs_dir):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "input")
+    dataset = os.path.join(dataset, "images")
 
     # 再構築スクリプトパス
     script_path ="demo.py"
@@ -531,7 +535,7 @@ def recon_monst3r(dataset, outputs_dir):
     ]
 
     # 実行ディレクトリ
-    workdir = "./models/monst3r"
+    workdir = os.path.join("models", "monst3r")
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -553,7 +557,7 @@ def recon_easi3r(dataset, outputs_dir):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "input")
+    dataset = os.path.join(dataset, "images")
 
     # 再構築スクリプトパス
     script_path ="demo.py"
@@ -567,7 +571,7 @@ def recon_easi3r(dataset, outputs_dir):
     ]
 
     # 実行ディレクトリ
-    workdir = "./models/Easi3R"
+    workdir = os.path.join("models", "Easi3R")
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -589,7 +593,7 @@ def recon_must3r(dataset, outputs_dir):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "input")
+    dataset = os.path.join(dataset, "images")
 
     # 再構築スクリプトパス
     script_path ="get_reconstruction.py"
@@ -606,7 +610,7 @@ def recon_must3r(dataset, outputs_dir):
     ]
 
     # 実行ディレクトリ
-    workdir = "./models/must3r"
+    workdir = os.path.join("models", "must3r")
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -628,10 +632,10 @@ def recon_fast3r(dataset, outputs_dir):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "input")
+    dataset = os.path.join(dataset, "images")
 
     # 再構築スクリプトパス
-    script_path ="recon_fast3r.py"
+    script_path = os.path.join("src", "recon_fast3r.py")
 
     # 実行コマンド
     cmd = [
@@ -663,7 +667,7 @@ def recon_splatt3r(dataset, outputs_dir):
         os.makedirs(outdir)
 
     # 再構築スクリプトパス
-    script_path = "recon_splatt3r.py"
+    script_path = os.path.join("src", "recon_splatt3r.py")
 
     # 実行コマンド
     cmd = [
@@ -673,7 +677,7 @@ def recon_splatt3r(dataset, outputs_dir):
     ]
 
     # 実行ディレクトリ
-    workdir = "./models/splatt3r"
+    workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -695,13 +699,13 @@ def recon_cut3r(dataset, outputs_dir):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "input")
+    dataset = os.path.join(dataset, "images")
 
     # 再構築スクリプトパス
-    script_path = "recon_cut3r.py"
+    script_path = os.path.join("src", "recon_cut3r.py")
 
     # 使用モデルパス
-    model_path = ".\models\CUT3R\src\cut3r_512_dpt_4_64.pth"
+    model_path = os.path.join("models", "CUT3R", "src", "cut3r_512_dpt_4_64.pth")
 
     # 実行コマンド
     cmd = [
@@ -737,7 +741,7 @@ def recon_wint3r(dataset, outputs_dir):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "input")
+    dataset = os.path.join(dataset, "images")
     
     # 再構築スクリプトパス
     script_path = "recon.py"
@@ -776,14 +780,11 @@ def recon_moge(dataset, outputs_dir, img_type):
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    # データセットのパス
-    dataset = os.path.join(dataset, "input")
-
     # 再構築スクリプトパス
     if img_type=="標準画像":
-        script_path = "./models/MoGe/moge/scripts/infer.py"
+        script_path = os.path.join("models", "MoGe", "moge", "scripts", "infer.py")
     elif img_type=="パノラマ画像":
-        script_path = "./models/MoGe/moge/scripts/infer_panorama.py"
+        script_path = os.path.join("models", "MoGe", "moge", "scripts", "infer_panorama.py")
 
     # 実行コマンド
     cmd = [
@@ -817,12 +818,12 @@ def recon_unik3d(dataset, outputs_dir):
         os.makedirs(outdir)
 
     # データセットのパス
-    dataset = os.path.join(dataset, "input")
+    dataset = os.path.join(dataset, "images")
 
     # 再構築スクリプトパス
-    script_path = "models/UniK3D/scripts/infer.py"
+    script_path = os.path.join("models", "UniK3D", "scripts", "infer.py")
     # configファイルパス
-    config_path = "models/UniK3D/configs/eval/vitl.json"
+    config_path = os.path.join("models", "UniK3D", "configs", "eval", "vitl.json")
 
     # 実行コマンド
     cmd = [
@@ -857,11 +858,8 @@ def recon_vggt(dataset, outputs_dir):
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    # データセットのパス
-    dataset = os.path.join(dataset, "input")
-
     # 再構築スクリプトパス
-    script_path = "recon_vgg.py"
+    script_path = os.path.join("src", "recon_vggt.py")
 
     # 実行コマンド
     cmd = [

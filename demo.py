@@ -7,7 +7,7 @@ import methods
 def get_state_value(state):
     return state
 def get_state_values(state):
-    return state, state, state, state, state
+    return state, state, state, state, state, state
 
 # メディアUI切り替えメソッド
 def display_media_ui(choice):
@@ -73,8 +73,37 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     output_video = gr.Textbox(label="データセット保存先")
                     with gr.Row(equal_height=True):
                         comp_rate = gr.Textbox(label="圧縮率")
-                        del_images_num = gr.Textbox(label="削除画像枚数")
+                        sel_images_num = gr.Textbox(label="採用画像枚数")
+                        rej_images_num = gr.Textbox(label="削除画像枚数")
                     gallery_vide = gr.Gallery(label="抽出された画像", columns=4, height="auto")
+                    gr.Markdown("""
+                                # 4.データセットのダウンロード
+                                - 作成したデータセットをZIPファイルにしてダウンロードできます．
+                                - ZIPファイルはデータセットと同じディレクトリに作成されます．また，実行後に表示されるZIPファイル名の右側よりダウンロードできます．
+                                """)
+                    zip_images_btn = gr.Button("データセットのダウンロード")
+                    zipfile_images = gr.File(label="ZIPファイル")
+        
+        with gr.Tab("COLMAP"):
+            current_dataset_colmap = gr.Textbox(label="現在セットされているデータセット")
+            gr.Markdown("""
+                        # 1.COLMAPによる前処理
+                        - データセットをNeRF系，GS系で扱えるようにCOLMAPを用いて前処理を行う必要があります．
+                        - 作成したデータセット以外が現在セットされていないか確認してください．
+                        """)
+            with gr.Accordion("オプション", open=False):
+                rebuilt = gr.Checkbox(label="前処理を再実行", value=False)
+            run_colmap_btn = gr.Button("COLMAP実行")
+            result_colmap = gr.Textbox(label="実行結果")
+            with gr.Column(visible=False) as dl_colmap_col:
+                gr.Markdown("""
+                # 2.データセットのダウンロード
+                - 作成したデータセットをZIPファイルにしてダウンロードできます．
+                - ZIPファイルはデータセットと同じディレクトリに作成されます．また，実行後に表示されるZIPファイル名の右側よりダウンロードできます．
+                """)
+                zip_colmap_btn = gr.Button("データセットのダウンロード")
+                zipfile_colmap = gr.File(label="ZIPファイル")
+      
         # NeRF系
         with gr.Tab("NeRF"):
             current_dataset_nerf = gr.Textbox(label="現在セットされているデータセット")
@@ -82,25 +111,16 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab("NeRF"):
                 gr.Markdown("# 1. データセットの種類を選択")
                 nerf_radio = gr.Radio(["作成したデータセット","処理済データセット"], label = "3次元再構築に用いるデータセットを選択してください．")
-                with gr.Column(visible=False) as pre_nerf_col:
-                    gr.Markdown("""
-                                # 2.前処理
-                                - データセットをNeRFで扱えるように前処理を行う必要があります．
-                                - 作成したデータセット以外が現在セットされていないか注意してください．
-                                """)
-                    with gr.Accordion("オプション", open=False):
-                        rebuilt_nerf = gr.Checkbox(label="前処理を再実行", value=False)
-                    run_colmap_nerf_btn = gr.Button("前処理実行")
-                    result_colmap_nerf = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_nerf_col:
                     gr.Markdown("""
-                                # 2.データセットのアップロード
+                                # 1.1.データセットのアップロード
                                 - ZIP圧縮を行ってからアップロードしてください．
                                 - ZIPファイル以外も選択できてしまうため注意してください．
                                 """)
                     ex_dataset_nerf = gr.File(label="データセットを選択してください")
+
                 with gr.Column(visible=False) as train_nerf_col:
-                    gr.Markdown("# 3.学習")
+                    gr.Markdown("# 2.学習")
                     with gr.Accordion("オプション", open=False):
                         iter_nerf = gr.Slider(value=1000000, minimum=25000, maximum=2000000, step=25000, label="総イテレーション数")
                     recon_nerf_btn = gr.Button("学習実行")
@@ -110,7 +130,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     result_recon_nerf = gr.Textbox(label="実行結果")
                     log_recon_nerf = gr.Textbox(label="実行ログ")
                 with gr.Column(visible=False) as export_nerf_col:
-                    gr.Markdown("# 4.点群出力")
+                    gr.Markdown("# 3.点群出力")
                     export_nerf_btn = gr.Button("点群出力実行")
                     outdir_export_nerf = gr.Textbox(label="実行結果保存場所")
                     runtime_export_nerf = gr.Textbox(label="実行時間")
@@ -122,25 +142,16 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab("Nerfacto"):
                 gr.Markdown("# 1. データセットの種類を選択")
                 nerfacto_radio = gr.Radio(["作成したデータセット","処理済データセット"], label = "3次元再構築に用いるデータセットを選択してください．")
-                with gr.Column(visible=False) as pre_nerfacto_col:
-                    gr.Markdown("""
-                                # 2.前処理
-                                - データセットをNefactoで扱えるように前処理を行う必要があります．
-                                - 作成したデータセット以外が現在セットされていないか注意してください．
-                                """)
-                    with gr.Accordion("オプション", open=False):
-                        rebuilt_nerfacto = gr.Checkbox(label="前処理を再実行", value=False)
-                    run_colmap_nerfacto_btn = gr.Button("前処理実行")
-                    result_colmap_nerfacto = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_nerfacto_col:
                     gr.Markdown("""
-                                # 2.データセットのアップロード
+                                # 1.1.データセットのアップロード
                                 - ZIP圧縮を行ってからアップロードしてください．
                                 - ZIPファイル以外も選択できてしまうため注意してください．
                                 """)
                     ex_dataset_nerfacto = gr.File(label="データセットを選択してください")
+
                 with gr.Column(visible=False) as train_nerfacto_col:
-                    gr.Markdown("# 3.学習")
+                    gr.Markdown("# 2.学習")
                     with gr.Accordion("オプション", open=False):
                         iter_nerfacto = gr.Slider(value=100000, minimum=25000, maximum=200000, step=25000, label="総イテレーション数")
                     recon_nerfacto_btn = gr.Button("学習実行")
@@ -150,7 +161,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     result_recon_nerfacto = gr.Textbox(label="実行結果")
                     log_recon_nerfacto = gr.Textbox(label="実行ログ")
                 with gr.Column(visible=False) as export_nerfacto_col:
-                    gr.Markdown("# 4.点群出力")
+                    gr.Markdown("# 3.点群出力")
                     export_nerfacto_btn = gr.Button("点群出力実行")
                     outdir_export_nerfacto = gr.Textbox(label="実行結果保存場所")
                     runtime_export_nerfacto = gr.Textbox(label="実行時間")
@@ -162,25 +173,16 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab("mip-NeRF"):
                 gr.Markdown("# 1. データセットの種類を選択")
                 mipnerf_radio = gr.Radio(["作成したデータセット","処理済データセット"], label = "3次元再構築に用いるデータセットを選択してください．")
-                with gr.Column(visible=False) as pre_mipnerf_col:
-                    gr.Markdown("""
-                                # 2.前処理
-                                - データセットをmip-NeRFで扱えるように前処理を行う必要があります．
-                                - 作成したデータセット以外が現在セットされていないか注意してください．
-                                """)
-                    with gr.Accordion("オプション", open=False):
-                        rebuilt_mipn = gr.Checkbox(label="前処理を再実行", value=False)
-                    run_colmap_mipn_btn = gr.Button("前処理実行")
-                    result_colmap_mipn = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_mipnerf_col:
                     gr.Markdown("""
-                                # 2.データセットのアップロード
+                                # 1.1.データセットのアップロード
                                 - ZIP圧縮を行ってからアップロードしてください．
                                 - ZIPファイル以外も選択できてしまうため注意してください．
                                 """)
                     ex_dataset_mipnerf = gr.File(label="データセットを選択してください")
+
                 with gr.Column(visible=False) as train_mipnerf_col:
-                    gr.Markdown("# 3.学習")
+                    gr.Markdown("# 2.学習")
                     with gr.Accordion("オプション", open=False):
                         iter_mipnerf = gr.Slider(value=1000000, minimum=25000, maximum=2000000, step=25000, label="総イテレーション数")
                     recon_mipnerf_btn = gr.Button("学習実行")
@@ -190,7 +192,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     result_recon_mipnerf = gr.Textbox(label="実行結果")
                     log_recon_mipnerf = gr.Textbox(label="実行ログ")
                 with gr.Column(visible=False) as export_mipnerf_col:
-                    gr.Markdown("# 4.点群出力")
+                    gr.Markdown("# 3.点群出力")
                     export_mipnerf_btn = gr.Button("点群出力実行")
                     outdir_export_mipnerf = gr.Textbox(label="実行結果保存場所")
                     runtime_export_mipnerf = gr.Textbox(label="実行時間")
@@ -202,25 +204,16 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab("SeaThru-NeRF"):
                 gr.Markdown("# 1. データセットの種類を選択")
                 stnerf_radio = gr.Radio(["作成したデータセット","処理済データセット"], label = "3次元再構築に用いるデータセットを選択してください．")
-                with gr.Column(visible=False) as pre_stnerf_col:
-                    gr.Markdown("""
-                                # 2.前処理
-                                - データセットをSeaThru-NeRFで扱えるように前処理を行う必要があります．
-                                - 作成したデータセット以外が現在セットされていないか注意してください．
-                                """)
-                    with gr.Accordion("オプション", open=False):
-                        rebuilt_stnerf = gr.Checkbox(label="前処理を再実行", value=False)
-                    run_colmap_stnerf_btn = gr.Button("前処理実行")
-                    result_colmap_stnerf = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_stnerf_col:
                     gr.Markdown("""
-                                # 2.データセットのアップロード
+                                # 1.1.データセットのアップロード
                                 - ZIP圧縮を行ってからアップロードしてください．
                                 - ZIPファイル以外も選択できてしまうため注意してください．
                                 """)
                     ex_dataset_stnerf = gr.File(label="データセットを選択してください")
+
                 with gr.Column(visible=False) as train_stnerf_col:
-                    gr.Markdown("# 3.学習")
+                    gr.Markdown("# 2.学習")
                     with gr.Accordion("オプション", open=False):
                         iter_stnerf = gr.Slider(value=100000, minimum=25000, maximum=200000, step=25000, label="総イテレーション数")
                     recon_stnerf_btn = gr.Button("学習実行")
@@ -230,7 +223,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     result_recon_stnerf = gr.Textbox(label="実行結果")
                     log_recon_stnerf = gr.Textbox(label="実行ログ")
                 with gr.Column(visible=False) as export_stnerf_col:
-                    gr.Markdown("# 4.点群出力")
+                    gr.Markdown("# 3.点群出力")
                     export_stnerf_btn = gr.Button("点群出力実行")
                     outdir_export_stnerf = gr.Textbox(label="実行結果保存場所")
                     runtime_export_stnerf = gr.Textbox(label="実行時間")
@@ -245,23 +238,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab("3DGS"):
                 gr.Markdown("# 1. データセットの種類を選択")
                 gs3d_radio = gr.Radio(["作成したデータセット","処理済データセット"], label = "3次元再構築に用いるデータセットを選択してください．")
-                with gr.Column(visible=False) as pre_3dgs_col:
-                    gr.Markdown("""
-                                # 2.前処理
-                                - データセットを3DGSで扱えるように前処理を行う必要があります．
-                                - 作成したデータセット以外が現在セットされていないか注意してください．
-                                """)
-                    with gr.Accordion("オプション", open=False):
-                        rebuilt_3dgs = gr.Checkbox(label="前処理を再実行", value=False)
-                    run_colmap_3dgs_btn = gr.Button("前処理実行")
-                    result_colmap_3dgs = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_3dgs_col:
                     gr.Markdown("""
-                                # 2.データセットのアップロード
+                                # 1.1.データセットのアップロード
                                 - ZIP圧縮を行ってからアップロードしてください．
                                 - ZIPファイル以外も選択できてしまうため注意してください．
                                 """)
                     ex_dataset_3dgs = gr.File(label="データセットを選択してください")
+
                 with gr.Column(visible=False) as train_3dgs_col:
                     gr.Markdown("# 2. 学習")
                     with gr.Accordion("オプション", open=False):
@@ -316,59 +300,39 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab("Mip-Splatting"):
                 gr.Markdown("# 1. データセットの種類を選択")
                 mips_radio = gr.Radio(["作成したデータセット","処理済データセット"], label = "3次元再構築に用いるデータセットを選択してください．")
-                with gr.Column(visible=False) as pre_mips_col:
-                    gr.Markdown("""
-                                # 2.前処理
-                                - データセットをMip-Splattingで扱えるように前処理を行う必要があります．
-                                - 作成したデータセット以外が現在セットされていないか注意してください．
-                                """)
-                    with gr.Accordion("オプション", open=False):
-                        rebuilt_mips = gr.Checkbox(label="前処理を再実行", value=False)
-                    run_colmap_mips_btn = gr.Button("前処理実行")
-                    result_colmap_mips = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_mips_col:
                     gr.Markdown("""
-                                # 2.データセットのアップロード
+                                # 1.1.データセットのアップロード
                                 - ZIP圧縮を行ってからアップロードしてください．
                                 - ZIPファイル以外も選択できてしまうため注意してください．
                                 """)
                     ex_dataset_mips = gr.File(label="データセットを選択してください")
+
                 with gr.Column(visible=False) as train_mips_col:
                     gr.Markdown("# 2. 学習")
                     with gr.Accordion("オプション", open=False):
-                        save_iter1_mips = gr.Slider(value=7000, minimum=0, maximum=50000, step=100, label="モデルを保存するイテレーション数（1回目）")
-                        save_iter2_mips = gr.Slider(value=30000, minimum=0, maximum=50000, step=100, label="モデルを保存するイテレーション数（2回目）")     
+                        save_iter_mips = gr.Slider(value=30000, minimum=0, maximum=50000, step=100, label="モデルを保存するイテレーション数")     
                     recon_mips_btn = gr.Button("学習実行")
                     outdir_recon_mips = gr.Textbox(label="学習結果保存先")
                     runtime_recon_mips = gr.Textbox(label="実行時間")
                     result_recon_mips = gr.Textbox(label="実行結果")
                     log_recon_mips = gr.Textbox(label="実行ログ")
-                    outmodel1_mips = gr.Model3D("1回目のセーブポイント")
-                    outmodel2_mips = gr.Model3D("2回目のセーブポイント")
+                    outmodel_mips = gr.Model3D("三次元再構築結果")
 
             # Splatfacto
             with gr.Tab("Splatfacto"):
                 gr.Markdown("# 1. データセットの種類を選択")
                 sfacto_radio = gr.Radio(["作成したデータセット","処理済データセット"], label = "3次元再構築に用いるデータセットを選択してください．")
-                with gr.Column(visible=False) as pre_sfacto_col:
-                    gr.Markdown("""
-                                # 2.前処理
-                                - データセットをmip-NeRFで扱えるように前処理を行う必要があります．
-                                - 作成したデータセット以外が現在セットされていないか注意してください．
-                                """)
-                    with gr.Accordion("オプション", open=False):
-                        rebuilt_sfacto = gr.Checkbox(label="前処理を再実行", value=False)
-                    run_colmap_sfacto_btn = gr.Button("前処理実行")
-                    result_colmap_sfacto = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_sfacto_col:
                     gr.Markdown("""
-                                # 2.データセットのアップロード
+                                # 1.1.データセットのアップロード
                                 - ZIP圧縮を行ってからアップロードしてください．
                                 - ZIPファイル以外も選択できてしまうため注意してください．
                                 """)
                     ex_dataset_sfacto = gr.File(label="データセットを選択してください")
+
                 with gr.Column(visible=False) as train_sfacto_col:
-                    gr.Markdown("# 3.学習")
+                    gr.Markdown("# 2.学習")
                     with gr.Accordion("オプション", open=False):
                         iter_sfacto = gr.Slider(value=30000, minimum=0, maximum=50000, step=2000, label="総イテレーション数")
                     recon_sfacto_btn = gr.Button("学習実行")
@@ -378,7 +342,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     result_recon_sfacto = gr.Textbox(label="実行結果")
                     log_recon_sfacto = gr.Textbox(label="実行ログ")
                 with gr.Column(visible=False) as export_sfacto_col:
-                    gr.Markdown("# 4.点群出力")
+                    gr.Markdown("# 3.点群出力")
                     export_sfacto_btn = gr.Button("点群出力実行")
                     outdir_export_sfacto = gr.Textbox(label="実行結果保存場所")
                     runtime_export_sfacto = gr.Textbox(label="実行時間")
@@ -390,35 +354,24 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab("4D-Gaussians"):
                 gr.Markdown("# 1. データセットの種類を選択")
                 gs4d_radio = gr.Radio(["作成したデータセット","処理済データセット"], label = "3次元再構築に用いるデータセットを選択してください．")
-                with gr.Column(visible=False) as pre_4dgs_col:
-                    gr.Markdown("""
-                                # 2.前処理
-                                - データセットを4D-Gaussiansで扱えるように前処理を行う必要があります．
-                                - 作成したデータセット以外が現在セットされていないか注意してください．
-                                """)
-                    with gr.Accordion("オプション", open=False):
-                        rebuilt_4dgs = gr.Checkbox(label="前処理を再実行", value=False)
-                    run_colmap_4dgs_btn = gr.Button("前処理実行")
-                    result_colmap_4dgs = gr.Textbox(label="実行結果")
                 with gr.Column(visible=False) as ex_4dgs_col:
                     gr.Markdown("""
-                                # 2.データセットのアップロード
+                                # 1.1.データセットのアップロード
                                 - ZIP圧縮を行ってからアップロードしてください．
                                 - ZIPファイル以外も選択できてしまうため注意してください．
                                 """)
                     ex_dataset_4dgs = gr.File(label="データセットを選択してください")
+
                 with gr.Column(visible=False) as train_4dgs_col:
                     gr.Markdown("# 2. 学習")
                     with gr.Accordion("オプション", open=False):
-                        save_iter1_4dgs = gr.Slider(value=15000, minimum=0, maximum=50000, step=100, label="モデルを保存するイテレーション数（1回目）")
-                        save_iter2_4dgs = gr.Slider(value=30000, minimum=0, maximum=50000, step=100, label="モデルを保存するイテレーション数（2回目）")     
+                        save_iter_4dgs = gr.Slider(value=30000, minimum=0, maximum=50000, step=100, label="モデルを保存するイテレーション数")     
                     recon_4dgs_btn = gr.Button("学習実行")
                     outdir_recon_4dgs = gr.Textbox(label="学習結果保存先")
                     runtime_recon_4dgs = gr.Textbox(label="実行時間")
                     result_recon_4dgs = gr.Textbox(label="実行結果")
                     log_recon_4dgs = gr.Textbox(label="実行ログ")
-                    outmodel1_4dgs = gr.Model3D("1回目のセーブポイント")
-                    outmodel2_4dgs = gr.Model3D("2回目のセーブポイント")
+                    outmodel_4dgs = gr.Model3D("三次元再構築結果")
 
         with gr.Tab("3sters"):
             current_dataset_3sters = gr.Textbox(label="現在セットされているデータセット")
@@ -626,28 +579,28 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                            outputs=[image_col, video_col])
         nerf_radio.change(fn=display_dataset_ui,
                           inputs=nerf_radio,
-                          outputs=[pre_nerf_col, ex_nerf_col])
+                          outputs=[train_nerf_col, ex_nerf_col])
         nerfacto_radio.change(fn=display_dataset_ui,
                           inputs=nerfacto_radio,
-                          outputs=[pre_nerfacto_col, ex_nerfacto_col])
+                          outputs=[train_nerfacto_col, ex_nerfacto_col])
         mipnerf_radio.change(fn=display_dataset_ui,
                           inputs=mipnerf_radio,
-                          outputs=[pre_mipnerf_col, ex_mipnerf_col])
+                          outputs=[train_mipnerf_col, ex_mipnerf_col])
         stnerf_radio.change(fn=display_dataset_ui,
                           inputs=stnerf_radio,
-                          outputs=[pre_stnerf_col, ex_stnerf_col])
+                          outputs=[train_stnerf_col, ex_stnerf_col])
         gs3d_radio.change(fn=display_dataset_ui,
                           inputs=gs3d_radio,
-                          outputs=[pre_3dgs_col, ex_3dgs_col])
+                          outputs=[train_3dgs_col, ex_3dgs_col])
         mips_radio.change(fn=display_dataset_ui,
                           inputs=mips_radio,
-                          outputs=[pre_mips_col, ex_mips_col])
+                          outputs=[train_mips_col, ex_mips_col])
         sfacto_radio.change(fn=display_dataset_ui,
                           inputs=gs3d_radio,
-                          outputs=[pre_sfacto_col, ex_sfacto_col])
+                          outputs=[train_sfacto_col, ex_sfacto_col])
         gs4d_radio.change(fn=display_dataset_ui,
                           inputs=gs4d_radio,
-                          outputs=[pre_4dgs_col, ex_4dgs_col])
+                          outputs=[train_4dgs_col, ex_4dgs_col])
         img_splatt3r.change(fn=col_change, outputs=inference_splatt3r_col)
         img_moge.change(fn=col_change, outputs=inference_moge_col)
         img_unik3d.change(fn=col_change, outputs=inference_unik3d_col)
@@ -659,22 +612,30 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                        ).success(
                            fn=get_state_values, 
                            inputs=dataset, 
-                           outputs=[current_dataset_nerf, 
+                           outputs=[current_dataset_colmap,
+                                    current_dataset_nerf, 
                                     current_dataset_gs,
                                     current_dataset_3sters,
                                     current_dataset_mds,
                                     current_dataset_vgg])
         run_ffmpeg_btn.click(fn=preprocess.extract_frames_with_filter, 
                          inputs=[video, datasetsdir_state, fps, rsi, ssim], 
-                         outputs=[dataset, vresult_col, output_video, comp_rate, del_images_num, gallery_vide]
+                         outputs=[dataset, vresult_col, output_video, comp_rate, sel_images_num, rej_images_num, gallery_vide]
                         ).success(
                             fn=get_state_values, 
                             inputs=dataset, 
-                            outputs=[current_dataset_nerf, 
+                            outputs=[current_dataset_colmap,
+                                     current_dataset_nerf, 
                                      current_dataset_gs,
                                      current_dataset_3sters,
                                      current_dataset_mds,
                                      current_dataset_vgg])
+        zip_images_btn.click(fn=preprocess.zip_dataset,
+                             inputs=dataset,
+                             outputs=zipfile_images)
+        zip_colmap_btn.click(fn=preprocess.zip_dataset,
+                             inputs=dataset,
+                             outputs=zipfile_colmap)
         ex_dataset_nerf.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_nerf, datasetsdir_state],
                                outputs=[dataset, train_nerf_col]).success(
@@ -725,30 +686,9 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                    outputs=current_dataset_gs)
         
         # 前処理
-        run_colmap_nerf_btn.click(fn=preprocess.run_colmap,
-                                  inputs=[dataset, rebuilt_nerf],
-                                  outputs=[result_colmap_nerf, train_nerf_col])
-        run_colmap_nerfacto_btn.click(fn=preprocess.run_colmap,
-                                      inputs=[dataset, rebuilt_nerfacto],
-                                      outputs=[result_colmap_nerfacto, train_nerfacto_col])
-        run_colmap_mipn_btn.click(fn=preprocess.run_colmap,
-                                  inputs=[dataset, rebuilt_mipn],
-                                  outputs=[result_colmap_mipn, train_mipnerf_col])
-        run_colmap_stnerf_btn.click(fn=preprocess.run_colmap,
-                                    inputs=[dataset, rebuilt_stnerf],
-                                    outputs=[result_colmap_stnerf, train_stnerf_col])
-        run_colmap_3dgs_btn.click(fn=preprocess.run_colmap,
-                                  inputs=[dataset, rebuilt_3dgs],
-                                  outputs=[result_colmap_3dgs, train_3dgs_col])
-        run_colmap_mips_btn.click(fn=preprocess.run_colmap,
-                                  inputs=[dataset, rebuilt_mips],
-                                  outputs=[result_colmap_mips, train_mips_col])
-        run_colmap_sfacto_btn.click(fn=preprocess.run_colmap,
-                                    inputs=[dataset, rebuilt_sfacto],
-                                    outputs=[result_colmap_sfacto, train_sfacto_col])
-        run_colmap_4dgs_btn.click(fn=preprocess.run_colmap,
-                                  inputs=[dataset, rebuilt_4dgs],
-                                  outputs=[result_colmap_4dgs, train_4dgs_col])
+        run_colmap_btn.click(fn=preprocess.run_colmap,
+                             inputs=[dataset, rebuilt],
+                             outputs=[result_colmap, dl_colmap_col])
         
         # 三次元再構築
         recon_nerf_btn.click(fn=methods.recon_nerf,
@@ -771,14 +711,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                      densification_interval, opacity_rest_interval, percent_dense], 
                                      outputs=[outdir_recon_3dgs, runtime_3dgs, result_recon_3dgs, log_recon_3dgs, outmodel_3dgs, render_3dgs_col ])
         recon_mips_btn.click(fn=methods.recon_mipSplatting, 
-                             inputs=[dataset, outputsdir_state, save_iter1_mips, save_iter2_mips], 
-                             outputs=[outdir_recon_mips, runtime_recon_mips, result_recon_mips, log_recon_mips, outmodel1_mips, outmodel2_mips])
+                             inputs=[dataset, outputsdir_state, save_iter_mips], 
+                             outputs=[outdir_recon_mips, runtime_recon_mips, result_recon_mips, log_recon_mips, outmodel_mips])
         recon_sfacto_btn.click(fn=methods.recon_sfacto,
                              inputs=[dataset, outputsdir_state, iter_sfacto],
                              outputs=[outdir_recon_sfacto, runtime_recon_sfacto, result_recon_sfacto, log_recon_sfacto, export_sfacto_col])
         recon_4dgs_btn.click(fn=methods.recon_4dGaussians, 
-                             inputs=[dataset, outputsdir_state, save_iter1_4dgs, save_iter2_4dgs], 
-                             outputs=[outdir_recon_4dgs, runtime_recon_4dgs, result_recon_4dgs, log_recon_4dgs, outmodel1_4dgs, outmodel2_4dgs])
+                             inputs=[dataset, outputsdir_state, save_iter_4dgs], 
+                             outputs=[outdir_recon_4dgs, runtime_recon_4dgs, result_recon_4dgs, log_recon_4dgs, outmodel_4dgs])
         recon_dust3r_btn.click(fn=methods.recon_dust3r,
                                inputs=[dataset, outputsdir_state, schedule, niter, min_conf_thr, as_pointcloud,mask_sky, clean_depth, transparent_cams, cam_size,scenegraph_type, winsize, refid], 
                                outputs=[outdir_recon_dust3r, runtime_recon_dust3r, result_recon_dust3r, log_recon_dust3r, outmodel_dust3r, outimgs_dust3r]).success(

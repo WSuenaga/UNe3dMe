@@ -7,6 +7,12 @@ import gc
 import trimesh
 import matplotlib
 
+import sys
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))  # src
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)              # gradio
+sys.path.append(PROJECT_ROOT)
+sys.path.append(os.path.join(PROJECT_ROOT, "models", "fast3r"))
+
 from models.fast3r.fast3r.dust3r.utils.image import load_images
 from models.fast3r.fast3r.dust3r.inference_multiview import inference
 from models.fast3r.fast3r.models.fast3r import Fast3R

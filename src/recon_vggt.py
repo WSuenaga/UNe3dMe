@@ -5,16 +5,17 @@ import torch
 import gc
 
 import sys
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join(SCRIPT_DIR, "models"))
-sys.path.append(os.path.join(SCRIPT_DIR, "models", "vggt"))
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))  # src
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)              # gradio
+sys.path.append(PROJECT_ROOT)
+sys.path.append(os.path.join(PROJECT_ROOT, "models"))
+sys.path.append(os.path.join(PROJECT_ROOT, "models", "vggt"))
 
 from models.vggt.visual_util import predictions_to_glb
 from models.vggt.vggt.models.vggt import VGGT
 from models.vggt.vggt.utils.load_fn import load_and_preprocess_images
 from models.vggt.vggt.utils.pose_enc import pose_encoding_to_extri_intri
 from models.vggt.vggt.utils.geometry import unproject_depth_map_to_point_map
-
 
 def run_vggt_reconstruction(
     dataset,
