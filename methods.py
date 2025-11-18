@@ -427,7 +427,7 @@ def recon_dust3r(dataset, outputs_dir, schedule, niter, min_conf_thr, as_pointcl
     device = "cuda"
 
     # 再構築スクリプト
-    script_path = os.path.join("models", "dust3r", "reconstruct.py")
+    script_path = os.path.join("src", "recon_dust3r.py")
 
     # 実行コマンド
     cmd = [
