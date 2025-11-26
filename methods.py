@@ -886,10 +886,42 @@ def recon_vggt(dataset, outputs_dir):
 """
 VGGDSfM
 """
-# --- 実行メソッド ---
+# --- 再構築メソッド ---
 def recon_vggdsfm():
 
     cmd = []
 
 
-    return 
+    return
+
+"""
+StreamVGGT
+"""
+# --- 再構築メソッド ---
+def recon_stmvggt(dataset, outputs_dir):
+    # 出力ディレクトリの作成
+    name = os.path.basename(dataset)
+    outdir = os.path.join(outputs_dir, "stmvggt", name)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
+    # 再構築スクリプトパス
+    script_path = os.path.join("src", "recon_streamvggt.py")
+
+    # 実行コマンド
+    cmd = [
+        "conda", "run", "-n", "streamvggt", "python", script_path,
+        "--input_dir", dataset,
+        "--output_dir", outdir,
+        "--show_cam"
+    ]
+    # 実行ディレクトリ
+    workdir = "./"
+
+    # 推論実行
+    runtime, status, log = run_subprocess(cmd, workdir)
+
+    # 再構築結果のパス
+    model_path = os.path.join(outdir, "scene.glb")
+
+    return outdir, runtime, status, log, model_path

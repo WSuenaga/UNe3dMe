@@ -92,6 +92,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         - 作成したデータセット以外が現在セットされていないか確認してください．
                         """)
             with gr.Accordion("オプション", open=False):
+                gr.Markdown("- データセットが破損している場合，このオプションを有効にして再度前処理を行ってください．")
                 rebuilt = gr.Checkbox(label="前処理を再実行", value=False)
             run_colmap_btn = gr.Button("COLMAP実行")
             result_colmap = gr.Textbox(label="実行結果")
@@ -570,6 +571,18 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab("VGGSfM"):
                 gr.Model3D()
 
+            # StreamVGGT
+            with gr.Tab("StreamVGGT"):
+                gr.Markdown("# 1.推論")
+                with gr.Accordion("オプション", open=False):
+                    gr.Markdown()
+                recon_stmvggt_btn = gr.Button("推論実行")
+                outdir_recon_stmvggt = gr.Textbox(label="推論結果保存先")
+                runtime_recon_stmvggt = gr.Textbox(label="実行時間")
+                result_recon_stmvggt = gr.Textbox(label="実行結果")
+                log_recon_stmvggt = gr.Textbox(label="実行ログ")
+                outmodel_stmvggt = gr.Model3D(label="三次元再構築結果")
+
         """
         イベントリスナ
         """
@@ -758,6 +771,9 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         recon_vggt_btn.click(fn=methods.recon_vggt,
                         inputs=[dataset, outputsdir_state], 
                         outputs=[outdir_recon_vggt, runtime_recon_vggt, result_recon_vggt, log_recon_vggt, outmodel_vggt])
+        recon_stmvggt_btn.click(fn=methods.recon_stmvggt,
+                        inputs=[dataset, outputsdir_state], 
+                        outputs=[outdir_recon_stmvggt, runtime_recon_stmvggt, result_recon_stmvggt, log_recon_stmvggt, outmodel_stmvggt])
         
         # 点群出力（Nerfstudio）
         export_nerf_btn.click(fn=methods.export_nerf,
