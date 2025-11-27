@@ -583,6 +583,18 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 log_recon_stmvggt = gr.Textbox(label="実行ログ")
                 outmodel_stmvggt = gr.Model3D(label="三次元再構築結果")
 
+            # FastVGGT
+            with gr.Tab("FastVGGT"):
+                gr.Markdown("# 1.推論")
+                with gr.Accordion("オプション", open=False):
+                    gr.Markdown()
+                recon_fastvggt_btn = gr.Button("推論実行")
+                outdir_recon_fastvggt = gr.Textbox(label="推論結果保存先")
+                runtime_recon_fastvggt = gr.Textbox(label="実行時間")
+                result_recon_fastvggt = gr.Textbox(label="実行結果")
+                log_recon_fastvggt = gr.Textbox(label="実行ログ")
+                outmodel_fastvggt = gr.Model3D(label="三次元再構築結果")
+
         """
         イベントリスナ
         """
@@ -774,6 +786,9 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         recon_stmvggt_btn.click(fn=methods.recon_stmvggt,
                         inputs=[dataset, outputsdir_state], 
                         outputs=[outdir_recon_stmvggt, runtime_recon_stmvggt, result_recon_stmvggt, log_recon_stmvggt, outmodel_stmvggt])
+        recon_fastvggt_btn.click(fn=methods.recon_fastvggt,
+                        inputs=[dataset, outputsdir_state], 
+                        outputs=[outdir_recon_fastvggt, runtime_recon_fastvggt, result_recon_fastvggt, log_recon_fastvggt, outmodel_fastvggt])
         
         # 点群出力（Nerfstudio）
         export_nerf_btn.click(fn=methods.export_nerf,

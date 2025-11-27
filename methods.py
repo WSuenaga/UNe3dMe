@@ -15,16 +15,6 @@ from preprocess import get_imagelist
 SHELL_FLAG = platform.system() == "Windows"
 
 def run_subprocess(cmd, workdir):
-    """
-    subprocess.run を共通化したメソッド
-    Args:
-        cmd (list[str]): 実行コマンド（リスト形式）
-        workdir (str): 実行ディレクトリ
-    Returns:
-        run_time (str): 実行時間 (HHmmss)
-        status (str): 実行ステータス（✅ 成功 / ❌ 失敗(returncode=xx)）
-        log (str): コマンド＋標準出力/標準エラーをまとめたログ
-    """
     # subprocess実行
     global SHELL_FLAG
     print("Running:", " ".join(map(str, cmd)))
@@ -923,5 +913,43 @@ def recon_stmvggt(dataset, outputs_dir):
 
     # 再構築結果のパス
     model_path = os.path.join(outdir, "scene.glb")
+
+    return outdir, runtime, status, log, model_path
+
+"""
+FastVGGT
+"""
+# --- 再構築メソッド ---
+def recon_fastvggt(dataset, outputs_dir):
+    # 出力ディレクトリの作成
+    name = os.path.basename(dataset)
+    outdir = os.path.join(outputs_dir, "fastvggt", name)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
+    # 再構築スクリプトパス
+    script_path = os.path.join("eval", "eval_custom.py")
+
+    dataset = os.path.join(dataset, "images")
+
+    # check pointのパス
+    ckpt_path = os.path.join("ckpt", "model_tracker_fixed_e20.pt")
+
+    # 実行コマンド
+    cmd = [
+        "conda", "run", "-n", "fastvggt", "python", script_path,
+        "--data_path", dataset,
+        "--output_path", outdir,
+        "--ckpt_path", ckpt_path,
+        "--plot"
+    ]
+    # 実行ディレクトリ
+    workdir = os.path.join("models", "FastVGGT")
+
+    # 推論実行
+    runtime, status, log = run_subprocess(cmd, workdir)
+
+    # 再構築結果のパス
+    model_path = os.path.join(outdir, "custom_dataset", "reconstructed_points.ply")
 
     return outdir, runtime, status, log, model_path
