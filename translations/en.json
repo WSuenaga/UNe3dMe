@@ -1,0 +1,535 @@
+{
+  "dataset_tab": {
+    "title": "Create Dataset",
+    "subtitle1": "# 1. Select File Type",
+    "radio_image": "📷Image",
+    "radio_video": "🎥Video",
+    "media_radio": "📂Please select the file type",
+    "image_section": {
+      "subtitle2": "# 2. Create Dataset",
+      "subtitle2_1": "## 2.1 Upload images\n- Be careful because you can select non-image files as well.",
+      "images": "📷Select the image to use.",
+      "subtitle2_2": "## 2.2 Enter an optional dataset name\n- If left empty, a random name will be assigned to the dataset.",
+      "dataset_name": "🏷️Dataset Name",
+      "run_copy_btn": "🚀Create Dataset",
+      "subtitle3": "# 3. Dataset Created",
+      "output_image": "📁Dataset Save Location",
+      "gallery_image": "📷Input Images"
+    },
+    "video_section": {
+      "subtitle2": "# 2. Create Dataset",
+      "video": "🎥Select the video to use.",
+      "fps": "⏱Frames to extract per second",
+      "option": {
+        "title": "⚙️Options",
+        "subtitle": "## Dataset Compression",
+        "info1": "Remove duplicate images to save computational resources.\n- Enable dataset compression?",
+        "rsi": "Compress Dataset",
+        "info2": "- Set the SSIM threshold. Lower values produce stronger compression.",
+        "ssim": "SSIM Threshold"
+      },
+      "run_ffmpeg_btn": "🚀Create Dataset",
+      "subtitle3": "# 3. Dataset Created",
+      "output_video": "📁Dataset Save Location",
+      "comp_rate": "📉Compression Rate",
+      "sel_images_num": "👍Number of Selected Images",
+      "rej_images_num": "🗑️Number of Deleted Images",
+      "gallery_video": "Extracted Images",
+      "subtitle4": "# 4. Download Dataset",
+      "info3": "- You can download the created dataset as a ZIP file.\n- The ZIP file is created in the same directory as the dataset. You can download it from the right side of the displayed filename.",
+      "zip_images_btn": "💾Download Dataset",
+      "zipfile_images": "📦ZIP File"
+    }
+  },
+  "colmap_tab": {
+    "title": "COLMAP",
+    "current_dataset": "📂Currently Selected Dataset",
+    "subtitle1": "# 1. Preprocessing with COLMAP",
+    "info1": "- You need to preprocess the dataset with COLMAP so that NeRF/GS methods can use it.\n- Ensure that the correct dataset is selected.",
+    "option": {
+      "title": "⚙️Options",
+      "info1": "- If the dataset is corrupted, enable this option and run preprocessing again.",
+      "rebuild": "🛠️Rerun Preprocessing"
+    },
+    "run_colmap_btn": "🚀Run COLMAP",
+    "result_colmap": "📝Execution Result",
+    "subtitle2": "# 2. Download Dataset",
+    "info2": "- You can download the processed dataset as a ZIP file.\n- The ZIP file is created in the same directory as the dataset. You can download it from the right side of the displayed filename.",
+    "zip_colmap_btn": "💾Download Dataset",
+    "zipfile_colmap": "📦ZIP File"
+  },
+  "nerf_tab": {
+    "title": "NeRF",
+    "current_dataset": "📂Currently Selected Dataset",
+    "vnerf": {
+      "title": "Vanilla NeRF",
+      "subtitle1": "# 1. Select Dataset Type",
+      "radio_newdata": "Created Dataset",
+      "radio_exdata": "Processed Dataset",
+      "radio": "Select the dataset for 3D reconstruction.",
+      "subtitle1_1": "# 1.1 Upload Dataset",
+      "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Be careful because you can select non-ZIP files as well.",
+      "ex_dataset": "📂Select Dataset",
+      "subtitle2": "# 2. Training",
+      "option": {
+        "title": "⚙️Options",
+        "iter": "Total Iterations"
+      },
+      "recon_btn": "🚀Start Training",
+      "viewer": "🌐[View training progress in the viewer.](http://127.0.0.1:7007)",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Training Result",
+      "log_recon": "📝Training Log",
+      "subtitle3": "# 3. Export Point Cloud",
+      "export_btn": "🚀Export Point Cloud",
+      "outdir_export": "📁Output Directory",
+      "runtime_export": "⏳Runtime",
+      "result_export": "💡Execution Result",
+      "log_export": "📝Execution Log",
+      "gallery": "🖼️Input & Rendered Images"
+    },
+    "nerfacto": {
+      "title": "Nerfacto",
+      "subtitle1": "# 1. Select Dataset Type",
+      "radio_newdata": "Created Dataset",
+      "radio_exdata": "Processed Dataset",
+      "radio": "Select the dataset for 3D reconstruction.",
+      "subtitle1_1": "# 1.1 Upload Dataset",
+      "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Be careful because you can select non-ZIP files as well.",
+      "ex_dataset": "📂Select Dataset",
+      "subtitle2": "# 2. Training",
+      "option": {
+        "title": "⚙️Options",
+        "iter": "Total Iterations"
+      },
+      "recon_btn": "🚀Start Training",
+      "viewer": "🌐[View training progress in the viewer.](http://127.0.0.1:7008)",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Training Result",
+      "log_recon": "📝Training Log",
+      "subtitle3": "# 3. Export Point Cloud",
+      "export_btn": "🚀Export Point Cloud",
+      "outdir_export": "📁Output Directory",
+      "runtime_export": "⏳Runtime",
+      "result_export": "💡Execution Result",
+      "log_export": "📝Execution Log",
+      "gallery": "🖼️Input & Rendered Images"
+    },
+    "mip-nerf": {
+      "title": "mip-NeRF",
+      "subtitle1": "# 1. Select Dataset Type",
+      "radio_newdata": "Created Dataset",
+      "radio_exdata": "Processed Dataset",
+      "radio": "Select the dataset for 3D reconstruction.",
+      "subtitle1_1": "# 1.1 Upload Dataset",
+      "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Be careful because you can select non-ZIP files as well.",
+      "ex_dataset": "📂Select Dataset",
+      "subtitle2": "# 2. Training",
+      "option": {
+        "title": "⚙️Options",
+        "iter": "Total Iterations"
+      },
+      "recon_btn": "🚀Start Training",
+      "viewer": "🌐[View training progress in the viewer.](http://127.0.0.1:7009)",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Training Result",
+      "log_recon": "📝Training Log",
+      "subtitle3": "# 3. Export Point Cloud",
+      "export_btn": "🚀Export Point Cloud",
+      "outdir_export": "📁Output Directory",
+      "runtime_export": "⏳Runtime",
+      "result_export": "💡Execution Result",
+      "log_export": "📝Execution Log",
+      "gallery": "🖼️Input & Rendered Images"
+    },
+    "seathru-nerf": {
+      "title": "SeaThru-NeRF",
+      "subtitle1": "# 1. Select Dataset Type",
+      "radio_newdata": "Created Dataset",
+      "radio_exdata": "Processed Dataset",
+      "radio": "Select the dataset for 3D reconstruction.",
+      "subtitle1_1": "# 1.1 Upload Dataset",
+      "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Be careful because you can select non-ZIP files as well.",
+      "ex_dataset": "📂Select Dataset",
+      "subtitle2": "# 2. Training",
+      "option": {
+        "title": "⚙️Options",
+        "iter": "Total Iterations"
+      },
+      "recon_btn": "🚀Start Training",
+      "viewer": "🌐[View training progress in the viewer.](http://127.0.0.1:7010)",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Training Result",
+      "log_recon": "📝Training Log",
+      "subtitle3": "# 3. Export Point Cloud",
+      "export_btn": "🚀Export Point Cloud",
+      "outdir_export": "📁Output Directory",
+      "runtime_export": "⏳Runtime",
+      "result_export": "💡Execution Result",
+      "log_export": "📝Execution Log",
+      "gallery": "🖼️Input & Rendered Images"
+    }
+  },
+  "gs_tab": {
+  "title": "GS",
+  "current_dataset": "📂Currently Selected Dataset",
+  "vgs": {
+    "title": "Vanilla GS",
+    "subtitle1": "# 1. Select Dataset Type",
+    "radio_newdata": "Created Dataset",
+    "radio_exdata": "Processed Dataset",
+    "radio": "Select the dataset to use for 3D reconstruction.",
+    "subtitle1_1": "# 1.1 Upload Dataset",
+    "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Be careful because non-ZIP files can also be selected.",
+    "ex_dataset": "📂Select Dataset",
+    "subtitle2": "# 2. Training",
+    "option": {
+      "title": "⚙️Options"
+      },
+    "recon_btn": "🚀Start Training",
+    "outdir_recon": "📁Output Directory",
+    "runtime_recon": "⏳Runtime",
+    "result_recon": "💡Training Result",
+    "log_recon": "📝Training Log",
+    "outmodel": "🌐3D Reconstruction Result",
+    "subtitle3": "# 3. Rendering & Evaluation",
+    "skip_train": "Do not render training images",
+    "skip_test": "Do not render test images",
+    "eval_vgs_btn": "🚀Start Rendering",
+    "result_render_vgs": "💡Rendering Result",
+    "eval_vgs": "📊Evaluation Metrics",
+    "gallery_vgs": "🖼️Ground Truth & Rendered Images"
+    },
+  "mip-splatting": {
+    "title": "Mip-Splatting",
+    "subtitle1": "# 1. Select Dataset Type",
+    "radio_newdata": "Created Dataset",
+    "radio_exdata": "Processed Dataset",
+    "radio": "Select the dataset to use for 3D reconstruction.",
+    "subtitle1_1": "# 1.1 Upload Dataset",
+    "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Note that non-ZIP files can also be selected.",
+    "ex_dataset": "📂Select Dataset",
+    "subtitle2": "# 2. Training",
+    "option": {
+      "title": "⚙️Options",
+      "save_iter": "Iteration number to save the model"
+      },
+    "recon_btn": "🚀Start Training",
+    "outdir_recon": "📁Output Directory",
+    "runtime_recon": "⏳Runtime",
+    "result_recon": "💡Training Result",
+    "log_recon": "📝Training Log",
+    "outmodel": "🌐3D Reconstruction Result"
+    },
+  "splatfacto": {
+    "title": "Splatfacto",
+    "subtitle1": "# 1. Select Dataset Type",
+    "radio_newdata": "Created Dataset",
+    "radio_exdata": "Processed Dataset",
+    "radio": "Select the dataset for 3D reconstruction.",
+    "subtitle1_1": "# 1.1 Upload Dataset",
+    "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Be careful because you can select non-ZIP files as well.",
+    "ex_dataset": "📂Select Dataset",
+    "subtitle2": "# 2. Training",
+    "option": {
+      "title": "⚙️Options",
+      "iter": "Total Iterations"
+      },
+    "recon_btn": "🚀Start Training",
+    "viewer": "🌐[View training progress in the viewer.](http://127.0.0.1:7011)",
+    "outdir_recon": "📁Output Directory",
+    "runtime_recon": "⏳Runtime",
+    "result_recon": "💡Training Result",
+    "log_recon": "📝Training Log",
+    "subtitle3": "# 3. Export Point Cloud",
+    "export_btn": "🚀Export Point Cloud",
+    "outdir_export": "📁Output Directory",
+    "runtime_export": "⏳Runtime",
+    "result_export": "💡Execution Result",
+    "log_export": "📝Execution Log",
+    "gallery": "🖼️Input & Rendered Images"
+    },
+  "4d-gaussians": {
+    "title": "4D-Gaussians",
+    "subtitle1": "# 1. Select Dataset Type",
+    "radio_newdata": "Created Dataset",
+    "radio_exdata": "Processed Dataset",
+    "radio": "Select the dataset to use for 3D reconstruction.",
+    "subtitle1_1": "# 1.1 Upload Dataset",
+    "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Note that non-ZIP files can also be selected.",
+    "ex_dataset": "📂Select Dataset",
+    "subtitle2": "# 2. Training",
+    "option": {
+      "title": "⚙️Options",
+      "save_iter": "Iteration number to save the model"
+      },
+    "recon_btn": "🚀Start Training",
+    "outdir_recon": "📁Output Directory",
+    "runtime_recon": "⏳Runtime",
+    "result_recon": "💡Training Result",
+    "log_recon": "📝Training Log",
+    "outmodel": "🌐3D Reconstruction Result"
+    } 
+  },
+  "3sters_tab": {
+    "title": "3sters",
+    "current_dataset": "📂Currently Selected Dataset",
+
+    "dust3r": {
+      "title": "DUSt3R",
+      "subtitle1": "# 1. Inference",
+      "option": {
+        "title": "⚙️Options"
+      },
+      "recon_btn": "🚀Run Inference",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Inference Result",
+      "log_recon": "📝Execution Log",
+      "outmodel": "🌐3D Reconstruction Result",
+      "gallery": "🖼️Input Images / Depth Maps / Confidence Maps"
+    },
+
+    "mast3r": {
+      "title": "MASt3R",
+      "subtitle1": "# 1. Inference",
+      "option": {
+        "title": "⚙️Options"
+      },
+      "recon_btn": "🚀Run Inference",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Inference Result",
+      "log_recon": "📝Execution Log",
+      "outmodel": "🌐3D Reconstruction Result"
+    },
+
+    "monst3r": {
+      "title": "MonST3R",
+      "subtitle1": "# 1. Inference",
+      "option": {
+        "title": "⚙️Options"
+      },
+      "recon_btn": "🚀Run Inference",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Inference Result",
+      "log_recon": "📝Execution Log",
+      "outmodel": "🌐3D Reconstruction Result"
+    },
+
+    "easi3r": {
+      "title": "Easi3R",
+      "subtitle1": "# 1. Inference",
+      "info1": "- Inference may fail if the number of input images is small.",
+      "option": {
+        "title": "⚙️Options"
+      },
+      "recon_btn": "🚀Run Inference",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Inference Result",
+      "log_recon": "📝Execution Log",
+      "outmodel": "🌐3D Reconstruction Result"
+    },
+
+    "must3r": {
+      "title": "MUSt3R",
+      "subtitle1": "# 1. Inference",
+      "option": {
+        "title": "⚙️Options"
+      },
+      "recon_btn": "🚀Run Inference",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Inference Result",
+      "log_recon": "📝Execution Log",
+      "outmodel": "🌐3D Reconstruction Result"
+    },
+
+    "fast3r": {
+      "title": "Fast3R",
+      "subtitle1": "# 1. Inference",
+      "option": {
+        "title": "⚙️Options"
+      },
+      "recon_btn": "🚀Run Inference",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Inference Result",
+      "log_recon": "📝Execution Log",
+      "outmodel": "🌐3D Reconstruction Result"
+    },
+
+    "splatt3r": {
+      "title": "Splatt3R",
+      "subtitle1": "# 1. Select Image",
+      "info1": "- Please select an image to use for inference.",
+      "image": "📷Select a Single Image",
+      "subtitle2": "# 2. Inference",
+      "option": {
+        "title": "⚙️Options"
+      },
+      "recon_btn": "🚀Run Inference",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Inference Result",
+      "log_recon": "📝Execution Log",
+      "outmodel": "🌐3D Reconstruction Result"
+    },
+
+    "cut3r": {
+      "title": "CUT3R",
+      "subtitle1": "# 1. Inference",
+      "option": {
+        "title": "⚙️Options"
+      },
+      "recon_btn": "🚀Run Inference",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Inference Result",
+      "log_recon": "📝Execution Log",
+      "outmodel": "🌐3D Reconstruction Result"
+    },
+
+    "wint3r": {
+      "title": "WinT3R",
+      "subtitle1": "# 1. Inference",
+      "option": {
+        "title": "⚙️Options"
+      },
+      "recon_btn": "🚀Run Inference",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Inference Result",
+      "log_recon": "📝Execution Log",
+      "outmodel": "🌐3D Reconstruction Result"
+    }
+  },
+  "mds_tab": {
+    "title": "mds",
+    "current_dataset": "📂Current Dataset",
+    "moge": {
+      "title": "MoGe",
+      "subtitle1": "# 1. Select Image",
+      "info1": "- Please select an image to use for inference.",
+      "image": "📷Select one image",
+      "subtitle2": "# 2. Inference",
+      "option": {
+        "title": "⚙️Options",
+        "radio_standard": "Standard Image",
+        "radio_panorama": "Panorama Image",
+        "radio_default": "Standard Image"
+      },
+      "recon_btn": "🚀Run Inference",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Result",
+      "log_recon": "📝Log",
+      "outmodel": "🌐3D Reconstruction Result"
+    },
+    "unik3d": {
+      "title": "UniK3D",
+      "subtitle1": "# 1. Select Image",
+      "info1": "- Please select an image to use for inference.",
+      "image": "📷Select one image",
+      "subtitle2": "# 2. Inference",
+      "option": {
+        "title": "⚙️Options"
+      },
+      "recon_btn": "🚀Run Inference",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Result",
+      "log_recon": "📝Log",
+      "outmodel": "🌐3D Reconstruction Result"
+    }
+  },
+  "vgg_tab": {
+    "title": "VGG",
+    "current_dataset": "📂Current Dataset",
+    "vggt": {
+      "title": "VGGT",
+      "subtitle1": "# 1. Inference",
+      "option": {
+        "title": "⚙️Options",
+        "mode_vggt": "Select Mode"
+      },
+      "recon_btn": "🚀Run Inference",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Result",
+      "log_recon": "📝Log",
+      "outmodel": "🌐3D Reconstruction Result"
+    },
+    "vggsfm": {
+      "title": "VGGSfM",
+      "subtitle1": "# 1. Inference",
+      "option": {
+        "title": "⚙️Options"
+      },
+      "recon_btn": "🚀Run Inference",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Result",
+      "log_recon": "📝Log",
+      "outmodel": "🌐3D Reconstruction Result"
+    },
+    "vggt-slam": {
+      "title": "VGGT-SLAM",
+      "subtitle1": "# 1. Inference",
+      "option": {
+        "title": "⚙️Options"
+      },
+      "recon_btn": "🚀Run Inference",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Result",
+      "log_recon": "📝Log",
+      "outmodel": "🌐3D Reconstruction Result"
+    },
+    "streamvggt": {
+      "title": "StreamVGGT",
+      "subtitle1": "# 1. Inference",
+      "option": {
+        "title": "⚙️Options"
+      },
+      "recon_btn": "🚀Run Inference",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Result",
+      "log_recon": "📝Log",
+      "outmodel": "🌐3D Reconstruction Result"
+    },
+    "fastvggt": {
+      "title": "FastVGGT",
+      "subtitle1": "# 1. Inference",
+      "option": {
+        "title": "⚙️Options"
+      },
+      "recon_btn": "🚀Run Inference",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Result",
+      "log_recon": "📝Log",
+      "outmodel": "🌐3D Reconstruction Result"
+    },
+    "pi3": {
+      "title": "Pi3",
+      "subtitle1": "# 1. Inference",
+      "option": {
+        "title": "⚙️Options"
+      },
+      "recon_btn": "🚀Run Inference",
+      "outdir_recon": "📁Output Directory",
+      "runtime_recon": "⏳Runtime",
+      "result_recon": "💡Result",
+      "log_recon": "📝Log",
+      "outmodel": "🌐3D Reconstruction Result"
+    }
+  }
+}

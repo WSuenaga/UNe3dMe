@@ -89,7 +89,7 @@ def remove_similar_images(input_dir: str, ssim_threshold: float = 0.95):
         compression_rate = (selected_count / original_count) * 100
         compression_rate = float(f"{compression_rate:.3g}")
 
-    return f"{compression_rate}%", f"{selected_count}枚", f"{rejected_count}枚"
+    return f"{compression_rate}%", f"{selected_count}", f"{rejected_count}"
 
 def extract_frames_with_filter(video, parent_path, fps, remove_similar, ssim_threshold):
     video_name = os.path.splitext(os.path.basename(video))[0]

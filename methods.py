@@ -132,15 +132,15 @@ def render_nerfstudio():
     return
 
 """
-NeRF
+Vanilla-NeRF
 """
 # --- 再構築メソッド ---
-def recon_nerf(dataset, out_dir, iter):
+def recon_vnerf(dataset, out_dir, iter):
     train_args = ["--max-num-iterations", f"{iter}",
                   "--viewer.websocket-port-default", "7007"]
     return train_nerfstudio(dataset, out_dir, "vanilla-nerf", train_args)
 # --- 点群出力メソッド ---
-def export_nerf(dataset, out_dir):
+def export_vnerf(dataset, out_dir):
     export_args = ["--rgb-output-name", "rgb_fine", 
                    "--depth-output-name", "depth_fine"]
     return export_nerfstudio(dataset, out_dir, "vanilla-nerf", "pointcloud", export_args)
@@ -188,10 +188,10 @@ def export_stnerf(dataset, out_dir):
     return export_nerfstudio(dataset, out_dir, "seathru-nerf", "pointcloud", export_args)
 
 """
-3DGS
+Vanilla-GS
 """
 # --- 再構築メソッド--- 
-def recon_3dgs(dataset, outputs_dir, sh_degree, data_device, lambde_dsiim, iterations,
+def recon_vgs(dataset, outputs_dir, sh_degree, data_device, lambde_dsiim, iterations,
              test_iteraion, save_iteration, 
              feature_lr, opacity_lr, scaling_lr, rotation_lr, position_lr_init,
              position_lr_final, position_lr_delay_mult, densify_from_iter,
@@ -771,9 +771,9 @@ def recon_moge(dataset, outputs_dir, img_type):
         os.makedirs(outdir)
 
     # 再構築スクリプトパス
-    if img_type=="標準画像":
+    if img_type=="標準画像" or img_type=="Standard Image":
         script_path = os.path.join("models", "MoGe", "moge", "scripts", "infer.py")
-    elif img_type=="パノラマ画像":
+    elif img_type=="パノラマ画像" or img_type=="Panorama Image":
         script_path = os.path.join("models", "MoGe", "moge", "scripts", "infer_panorama.py")
 
     # 実行コマンド
