@@ -19,18 +19,29 @@ def run_subprocess(cmd, workdir):
     global SHELL_FLAG
     print("Running:", " ".join(map(str, cmd)))
     start_time = time.time()
+    
     try:
-        result = subprocess.run(
+        # Popenでプロセスを開始
+        process = subprocess.Popen(
             cmd,
-            capture_output=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             text=True,
             encoding="utf-8",
             errors="replace",
             cwd=workdir,
             shell=SHELL_FLAG
         )
+        
+        # プロセスの終了を待ち、標準出力と標準エラー出力を取得
+        stdout_data, stderr_data = process.communicate()
+        
+        # プロセスが終了した時点の終了コードを取得
+        returncode = process.returncode
+
     except Exception as e:
         return "0時間0分0秒", "❌ 失敗 (Exception)", f"実行に失敗しました: {e}"
+        
     end_time = time.time()
 
     # 実行時間の計算
@@ -40,12 +51,12 @@ def run_subprocess(cmd, workdir):
     run_time = f"{hours}時間{minutes}分{seconds}秒"
 
     # ログの出力
-    if result.returncode == 0:
+    if returncode == 0:
         status = "✅ 成功"
-        log = f"{result.stdout.strip()}"
+        log = f"{stdout_data.strip()}"
     else:
         status = "❌ 失敗"
-        log = f"{result.stderr.strip()}"
+        log = f"{stderr_data.strip()}"
 
     return run_time, status, log
     
