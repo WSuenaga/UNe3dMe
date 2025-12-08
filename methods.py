@@ -879,15 +879,49 @@ def recon_vggt(dataset, outputs_dir):
 
     return outdir, runtime, status, log, model_path
 """
-VGGDSfM
+VGGSfM
 """
 # --- 再構築メソッド ---
-def recon_vggdsfm():
+def recon_vggsfm():
 
     cmd = []
 
 
     return
+
+"""
+VGGT-SLAM
+"""
+# --- 再構築メソッド ---
+def recon_vggtslam(dataset, outputs_dir):
+    # 出力ディレクトリの作成
+    name = os.path.basename(dataset)
+    outdir = os.path.join(outputs_dir, "vggt-slam", name)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
+    # データセットのパス
+    dataset = os.path.join(dataset, "images")
+
+    # 再構築スクリプトパス
+    script_path = "main.py"
+
+    # 実行コマンド
+    cmd = [
+        "conda", "run", "-n", "vggt-slam", "python", script_path,
+        "--image_folder", dataset
+    ]
+
+    # 実行ディレクトリ
+    workdir = os.path.join("models", "VGGT-SLAM")
+
+    # 推論実行
+    runtime, status, log = run_subprocess(cmd, workdir)
+
+    # 再構築結果のパス
+    model_path = os.path.join(outdir, "scene.glb")
+
+    return outdir, runtime, status, log, model_path
 
 """
 StreamVGGT
@@ -956,5 +990,42 @@ def recon_fastvggt(dataset, outputs_dir):
 
     # 再構築結果のパス
     model_path = os.path.join(outdir, "custom_dataset", "reconstructed_points.ply")
+
+    return outdir, runtime, status, log, model_path
+
+"""
+Pi3
+"""
+# --- 再構築メソッド ---
+def recon_pi3(dataset, outputs_dir):
+    # 出力ディレクトリの作成
+    name = os.path.basename(dataset)
+    outdir = os.path.join(outputs_dir, "pi3", name)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
+    # 再構築スクリプトパス
+    script_path = "example.py"
+
+    # データセットパス
+    dataset = os.path.join(dataset, "images")
+
+    # 出力パス
+    outpath = os.path.join(outdir, "recon.ply")
+
+    # 実行コマンド
+    cmd = [
+        "conda", "run", "-n", "Pi3", "python", script_path,
+        "--data_path", dataset,
+        "--save_path", outpath
+    ]
+    # 実行ディレクトリ
+    workdir = os.path.join("models", "Pi3")
+
+    # 推論実行
+    runtime, status, log = run_subprocess(cmd, workdir)
+
+    # 再構築結果のパス
+    model_path = os.path.join(outdir, "recon.ply")
 
     return outdir, runtime, status, log, model_path

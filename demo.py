@@ -1019,7 +1019,6 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
 
             # Pi3
             with gr.Tab(label=lang["vgg_tab"]["pi3"]["title"]) as pi3_tab:
-                gr.Markdown("# ※未実装")
                 pi3_sub1 = gr.Markdown(lang["vgg_tab"]["pi3"]["subtitle1"])
                 with gr.Accordion(label=lang["vgg_tab"]["pi3"]["option"]["title"], open=False) as pi3_option:
                     gr.Markdown()
@@ -1613,12 +1612,18 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         recon_vggt_btn.click(fn=methods.recon_vggt,
                         inputs=[dataset, outputsdir_state], 
                         outputs=[outdir_recon_vggt, runtime_recon_vggt, result_recon_vggt, log_recon_vggt, outmodel_vggt])
+        recon_vggtslam_btn.click(fn=methods.recon_vggtslam,
+                                 inputs=[dataset, outputsdir_state],
+                                 outputs=[outdir_recon_vggtslam, runtime_recon_vggtslam, result_recon_vggtslam, log_recon_vggtslam, outmodel_vggtslam])
         recon_stmvggt_btn.click(fn=methods.recon_stmvggt,
                         inputs=[dataset, outputsdir_state], 
                         outputs=[outdir_recon_stmvggt, runtime_recon_stmvggt, result_recon_stmvggt, log_recon_stmvggt, outmodel_stmvggt])
         recon_fastvggt_btn.click(fn=methods.recon_fastvggt,
                         inputs=[dataset, outputsdir_state], 
                         outputs=[outdir_recon_fastvggt, runtime_recon_fastvggt, result_recon_fastvggt, log_recon_fastvggt, outmodel_fastvggt])
+        recon_pi3_btn.click(fn=methods.recon_pi3,
+                            inputs=[dataset, outputsdir_state],
+                            outputs=[outdir_recon_pi3, runtime_recon_pi3, result_recon_pi3, log_recon_pi3, outmodel_pi3])
         
         # 点群出力（Nerfstudio）
         export_vnerf_btn.click(fn=methods.export_vnerf,
