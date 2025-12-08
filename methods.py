@@ -1,5 +1,4 @@
 import os
-import sys
 import glob
 import json
 import time
@@ -814,39 +813,34 @@ UniK3D
 # --- 再構築メソッド ---
 def recon_unik3d(dataset, outputs_dir):
     # 出力ディレクトリの作成
+    name = os.path.splitext(os.path.basename(dataset))[0]
     outdir = os.path.join(outputs_dir, "unik3d")
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    # データセットのパス
-    dataset = os.path.join(dataset, "images")
-
     # 再構築スクリプトパス
-    script_path = os.path.join("models", "UniK3D", "scripts", "infer.py")
-    # configファイルパス
-    config_path = os.path.join("models", "UniK3D", "configs", "eval", "vitl.json")
+    script_path = os.path.join("scripts", "infer.py")
 
     # 実行コマンド
     cmd = [
         "conda", "run", "-n", "UniK3D", "python", script_path,
         "--input", dataset, 
         "--output", outdir,
-        "--config-file", config_path,
+        "--config-file", "configs/eval/vitl.json",
         "--save",
         "--save-ply"
     ]
 
     # 実行ディレクトリ
-    workdir = "./"
+    workdir = os.path.join("models", "UniK3D")
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
 
     # 再構築結果のパス
-    #base_name = os.path.splitext(os.path.basename(dataset))[0]
-    #model_path = os.path.join(outdir, base_name, "mesh.glb") 
+    model_path = os.path.join(outdir, f"{name}.ply") 
 
-    return outdir, runtime, status, log
+    return outdir, runtime, status, log, model_path
 
 """
 VGGT

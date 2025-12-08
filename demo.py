@@ -937,7 +937,6 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
 
             # UniK3D
             with gr.Tab(label=lang["mds_tab"]["unik3d"]["title"]) as unik3d_tab:
-                gr.Markdown("# ※未実装")
                 unik3d_sub1 = gr.Markdown(lang["mds_tab"]["unik3d"]["subtitle1"])
                 unik3d_info1 = gr.Markdown(lang["mds_tab"]["unik3d"]["info1"])
                 img_unik3d = gr.Image(type="filepath", label=lang["mds_tab"]["unik3d"]["image"])
@@ -1610,7 +1609,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         outputs=[outdir_recon_moge, runtime_recon_moge, result_recon_moge, log_recon_moge, outmodel_moge])
         recon_unik3d_btn.click(fn=methods.recon_unik3d,
                         inputs=[img_unik3d, outputsdir_state], 
-                        outputs=[outdir_recon_unik3d, runtime_recon_unik3d, result_recon_unik3d, log_recon_unik3d])
+                        outputs=[outdir_recon_unik3d, runtime_recon_unik3d, result_recon_unik3d, log_recon_unik3d, outmodel_unik3d])
         recon_vggt_btn.click(fn=methods.recon_vggt,
                         inputs=[dataset, outputsdir_state], 
                         outputs=[outdir_recon_vggt, runtime_recon_vggt, result_recon_vggt, log_recon_vggt, outmodel_vggt])
