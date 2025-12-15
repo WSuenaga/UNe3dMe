@@ -93,6 +93,31 @@ def train_nerfstudio(dataset, outputs_dir, method_name, train_args=None):
 
     return outdir, runtime, status, log, gr.Column(visible=True)
 
+# --- ns-train呼び出しメソッド（slurm） ---
+def train_nerfstudio_slurm(dataset, outputs_dir, method_name, iter, port):
+    """
+    Nerfstudio モデルを学習する関数
+    """
+    name = os.path.basename(dataset)
+    outdir = os.path.join(outputs_dir, method_name, name)
+    os.makedirs(outdir, exist_ok=True)
+
+    # スクリプトパス
+    sbatch_script = os.path.join("scripts", "recon_nerfstudio.sh")
+
+    # データセットのパス
+    dataset =os.path.join(dataset, "colmap")
+
+    train_cmd = [
+        "sbatch", sbatch_script, method_name, outdir, iter, port, dataset
+    ]
+
+    workdir = "./"
+
+    runtime, status, log = run_subprocess(train_cmd, workdir)
+
+    return outdir, runtime, status, log, gr.Column(visible=True)
+
 # --- ns-export呼び出しメソッド ---
 def export_nerfstudio(dataset, outputs_dir, method_name, filetype, export_args=None):
     """
@@ -145,10 +170,15 @@ def render_nerfstudio():
 Vanilla-NeRF
 """
 # --- 再構築メソッド ---
-def recon_vnerf(dataset, out_dir, iter):
-    train_args = ["--max-num-iterations", f"{iter}",
-                  "--viewer.websocket-port-default", "7007"]
-    return train_nerfstudio(dataset, out_dir, "vanilla-nerf", train_args)
+def recon_vnerf(mode, dataset, out_dir, iter):
+    port = 7007
+    if mode == "local":
+        train_args = ["--max-num-iterations", f"{iter}",
+                    "--viewer.websocket-port-default", f"{port}"]
+        return train_nerfstudio(dataset, out_dir, "vanilla-nerf", train_args)
+    elif mode == "slurm":
+        return train_nerfstudio_slurm(dataset, out_dir, "vanilla-nerf", iter, port)
+    
 # --- 点群出力メソッド ---
 def export_vnerf(dataset, out_dir):
     export_args = ["--rgb-output-name", "rgb_fine", 
@@ -159,10 +189,15 @@ def export_vnerf(dataset, out_dir):
 Nerfacto
 """
 # --- 再構築メソッド ---
-def recon_nerfacto(dataset, out_dir, iter):
-    train_args = ["--max-num-iterations", f"{iter}",
-                  "--viewer.websocket-port-default", "7008"]
-    return train_nerfstudio(dataset, out_dir, "nerfacto-huge", train_args)
+def recon_nerfacto(mode, dataset, out_dir, iter):
+    port = 7008
+    if mode == "local":
+        train_args = ["--max-num-iterations", f"{iter}",
+                    "--viewer.websocket-port-default", f"{port}"]
+        return train_nerfstudio(dataset, out_dir, "nerfacto-huge", train_args)
+    elif mode == "slurm":
+        return train_nerfstudio_slurm(dataset, out_dir, "nerfacto-huge", iter, port)
+    
 # --- 点群出力メソッド ---
 def export_nerfacto(dataset, out_dir):
     export_args = ["--rgb-output-name", "rgb", 
@@ -173,10 +208,15 @@ def export_nerfacto(dataset, out_dir):
 mip-NeRF
 """
 # --- 再構築メソッド ---
-def recon_mipnerf(dataset, out_dir, iter):
-    train_args = ["--max-num-iterations", f"{iter}",
-                  "--viewer.websocket-port-default", "7009"]
-    return train_nerfstudio(dataset, out_dir, "mipnerf", train_args)
+def recon_mipnerf(mode, dataset, out_dir, iter):
+    port = 7009
+    if mode == "local":
+        train_args = ["--max-num-iterations", f"{iter}",
+                    "--viewer.websocket-port-default", f"{port}"]
+        return train_nerfstudio(dataset, out_dir, "mipnerf", train_args)
+    elif mode == "slurm":
+        return train_nerfstudio_slurm(dataset, out_dir, "mipnerf", iter, port)
+    
 # --- 点群出力メソッド ---
 def export_mipnerf(dataset, out_dir):
     export_args = ["--rgb-output-name", "rgb_fine", 
@@ -187,10 +227,15 @@ def export_mipnerf(dataset, out_dir):
 SeaThru-NeRF
 """
 # --- 再構築メソッド ---
-def recon_stnerf(dataset, out_dir, iter):
-    train_args = ["--max-num-iterations", f"{iter}",
-                  "--viewer.websocket-port-default", "7010"]
-    return train_nerfstudio(dataset, out_dir, "seathru-nerf", train_args)
+def recon_stnerf(mode, dataset, out_dir, iter):
+    port = 7010
+    if mode == "local":
+        train_args = ["--max-num-iterations", f"{iter}",
+                    "--viewer.websocket-port-default", f"{port}"]
+        return train_nerfstudio(dataset, out_dir, "seathru-nerf", train_args)
+    elif mode == "slurm":
+        return train_nerfstudio_slurm(dataset, out_dir, "seathru-nerf", iter, port)
+
 # --- 点群出力メソッド ---
 def export_stnerf(dataset, out_dir):
     export_args = ["--rgb-output-name", "rgb", 
@@ -201,8 +246,8 @@ def export_stnerf(dataset, out_dir):
 Vanilla-GS
 """
 # --- 再構築メソッド--- 
-def recon_vgs(dataset, outputs_dir, sh_degree, data_device, lambde_dsiim, iterations,
-             test_iteraion, save_iteration, 
+def recon_vgs(mode, dataset, outputs_dir, sh_degree, data_device, lambde_dsiim, iterations,
+             test_iteraion, save_iter, 
              feature_lr, opacity_lr, scaling_lr, rotation_lr, position_lr_init,
              position_lr_final, position_lr_delay_mult, densify_from_iter,
              densify_until_iter, densify_grad_threshold, densification_interval,
@@ -213,28 +258,43 @@ def recon_vgs(dataset, outputs_dir, sh_degree, data_device, lambde_dsiim, iterat
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    # 再構築スクリプトパス
-    script_path = "train.py"
-
     # データセットのパス
     dataset =os.path.join(dataset, "colmap")
-    # 実行コマンド
-    cmd = [
-        "conda", "run", "-n", "gaussian_splatting", "python", script_path,
-        "--source_path", dataset,
-        "--model_path", outdir,
-        "--save_iterations", str(save_iteration),
-        "--eval"
-    ]
 
-    # 実行ディレクトリ
-    workdir = os.path.join("models", "gaussian-splatting")
+    if mode=="local":
+        # 再構築スクリプトパス
+        recon_script = "train.py"
+
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "gaussian_splatting", "python", recon_script,
+            "--source_path", dataset,
+            "--model_path", outdir,
+            "--save_iterations", str(save_iter),
+            "--eval"
+        ]
+
+        # 実行ディレクトリ
+        workdir = os.path.join("models", "gaussian-splatting")
+    elif mode=="slurm":
+
+        # sbatchスクリプトパス
+        sbatch_script = os.path.join("scripts", "recon_vanillags.sh")
+
+        # 再構築スクリプトパス
+        recon_script = os.path.join("models", "gaussian-splatting", "train.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, save_iter]
+
+        # 実行ディレクトリ
+        workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
 
     # 再構築結果のパス
-    model_path = os.path.join(outdir, "point_cloud", f"iteration_{save_iteration}", "point_cloud.ply")
+    model_path = os.path.join(outdir, "point_cloud", f"iteration_{save_iter}", "point_cloud.ply")
 
     return outdir, runtime, status, log, model_path, gr.Column(visible=True)
 
@@ -323,35 +383,47 @@ def render_eval_3dgs(model_path, skip_train, skip_test, iteration=None):
 Mip-Splatting
 """
 # --- 再構築メソッド ---
-def recon_mipSplatting(dataset, outputs_dir, save_iteration):
+def recon_mipSplatting(mode, dataset, outputs_dir, save_iter):
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "mip-splatting", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    # 再構築スクリプトパス
-    script_path ="train.py"
-
     # データセットのパス
     dataset =os.path.join(dataset, "colmap")
 
-    # 実行コマンド
-    cmd = [
-        "conda", "run", "-n", "mip-splatting", "python", script_path,
-        "-s", dataset,
-        "-m", outdir,
-        "--save_iterations", str(save_iteration)
-    ]
+    if mode=="local":
+        # 再構築スクリプトパス
+        recon_script ="train.py"
 
-    # 実行ディレクトリ
-    workdir = os.path.join("models", "mip-splatting")
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "mip-splatting", "python", recon_script,
+            "-s", dataset,
+            "-m", outdir,
+            "--save_iterations", str(save_iter)]
+        
+        # 実行ディレクトリ
+        workdir = os.path.join("models", "mip-splatting")
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_mipsplatting.sh")
+
+        # 再構築スクリプトパス
+        recon_script = os.path.join("models", "mip-splatting", "train.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, save_iter]
+
+        # 実行ディレクトリ
+        workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
 
     # 再構築結果のパス
-    model_path = os.path.join(outdir, "point_cloud", f"iteration_{save_iteration}", "point_cloud.ply")
+    model_path = os.path.join(outdir, "point_cloud", f"iteration_{save_iter}", "point_cloud.ply")
 
     return outdir, runtime, status, log, model_path
 
@@ -359,10 +431,15 @@ def recon_mipSplatting(dataset, outputs_dir, save_iteration):
 Splatfacto
 """
 # --- 再構築メソッド ---
-def recon_sfacto(dataset, out_dir, iter):
-    train_args = ["--max-num-iterations", f"{iter}",
-                  "--viewer.websocket-port-default", "7011"]
-    return train_nerfstudio(dataset, out_dir, "splatfacto-big", train_args)
+def recon_sfacto(mode, dataset, out_dir, iter):
+    port = 7011
+    if mode == "local":
+        train_args = ["--max-num-iterations", f"{iter}",
+                    "--viewer.websocket-port-default", f"{port}"]
+        return train_nerfstudio(dataset, out_dir, "splatfacto-big", train_args)
+    elif mode == "slurm":
+        return train_nerfstudio_slurm(dataset, out_dir, "splatfacto-big", iter, port)
+    
 # --- 点群出力メソッド ---
 def export_sfacto(dataset, out_dir):
     export_args = ["--rgb-output-name", "rgb", 
@@ -373,35 +450,48 @@ def export_sfacto(dataset, out_dir):
 4D-Gaussians
 """
 # --- 再構築メソッド ---
-def recon_4dGaussians(dataset, outputs_dir, save_iteration):
+def recon_4dGaussians(mode, dataset, outputs_dir, save_iter):
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "4D-Gaussians", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    # 再構築スクリプトパス
-    script_path ="train.py"
-
     # データセットのパス
     dataset =os.path.join(dataset, "colmap")
 
-    # 実行コマンド
-    cmd = [
-        "conda", "run", "-n", "Gaussians4D", "python", script_path,
-        "--source_path", dataset,
-        "--model_path", outdir,
-        "--save_iterations", str(save_iteration)
-    ]
+    if mode=="local":
+        # 再構築スクリプトパス
+        recon_script ="train.py"
 
-    # 実行ディレクトリ
-    workdir = os.path.join("models", "4DGaussians")
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "Gaussians4D", "python", recon_script,
+            "--source_path", dataset,
+            "--model_path", outdir,
+            "--save_iterations", str(save_iter)
+        ]
+
+        # 実行ディレクトリ
+        workdir = os.path.join("models", "4DGaussians")
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_4dgaussians.sh")
+
+        # 再構築スクリプトパス
+        recon_script = os.path.join("models", "4DGaussians", "train.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, save_iter]
+
+        # 実行ディレクトリ
+        workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
 
     # 再構築結果のパス
-    model_path = os.path.join(outdir, "point_cloud", f"iteration_{save_iteration}", "point_cloud.ply")
+    model_path = os.path.join(outdir, "point_cloud", f"iteration_{save_iter}", "point_cloud.ply")
 
     return outdir, runtime, status, log, model_path
 
@@ -409,7 +499,7 @@ def recon_4dGaussians(dataset, outputs_dir, save_iteration):
 DUSt3R
 """
 # --- 再構築メソッド ---
-def recon_dust3r(dataset, outputs_dir, schedule, niter, min_conf_thr, as_pointcloud, mask_sky, 
+def recon_dust3r(mode, dataset, outputs_dir, schedule, niter, min_conf_thr, as_pointcloud, mask_sky, 
                clean_depth, transparent_cams, cam_size, scenegraph_type, winsize, refid):
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
@@ -426,36 +516,49 @@ def recon_dust3r(dataset, outputs_dir, schedule, niter, min_conf_thr, as_pointcl
     image_size = 512
     device = "cuda"
 
-    # 再構築スクリプト
-    script_path = os.path.join("src", "recon_dust3r.py")
+    if mode=="local":
+        # 再構築スクリプト
+        recon_script = os.path.join("scripts", "recon_dust3r.py")
 
-    # 実行コマンド
-    cmd = [
-        "conda", "run", "-n", "dust3r", "python", script_path,
-        "--model_name", model_name,
-        "--device", device,
-        "--outdir", outdir,
-        "--image_size", str(image_size),
-        "--filelist", dataset,
-        "--schedule", schedule,
-        "--niter", str(niter),
-        "--min_conf_thr", str(min_conf_thr),
-        "--cam_size", str(cam_size),
-        "--scenegraph_type", scenegraph_type,
-        "--winsize", str(winsize),
-        "--refid", str(refid),
-    ]
-    if as_pointcloud:
-        cmd.append("--as_pointcloud")
-    if mask_sky:
-        cmd.append("--mask_sky")
-    if clean_depth:
-        cmd.append("--clean_depth")
-    if transparent_cams:
-        cmd.append("--transparent_cams")
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "dust3r", "python", recon_script,
+            "--model_name", model_name,
+            "--device", device,
+            "--outdir", outdir,
+            "--image_size", str(image_size),
+            "--filelist", dataset,
+            "--schedule", schedule,
+            "--niter", str(niter),
+            "--min_conf_thr", str(min_conf_thr),
+            "--cam_size", str(cam_size),
+            "--scenegraph_type", scenegraph_type,
+            "--winsize", str(winsize),
+            "--refid", str(refid),
+        ]
+        if as_pointcloud:
+            cmd.append("--as_pointcloud")
+        if mask_sky:
+            cmd.append("--mask_sky")
+        if clean_depth:
+            cmd.append("--clean_depth")
+        if transparent_cams:
+            cmd.append("--transparent_cams")
 
-    # 実行ディレクトリ
-    workdir = "./"
+        # 実行ディレクトリ
+        workdir = "./"
+    elif mode=="slurm":
+        # sbatchスクリプトパス
+        sbatch_script = os.path.join("scripts", "recon_dust3r.sh")
+
+        # 再構築スクリプト
+        recon_script = os.path.join("scripts", "recon_dust3r.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, recon_script, model_name, device, outdir, image_size, dataset]
+
+        # 実行ディレクトリ
+        workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -471,7 +574,7 @@ def recon_dust3r(dataset, outputs_dir, schedule, niter, min_conf_thr, as_pointcl
 MASt3R
 """
 # --- 再構築メソッド ---
-def recon_mast3r(dataset, outputs_dir):
+def recon_mast3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "mast3r", name)
@@ -486,20 +589,33 @@ def recon_mast3r(dataset, outputs_dir):
     # 個々の画像のパスのリストを作成
     filelist = get_imagelist(dataset)
 
-    # 再構築スクリプトパス
-    script_path = os.path.join("src", "recon_mast3r.py")
+    if mode=="local":
+        # 再構築スクリプトパス
+        recon_script = os.path.join("scripts", "recon_mast3r.py")
 
-    # 実行コマンド
-    cmd = [
-        "conda", "run", "-n", "mast3r", "python", script_path,
-        "--filelist", str(filelist),
-        "--outdir", outdir,
-        "--model_name", model,
-        "--as_pointcloud"
-    ]
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "mast3r", "python", recon_script,
+            "--filelist", str(filelist),
+            "--outdir", outdir,
+            "--model_name", model,
+            "--as_pointcloud"
+        ]
 
-    # 実行ディレクトリ
-    workdir = "./"
+        # 実行ディレクトリ
+        workdir = "./"
+    elif mode=="slurm":
+        # sbatchスクリプトパス
+        sbatch_script = os.path.join("scripts", "recon_mast3r.sh")
+
+        # 再構築スクリプトパス
+        recon_script = os.path.join("scripts", "recon_mast3r.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, recon_script, filelist, outdir, model]
+
+        # 実行ディレクトリ
+        workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -513,7 +629,7 @@ def recon_mast3r(dataset, outputs_dir):
 MonST3R
 """
 # --- 再構築メソッド ---
-def recon_monst3r(dataset, outputs_dir):
+def recon_monst3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "mast3r")
@@ -523,19 +639,32 @@ def recon_monst3r(dataset, outputs_dir):
     # データセットのパス
     dataset = os.path.join(dataset, "images")
 
-    # 再構築スクリプトパス
-    script_path ="demo.py"
+    if mode=="local":
+        # 再構築スクリプトパス
+        recon_script ="demo.py"
 
-    # 実行コマンド
-    cmd = [
-        "conda", "run", "-n", "monst3r", "python", script_path,
-        "--input_dir", dataset,
-        "--output_dir", outdir,
-        "--seq_name", name
-    ]
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "monst3r", "python", recon_script,
+            "--input_dir", dataset,
+            "--output_dir", outdir,
+            "--seq_name", name
+        ]
 
-    # 実行ディレクトリ
-    workdir = os.path.join("models", "monst3r")
+        # 実行ディレクトリ
+        workdir = os.path.join("models", "monst3r")
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_mast3r.sh")
+
+        # 再構築スクリプトパス
+        recon_script = os.path.join("models", "monst3r", "demo.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, name]
+
+        # 実行ディレクトリ
+        workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -549,7 +678,7 @@ def recon_monst3r(dataset, outputs_dir):
 Easi3R
 """
 # --- 再構築メソッド ---
-def recon_easi3r(dataset, outputs_dir):
+def recon_easi3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "easi3r")
@@ -559,19 +688,32 @@ def recon_easi3r(dataset, outputs_dir):
     # データセットのパス
     dataset = os.path.join(dataset, "images")
 
-    # 再構築スクリプトパス
-    script_path ="demo.py"
+    if mode=="local":
+        # 再構築スクリプトパス
+        recon_script ="demo.py"
 
-    # 実行コマンド
-    cmd = [
-        "conda", "run", "-n", "easi3r", "python", script_path,
-        "--input_dir", dataset,
-        "--output_dir", outdir,
-        "--seq_name", name
-    ]
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "easi3r", "python", recon_script,
+            "--input_dir", dataset,
+            "--output_dir", outdir,
+            "--seq_name", name
+        ]
 
-    # 実行ディレクトリ
-    workdir = os.path.join("models", "Easi3R")
+        # 実行ディレクトリ
+        workdir = os.path.join("models", "Easi3R")
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_easi3r.sh")
+
+        # 再構築スクリプトパス
+        recon_script = os.path.join("models", "Easi3R", "demo.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, name]
+
+        # 実行ディレクトリ
+        workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -585,7 +727,7 @@ def recon_easi3r(dataset, outputs_dir):
 MUSt3R
 """
 # --- 再構築メソッド ---
-def recon_must3r(dataset, outputs_dir):
+def recon_must3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "must3r", name)
@@ -595,22 +737,35 @@ def recon_must3r(dataset, outputs_dir):
     # データセットのパス
     dataset = os.path.join(dataset, "images")
 
-    # 再構築スクリプトパス
-    script_path ="get_reconstruction.py"
+    if mode=="local":
+        # 再構築スクリプトパス
+        recon_script ="get_reconstruction.py"
 
-    # 実行コマンド
-    cmd = [
-        "micromamba", "run", "-n", "must3r", "python", script_path,
-        "--image_dir", dataset,
-        "--output", outdir,
-        "--weights", "ckpt/MUSt3R_512.pth",
-        "--retrieval", "ckpt/MUSt3R_512_retrieval_trainingfree.pth",
-        "--image_size", "512",
-        "--file_type", "glb"
-    ]
+        # 実行コマンド
+        cmd = [
+            "micromamba", "run", "-n", "must3r", "python", recon_script,
+            "--image_dir", dataset,
+            "--output", outdir,
+            "--weights", "ckpt/MUSt3R_512.pth",
+            "--retrieval", "ckpt/MUSt3R_512_retrieval_trainingfree.pth",
+            "--image_size", "512",
+            "--file_type", "glb"
+        ]
 
-    # 実行ディレクトリ
-    workdir = os.path.join("models", "must3r")
+        # 実行ディレクトリ
+        workdir = os.path.join("models", "must3r")
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_must3r.sh")
+
+        # 再構築スクリプトパス
+        recon_script = os.path.join("models", "must3r", "get_reconstruction.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir]
+
+        # 実行ディレクトリ
+        workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -624,7 +779,7 @@ def recon_must3r(dataset, outputs_dir):
 Fast3R
 """
 # --- 再構築メソッド ---
-def recon_fast3r(dataset, outputs_dir):
+def recon_fast3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "fast3r", name)
@@ -634,18 +789,31 @@ def recon_fast3r(dataset, outputs_dir):
     # データセットのパス
     dataset = os.path.join(dataset, "images")
 
-    # 再構築スクリプトパス
-    script_path = os.path.join("src", "recon_fast3r.py")
+    if mode=="local":
+        # 再構築スクリプトパス
+        recon_script = os.path.join("scripts", "recon_fast3r.py")
 
-    # 実行コマンド
-    cmd = [
-        "conda", "run", "-n", "fast3r", "python", script_path,
-        "--inpdir", dataset,
-        "--outdir", outdir,
-    ]
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "fast3r", "python", recon_script,
+            "--inpdir", dataset,
+            "--outdir", outdir,
+        ]
 
-    # 実行ディレクトリ
-    workdir = "./"
+        # 実行ディレクトリ
+        workdir = "./"
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_fast3r.sh")
+
+        # 再構築スクリプトパス
+        recon_script = os.path.join("scripts", "recon_fast3r.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir]
+
+        # 実行ディレクトリ
+        workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -659,25 +827,38 @@ def recon_fast3r(dataset, outputs_dir):
 Splatt3R
 """
 # --- 再構築メソッド ---
-def recon_splatt3r(dataset, outputs_dir):
+def recon_splatt3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
     name = os.path.splitext(os.path.basename(dataset))[0]
     outdir = os.path.join(outputs_dir, "splatt3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    # 再構築スクリプトパス
-    script_path = os.path.join("src", "recon_splatt3r.py")
+    if mode=="local":
+        # 再構築スクリプトパス
+        recon_script = os.path.join("scripts", "recon_splatt3r.py")
 
-    # 実行コマンド
-    cmd = [
-        "conda", "run", "-n", "splatt3r", "python", script_path,
-        "--image1", dataset, 
-        "--outdir", outdir
-    ]
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "splatt3r", "python", recon_script,
+            "--image1", dataset, 
+            "--outdir", outdir
+        ]
 
-    # 実行ディレクトリ
-    workdir = "./"
+        # 実行ディレクトリ
+        workdir = "./"
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_splatt3r.sh")
+
+        # 再構築スクリプトパス
+        recon_script = os.path.join("scripts", "recon_splatt3r.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir]
+
+        # 実行ディレクトリ
+        workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -691,7 +872,7 @@ def recon_splatt3r(dataset, outputs_dir):
 CUT3R
 """
 # --- 再構築メソッド ---
-def recon_cut3r(dataset, outputs_dir):
+def recon_cut3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "cutt3r", name)
@@ -701,25 +882,38 @@ def recon_cut3r(dataset, outputs_dir):
     # データセットのパス
     dataset = os.path.join(dataset, "images")
 
-    # 再構築スクリプトパス
-    script_path = os.path.join("src", "recon_cut3r.py")
-
     # 使用モデルパス
     model_path = os.path.join("models", "CUT3R", "src", "cut3r_512_dpt_4_64.pth")
 
-    # 実行コマンド
-    cmd = [
-        "conda", "run", "-n", "cut3r", "python", script_path,
-        "--inpdir", dataset, 
-        "--outdir", outdir,
-        "--model_path", model_path,
-        "--image_size", "512",
-        "--vis_threshold", "1.5",
-        "--device", "cuda"
-    ]
+    if mode=="local":
+        # 再構築スクリプトパス
+        recon_script = os.path.join("scripts", "recon_cut3r.py")
 
-    # 実行ディレクトリ
-    workdir = "./"
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "cut3r", "python", recon_script,
+            "--inpdir", dataset, 
+            "--outdir", outdir,
+            "--model_path", model_path,
+            "--image_size", "512",
+            "--vis_threshold", "1.5",
+            "--device", "cuda"
+        ]
+
+        # 実行ディレクトリ
+        workdir = "./"
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_cut3r.sh")
+
+        # 再構築スクリプトパス
+        recon_script = os.path.join("scripts", "recon_cut3r.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, model_path]
+
+        # 実行ディレクトリ
+        workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -733,7 +927,7 @@ def recon_cut3r(dataset, outputs_dir):
 WinT3R
 """
 # --- 再構築メソッド ---
-def recon_wint3r(dataset, outputs_dir):
+def recon_wint3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "wint3r", name)
@@ -742,24 +936,37 @@ def recon_wint3r(dataset, outputs_dir):
 
     # データセットのパス
     dataset = os.path.join(dataset, "images")
-    
-    # 再構築スクリプトパス
-    script_path = "recon.py"
 
     # checkpointパス
     ckpt_path = os.path.join("checkpoints", "pytorch_model.bin")
 
-    # 実行コマンド
-    cmd = [
-        "conda", "run", "-n", "wint3r", "python", script_path,
-        "--data_path", dataset, 
-        "--save_dir", outdir,
-        "--inference_mode", "offline",
-        "--ckpt", ckpt_path
-    ]
+    if mode=="local":
+        # 再構築スクリプトパス
+        recon_script = "recon.py"
 
-    # 実行ディレクトリ
-    workdir = os.path.join("models", "WinT3R")
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "wint3r", "python", recon_script,
+            "--data_path", dataset, 
+            "--save_dir", outdir,
+            "--inference_mode", "offline",
+            "--ckpt", ckpt_path
+        ]
+
+        # 実行ディレクトリ
+        workdir = os.path.join("models", "WinT3R")
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_wint3r.sh")
+
+        # 再構築スクリプトパス
+        recon_script = os.path.join("models", "WinT3R", "recon.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, ckpt_path]
+
+        # 実行ディレクトリ
+        workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -773,7 +980,7 @@ def recon_wint3r(dataset, outputs_dir):
 MoGe
 """
 # --- 再構築メソッド ---
-def recon_moge(dataset, outputs_dir, img_type):
+def recon_moge(mode, dataset, outputs_dir, img_type):
     # 出力ディレクトリの作成
     name = os.path.splitext(os.path.basename(dataset))[0]
     outdir = os.path.join(outputs_dir, "moge")
@@ -782,22 +989,32 @@ def recon_moge(dataset, outputs_dir, img_type):
 
     # 再構築スクリプトパス
     if img_type=="標準画像" or img_type=="Standard Image":
-        script_path = os.path.join("models", "MoGe", "moge", "scripts", "infer.py")
+        recon_script = os.path.join("models", "MoGe", "moge", "scripts", "infer.py")
     elif img_type=="パノラマ画像" or img_type=="Panorama Image":
-        script_path = os.path.join("models", "MoGe", "moge", "scripts", "infer_panorama.py")
+        recon_script = os.path.join("models", "MoGe", "moge", "scripts", "infer_panorama.py")
 
-    # 実行コマンド
-    cmd = [
-        "conda", "run", "-n", "MoGe", "python", script_path,
-        "-i", dataset, 
-        "-o", outdir,
-        "--maps",
-        "--glb",
-        "--ply"
-    ]
+    if mode=="local":
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "MoGe", "python", recon_script,
+            "-i", dataset, 
+            "-o", outdir,
+            "--maps",
+            "--glb",
+            "--ply"
+        ]
 
-    # 実行ディレクトリ
-    workdir = "./"
+        # 実行ディレクトリ
+        workdir = "./"
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_moge.sh")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir]
+
+        # 実行ディレクトリ
+        workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -811,28 +1028,41 @@ def recon_moge(dataset, outputs_dir, img_type):
 UniK3D
 """
 # --- 再構築メソッド ---
-def recon_unik3d(dataset, outputs_dir):
+def recon_unik3d(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
     name = os.path.splitext(os.path.basename(dataset))[0]
     outdir = os.path.join(outputs_dir, "unik3d")
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    # 再構築スクリプトパス
-    script_path = os.path.join("scripts", "infer.py")
+    if mode=="local":
+        # 再構築スクリプトパス
+        recon_script = os.path.join("scripts", "infer.py")
 
-    # 実行コマンド
-    cmd = [
-        "conda", "run", "-n", "UniK3D", "python", script_path,
-        "--input", dataset, 
-        "--output", outdir,
-        "--config-file", "configs/eval/vitl.json",
-        "--save",
-        "--save-ply"
-    ]
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "UniK3D", "python", recon_script,
+            "--input", dataset, 
+            "--output", outdir,
+            "--config-file", "configs/eval/vitl.json",
+            "--save",
+            "--save-ply"
+        ]
 
-    # 実行ディレクトリ
-    workdir = os.path.join("models", "UniK3D")
+        # 実行ディレクトリ
+        workdir = os.path.join("models", "UniK3D")
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_unik3d.sh")
+
+        # 再構築スクリプトパス
+        recon_script = os.path.join("models", "UniK3D", "scripts", "infer.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir]
+
+        # 実行ディレクトリ
+        workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -846,30 +1076,43 @@ def recon_unik3d(dataset, outputs_dir):
 VGGT
 """
 # --- 再構築メソッド ---
-def recon_vggt(dataset, outputs_dir):
+def recon_vggt(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "vggt", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    # 再構築スクリプトパス
-    script_path = os.path.join("src", "recon_vggt.py")
+    if mode=="local":
+        # 再構築スクリプトパス
+        recon_script = os.path.join("scripts", "recon_vggt.py")
 
-    # 実行コマンド
-    cmd = [
-        "conda", "run", "-n", "dust3r", "python", script_path,
-        "--image-dir", dataset,
-        "--out-dir", outdir,
-        "--conf-thres", "3.0",
-        "--frame-filter", "All",
-        "--prediction-mode", "Pointmap Regression",
-        "--mode", "crop",
-        "--device", "cuda",
-        "--show-cam"
-    ]
-    # 実行ディレクトリ
-    workdir = "./"
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "vggt", "python", recon_script,
+            "--image-dir", dataset,
+            "--out-dir", outdir,
+            "--conf-thres", "3.0",
+            "--frame-filter", "All",
+            "--prediction-mode", "Pointmap Regression",
+            "--mode", "crop",
+            "--device", "cuda",
+            "--show-cam"
+        ]
+        # 実行ディレクトリ
+        workdir = "./"
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_vggt.sh")
+
+        # 再構築スクリプトパス
+        recon_script = os.path.join("scripts", "recon_vggt.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir]
+
+        # 実行ディレクトリ
+        workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -893,27 +1136,40 @@ def recon_vggsfm():
 VGGT-SLAM
 """
 # --- 再構築メソッド ---
-def recon_vggtslam(dataset, outputs_dir):
+def recon_vggtslam(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "vggt-slam", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    # データセットのパス
-    dataset = os.path.join(dataset, "images")
+    if mode=="local":
+        # データセットのパス
+        dataset = os.path.join(dataset, "images")
 
-    # 再構築スクリプトパス
-    script_path = "main.py"
+        # 再構築スクリプトパス
+        script_path = "main.py"
 
-    # 実行コマンド
-    cmd = [
-        "conda", "run", "-n", "vggt-slam", "python", script_path,
-        "--image_folder", dataset
-    ]
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "vggt-slam", "python", script_path,
+            "--image_folder", dataset
+        ]
 
-    # 実行ディレクトリ
-    workdir = os.path.join("models", "VGGT-SLAM")
+        # 実行ディレクトリ
+        workdir = os.path.join("models", "VGGT-SLAM")
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_vggtslam.sh")
+
+        # 再構築スクリプトパス
+        recon_script = os.path.join("models", "VGGT-SLAM", "main.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, recon_script, dataset]
+
+        # 実行ディレクトリ
+        workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -927,25 +1183,38 @@ def recon_vggtslam(dataset, outputs_dir):
 StreamVGGT
 """
 # --- 再構築メソッド ---
-def recon_stmvggt(dataset, outputs_dir):
+def recon_stmvggt(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "stmvggt", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    # 再構築スクリプトパス
-    script_path = os.path.join("src", "recon_streamvggt.py")
+    if mode=="local":
+        # 再構築スクリプトパス
+        recon_script = os.path.join("scripts", "recon_streamvggt.py")
 
-    # 実行コマンド
-    cmd = [
-        "conda", "run", "-n", "streamvggt", "python", script_path,
-        "--input_dir", dataset,
-        "--output_dir", outdir,
-        "--show_cam"
-    ]
-    # 実行ディレクトリ
-    workdir = "./"
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "streamvggt", "python", recon_script,
+            "--input_dir", dataset,
+            "--output_dir", outdir,
+            "--show_cam"
+        ]
+        # 実行ディレクトリ
+        workdir = "./"
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_streamvggt.sh")
+
+        # 再構築スクリプトパス
+        recon_script = os.path.join("scripts", "recon_streamvggt.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir]
+
+        # 実行ディレクトリ
+        workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -959,31 +1228,46 @@ def recon_stmvggt(dataset, outputs_dir):
 FastVGGT
 """
 # --- 再構築メソッド ---
-def recon_fastvggt(dataset, outputs_dir):
+def recon_fastvggt(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "fastvggt", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    # 再構築スクリプトパス
-    script_path = os.path.join("eval", "eval_custom.py")
-
+    # データセット
     dataset = os.path.join(dataset, "images")
 
     # check pointのパス
     ckpt_path = os.path.join("ckpt", "model_tracker_fixed_e20.pt")
 
-    # 実行コマンド
-    cmd = [
-        "conda", "run", "-n", "fastvggt", "python", script_path,
-        "--data_path", dataset,
-        "--output_path", outdir,
-        "--ckpt_path", ckpt_path,
-        "--plot"
-    ]
-    # 実行ディレクトリ
-    workdir = os.path.join("models", "FastVGGT")
+    if mode=="local":
+    # 再構築スクリプトパス
+        recon_script = os.path.join("eval", "eval_custom.py")
+
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "fastvggt", "python", recon_script,
+            "--data_path", dataset,
+            "--output_path", outdir,
+            "--ckpt_path", ckpt_path,
+            "--plot"
+        ]
+
+        # 実行ディレクトリ
+        workdir = os.path.join("models", "FastVGGT")
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_fastvggt.sh")
+
+        # 再構築スクリプトパス
+        recon_script = os.path.join("models", "FastVGGT", "eval", "eval_custom.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, ckpt_path]
+
+        # 実行ディレクトリ
+        workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)
@@ -997,30 +1281,44 @@ def recon_fastvggt(dataset, outputs_dir):
 Pi3
 """
 # --- 再構築メソッド ---
-def recon_pi3(dataset, outputs_dir):
+def recon_pi3(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "pi3", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    # 再構築スクリプトパス
-    script_path = "example.py"
-
     # データセットパス
     dataset = os.path.join(dataset, "images")
 
     # 出力パス
-    outpath = os.path.join(outdir, "recon.ply")
+    outdir = os.path.join(outdir, "recon.ply")
 
-    # 実行コマンド
-    cmd = [
-        "conda", "run", "-n", "Pi3", "python", script_path,
-        "--data_path", dataset,
-        "--save_path", outpath
-    ]
-    # 実行ディレクトリ
-    workdir = os.path.join("models", "Pi3")
+    if mode=="local":
+        # 再構築スクリプトパス
+        recon_script = "example.py"
+
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "Pi3", "python", recon_script,
+            "--data_path", dataset,
+            "--save_path", outdir
+        ]
+
+        # 実行ディレクトリ
+        workdir = os.path.join("models", "Pi3")
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_pi3.sh")
+
+        # 再構築スクリプトパス
+        recon_script = os.path.join("models", "Pi3", "example.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir]
+
+        # 実行ディレクトリ
+        workdir = "./"
 
     # 推論実行
     runtime, status, log = run_subprocess(cmd, workdir)

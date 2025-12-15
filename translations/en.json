@@ -73,6 +73,7 @@
       "subtitle2": "# 2. Training",
       "option": {
         "title": "⚙️Options",
+        "exe_mode": "Execution Environment",
         "iter": "Total Iterations"
       },
       "recon_btn": "🚀Start Training",
@@ -101,6 +102,7 @@
       "subtitle2": "# 2. Training",
       "option": {
         "title": "⚙️Options",
+        "exe_mode": "Execution Environment",
         "iter": "Total Iterations"
       },
       "recon_btn": "🚀Start Training",
@@ -129,6 +131,7 @@
       "subtitle2": "# 2. Training",
       "option": {
         "title": "⚙️Options",
+        "exe_mode": "Execution Environment",
         "iter": "Total Iterations"
       },
       "recon_btn": "🚀Start Training",
@@ -157,6 +160,7 @@
       "subtitle2": "# 2. Training",
       "option": {
         "title": "⚙️Options",
+        "exe_mode": "Execution Environment",
         "iter": "Total Iterations"
       },
       "recon_btn": "🚀Start Training",
@@ -188,7 +192,8 @@
     "ex_dataset": "📂Select Dataset",
     "subtitle2": "# 2. Training",
     "option": {
-      "title": "⚙️Options"
+      "title": "⚙️Options",
+      "exe_mode": "Execution Environment"
       },
     "recon_btn": "🚀Start Training",
     "outdir_recon": "📁Output Directory",
@@ -216,6 +221,7 @@
     "subtitle2": "# 2. Training",
     "option": {
       "title": "⚙️Options",
+      "exe_mode": "Execution Environment",
       "save_iter": "Iteration number to save the model"
       },
     "recon_btn": "🚀Start Training",
@@ -237,6 +243,7 @@
     "subtitle2": "# 2. Training",
     "option": {
       "title": "⚙️Options",
+      "exe_mode": "Execution Environment",
       "iter": "Total Iterations"
       },
     "recon_btn": "🚀Start Training",
@@ -265,6 +272,7 @@
     "subtitle2": "# 2. Training",
     "option": {
       "title": "⚙️Options",
+      "exe_mode": "Execution Environment",
       "save_iter": "Iteration number to save the model"
       },
     "recon_btn": "🚀Start Training",
@@ -283,7 +291,8 @@
       "title": "DUSt3R",
       "subtitle1": "# 1. Inference",
       "option": {
-        "title": "⚙️Options"
+        "title": "⚙️Options",
+        "exe_mode": "Execution Environment"
       },
       "recon_btn": "🚀Run Inference",
       "outdir_recon": "📁Output Directory",
@@ -298,7 +307,8 @@
       "title": "MASt3R",
       "subtitle1": "# 1. Inference",
       "option": {
-        "title": "⚙️Options"
+        "title": "⚙️Options",
+        "exe_mode": "Execution Environment"
       },
       "recon_btn": "🚀Run Inference",
       "outdir_recon": "📁Output Directory",
@@ -312,7 +322,8 @@
       "title": "MonST3R",
       "subtitle1": "# 1. Inference",
       "option": {
-        "title": "⚙️Options"
+        "title": "⚙️Options",
+        "exe_mode": "Execution Environment"
       },
       "recon_btn": "🚀Run Inference",
       "outdir_recon": "📁Output Directory",
@@ -327,7 +338,8 @@
       "subtitle1": "# 1. Inference",
       "info1": "- Inference may fail if the number of input images is small.",
       "option": {
-        "title": "⚙️Options"
+        "title": "⚙️Options",
+        "exe_mode": "Execution Environment"
       },
       "recon_btn": "🚀Run Inference",
       "outdir_recon": "📁Output Directory",
@@ -341,7 +353,8 @@
       "title": "MUSt3R",
       "subtitle1": "# 1. Inference",
       "option": {
-        "title": "⚙️Options"
+        "title": "⚙️Options",
+        "exe_mode": "Execution Environment"
       },
       "recon_btn": "🚀Run Inference",
       "outdir_recon": "📁Output Directory",
@@ -355,7 +368,8 @@
       "title": "Fast3R",
       "subtitle1": "# 1. Inference",
       "option": {
-        "title": "⚙️Options"
+        "title": "⚙️Options",
+        "exe_mode": "Execution Environment"
       },
       "recon_btn": "🚀Run Inference",
       "outdir_recon": "📁Output Directory",
@@ -372,7 +386,8 @@
       "image": "📷Select a Single Image",
       "subtitle2": "# 2. Inference",
       "option": {
-        "title": "⚙️Options"
+        "title": "⚙️Options",
+        "exe_mode": "Execution Environment"
       },
       "recon_btn": "🚀Run Inference",
       "outdir_recon": "📁Output Directory",
@@ -386,7 +401,8 @@
       "title": "CUT3R",
       "subtitle1": "# 1. Inference",
       "option": {
-        "title": "⚙️Options"
+        "title": "⚙️Options",
+        "exe_mode": "Execution Environment"
       },
       "recon_btn": "🚀Run Inference",
       "outdir_recon": "📁Output Directory",
@@ -400,7 +416,8 @@
       "title": "WinT3R",
       "subtitle1": "# 1. Inference",
       "option": {
-        "title": "⚙️Options"
+        "title": "⚙️Options",
+        "exe_mode": "Execution Environment"
       },
       "recon_btn": "🚀Run Inference",
       "outdir_recon": "📁Output Directory",
@@ -421,6 +438,7 @@
       "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
+        "exe_mode": "Execution Environment",
         "radio_standard": "Standard Image",
         "radio_panorama": "Panorama Image",
         "radio_default": "Standard Image"
@@ -439,7 +457,8 @@
       "image": "📷Select one image",
       "subtitle2": "# 2. Inference",
       "option": {
-        "title": "⚙️Options"
+        "title": "⚙️Options",
+        "exe_mode": "Execution Environment"
       },
       "recon_btn": "🚀Run Inference",
       "outdir_recon": "📁Output Directory",
@@ -457,6 +476,7 @@
       "subtitle1": "# 1. Inference",
       "option": {
         "title": "⚙️Options",
+        "exe_mode": "Execution Environment",
         "mode_vggt": "Select Mode"
       },
       "recon_btn": "🚀Run Inference",
@@ -470,7 +490,8 @@
       "title": "VGGSfM",
       "subtitle1": "# 1. Inference",
       "option": {
-        "title": "⚙️Options"
+        "title": "⚙️Options",
+        "exe_mode": "Execution Environment"
       },
       "recon_btn": "🚀Run Inference",
       "outdir_recon": "📁Output Directory",
@@ -483,7 +504,8 @@
       "title": "VGGT-SLAM",
       "subtitle1": "# 1. Inference",
       "option": {
-        "title": "⚙️Options"
+        "title": "⚙️Options",
+        "exe_mode": "Execution Environment"
       },
       "recon_btn": "🚀Run Inference",
       "outdir_recon": "📁Output Directory",
@@ -496,7 +518,8 @@
       "title": "StreamVGGT",
       "subtitle1": "# 1. Inference",
       "option": {
-        "title": "⚙️Options"
+        "title": "⚙️Options",
+        "exe_mode": "Execution Environment"
       },
       "recon_btn": "🚀Run Inference",
       "outdir_recon": "📁Output Directory",
@@ -509,7 +532,8 @@
       "title": "FastVGGT",
       "subtitle1": "# 1. Inference",
       "option": {
-        "title": "⚙️Options"
+        "title": "⚙️Options",
+        "exe_mode": "Execution Environment"
       },
       "recon_btn": "🚀Run Inference",
       "outdir_recon": "📁Output Directory",
@@ -522,7 +546,8 @@
       "title": "Pi3",
       "subtitle1": "# 1. Inference",
       "option": {
-        "title": "⚙️Options"
+        "title": "⚙️Options",
+        "exe_mode": "Execution Environment"
       },
       "recon_btn": "🚀Run Inference",
       "outdir_recon": "📁Output Directory",

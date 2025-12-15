@@ -83,6 +83,7 @@ def update_ui(choice):
         gr.File(label=lang["nerf_tab"]["vnerf"]["ex_dataset"]), # ex_dataset_vnerf
         gr.Markdown(lang["nerf_tab"]["vnerf"]["subtitle2"]), # vnerf_sub2
         gr.Accordion(label=lang["nerf_tab"]["vnerf"]["option"]["title"]), # vnerf_option
+        gr.Radio(label= lang["nerf_tab"]["vnerf"]["option"]["exe_mode"]), # exe_mode_vnerf
         gr.Slider(label=lang["nerf_tab"]["vnerf"]["option"]["iter"]), # iter_vnerf
         gr.Button(value=lang["nerf_tab"]["vnerf"]["recon_btn"]), # recon_vnerf_btn
         gr.Markdown(lang["nerf_tab"]["vnerf"]["viewer"]), # vnerf_viewer
@@ -107,6 +108,7 @@ def update_ui(choice):
         gr.File(label=lang["nerf_tab"]["nerfacto"]["ex_dataset"]), # ex_dataset_nerfacto
         gr.Markdown(lang["nerf_tab"]["nerfacto"]["subtitle2"]), # nerfacto_sub2
         gr.Accordion(label=lang["nerf_tab"]["nerfacto"]["option"]["title"]), # nerfacto_option
+        gr.Radio(label= lang["nerf_tab"]["nerfacto"]["option"]["exe_mode"]), # exe_mode_nerfacto
         gr.Slider(label=lang["nerf_tab"]["nerfacto"]["option"]["iter"]), # iter_nerfacto
         gr.Button(value=lang["nerf_tab"]["nerfacto"]["recon_btn"]), # recon_nerfacto_btn
         gr.Markdown(lang["nerf_tab"]["nerfacto"]["viewer"]), # nerfacto_viewer
@@ -131,6 +133,7 @@ def update_ui(choice):
         gr.File(label=lang["nerf_tab"]["mip-nerf"]["ex_dataset"]), # ex_dataset_mipnerf
         gr.Markdown(lang["nerf_tab"]["mip-nerf"]["subtitle2"]), # mipnerf_sub2
         gr.Accordion(label=lang["nerf_tab"]["mip-nerf"]["option"]["title"]), # mipnerf_option
+        gr.Radio(label= lang["nerf_tab"]["mip-nerf"]["option"]["exe_mode"]), # exe_mode_mipnerf
         gr.Slider(label=lang["nerf_tab"]["mip-nerf"]["option"]["iter"]), # iter_mipnerf
         gr.Button(value=lang["nerf_tab"]["mip-nerf"]["recon_btn"]), # recon_mipnerf_btn
         gr.Markdown(lang["nerf_tab"]["mip-nerf"]["viewer"]), # mipnerf_viewer
@@ -155,6 +158,7 @@ def update_ui(choice):
         gr.File(label=lang["nerf_tab"]["seathru-nerf"]["ex_dataset"]), # ex_dataset_stnerf
         gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["subtitle2"]), # stnerf_sub2
         gr.Accordion(label=lang["nerf_tab"]["seathru-nerf"]["option"]["title"]), # stnerf_option
+        gr.Radio(label= lang["nerf_tab"]["seathru-nerf"]["option"]["exe_mode"]), # exe_mode_stnerf
         gr.Slider(label=lang["nerf_tab"]["seathru-nerf"]["option"]["iter"]), # iter_stnerf
         gr.Button(value=lang["nerf_tab"]["seathru-nerf"]["recon_btn"]), # recon_stnerf_btn
         gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["viewer"]), # stnerf_viewer
@@ -182,6 +186,7 @@ def update_ui(choice):
         gr.File(label=lang["gs_tab"]["vgs"]["ex_dataset"]), # ex_dataset_vgs
         gr.Markdown(lang["gs_tab"]["vgs"]["subtitle2"]), # vgs_sub2
         gr.Accordion(label=lang["gs_tab"]["vgs"]["option"]["title"]), # vgs_option
+        gr.Radio(label= lang["gs_tab"]["vgs"]["option"]["exe_mode"]), # exe_mode_vgs
         gr.Button(value=lang["gs_tab"]["vgs"]["recon_btn"]), # recon_vgs_btn
         gr.Textbox(label=lang["gs_tab"]["vgs"]["outdir_recon"]), # outdir_recon_vgs
         gr.Textbox(label=lang["gs_tab"]["vgs"]["runtime_recon"]), # runtime_vgs
@@ -205,6 +210,7 @@ def update_ui(choice):
         gr.File(label=lang["gs_tab"]["mip-splatting"]["ex_dataset"]), # ex_dataset_mips
         gr.Markdown(lang["gs_tab"]["mip-splatting"]["subtitle2"]), # mips_sub2
         gr.Accordion(label=lang["gs_tab"]["mip-splatting"]["option"]["title"]), # mips_option
+        gr.Radio(label= lang["gs_tab"]["mip-splatting"]["option"]["exe_mode"]), # exe_mode_mips
         gr.Slider(label=lang["gs_tab"]["mip-splatting"]["option"]["save_iter"]), # save_iter_mips
         gr.Button(value=lang["gs_tab"]["mip-splatting"]["recon_btn"]), # recon_mips_btn
         gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["outdir_recon"]), # outdir_recon_mips
@@ -222,6 +228,7 @@ def update_ui(choice):
         gr.File(label=lang["gs_tab"]["splatfacto"]["ex_dataset"]), # ex_dataset_sfacto
         gr.Markdown(lang["gs_tab"]["splatfacto"]["subtitle2"]), # sfacto_sub2
         gr.Accordion(label=lang["gs_tab"]["splatfacto"]["option"]["title"]), # sfacto_option
+        gr.Radio(label= lang["gs_tab"]["splatfacto"]["option"]["exe_mode"]), # exe_mode_sfacto
         gr.Slider(label=lang["gs_tab"]["splatfacto"]["option"]["iter"]), # iter_sfacto
         gr.Button(value=lang["gs_tab"]["splatfacto"]["recon_btn"]), # recon_sfacto_btn
         gr.Markdown(lang["gs_tab"]["splatfacto"]["viewer"]), # sfacto_viewer
@@ -246,6 +253,7 @@ def update_ui(choice):
         gr.File(label=lang["gs_tab"]["4d-gaussians"]["ex_dataset"]), # ex_dataset_gs4d
         gr.Markdown(lang["gs_tab"]["4d-gaussians"]["subtitle2"]), # gs4d_sub2
         gr.Accordion(label=lang["gs_tab"]["4d-gaussians"]["option"]["title"]), # gs4d_option
+        gr.Radio( label= lang["gs_tab"]["4d-gaussians"]["option"]["exe_mode"]), # exe_mode_4dgs
         gr.Slider(label=lang["gs_tab"]["4d-gaussians"]["option"]["save_iter"]), # save_iter_gs4d
         gr.Button(value=lang["gs_tab"]["4d-gaussians"]["recon_btn"]), # recon_gs4d_btn
         gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["outdir_recon"]), # outdir_recon_gs4d
@@ -260,6 +268,7 @@ def update_ui(choice):
         gr.Tab(label=lang["3sters_tab"]["dust3r"]["title"]), # dust3r_tab
         gr.Markdown(lang["3sters_tab"]["dust3r"]["subtitle1"]), # dust3r_sub1
         gr.Accordion(label=lang["3sters_tab"]["dust3r"]["option"]["title"]), # dust3r_option
+        gr.Radio(label= lang["3sters_tab"]["dust3r"]["option"]["exe_mode"]), # exe_mode_dust3r
         gr.Button(value=lang["3sters_tab"]["dust3r"]["recon_btn"]), # recon_dust3r_btn
         gr.Textbox(label=lang["3sters_tab"]["dust3r"]["outdir_recon"]), # outdir_recon_dust3r
         gr.Textbox(label=lang["3sters_tab"]["dust3r"]["runtime_recon"]), # runtime_recon_dust3r
@@ -271,6 +280,7 @@ def update_ui(choice):
         gr.Tab(label=lang["3sters_tab"]["mast3r"]["title"]), # mast3r_tab
         gr.Markdown(lang["3sters_tab"]["mast3r"]["subtitle1"]), # mast3r_sub1
         gr.Accordion(label=lang["3sters_tab"]["mast3r"]["option"]["title"]), # mast3r_option
+        gr.Radio(label= lang["3sters_tab"]["mast3r"]["option"]["exe_mode"]), # exe_mode_mast3r
         gr.Button(value=lang["3sters_tab"]["mast3r"]["recon_btn"]), # recon_mast3r_btn
         gr.Textbox(label=lang["3sters_tab"]["mast3r"]["outdir_recon"]), # outdir_recon_mast3r
         gr.Textbox(label=lang["3sters_tab"]["mast3r"]["runtime_recon"]), # runtime_recon_mast3r
@@ -281,6 +291,7 @@ def update_ui(choice):
         gr.Tab(label=lang["3sters_tab"]["monst3r"]["title"]), # monst3r_tab
         gr.Markdown(lang["3sters_tab"]["monst3r"]["subtitle1"]), # monst3r_sub1
         gr.Accordion(label=lang["3sters_tab"]["monst3r"]["option"]["title"]), # monst3r_option
+        gr.Radio(label= lang["3sters_tab"]["monst3r"]["option"]["exe_mode"]), # exe_mode_monst3r
         gr.Button(value=lang["3sters_tab"]["monst3r"]["recon_btn"]), # recon_monst3r_btn
         gr.Textbox(label=lang["3sters_tab"]["monst3r"]["outdir_recon"]), # outdir_recon_monst3r
         gr.Textbox(label=lang["3sters_tab"]["monst3r"]["runtime_recon"]), # runtime_recon_monst3r
@@ -292,6 +303,7 @@ def update_ui(choice):
         gr.Markdown(lang["3sters_tab"]["easi3r"]["subtitle1"]), # easi3r_sub1
         gr.Markdown(lang["3sters_tab"]["easi3r"]["info1"]), # easi3r_info1
         gr.Accordion(label=lang["3sters_tab"]["easi3r"]["option"]["title"]), # easi3r_option
+        gr.Radio(label= lang["3sters_tab"]["easi3r"]["option"]["exe_mode"]), # exe_mode_easi3r
         gr.Button(value=lang["3sters_tab"]["easi3r"]["recon_btn"]), # recon_easi3r_btn
         gr.Textbox(label=lang["3sters_tab"]["easi3r"]["outdir_recon"]), # outdir_recon_easi3r
         gr.Textbox(label=lang["3sters_tab"]["easi3r"]["runtime_recon"]), # runtime_recon_easi3r
@@ -302,6 +314,7 @@ def update_ui(choice):
         gr.Tab(label=lang["3sters_tab"]["must3r"]["title"]), # must3r_tab
         gr.Markdown(lang["3sters_tab"]["must3r"]["subtitle1"]), # must3r_sub1
         gr.Accordion(label=lang["3sters_tab"]["must3r"]["option"]["title"]), # must3r_option
+        gr.Radio(label= lang["3sters_tab"]["must3r"]["option"]["exe_mode"]), # exe_mode_must3r
         gr.Button(value=lang["3sters_tab"]["must3r"]["recon_btn"]), # recon_must3r_btn
         gr.Textbox(label=lang["3sters_tab"]["must3r"]["outdir_recon"]), # outdir_recon_must3r
         gr.Textbox(label=lang["3sters_tab"]["must3r"]["runtime_recon"]), # runtime_recon_must3r
@@ -312,6 +325,7 @@ def update_ui(choice):
         gr.Tab(label=lang["3sters_tab"]["fast3r"]["title"]), # fast3r_tab
         gr.Markdown(lang["3sters_tab"]["fast3r"]["subtitle1"]), # fast3r_sub1
         gr.Accordion(label=lang["3sters_tab"]["fast3r"]["option"]["title"]), # fast3r_option
+        gr.Radio(label= lang["3sters_tab"]["fast3r"]["option"]["exe_mode"]), # exe_mode_fast3r
         gr.Button(value=lang["3sters_tab"]["fast3r"]["recon_btn"]), # recon_fast3r_btn
         gr.Textbox(label=lang["3sters_tab"]["fast3r"]["outdir_recon"]), # outdir_recon_fast3r
         gr.Textbox(label=lang["3sters_tab"]["fast3r"]["runtime_recon"]), # runtime_recon_fast3r
@@ -325,6 +339,7 @@ def update_ui(choice):
         gr.Image(label=lang["3sters_tab"]["splatt3r"]["image"]), # img_splatt3r
         gr.Markdown(lang["3sters_tab"]["splatt3r"]["subtitle2"]), # splatt3r_sub2
         gr.Accordion(label=lang["3sters_tab"]["splatt3r"]["option"]["title"]), # splatt3r_option
+        gr.Radio(label= lang["3sters_tab"]["splatt3r"]["option"]["exe_mode"]), # exe_mode_splatt3r
         gr.Button(value=lang["3sters_tab"]["splatt3r"]["recon_btn"]), # recon_splatt3r_btn
         gr.Textbox(label=lang["3sters_tab"]["splatt3r"]["outdir_recon"]), # outdir_recon_splatt3r
         gr.Textbox(label=lang["3sters_tab"]["splatt3r"]["runtime_recon"]), # runtime_recon_splatt3r
@@ -335,6 +350,7 @@ def update_ui(choice):
         gr.Tab(label=lang["3sters_tab"]["cut3r"]["title"]), # cut3r_tab
         gr.Markdown(lang["3sters_tab"]["cut3r"]["subtitle1"]), # cut3r_sub1
         gr.Accordion(label=lang["3sters_tab"]["cut3r"]["option"]["title"]), # cut3r_option
+        gr.Radio(label= lang["3sters_tab"]["cut3r"]["option"]["exe_mode"]), # exe_mode_cut3r
         gr.Button(value=lang["3sters_tab"]["cut3r"]["recon_btn"]), # recon_cut3r_btn
         gr.Textbox(label=lang["3sters_tab"]["cut3r"]["outdir_recon"]), # outdir_recon_cut3r
         gr.Textbox(label=lang["3sters_tab"]["cut3r"]["runtime_recon"]), # runtime_recon_cut3r
@@ -345,6 +361,7 @@ def update_ui(choice):
         gr.Tab(label=lang["3sters_tab"]["wint3r"]["title"]), # wint3r_tab
         gr.Markdown(lang["3sters_tab"]["wint3r"]["subtitle1"]), # wint3r_sub1
         gr.Accordion(label=lang["3sters_tab"]["wint3r"]["option"]["title"]), # wint3r_option
+        gr.Radio(label= lang["3sters_tab"]["wint3r"]["option"]["exe_mode"]), # exe_mode_wint3r
         gr.Button(value=lang["3sters_tab"]["wint3r"]["recon_btn"]), # recon_wint3r_btn
         gr.Textbox(label=lang["3sters_tab"]["wint3r"]["outdir_recon"]), # outdir_recon_wint3r
         gr.Textbox(label=lang["3sters_tab"]["wint3r"]["runtime_recon"]), # runtime_recon_wint3r
@@ -361,6 +378,7 @@ def update_ui(choice):
         gr.Image(label=lang["mds_tab"]["moge"]["image"]), # img_moge
         gr.Markdown(lang["mds_tab"]["moge"]["subtitle2"]), # moge_sub2
         gr.Accordion(label=lang["mds_tab"]["moge"]["option"]["title"]), # moge_option
+        gr.Radio(label= lang["mds_tab"]["moge"]["option"]["exe_mode"]), # exe_mode_moge
         gr.Radio(choices=[lang["mds_tab"]["moge"]["option"]["radio_standard"], lang["mds_tab"]["moge"]["option"]["radio_panorama"]], 
                  value=lang["mds_tab"]["moge"]["option"]["radio_default"]), # img_type_moge
         gr.Button(value=lang["mds_tab"]["moge"]["recon_btn"]), # recon_moge_btn
@@ -376,6 +394,7 @@ def update_ui(choice):
         gr.Image(label=lang["mds_tab"]["unik3d"]["image"]), # img_unik3d
         gr.Markdown(lang["mds_tab"]["unik3d"]["subtitle2"]), # unik3d_sub2
         gr.Accordion(label=lang["mds_tab"]["unik3d"]["option"]["title"]), # unik3d_option
+        gr.Radio(label= lang["mds_tab"]["unik3d"]["option"]["exe_mode"]), # exe_mode_unik3d
         gr.Button(value=lang["mds_tab"]["unik3d"]["recon_btn"]), # recon_unik3d_btn
         gr.Textbox(label=lang["mds_tab"]["unik3d"]["outdir_recon"]), # outdir_recon_unik3d
         gr.Textbox(label=lang["mds_tab"]["unik3d"]["runtime_recon"]), # runtime_recon_unik3d
@@ -389,6 +408,7 @@ def update_ui(choice):
         gr.Tab(label=lang["vgg_tab"]["vggt"]["title"]), # vggt_tab
         gr.Markdown(lang["vgg_tab"]["vggt"]["subtitle1"]), # vggt_sub1
         gr.Accordion(label=lang["vgg_tab"]["vggt"]["option"]["title"]), # vggt_option
+        gr.Radio(label= lang["vgg_tab"]["vggt"]["option"]["exe_mode"]), # exe_mode_vggt
         gr.Radio(label=lang["vgg_tab"]["vggt"]["option"]["mode_vggt"]), # mode_vggt
         gr.Button(value=lang["vgg_tab"]["vggt"]["recon_btn"]), # recon_vggt_btn
         gr.Textbox(label=lang["vgg_tab"]["vggt"]["outdir_recon"]), # outdir_recon_vggt
@@ -400,6 +420,7 @@ def update_ui(choice):
         gr.Tab(label=lang["vgg_tab"]["vggsfm"]["title"]), # vggsfm_tab
         gr.Markdown(lang["vgg_tab"]["vggsfm"]["subtitle1"]), # vggsfm_sub1
         gr.Accordion(label=lang["vgg_tab"]["vggsfm"]["option"]["title"]), # vggsfm_option
+        gr.Radio(label= lang["vgg_tab"]["vggsfm"]["option"]["exe_mode"]), # exe_mode_vggsfm
         gr.Button(value=lang["vgg_tab"]["vggsfm"]["recon_btn"]), # recon_vggtsfm_btn
         gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["outdir_recon"]), # outdir_recon_vggtsfm
         gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["runtime_recon"]), # runtime_recon_vggtsfm
@@ -410,6 +431,7 @@ def update_ui(choice):
         gr.Tab(label=lang["vgg_tab"]["vggt-slam"]["title"]), # vggtslam_tab
         gr.Markdown(lang["vgg_tab"]["vggt-slam"]["subtitle1"]), # vggtslam_sub1
         gr.Accordion(label=lang["vgg_tab"]["vggt-slam"]["option"]["title"]), # vggtslam_option
+        gr.Radio(label= lang["vgg_tab"]["vggt-slam"]["option"]["exe_mode"]), # exe_mode_vggtslam
         gr.Button(value=lang["vgg_tab"]["vggt-slam"]["recon_btn"]), # recon_vggtslam_btn
         gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["outdir_recon"]), # outdir_recon_vggtslam
         gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["runtime_recon"]), # runtime_recon_vggtslam
@@ -420,6 +442,7 @@ def update_ui(choice):
         gr.Tab(label=lang["vgg_tab"]["streamvggt"]["title"]), # stmvggt_tab
         gr.Markdown(lang["vgg_tab"]["streamvggt"]["subtitle1"]), # stmvggt_sub1
         gr.Accordion(label=lang["vgg_tab"]["streamvggt"]["option"]["title"]), # stmvggt_option
+        gr.Radio(label= lang["vgg_tab"]["streamvggt"]["option"]["exe_mode"]), # exe_mode_stmvggt
         gr.Button(value=lang["vgg_tab"]["streamvggt"]["recon_btn"]), # recon_stmvggt_btn
         gr.Textbox(label=lang["vgg_tab"]["streamvggt"]["outdir_recon"]), # outdir_recon_stmvggt
         gr.Textbox(label=lang["vgg_tab"]["streamvggt"]["runtime_recon"]), # runtime_recon_stmvggt
@@ -430,6 +453,7 @@ def update_ui(choice):
         gr.Tab(label=lang["vgg_tab"]["fastvggt"]["title"]), # fastvggt_tab
         gr.Markdown(lang["vgg_tab"]["fastvggt"]["subtitle1"]), # fastvggt_sub1
         gr.Accordion(label=lang["vgg_tab"]["fastvggt"]["option"]["title"]), # fastvggt_option
+        gr.Radio(label= lang["vgg_tab"]["fastvggt"]["option"]["exe_mode"]), # exe_mode_fastvggt
         gr.Button(value=lang["vgg_tab"]["fastvggt"]["recon_btn"]), # recon_fastvggt_btn
         gr.Textbox(label=lang["vgg_tab"]["fastvggt"]["outdir_recon"]), # outdir_recon_fastvggt
         gr.Textbox(label=lang["vgg_tab"]["fastvggt"]["runtime_recon"]), # runtime_recon_fastvggt
@@ -440,6 +464,7 @@ def update_ui(choice):
         gr.Tab(label=lang["vgg_tab"]["pi3"]["title"]), # pi3_tab
         gr.Markdown(lang["vgg_tab"]["pi3"]["subtitle1"]), # pi3_sub1
         gr.Accordion(label=lang["vgg_tab"]["pi3"]["option"]["title"]), # pi3_option
+        gr.Radio(label= lang["vgg_tab"]["pi3"]["option"]["exe_mode"]), # exe_mode_pi3
         gr.Button(value=lang["vgg_tab"]["pi3"]["recon_btn"]), # recon_pi3_btn
         gr.Textbox(label=lang["vgg_tab"]["pi3"]["outdir_recon"]), # outdir_recon_pi3
         gr.Textbox(label=lang["vgg_tab"]["pi3"]["runtime_recon"]), # runtime_recon_pi3
@@ -547,7 +572,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         # NeRFTab
         with gr.Tab(label=lang["nerf_tab"]["title"]) as nerf_tab:
             current_dataset_nerf = gr.Textbox(label=lang["nerf_tab"]["current_dataset"])
-            # NeRF
+            # Vanilla-NeRF
             with gr.Tab(label=lang["nerf_tab"]["vnerf"]["title"]) as vnerf_tab:
                 vnerf_sub1 = gr.Markdown(lang["nerf_tab"]["vnerf"]["subtitle1"])
                 vnerf_radio = gr.Radio(choices=[lang["nerf_tab"]["vnerf"]["radio_newdata"], lang["nerf_tab"]["vnerf"]["radio_exdata"]], label=lang["nerf_tab"]["vnerf"]["radio"])
@@ -558,6 +583,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as train_vnerf_col:
                     vnerf_sub2 = gr.Markdown(lang["nerf_tab"]["vnerf"]["subtitle2"])
                     with gr.Accordion(label=lang["nerf_tab"]["vnerf"]["option"]["title"], open=False) as vnerf_option:
+                        exe_mode_vnerf = gr.Radio(choices=["local", "slurm"], value="local", label= lang["nerf_tab"]["vnerf"]["option"]["exe_mode"])
                         iter_vnerf = gr.Slider(value=1000000, minimum=25000, maximum=2000000, step=25000, label=lang["nerf_tab"]["vnerf"]["option"]["iter"])
                     recon_vnerf_btn = gr.Button(value=lang["nerf_tab"]["vnerf"]["recon_btn"])
                     vnerf_viewer = gr.Markdown(lang["nerf_tab"]["vnerf"]["viewer"])
@@ -585,6 +611,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as train_nerfacto_col:
                     nerfacto_sub2 = gr.Markdown(lang["nerf_tab"]["nerfacto"]["subtitle2"])
                     with gr.Accordion(label=lang["nerf_tab"]["nerfacto"]["option"]["title"], open=False) as nerfacto_option:
+                        exe_mode_nerfacto = gr.Radio(choices=["local", "slurm"], value="local", label= lang["nerf_tab"]["nerfacto"]["option"]["exe_mode"])
                         iter_nerfacto = gr.Slider(value=100000, minimum=25000, maximum=200000, step=25000, label=lang["nerf_tab"]["nerfacto"]["option"]["iter"])
                     recon_nerfacto_btn = gr.Button(value=lang["nerf_tab"]["nerfacto"]["recon_btn"])
                     nerfacto_viewer = gr.Markdown(lang["nerf_tab"]["nerfacto"]["viewer"])
@@ -612,6 +639,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as train_mipnerf_col:
                     mipnerf_sub2 = gr.Markdown(lang["nerf_tab"]["mip-nerf"]["subtitle2"])
                     with gr.Accordion(label=lang["nerf_tab"]["mip-nerf"]["option"]["title"], open=False) as mipnerf_option:
+                        exe_mode_mipnerf = gr.Radio(choices=["local", "slurm"], value="local", label= lang["nerf_tab"]["mip-nerf"]["option"]["exe_mode"])
                         iter_mipnerf = gr.Slider(value=1000000, minimum=25000, maximum=2000000, step=25000, label=lang["nerf_tab"]["mip-nerf"]["option"]["iter"])
                     recon_mipnerf_btn = gr.Button(value=lang["nerf_tab"]["mip-nerf"]["recon_btn"])
                     mipnerf_viewer = gr.Markdown(lang["nerf_tab"]["mip-nerf"]["viewer"])
@@ -639,6 +667,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as train_stnerf_col:
                     stnerf_sub2 = gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["subtitle2"])
                     with gr.Accordion(label=lang["nerf_tab"]["seathru-nerf"]["option"]["title"], open=False) as stnerf_option:
+                        exe_mode_stnerf = gr.Radio(choices=["local", "slurm"], value="local", label= lang["nerf_tab"]["seathru-nerf"]["option"]["exe_mode"])
                         iter_stnerf = gr.Slider(value=100000, minimum=25000, maximum=200000, step=25000, label=lang["nerf_tab"]["seathru-nerf"]["option"]["iter"])
                     recon_stnerf_btn = gr.Button(value=lang["nerf_tab"]["seathru-nerf"]["recon_btn"])
                     stnerf_viewer = gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["viewer"])
@@ -669,6 +698,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as train_vgs_col:
                     vgs_sub2 = gr.Markdown(lang["gs_tab"]["vgs"]["subtitle2"])
                     with gr.Accordion(label=lang["gs_tab"]["vgs"]["option"]["title"], open=False) as vgs_option:
+                        exe_mode_vgs = gr.Radio(choices=["local", "slurm"], value="local", label= lang["gs_tab"]["vgs"]["option"]["exe_mode"])
                         gr.Markdown("※未実装")
                         with gr.Row():
                             with gr.Column():
@@ -728,6 +758,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as train_mips_col:
                     mips_sub2 = gr.Markdown(lang["gs_tab"]["mip-splatting"]["subtitle2"])
                     with gr.Accordion(label=lang["gs_tab"]["mip-splatting"]["option"]["title"], open=False) as mips_option:
+                        exe_mode_mips = gr.Radio(choices=["local", "slurm"], value="local", label= lang["gs_tab"]["mip-splatting"]["option"]["exe_mode"])
                         save_iter_mips = gr.Slider(value=30000, minimum=0, maximum=50000, step=100, label=lang["gs_tab"]["mip-splatting"]["option"]["save_iter"])     
                     recon_mips_btn = gr.Button(value=lang["gs_tab"]["mip-splatting"]["recon_btn"])
                     outdir_recon_mips = gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["outdir_recon"])
@@ -747,6 +778,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as train_sfacto_col:
                     sfacto_sub2 = gr.Markdown(lang["gs_tab"]["splatfacto"]["subtitle2"])
                     with gr.Accordion(label=lang["gs_tab"]["splatfacto"]["option"]["title"], open=False) as sfacto_option:
+                        exe_mode_sfacto = gr.Radio(choices=["local", "slurm"], value="local", label= lang["gs_tab"]["splatfacto"]["option"]["exe_mode"])
                         iter_sfacto = gr.Slider(value=30000, minimum=0, maximum=50000, step=2000, label=lang["gs_tab"]["splatfacto"]["option"]["iter"])
                     recon_sfacto_btn = gr.Button(value=lang["gs_tab"]["splatfacto"]["recon_btn"])
                     sfacto_viewer = gr.Markdown(lang["gs_tab"]["splatfacto"]["viewer"])
@@ -774,6 +806,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as train_4dgs_col:
                     gs4d_sub2 = gr.Markdown(lang["gs_tab"]["4d-gaussians"]["subtitle2"])
                     with gr.Accordion(lang["gs_tab"]["4d-gaussians"]["option"]["title"], open=False) as gs4d_option:
+                        exe_mode_4dgs = gr.Radio(choices=["local", "slurm"], value="local", label= lang["gs_tab"]["4d-gaussians"]["option"]["exe_mode"])
                         save_iter_4dgs = gr.Slider(value=30000, minimum=0, maximum=50000, step=100, label=lang["gs_tab"]["4d-gaussians"]["option"]["save_iter"])     
                     recon_4dgs_btn = gr.Button(value=lang["gs_tab"]["4d-gaussians"]["recon_btn"])
                     outdir_recon_4dgs = gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["outdir_recon"])
@@ -789,6 +822,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab(label=lang["3sters_tab"]["dust3r"]["title"]) as dust3r_tab:
                 dust3r_sub1 = gr.Markdown(lang["3sters_tab"]["dust3r"]["subtitle1"])
                 with gr.Accordion(label=lang["3sters_tab"]["dust3r"]["option"]["title"], open=False) as dust3r_option:
+                    exe_mode_dust3r = gr.Radio(choices=["local", "slurm"], value="local", label= lang["3sters_tab"]["dust3r"]["option"]["exe_mode"])
                     gr.Markdown("※未実装")
                     with gr.Row():
                         schedule = gr.Dropdown(["linear", "cosine"], value='linear', label="schedule")
@@ -817,7 +851,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab(label=lang["3sters_tab"]["mast3r"]["title"]) as mast3r_tab:
                 mast3r_sub1 = gr.Markdown(lang["3sters_tab"]["mast3r"]["subtitle1"])
                 with gr.Accordion(lang["3sters_tab"]["mast3r"]["option"]["title"], open=False) as mast3r_option:
-                    gr.Markdown()
+                    exe_mode_mast3r = gr.Radio(choices=["local", "slurm"], value="local", label= lang["3sters_tab"]["mast3r"]["option"]["exe_mode"])
                 recon_mast3r_btn = gr.Button(value=lang["3sters_tab"]["mast3r"]["recon_btn"])
                 outdir_recon_mast3r = gr.Textbox(label=lang["3sters_tab"]["mast3r"]["outdir_recon"])
                 runtime_recon_mast3r = gr.Textbox(label=lang["3sters_tab"]["mast3r"]["runtime_recon"])
@@ -829,7 +863,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab(label=lang["3sters_tab"]["monst3r"]["title"]) as monst3r_tab:
                 monst3r_sub1 = gr.Markdown(lang["3sters_tab"]["mast3r"]["subtitle1"])
                 with gr.Accordion(label=lang["3sters_tab"]["monst3r"]["option"]["title"], open=False) as monst3r_option:
-                    gr.Markdown()
+                    exe_mode_monst3r = gr.Radio(choices=["local", "slurm"], value="local", label= lang["3sters_tab"]["monst3r"]["option"]["exe_mode"])
                 recon_monst3r_btn = gr.Button(value=lang["3sters_tab"]["monst3r"]["recon_btn"])
                 outdir_recon_monst3r = gr.Textbox(label=lang["3sters_tab"]["monst3r"]["outdir_recon"])
                 runtime_recon_monst3r = gr.Textbox(label=lang["3sters_tab"]["monst3r"]["runtime_recon"])
@@ -842,7 +876,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 easi3r_sub1 = gr.Markdown(lang["3sters_tab"]["easi3r"]["subtitle1"])
                 easi3r_info1 = gr.Markdown(lang["3sters_tab"]["easi3r"]["info1"])
                 with gr.Accordion(label=lang["3sters_tab"]["easi3r"]["option"]["title"], open=False) as easi3r_option:
-                    gr.Markdown()
+                    exe_mode_easi3r = gr.Radio(choices=["local", "slurm"], value="local", label= lang["3sters_tab"]["easi3r"]["option"]["exe_mode"])
                 recon_easi3r_btn = gr.Button(value=lang["3sters_tab"]["easi3r"]["recon_btn"])
                 outdir_recon_easi3r = gr.Textbox(label=lang["3sters_tab"]["easi3r"]["outdir_recon"])
                 runtime_recon_easi3r = gr.Textbox(label=lang["3sters_tab"]["easi3r"]["runtime_recon"])
@@ -854,7 +888,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab(label=lang["3sters_tab"]["must3r"]["title"]) as must3r_tab:
                 must3r_sub1 = gr.Markdown(lang["3sters_tab"]["must3r"]["subtitle1"])
                 with gr.Accordion(label=lang["3sters_tab"]["must3r"]["option"]["title"], open=False) as must3r_option:
-                    gr.Markdown()
+                    exe_mode_must3r = gr.Radio(choices=["local", "slurm"], value="local", label= lang["3sters_tab"]["must3r"]["option"]["exe_mode"])
                 recon_must3r_btn = gr.Button(value=lang["3sters_tab"]["must3r"]["recon_btn"])
                 outdir_recon_must3r = gr.Textbox(label=lang["3sters_tab"]["must3r"]["outdir_recon"])
                 runtime_recon_must3r = gr.Textbox(label=lang["3sters_tab"]["must3r"]["runtime_recon"])
@@ -866,7 +900,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab(label=lang["3sters_tab"]["fast3r"]["title"]) as fast3r_tab:
                 fast3r_sub1 = gr.Markdown(lang["3sters_tab"]["fast3r"]["subtitle1"])
                 with gr.Accordion(label=lang["3sters_tab"]["fast3r"]["option"]["title"], open=False) as fast3r_option:
-                    gr.Markdown()
+                    exe_mode_fast3r = gr.Radio(choices=["local", "slurm"], value="local", label= lang["3sters_tab"]["fast3r"]["option"]["exe_mode"])
                 recon_fast3r_btn = gr.Button(value=lang["3sters_tab"]["fast3r"]["recon_btn"])
                 outdir_recon_fast3r = gr.Textbox(label=lang["3sters_tab"]["fast3r"]["outdir_recon"])
                 runtime_recon_fast3r = gr.Textbox(label=lang["3sters_tab"]["fast3r"]["runtime_recon"])
@@ -883,7 +917,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as inference_splatt3r_col:
                     splatt3r_sub2 = gr.Markdown(lang["3sters_tab"]["splatt3r"]["subtitle2"])
                     with gr.Accordion(label=lang["3sters_tab"]["splatt3r"]["option"]["title"], open=False) as splatt3r_option:
-                        gr.Markdown()
+                        exe_mode_splatt3r = gr.Radio(choices=["local", "slurm"], value="local", label= lang["3sters_tab"]["splatt3r"]["option"]["exe_mode"])
                     recon_splatt3r_btn = gr.Button(value=lang["3sters_tab"]["splatt3r"]["recon_btn"])
                     outdir_recon_splatt3r = gr.Textbox(label=lang["3sters_tab"]["splatt3r"]["outdir_recon"])
                     runtime_recon_splatt3r = gr.Textbox(label=lang["3sters_tab"]["splatt3r"]["runtime_recon"])
@@ -895,7 +929,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab(label=lang["3sters_tab"]["cut3r"]["title"]) as cut3r_tab:
                 cut3r_sub1 = gr.Markdown(lang["3sters_tab"]["cut3r"]["subtitle1"])
                 with gr.Accordion(label=lang["3sters_tab"]["cut3r"]["option"]["title"], open=False) as cut3r_option:
-                    gr.Markdown()
+                    exe_mode_cut3r = gr.Radio(choices=["local", "slurm"], value="local", label= lang["3sters_tab"]["cut3r"]["option"]["exe_mode"])
                 recon_cut3r_btn = gr.Button(value=lang["3sters_tab"]["cut3r"]["recon_btn"])
                 outdir_recon_cut3r = gr.Textbox(label=lang["3sters_tab"]["cut3r"]["outdir_recon"])
                 runtime_recon_cut3r = gr.Textbox(label=lang["3sters_tab"]["cut3r"]["runtime_recon"])
@@ -907,7 +941,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab(label=lang["3sters_tab"]["wint3r"]["title"]) as wint3r_tab:
                 wint3r_sub1 = gr.Markdown(lang["3sters_tab"]["wint3r"]["subtitle1"])
                 with gr.Accordion(label=lang["3sters_tab"]["wint3r"]["option"]["title"], open=False) as wint3r_option:
-                    gr.Markdown()
+                    exe_mode_wint3r = gr.Radio(choices=["local", "slurm"], value="local", label= lang["3sters_tab"]["wint3r"]["option"]["exe_mode"])
                 recon_wint3r_btn = gr.Button(value=lang["3sters_tab"]["wint3r"]["recon_btn"])
                 outdir_recon_wint3r = gr.Textbox(label=lang["3sters_tab"]["wint3r"]["outdir_recon"])
                 runtime_recon_wint3r = gr.Textbox(label=lang["3sters_tab"]["wint3r"]["runtime_recon"])
@@ -927,6 +961,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as inference_moge_col:
                     moge_sub2 = gr.Markdown(lang["mds_tab"]["moge"]["subtitle2"])
                     with gr.Accordion(label=lang["mds_tab"]["moge"]["option"]["title"], open=False) as moge_option:
+                        exe_mode_moge = gr.Radio(choices=["local", "slurm"], value="local", label= lang["mds_tab"]["moge"]["option"]["exe_mode"])
                         img_type_moge = gr.Radio(choices=[lang["mds_tab"]["moge"]["option"]["radio_standard"], lang["mds_tab"]["moge"]["option"]["radio_panorama"]], value=lang["mds_tab"]["moge"]["option"]["radio_default"])
                     recon_moge_btn = gr.Button(value=lang["mds_tab"]["moge"]["recon_btn"])
                     outdir_recon_moge = gr.Textbox(label=lang["mds_tab"]["moge"]["outdir_recon"])
@@ -944,7 +979,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as inference_unik3d_col:
                     unik3d_sub2 = gr.Markdown(lang["mds_tab"]["unik3d"]["subtitle2"])
                     with gr.Accordion(label=lang["mds_tab"]["unik3d"]["option"]["title"], open=False) as unik3d_option:
-                        gr.Markdown()
+                        exe_mode_unik3d = gr.Radio(choices=["local", "slurm"], value="local", label= lang["mds_tab"]["unik3d"]["option"]["exe_mode"])
                     recon_unik3d_btn = gr.Button(value=lang["mds_tab"]["unik3d"]["recon_btn"])
                     outdir_recon_unik3d = gr.Textbox(label=lang["mds_tab"]["unik3d"]["outdir_recon"])
                     runtime_recon_unik3d = gr.Textbox(label=lang["mds_tab"]["unik3d"]["runtime_recon"])
@@ -959,6 +994,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab(label=lang["vgg_tab"]["vggt"]["title"]) as vggt_tab:
                 vggt_sub1 = gr.Markdown(lang["vgg_tab"]["vggt"]["subtitle1"])
                 with gr.Accordion(label=lang["vgg_tab"]["vggt"]["option"]["title"], open=False) as vggt_option:
+                    exe_mode_vggt = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vgg_tab"]["vggt"]["option"]["exe_mode"])
                     mode_vggt = gr.Radio(choices=["crop","pad"], value="crop", label=lang["vgg_tab"]["vggt"]["option"]["mode_vggt"])
                 recon_vggt_btn = gr.Button(value=lang["vgg_tab"]["vggt"]["recon_btn"])
                 outdir_recon_vggt = gr.Textbox(label=lang["vgg_tab"]["vggt"]["outdir_recon"])
@@ -972,7 +1008,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 gr.Markdown("# ※未実装")
                 vggsfm_sub1 = gr.Markdown(lang["vgg_tab"]["vggsfm"]["subtitle1"])
                 with gr.Accordion(label=lang["vgg_tab"]["vggsfm"]["option"]["title"], open=False) as vggsfm_option:
-                    gr.Markdown()
+                    exe_mode_vggsfm = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vgg_tab"]["vggsfm"]["option"]["exe_mode"])
                 recon_vggtsfm_btn = gr.Button(value=lang["vgg_tab"]["vggsfm"]["recon_btn"])
                 outdir_recon_vggtsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["outdir_recon"])
                 runtime_recon_vggtsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["runtime_recon"])
@@ -985,7 +1021,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 gr.Markdown("# ※未実装")
                 vggtslam_sub1 = gr.Markdown(lang["vgg_tab"]["vggt-slam"]["subtitle1"])
                 with gr.Accordion(label=lang["vgg_tab"]["vggt-slam"]["option"]["title"], open=False) as vggtslam_option:
-                    gr.Markdown()
+                    exe_mode_vggtslam = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vgg_tab"]["vggt-slam"]["option"]["exe_mode"])
                 recon_vggtslam_btn = gr.Button(value=lang["vgg_tab"]["vggt-slam"]["recon_btn"])
                 outdir_recon_vggtslam = gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["outdir_recon"])
                 runtime_recon_vggtslam = gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["runtime_recon"])
@@ -997,7 +1033,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab(label=lang["vgg_tab"]["streamvggt"]["title"]) as stmvggt_tab:
                 stmvggt_sub1 = gr.Markdown(lang["vgg_tab"]["streamvggt"]["subtitle1"])
                 with gr.Accordion(label=lang["vgg_tab"]["streamvggt"]["option"]["title"], open=False) as stmvggt_option:
-                    gr.Markdown()
+                    exe_mode_stmvggt = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vgg_tab"]["streamvggt"]["option"]["exe_mode"])
                 recon_stmvggt_btn = gr.Button(value=lang["vgg_tab"]["streamvggt"]["recon_btn"])
                 outdir_recon_stmvggt = gr.Textbox(label=lang["vgg_tab"]["streamvggt"]["outdir_recon"])
                 runtime_recon_stmvggt = gr.Textbox(label=lang["vgg_tab"]["streamvggt"]["runtime_recon"])
@@ -1009,7 +1045,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab(label=lang["vgg_tab"]["fastvggt"]["title"]) as fastvggt_tab:
                 fastvggt_sub1 = gr.Markdown(lang["vgg_tab"]["fastvggt"]["subtitle1"])
                 with gr.Accordion(label=lang["vgg_tab"]["fastvggt"]["option"]["title"], open=False) as fastvggt_option:
-                    gr.Markdown()
+                    exe_mode_fastvggt = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vgg_tab"]["fastvggt"]["option"]["exe_mode"])
                 recon_fastvggt_btn = gr.Button(value=lang["vgg_tab"]["fastvggt"]["recon_btn"])
                 outdir_recon_fastvggt = gr.Textbox(label=lang["vgg_tab"]["fastvggt"]["outdir_recon"])
                 runtime_recon_fastvggt = gr.Textbox(label=lang["vgg_tab"]["fastvggt"]["runtime_recon"])
@@ -1021,7 +1057,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Tab(label=lang["vgg_tab"]["pi3"]["title"]) as pi3_tab:
                 pi3_sub1 = gr.Markdown(lang["vgg_tab"]["pi3"]["subtitle1"])
                 with gr.Accordion(label=lang["vgg_tab"]["pi3"]["option"]["title"], open=False) as pi3_option:
-                    gr.Markdown()
+                    exe_mode_pi3 = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vgg_tab"]["pi3"]["option"]["exe_mode"])
                 recon_pi3_btn = gr.Button(value=lang["vgg_tab"]["pi3"]["recon_btn"])
                 outdir_recon_pi3 = gr.Textbox(label=lang["vgg_tab"]["pi3"]["outdir_recon"])
                 runtime_recon_pi3 = gr.Textbox(label=lang["vgg_tab"]["pi3"]["runtime_recon"])
@@ -1093,6 +1129,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      ex_dataset_vnerf,
                      vnerf_sub2,
                      vnerf_option,
+                     exe_mode_vnerf,
                      iter_vnerf,
                      recon_vnerf_btn,
                      vnerf_viewer,
@@ -1115,6 +1152,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      ex_dataset_nerfacto,
                      nerfacto_sub2,
                      nerfacto_option,
+                     exe_mode_nerfacto,
                      iter_nerfacto,
                      recon_nerfacto_btn,
                      nerfacto_viewer,
@@ -1137,6 +1175,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      ex_dataset_mipnerf,
                      mipnerf_sub2,
                      mipnerf_option,
+                     exe_mode_mipnerf,
                      iter_mipnerf,
                      recon_mipnerf_btn,
                      mipnerf_viewer,
@@ -1159,6 +1198,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      ex_dataset_stnerf,
                      stnerf_sub2,
                      stnerf_option,
+                     exe_mode_stnerf,
                      iter_stnerf,
                      recon_stnerf_btn,
                      stnerf_viewer,
@@ -1184,6 +1224,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      ex_dataset_vgs,
                      vgs_sub2,
                      vgs_option,
+                     exe_mode_vgs,
                      recon_vgs_btn,
                      outdir_recon_vgs,
                      runtime_recon_vgs,
@@ -1205,6 +1246,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      ex_dataset_mips,
                      mips_sub2,
                      mips_option,
+                     exe_mode_mips,
                      save_iter_mips,
                      recon_mips_btn,
                      outdir_recon_mips,
@@ -1220,6 +1262,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      ex_dataset_sfacto,
                      sfacto_sub2,
                      sfacto_option,
+                     exe_mode_sfacto,
                      iter_sfacto,
                      recon_sfacto_btn,
                      sfacto_viewer,
@@ -1242,6 +1285,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      ex_dataset_4dgs,
                      gs4d_sub2,
                      gs4d_option,
+                     exe_mode_4dgs,
                      save_iter_4dgs,
                      recon_4dgs_btn,
                      outdir_recon_4dgs,
@@ -1255,6 +1299,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      dust3r_tab, # DUSt3R
                      dust3r_sub1,
                      dust3r_option,
+                     exe_mode_dust3r,
                      recon_dust3r_btn,
                      outdir_recon_dust3r,
                      runtime_recon_dust3r,
@@ -1265,6 +1310,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      mast3r_tab, # MASt3R
                      mast3r_sub1,
                      mast3r_option,
+                     exe_mode_mast3r,
                      recon_mast3r_btn,
                      outdir_recon_mast3r,
                      runtime_recon_mast3r,
@@ -1274,6 +1320,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      monst3r_tab, # MonST3R
                      monst3r_sub1,
                      monst3r_option,
+                     exe_mode_monst3r,
                      recon_monst3r_btn,
                      outdir_recon_monst3r,
                      runtime_recon_monst3r,
@@ -1284,6 +1331,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      easi3r_sub1,
                      easi3r_info1,
                      easi3r_option,
+                     exe_mode_easi3r,
                      recon_easi3r_btn,
                      outdir_recon_easi3r,
                      runtime_recon_easi3r,
@@ -1293,6 +1341,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      must3r_tab, # MUSt3R
                      must3r_sub1,
                      must3r_option,
+                     exe_mode_must3r,
                      recon_must3r_btn,
                      outdir_recon_must3r,
                      runtime_recon_must3r,
@@ -1302,6 +1351,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      fast3r_tab, # Fast3R
                      fast3r_sub1,
                      fast3r_option,
+                     exe_mode_fast3r,
                      recon_fast3r_btn,
                      outdir_recon_fast3r,
                      runtime_recon_fast3r,
@@ -1314,6 +1364,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      img_splatt3r,
                      splatt3r_sub2,
                      splatt3r_option,
+                     exe_mode_splatt3r,
                      recon_splatt3r_btn,
                      outdir_recon_splatt3r,
                      runtime_recon_splatt3r,
@@ -1323,6 +1374,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      cut3r_tab, # CUT3R
                      cut3r_sub1,
                      cut3r_option,
+                     exe_mode_cut3r,
                      recon_cut3r_btn,
                      outdir_recon_cut3r,
                      runtime_recon_cut3r,
@@ -1332,6 +1384,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      wint3r_tab, # WinT3R
                      wint3r_sub1,
                      wint3r_option,
+                     exe_mode_wint3r,
                      recon_wint3r_btn,
                      outdir_recon_wint3r,
                      runtime_recon_wint3r,
@@ -1347,6 +1400,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      img_moge,
                      moge_sub2,
                      moge_option,
+                     exe_mode_moge,
                      img_type_moge,
                      recon_moge_btn,
                      outdir_recon_moge,
@@ -1360,6 +1414,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      img_unik3d,
                      unik3d_sub2,
                      unik3d_option,
+                     exe_mode_unik3d,
                      recon_unik3d_btn,
                      outdir_recon_unik3d,
                      runtime_recon_unik3d,
@@ -1372,6 +1427,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      vggt_tab, # VGGT
                      vggt_sub1,
                      vggt_option,
+                     exe_mode_vggt,
                      mode_vggt,
                      recon_vggt_btn,
                      outdir_recon_vggt,
@@ -1382,6 +1438,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      vggsfm_tab, # VGGSfM
                      vggsfm_sub1,
                      vggsfm_option,
+                     exe_mode_vggsfm,
                      recon_vggtsfm_btn,
                      outdir_recon_vggtsfm,
                      runtime_recon_vggtsfm,
@@ -1391,6 +1448,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      vggtslam_tab, # VGG-SLAM
                      vggtslam_sub1,
                      vggtslam_option,
+                     exe_mode_vggtslam,
                      recon_vggtslam_btn,
                      outdir_recon_vggtslam,
                      runtime_recon_vggtslam,
@@ -1400,6 +1458,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      stmvggt_tab, # StreamVGGT
                      stmvggt_sub1,
                      stmvggt_option,
+                     exe_mode_stmvggt,
                      recon_stmvggt_btn,
                      outdir_recon_stmvggt,
                      runtime_recon_stmvggt,
@@ -1409,6 +1468,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      fastvggt_tab, # FastVGGT
                      fastvggt_sub1,
                      fastvggt_option,
+                     exe_mode_fastvggt,
                      recon_fastvggt_btn,
                      outdir_recon_fastvggt,
                      runtime_recon_fastvggt,
@@ -1418,6 +1478,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      pi3_tab, # Pi3
                      pi3_sub1,
                      pi3_option,
+                     exe_mode_pi3,
                      recon_pi3_btn,
                      outdir_recon_pi3,
                      runtime_recon_pi3,
@@ -1546,83 +1607,83 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         
         # 三次元再構築
         recon_vnerf_btn.click(fn=methods.recon_vnerf,
-                             inputs=[dataset, outputsdir_state, iter_vnerf],
+                             inputs=[exe_mode_vnerf, dataset, outputsdir_state, iter_vnerf],
                              outputs=[outdir_recon_vnerf, runtime_recon_vnerf, result_recon_vnerf, log_recon_vnerf, export_vnerf_col])
         recon_nerfacto_btn.click(fn=methods.recon_nerfacto,
-                                 inputs=[dataset, outputsdir_state, iter_nerfacto],
+                                 inputs=[exe_mode_nerfacto, dataset, outputsdir_state, iter_nerfacto],
                                  outputs=[outdir_recon_nerfacto, runtime_recon_nerfacto, result_recon_nerfacto, log_recon_nerfacto, export_nerfacto_col])
         recon_mipnerf_btn.click(fn=methods.recon_mipnerf,
-                             inputs=[dataset, outputsdir_state, iter_mipnerf],
+                             inputs=[exe_mode_mipnerf, dataset, outputsdir_state, iter_mipnerf],
                              outputs=[outdir_recon_mipnerf, runtime_recon_mipnerf, result_recon_mipnerf, log_recon_mipnerf, export_mipnerf_col])
         recon_stnerf_btn.click(fn=methods.recon_stnerf,
-                             inputs=[dataset, outputsdir_state, iter_stnerf],
+                             inputs=[exe_mode_stnerf, dataset, outputsdir_state, iter_stnerf],
                              outputs=[outdir_recon_stnerf, runtime_recon_stnerf, result_recon_stnerf, log_recon_stnerf, export_stnerf_col])
         recon_vgs_btn.click(fn=methods.recon_vgs, 
-                             inputs=[dataset, outputsdir_state, sh_degree, data_device, lambda_dssim, iter_3dgs,
+                             inputs=[exe_mode_vgs, dataset, outputsdir_state, sh_degree, data_device, lambda_dssim, iter_3dgs,
                                      test_iter_3dgs, save_iter_3dgs, feature_lr,
                                      opacity_lr, scaling_lr, rotation_lr, position_lr_init, position_lr_final,
                                      position_lr_delay_mult, densify_from_iter, densify_until_iter, densify_grad_threshold,
                                      densification_interval, opacity_rest_interval, percent_dense], 
                                      outputs=[outdir_recon_vgs, runtime_recon_vgs, result_recon_vgs, log_recon_vgs, outmodel_vgs, render_vgs_col ])
         recon_mips_btn.click(fn=methods.recon_mipSplatting, 
-                             inputs=[dataset, outputsdir_state, save_iter_mips], 
+                             inputs=[exe_mode_mips, dataset, outputsdir_state, save_iter_mips], 
                              outputs=[outdir_recon_mips, runtime_recon_mips, result_recon_mips, log_recon_mips, outmodel_mips])
         recon_sfacto_btn.click(fn=methods.recon_sfacto,
-                             inputs=[dataset, outputsdir_state, iter_sfacto],
+                             inputs=[exe_mode_sfacto, dataset, outputsdir_state, iter_sfacto],
                              outputs=[outdir_recon_sfacto, runtime_recon_sfacto, result_recon_sfacto, log_recon_sfacto, export_sfacto_col])
         recon_4dgs_btn.click(fn=methods.recon_4dGaussians, 
-                             inputs=[dataset, outputsdir_state, save_iter_4dgs], 
+                             inputs=[exe_mode_4dgs, dataset, outputsdir_state, save_iter_4dgs], 
                              outputs=[outdir_recon_4dgs, runtime_recon_4dgs, result_recon_4dgs, log_recon_4dgs, outmodel_4dgs])
         recon_dust3r_btn.click(fn=methods.recon_dust3r,
-                               inputs=[dataset, outputsdir_state, schedule, niter, min_conf_thr, as_pointcloud,mask_sky, clean_depth, transparent_cams, cam_size,scenegraph_type, winsize, refid], 
+                               inputs=[exe_mode_dust3r, dataset, outputsdir_state, schedule, niter, min_conf_thr, as_pointcloud,mask_sky, clean_depth, transparent_cams, cam_size,scenegraph_type, winsize, refid], 
                                outputs=[outdir_recon_dust3r, runtime_recon_dust3r, result_recon_dust3r, log_recon_dust3r, outmodel_dust3r, outimgs_dust3r]).success(
                                            fn=preprocess.get_imagelist,
                                            inputs=outimgs_dust3r,
                                            outputs=gallery_dust3r)
         recon_mast3r_btn.click(fn=methods.recon_mast3r,
-                        inputs=[dataset, outputsdir_state], 
+                        inputs=[exe_mode_mast3r, dataset, outputsdir_state], 
                         outputs=[outdir_recon_mast3r, runtime_recon_mast3r, result_recon_mast3r, log_recon_mast3r, outmodel_mast3r])
         recon_monst3r_btn.click(fn=methods.recon_monst3r,
-                        inputs=[dataset, outputsdir_state], 
+                        inputs=[exe_mode_monst3r, dataset, outputsdir_state], 
                         outputs=[outdir_recon_monst3r, runtime_recon_monst3r, result_recon_monst3r, log_recon_monst3r, outmodel_monst3r])
         recon_easi3r_btn.click(fn=methods.recon_easi3r,
-                        inputs=[dataset, outputsdir_state], 
+                        inputs=[exe_mode_easi3r, dataset, outputsdir_state], 
                         outputs=[outdir_recon_easi3r, runtime_recon_easi3r, result_recon_easi3r, log_recon_easi3r, outmodel_easi3r])
         recon_must3r_btn.click(fn=methods.recon_must3r,
-                        inputs=[dataset, outputsdir_state], 
+                        inputs=[exe_mode_must3r, dataset, outputsdir_state], 
                         outputs=[outdir_recon_must3r, runtime_recon_must3r, result_recon_must3r, log_recon_must3r, outmodel_must3r])
         recon_fast3r_btn.click(fn=methods.recon_fast3r,
-                        inputs=[dataset, outputsdir_state], 
+                        inputs=[exe_mode_fast3r, dataset, outputsdir_state], 
                         outputs=[outdir_recon_fast3r, runtime_recon_fast3r, result_recon_fast3r, log_recon_fast3r, outmodel_fast3r])
         recon_cut3r_btn.click(fn=methods.recon_cut3r,
-                        inputs=[dataset, outputsdir_state], 
+                        inputs=[exe_mode_cut3r, dataset, outputsdir_state], 
                         outputs=[outdir_recon_cut3r, runtime_recon_cut3r, result_recon_cut3r, log_recon_cut3r, outmodel_cut3r])
         recon_wint3r_btn.click(fn=methods.recon_wint3r,
-                        inputs=[dataset, outputsdir_state], 
+                        inputs=[exe_mode_wint3r, dataset, outputsdir_state], 
                         outputs=[outdir_recon_wint3r, runtime_recon_wint3r, result_recon_wint3r, log_recon_wint3r, outmodel_wint3r])
         recon_splatt3r_btn.click(fn=methods.recon_splatt3r,
-                        inputs=[img_splatt3r, outputsdir_state], 
+                        inputs=[exe_mode_splatt3r, img_splatt3r, outputsdir_state], 
                         outputs=[outdir_recon_splatt3r, runtime_recon_splatt3r, result_recon_splatt3r, log_recon_splatt3r, outmodel_splatt3r])
         recon_moge_btn.click(fn=methods.recon_moge,
-                        inputs=[img_moge, outputsdir_state, img_type_moge], 
+                        inputs=[exe_mode_moge, img_moge, outputsdir_state, img_type_moge], 
                         outputs=[outdir_recon_moge, runtime_recon_moge, result_recon_moge, log_recon_moge, outmodel_moge])
         recon_unik3d_btn.click(fn=methods.recon_unik3d,
-                        inputs=[img_unik3d, outputsdir_state], 
+                        inputs=[exe_mode_unik3d, img_unik3d, outputsdir_state], 
                         outputs=[outdir_recon_unik3d, runtime_recon_unik3d, result_recon_unik3d, log_recon_unik3d, outmodel_unik3d])
         recon_vggt_btn.click(fn=methods.recon_vggt,
-                        inputs=[dataset, outputsdir_state], 
+                        inputs=[exe_mode_vggt, dataset, outputsdir_state], 
                         outputs=[outdir_recon_vggt, runtime_recon_vggt, result_recon_vggt, log_recon_vggt, outmodel_vggt])
         recon_vggtslam_btn.click(fn=methods.recon_vggtslam,
-                                 inputs=[dataset, outputsdir_state],
+                                 inputs=[exe_mode_vggtslam, dataset, outputsdir_state],
                                  outputs=[outdir_recon_vggtslam, runtime_recon_vggtslam, result_recon_vggtslam, log_recon_vggtslam, outmodel_vggtslam])
         recon_stmvggt_btn.click(fn=methods.recon_stmvggt,
-                        inputs=[dataset, outputsdir_state], 
+                        inputs=[exe_mode_stmvggt, dataset, outputsdir_state], 
                         outputs=[outdir_recon_stmvggt, runtime_recon_stmvggt, result_recon_stmvggt, log_recon_stmvggt, outmodel_stmvggt])
         recon_fastvggt_btn.click(fn=methods.recon_fastvggt,
-                        inputs=[dataset, outputsdir_state], 
+                        inputs=[exe_mode_fastvggt, dataset, outputsdir_state], 
                         outputs=[outdir_recon_fastvggt, runtime_recon_fastvggt, result_recon_fastvggt, log_recon_fastvggt, outmodel_fastvggt])
         recon_pi3_btn.click(fn=methods.recon_pi3,
-                            inputs=[dataset, outputsdir_state],
+                            inputs=[exe_mode_pi3, dataset, outputsdir_state],
                             outputs=[outdir_recon_pi3, runtime_recon_pi3, result_recon_pi3, log_recon_pi3, outmodel_pi3])
         
         # 点群出力（Nerfstudio）
