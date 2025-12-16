@@ -499,6 +499,7 @@
         "exe_mode": "実行環境"
       },
       "recon_btn": "🚀推論実行",
+      "viewer": "🌐[推論経過をビュアーで観る．](http://localhost/:8080)",
       "outdir_recon": "📁実行結果保存場所",
       "runtime_recon": "⏳実行時間",
       "result_recon": "💡実行結果",

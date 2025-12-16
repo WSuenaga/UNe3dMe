@@ -8,4 +8,5 @@ source ~/anaconda3/etc/profile.d/conda.sh
 conda activate vggt-slam
 
 python "$1" \
-  --image_folder "$2" 
+  --image_folder "$2" \
+  --vis_map

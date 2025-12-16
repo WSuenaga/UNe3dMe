@@ -433,6 +433,7 @@ def update_ui(choice):
         gr.Accordion(label=lang["vgg_tab"]["vggt-slam"]["option"]["title"]), # vggtslam_option
         gr.Radio(label= lang["vgg_tab"]["vggt-slam"]["option"]["exe_mode"]), # exe_mode_vggtslam
         gr.Button(value=lang["vgg_tab"]["vggt-slam"]["recon_btn"]), # recon_vggtslam_btn
+        gr.Markdown(lang["vgg_tab"]["vggt-slam"]["viewer"]), # vggtslam_viewer
         gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["outdir_recon"]), # outdir_recon_vggtslam
         gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["runtime_recon"]), # runtime_recon_vggtslam
         gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["result_recon"]), # result_recon_vggtslam
@@ -1018,11 +1019,11 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
 
             # VGGT-SLAM
             with gr.Tab(label=lang["vgg_tab"]["vggt-slam"]["title"]) as vggtslam_tab:
-                gr.Markdown("# ※未実装")
                 vggtslam_sub1 = gr.Markdown(lang["vgg_tab"]["vggt-slam"]["subtitle1"])
                 with gr.Accordion(label=lang["vgg_tab"]["vggt-slam"]["option"]["title"], open=False) as vggtslam_option:
                     exe_mode_vggtslam = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vgg_tab"]["vggt-slam"]["option"]["exe_mode"])
                 recon_vggtslam_btn = gr.Button(value=lang["vgg_tab"]["vggt-slam"]["recon_btn"])
+                vggtslam_viewer = gr.Markdown(lang["vgg_tab"]["vggt-slam"]["viewer"])
                 outdir_recon_vggtslam = gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["outdir_recon"])
                 runtime_recon_vggtslam = gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["runtime_recon"])
                 result_recon_vggtslam = gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["result_recon"])
@@ -1445,11 +1446,12 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      result_recon_vggtsfm,
                      log_recon_vggtsfm,
                      outmodel_vggtsfm,
-                     vggtslam_tab, # VGG-SLAM
+                     vggtslam_tab, # VGGT-SLAM
                      vggtslam_sub1,
                      vggtslam_option,
                      exe_mode_vggtslam,
                      recon_vggtslam_btn,
+                     vggtslam_viewer,
                      outdir_recon_vggtslam,
                      runtime_recon_vggtslam,
                      result_recon_vggtslam,

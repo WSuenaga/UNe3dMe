@@ -508,6 +508,7 @@
         "exe_mode": "Execution Environment"
       },
       "recon_btn": "🚀Run Inference",
+      "viewer": "🌐[View inference progress in the viewer.](http://localhost:8080)",
       "outdir_recon": "📁Output Directory",
       "runtime_recon": "⏳Runtime",
       "result_recon": "💡Result",

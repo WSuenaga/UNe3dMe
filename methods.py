@@ -1148,12 +1148,13 @@ def recon_vggtslam(mode, dataset, outputs_dir):
         dataset = os.path.join(dataset, "images")
 
         # 再構築スクリプトパス
-        script_path = "main.py"
+        recon_script = "main.py"
 
         # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "vggt-slam", "python", script_path,
-            "--image_folder", dataset
+            "conda", "run", "-n", "vggt-slam", "python", recon_script,
+            "--image_folder", dataset,
+            "--vis_map"
         ]
 
         # 実行ディレクトリ
@@ -1175,7 +1176,7 @@ def recon_vggtslam(mode, dataset, outputs_dir):
     runtime, status, log = run_subprocess(cmd, workdir)
 
     # 再構築結果のパス
-    model_path = os.path.join(outdir, "scene.glb")
+    model_path = ""
 
     return outdir, runtime, status, log, model_path
 
