@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=myjob
+#SBATCH --job-name=4DGaussians
 #SBATCH --output=logs/%x_%j.out
 #SBATCH --error=logs/%x_%j.err
 

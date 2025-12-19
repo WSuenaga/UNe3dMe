@@ -109,7 +109,7 @@ def train_nerfstudio_slurm(dataset, outputs_dir, method_name, iter, port):
     dataset =os.path.join(dataset, "colmap")
 
     train_cmd = [
-        "sbatch", sbatch_script, method_name, outdir, iter, port, dataset
+        "sbatch", f"--job-name={method_name}", sbatch_script, method_name, outdir, str(iter), str(port), dataset
     ]
 
     workdir = "./"

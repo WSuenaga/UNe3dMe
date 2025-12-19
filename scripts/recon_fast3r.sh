@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=myjob
+#SBATCH --job-name=fast3r
 #SBATCH --output=logs/%x_%j.out
 #SBATCH --error=logs/%x_%j.err
 

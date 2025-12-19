@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=myjob
+#SBATCH --job-name=mast3r
 #SBATCH --output=logs/%x_%j.out
 #SBATCH --error=logs/%x_%j.err
 

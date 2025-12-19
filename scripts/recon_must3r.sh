@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --job-name=myjob
+#SBATCH --job-name=must3r
 #SBATCH --output=logs/%x_%j.out
 #SBATCH --error=logs/%x_%j.err
 
-# micromamba 初期化（必須）
+# micromamba
 eval "$(micromamba shell hook -s bash)"
 
 micromamba activate must3r
