@@ -7,6 +7,7 @@ import string
 import subprocess
 import platform
 import zipfile
+from datetime import datetime
 # サードパーティライブラリ
 import cv2
 import gradio as gr
@@ -93,52 +94,38 @@ def remove_similar_images(input_dir: str, ssim_threshold: float = 0.95):
 
 def extract_frames_with_filter(video, parent_path, fps, remove_similar, ssim_threshold):
     video_name = os.path.splitext(os.path.basename(video))[0]
-    output_path = os.path.join(parent_path, video_name, "images")
-    
-    # ディレクトリが既に存在し、画像が存在する場合はスキップ
-    if os.path.exists(output_path):
-        existing_images = sorted([
-            f for f in os.listdir(output_path) if f.endswith(".png")
-        ])
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    dataset_dir = os.path.join(parent_path, video_name, timestamp)
+    output_path = os.path.join(dataset_dir, "images")
+    os.makedirs(output_path, exist_ok=True)
+
+    global SHELL_FLAG
+    command = [
+        "ffmpeg",
+        "-i", video,
+        "-vf", f"fps={fps}",
+        os.path.join(output_path, "%04d.png")
+    ]
+    subprocess.run(command, check=True, shell=SHELL_FLAG)
+
+    # フレーム抽出後の画像リスト
+    extracted_images = sorted([
+        f for f in os.listdir(output_path) if f.endswith(".png")
+    ])
+
+    if remove_similar:
+        comp_rate, sel_images_num, rej_images_num = remove_similar_images(output_path, ssim_threshold)
     else:
-        existing_images = []
-
-    if existing_images:
-        print(f"ディレクトリ {output_path} は既に存在します。抽出済みの画像を使用します。")
-        comp_rate = ""
-        sel_images_num = len(existing_images) 
-        rej_images_num = "" 
-    else:
-        os.makedirs(output_path, exist_ok=True)
-
-        global SHELL_FLAG
-        command = [
-            "ffmpeg",
-            "-i", video,
-            "-vf", f"fps={fps}",
-            os.path.join(output_path, "%04d.png")
-        ]
-        subprocess.run(command, check=True, shell=SHELL_FLAG)
-
-        # フレーム抽出後の画像リスト
-        extracted_images = sorted([
-            f for f in os.listdir(output_path) if f.endswith(".png")
-        ])
-
-        if remove_similar:
-            comp_rate, sel_images_num, rej_images_num = remove_similar_images(output_path, ssim_threshold)
-        else:
-            comp_rate = "100%"
-            sel_images_num = len(extracted_images)  
-            rej_images_num = "0枚"
+        comp_rate = "100%"
+        sel_images_num = len(extracted_images)  
+        rej_images_num = "0枚"
 
     # フルパスで返す
     imagelist = sorted([
         os.path.join(output_path, f)
         for f in os.listdir(output_path) if f.endswith(".png")
     ])
-
-    dataset_dir = os.path.join(parent_path, video_name)
 
     return dataset_dir, gr.Column(visible=True), dataset_dir, comp_rate, sel_images_num, rej_images_num, imagelist
 
