@@ -426,7 +426,6 @@ def update_ui(choice):
         gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["runtime_recon"]), # runtime_recon_vggtsfm
         gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["result_recon"]), # result_recon_vggtsfm
         gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["log_recon"]), # log_recon_vggtsfm
-        gr.Model3D(label=lang["vgg_tab"]["vggsfm"]["outmodel"]), # outmodel_vggtsfm
         # VGGT-SLAM
         gr.Tab(label=lang["vgg_tab"]["vggt-slam"]["title"]), # vggtslam_tab
         gr.Markdown(lang["vgg_tab"]["vggt-slam"]["subtitle1"]), # vggtslam_sub1
@@ -1006,7 +1005,6 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             
             # VGGSfM
             with gr.Tab(label=lang["vgg_tab"]["vggsfm"]["title"]) as vggsfm_tab:
-                gr.Markdown("# ※未実装")
                 vggsfm_sub1 = gr.Markdown(lang["vgg_tab"]["vggsfm"]["subtitle1"])
                 with gr.Accordion(label=lang["vgg_tab"]["vggsfm"]["option"]["title"], open=False) as vggsfm_option:
                     exe_mode_vggsfm = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vgg_tab"]["vggsfm"]["option"]["exe_mode"])
@@ -1015,7 +1013,6 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_vggtsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["runtime_recon"])
                 result_recon_vggtsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["result_recon"])
                 log_recon_vggtsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["log_recon"])
-                outmodel_vggtsfm = gr.Model3D(label=lang["vgg_tab"]["vggsfm"]["outmodel"])
 
             # VGGT-SLAM
             with gr.Tab(label=lang["vgg_tab"]["vggt-slam"]["title"]) as vggtslam_tab:
@@ -1445,7 +1442,6 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      runtime_recon_vggtsfm,
                      result_recon_vggtsfm,
                      log_recon_vggtsfm,
-                     outmodel_vggtsfm,
                      vggtslam_tab, # VGGT-SLAM
                      vggtslam_sub1,
                      vggtslam_option,
@@ -1675,6 +1671,9 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         recon_vggt_btn.click(fn=methods.recon_vggt,
                         inputs=[exe_mode_vggt, dataset, outputsdir_state], 
                         outputs=[outdir_recon_vggt, runtime_recon_vggt, result_recon_vggt, log_recon_vggt, outmodel_vggt])
+        recon_vggtsfm_btn.click(fn=methods.recon_vggsfm,
+                                inputs=[exe_mode_vggsfm, dataset, outputsdir_state],
+                                outputs=[outdir_recon_vggtsfm, runtime_recon_vggtsfm, result_recon_vggtsfm, log_recon_vggtsfm])
         recon_vggtslam_btn.click(fn=methods.recon_vggtslam,
                                  inputs=[exe_mode_vggtslam, dataset, outputsdir_state],
                                  outputs=[outdir_recon_vggtslam, runtime_recon_vggtslam, result_recon_vggtslam, log_recon_vggtslam, outmodel_vggtslam])
@@ -1707,7 +1706,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
 
         # レンダリング・評価
         eval_vgs_btn.click(fn=methods.render_eval_3dgs,
-                    inputs=[outdir_recon_vgs, skip_train, skip_test],
+                    inputs=[outdir_recon_vgs, skip_train, skip_test, save_iter_3dgs],
                     outputs=[result_render_vgs, eval_vgs, gallery_vgs])
             
     demo.launch()

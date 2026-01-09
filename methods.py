@@ -298,22 +298,11 @@ def recon_vgs(mode, dataset, outputs_dir, sh_degree, data_device, lambde_dsiim, 
 
     return outdir, runtime, status, log, model_path, gr.Column(visible=True)
 
-# --- 最大イテレーション数取得メソッド --- 
-def _get_latest_iteration(model_path):
-    """train/ または test ディレクトリから最新のours_xxxxx を見つけて番号を返す"""
-    test_dir = os.path.join(model_path, "test")
-    if not os.path.exists(test_dir):
-        return None
-    ours_dirs = [d for d in os.listdir(test_dir) if d.startswith("ours_")]
-    if not ours_dirs:
-        return None
-    # 数値部分でソートして最新を取得
-    latest = sorted(ours_dirs, key=lambda x: int(x.split("_")[1]))[-1]
-    return latest.split("_")[1]
-
 # --- レンダリング&評価メソッド ---
-def render_eval_3dgs(model_path, skip_train, skip_test, iteration=None):
-    # レンダリング
+def render_eval_3dgs(model_path, skip_train, skip_test, iteration):
+    # =========================
+    # Render
+    # =========================
     render_script_path = os.path.join("models", "gaussian-splatting", "render.py")
     render_cmd = [
         "conda", "run", "-n", "gaussian_splatting", "python", render_script_path,
@@ -327,13 +316,29 @@ def render_eval_3dgs(model_path, skip_train, skip_test, iteration=None):
         render_cmd.extend(["--iteration", str(iteration)])
 
     print("Running:", " ".join(map(str, render_cmd)))
-    render_result = subprocess.run(render_cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", shell=SHELL_FLAG)
 
-    if render_result.returncode != 0:
-        error_output = render_result.stderr.strip()
-        return f"レンダリングに失敗しました\n\nエラー内容:\n{error_output}", []
-    
-    # 評価
+    render_proc = subprocess.Popen(
+        render_cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        shell=SHELL_FLAG,
+    )
+
+    render_stdout, render_stderr = render_proc.communicate()
+
+    if render_proc.returncode != 0:
+        return (
+            "レンダリングに失敗しました\n\nエラー内容:\n" + render_stderr.strip(),
+            [],
+            [],
+        )
+
+    # =========================
+    # Evaluation
+    # =========================
     eval_script_path = os.path.join("models", "gaussian-splatting", "metrics.py")
     eval_cmd = [
         "conda", "run", "-n", "gaussian_splatting", "python", eval_script_path,
@@ -341,43 +346,73 @@ def render_eval_3dgs(model_path, skip_train, skip_test, iteration=None):
     ]
 
     print("Running:", " ".join(map(str, eval_cmd)))
-    eval_result = subprocess.run(eval_cmd, capture_output=True, text=True, shell=SHELL_FLAG)
 
-    if eval_result.returncode != 0:
-        error_output = eval_result.stderr.strip()
-        return f"レンダリングに失敗しました\n\nエラー内容:\n{error_output}", [], []
+    eval_proc = subprocess.Popen(
+        eval_cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        shell=SHELL_FLAG,
+    )
 
-    # 評価結果の取得
+    eval_stdout, eval_stderr = eval_proc.communicate()
+
+    if eval_proc.returncode != 0:
+        return (
+            "評価に失敗しました\n\nエラー内容:\n" + eval_stderr.strip(),
+            [],
+            [],
+        )
+
+    # =========================
+    # Load metrics
+    # =========================
     results_json = os.path.join(model_path, "results.json")
     values = []
     if os.path.exists(results_json):
-        with open(results_json, "r") as f:
+        with open(results_json, "r", encoding="utf-8") as f:
             results_data = json.load(f)
-        # 最初の行の値だけ取り出す
+
         first_method = list(results_data.keys())[0]
         metrics = results_data[first_method]
-        # PSNR, SSIM, LPIPS の順でリスト化
         values = [[metrics["PSNR"], metrics["SSIM"], metrics["LPIPS"]]]
 
-    # 最新イテレーションを推測
-    iter_str = str(iteration) if iteration is not None else _get_latest_iteration(model_path)
-    test_dir = os.path.join(model_path, "test", f"ours_{iter_str}")
+    # =========================
+    # Load images
+    # =========================
+    test_dir = os.path.join(model_path, "test", f"ours_{iteration}")
     gt_dir = os.path.join(test_dir, "gt")
     render_dir = os.path.join(test_dir, "renders")
 
     if not os.path.exists(render_dir) or not os.path.exists(gt_dir):
-        return f"出力ディレクトリが見つかりません: {render_dir} または {gt_dir}", [], []
+        return (
+            f"結果を保存したディレクトリが見つかりません: {render_dir} または {gt_dir}",
+            [],
+            [],
+        )
 
-    # ソートして画像取得
     gt_images = sorted(glob.glob(os.path.join(gt_dir, "*.png")))
     render_images = sorted(glob.glob(os.path.join(render_dir, "*.png")))
 
-    # ペアにして gallery 表示用のリストに変換
     gallery_images = []
     for gt_img, render_img in zip(gt_images, render_images):
         gallery_images.append(gt_img)
         gallery_images.append(render_img)
-    return "レンダリングに成功しました", values, gallery_images
+
+    success_message = (
+    "レンダリングに成功しました\n\n"
+    "===== Render stdout =====\n"
+    f"{render_stdout.strip()}\n\n"
+    "===== Render stderr =====\n"
+    f"{render_stderr.strip()}\n\n"
+    "===== Eval stdout =====\n"
+    f"{eval_stdout.strip()}\n\n"
+    "===== Eval stderr =====\n"
+    f"{eval_stderr.strip()}")
+
+    return success_message, values, gallery_images
 
 """
 Mip-Splatting
@@ -1121,16 +1156,46 @@ def recon_vggt(mode, dataset, outputs_dir):
     model_path = os.path.join(outdir, "scene.glb")
 
     return outdir, runtime, status, log, model_path
+
 """
 VGGSfM
 """
 # --- 再構築メソッド ---
-def recon_vggsfm():
+def recon_vggsfm(mode, dataset, outputs_dir):
+    # 出力ディレクトリの作成
+    name = os.path.basename(dataset)
+    outdir = os.path.join(outputs_dir, "vggsfm", name)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
 
-    cmd = []
+    if mode=="local":
+        # 再構築スクリプトパス
+        recon_script = "demo.py"
 
+        # 実行コマンド
+        cmd_sfm = [
+            "conda", "run", "-n", "vggsfm_tmp", "python", recon_script,
+            f"SCENE_DIR={dataset}"
+        ]
+        # 実行ディレクトリ
+        workdir = os.path.join("models", "vggsfm")
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_vggsfm.sh")
 
-    return
+        # 再構築スクリプトパス
+        recon_script = os.path.join("models", "vggsfm", "demo.py")
+
+        # 実行コマンド
+        cmd_sfm = ["sbatch", sbatch_script, recon_script, dataset, outdir]
+
+        # 実行ディレクトリ
+        workdir = "./"
+
+    # 推論実行
+    runtime, status, log = run_subprocess(cmd_sfm, workdir)
+
+    return outdir, runtime, status, log
 
 """
 VGGT-SLAM

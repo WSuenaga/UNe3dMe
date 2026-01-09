@@ -204,7 +204,7 @@
       "subtitle3": "# 3.レンダリング・評価",
       "skip_train": "学習画像のレンダリングを行わない",
       "skip_test": "テスト画像のレンダリングを行わない",
-      "eval_vgs_btn": "🚀レンダリング実行",
+      "eval_vgs_btn": "🚀レンダリング&評価実行",
       "result_render_vgs": "💡実行結果",
       "eval_vgs": "📊評価指標",
       "gallery_vgs": "🖼️Ground Truth・レンダリングされた画像"

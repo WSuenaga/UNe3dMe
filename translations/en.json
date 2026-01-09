@@ -204,7 +204,7 @@
     "subtitle3": "# 3. Rendering & Evaluation",
     "skip_train": "Do not render training images",
     "skip_test": "Do not render test images",
-    "eval_vgs_btn": "🚀Start Rendering",
+    "eval_vgs_btn": "🚀Start Rendering & Evaluation",
     "result_render_vgs": "💡Rendering Result",
     "eval_vgs": "📊Evaluation Metrics",
     "gallery_vgs": "🖼️Ground Truth & Rendered Images"
