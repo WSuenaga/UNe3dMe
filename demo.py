@@ -482,9 +482,9 @@ def display_media_ui(choice):
     elif choice == "🎥動画" or choice == "🎥Video":
         return gr.Column(visible=False), gr.Column(visible=True)
 def display_dataset_ui(choice):
-    if choice == "作成したデータセット" or choice == "Created Dataset":
+    if choice == "内部データセット" or choice == "Internal Dataset":
         return gr.Column(visible=True), gr.Column(visible=False)
-    elif choice == "処理済データセット" or choice == "Processed Dataset":
+    elif choice == "外部データセット" or choice == "External Dataset":
         return gr.Column(visible=False), gr.Column(visible=True)
 def col_change():
     return gr.Column(visible=True)
