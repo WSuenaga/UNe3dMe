@@ -64,8 +64,8 @@
     "vnerf": {
       "title": "Vanilla NeRF",
       "subtitle1": "# 1. Select Dataset Type",
-      "radio_newdata": "Created Dataset",
-      "radio_exdata": "Processed Dataset",
+      "radio_indata": "Internal Dataset",
+      "radio_exdata": "External Dataset",
       "radio": "Select the dataset for 3D reconstruction.",
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Be careful because you can select non-ZIP files as well.",
@@ -81,7 +81,7 @@
       "outdir_recon": "📁Output Directory",
       "runtime_recon": "⏳Runtime",
       "result_recon": "💡Training Result",
-      "log_recon": "📝Training Log",
+      "log_recon": "📝Execution Log",
       "subtitle3": "# 3. Export Point Cloud",
       "export_btn": "🚀Export Point Cloud",
       "outdir_export": "📁Output Directory",
@@ -93,8 +93,8 @@
     "nerfacto": {
       "title": "Nerfacto",
       "subtitle1": "# 1. Select Dataset Type",
-      "radio_newdata": "Created Dataset",
-      "radio_exdata": "Processed Dataset",
+      "radio_indata": "Internal Dataset",
+      "radio_exdata": "External Dataset",
       "radio": "Select the dataset for 3D reconstruction.",
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Be careful because you can select non-ZIP files as well.",
@@ -110,7 +110,7 @@
       "outdir_recon": "📁Output Directory",
       "runtime_recon": "⏳Runtime",
       "result_recon": "💡Training Result",
-      "log_recon": "📝Training Log",
+      "log_recon": "📝Execution Log",
       "subtitle3": "# 3. Export Point Cloud",
       "export_btn": "🚀Export Point Cloud",
       "outdir_export": "📁Output Directory",
@@ -122,8 +122,8 @@
     "mip-nerf": {
       "title": "mip-NeRF",
       "subtitle1": "# 1. Select Dataset Type",
-      "radio_newdata": "Created Dataset",
-      "radio_exdata": "Processed Dataset",
+      "radio_indata": "Internal Dataset",
+      "radio_exdata": "External Dataset",
       "radio": "Select the dataset for 3D reconstruction.",
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Be careful because you can select non-ZIP files as well.",
@@ -139,7 +139,7 @@
       "outdir_recon": "📁Output Directory",
       "runtime_recon": "⏳Runtime",
       "result_recon": "💡Training Result",
-      "log_recon": "📝Training Log",
+      "log_recon": "📝Execution Log",
       "subtitle3": "# 3. Export Point Cloud",
       "export_btn": "🚀Export Point Cloud",
       "outdir_export": "📁Output Directory",
@@ -151,8 +151,8 @@
     "seathru-nerf": {
       "title": "SeaThru-NeRF",
       "subtitle1": "# 1. Select Dataset Type",
-      "radio_newdata": "Created Dataset",
-      "radio_exdata": "Processed Dataset",
+      "radio_indata": "Internal Dataset",
+      "radio_exdata": "External Dataset",
       "radio": "Select the dataset for 3D reconstruction.",
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Be careful because you can select non-ZIP files as well.",
@@ -168,7 +168,7 @@
       "outdir_recon": "📁Output Directory",
       "runtime_recon": "⏳Runtime",
       "result_recon": "💡Training Result",
-      "log_recon": "📝Training Log",
+      "log_recon": "📝Execution Log",
       "subtitle3": "# 3. Export Point Cloud",
       "export_btn": "🚀Export Point Cloud",
       "outdir_export": "📁Output Directory",
@@ -184,9 +184,9 @@
   "vgs": {
     "title": "Vanilla GS",
     "subtitle1": "# 1. Select Dataset Type",
-    "radio_newdata": "Created Dataset",
-    "radio_exdata": "Processed Dataset",
-    "radio": "Select the dataset to use for 3D reconstruction.",
+    "radio_indata": "Internal Dataset",
+    "radio_exdata": "External Dataset",
+    "radio": "Select the dataset for 3D reconstruction.",
     "subtitle1_1": "# 1.1 Upload Dataset",
     "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Be careful because non-ZIP files can also be selected.",
     "ex_dataset": "📂Select Dataset",
@@ -199,22 +199,24 @@
     "outdir_recon": "📁Output Directory",
     "runtime_recon": "⏳Runtime",
     "result_recon": "💡Training Result",
-    "log_recon": "📝Training Log",
+    "log_recon": "📝Execution Log",
     "outmodel": "🌐3D Reconstruction Result",
     "subtitle3": "# 3. Rendering & Evaluation",
     "skip_train": "Do not render training images",
     "skip_test": "Do not render test images",
-    "eval_vgs_btn": "🚀Start Rendering & Evaluation",
-    "result_render_vgs": "💡Rendering Result",
-    "eval_vgs": "📊Evaluation Metrics",
-    "gallery_vgs": "🖼️Ground Truth & Rendered Images"
+    "eval_btn": "🚀Start Rendering & Evaluation",
+    "runtime_eval": "⏳Runtime",
+    "result_eval": "💡Rendering Result",
+    "log_eval": "📝Execution Log",
+    "metrics": "📊Evaluation Metrics",
+    "gallery": "🖼️Ground Truth & Rendered Images"
     },
   "mip-splatting": {
     "title": "Mip-Splatting",
     "subtitle1": "# 1. Select Dataset Type",
-    "radio_newdata": "Created Dataset",
-    "radio_exdata": "Processed Dataset",
-    "radio": "Select the dataset to use for 3D reconstruction.",
+    "radio_indata": "Internal Dataset",
+    "radio_exdata": "External Dataset",
+    "radio": "Select the dataset for 3D reconstruction.",
     "subtitle1_1": "# 1.1 Upload Dataset",
     "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Note that non-ZIP files can also be selected.",
     "ex_dataset": "📂Select Dataset",
@@ -228,14 +230,14 @@
     "outdir_recon": "📁Output Directory",
     "runtime_recon": "⏳Runtime",
     "result_recon": "💡Training Result",
-    "log_recon": "📝Training Log",
+    "log_recon": "📝Execution Log",
     "outmodel": "🌐3D Reconstruction Result"
     },
   "splatfacto": {
     "title": "Splatfacto",
     "subtitle1": "# 1. Select Dataset Type",
-    "radio_newdata": "Created Dataset",
-    "radio_exdata": "Processed Dataset",
+    "radio_indata": "Internal Dataset",
+    "radio_exdata": "External Dataset",
     "radio": "Select the dataset for 3D reconstruction.",
     "subtitle1_1": "# 1.1 Upload Dataset",
     "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Be careful because you can select non-ZIP files as well.",
@@ -251,7 +253,7 @@
     "outdir_recon": "📁Output Directory",
     "runtime_recon": "⏳Runtime",
     "result_recon": "💡Training Result",
-    "log_recon": "📝Training Log",
+    "log_recon": "📝Execution Log",
     "subtitle3": "# 3. Export Point Cloud",
     "export_btn": "🚀Export Point Cloud",
     "outdir_export": "📁Output Directory",
@@ -263,9 +265,9 @@
   "4d-gaussians": {
     "title": "4D-Gaussians",
     "subtitle1": "# 1. Select Dataset Type",
-    "radio_newdata": "Created Dataset",
-    "radio_exdata": "Processed Dataset",
-    "radio": "Select the dataset to use for 3D reconstruction.",
+    "radio_indata": "Internal Dataset",
+    "radio_exdata": "External Dataset",
+    "radio": "Select the dataset for 3D reconstruction.",
     "subtitle1_1": "# 1.1 Upload Dataset",
     "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Note that non-ZIP files can also be selected.",
     "ex_dataset": "📂Select Dataset",
@@ -279,7 +281,7 @@
     "outdir_recon": "📁Output Directory",
     "runtime_recon": "⏳Runtime",
     "result_recon": "💡Training Result",
-    "log_recon": "📝Training Log",
+    "log_recon": "📝Execution Log",
     "outmodel": "🌐3D Reconstruction Result"
     } 
   },
@@ -447,7 +449,7 @@
       "outdir_recon": "📁Output Directory",
       "runtime_recon": "⏳Runtime",
       "result_recon": "💡Result",
-      "log_recon": "📝Log",
+      "log_recon": "📝Execution Log",
       "outmodel": "🌐3D Reconstruction Result"
     },
     "unik3d": {
@@ -464,7 +466,7 @@
       "outdir_recon": "📁Output Directory",
       "runtime_recon": "⏳Runtime",
       "result_recon": "💡Result",
-      "log_recon": "📝Log",
+      "log_recon": "📝Execution Log",
       "outmodel": "🌐3D Reconstruction Result"
     }
   },
@@ -483,7 +485,7 @@
       "outdir_recon": "📁Output Directory",
       "runtime_recon": "⏳Runtime",
       "result_recon": "💡Result",
-      "log_recon": "📝Log",
+      "log_recon": "📝Execution Log",
       "outmodel": "🌐3D Reconstruction Result"
     },
     "vggsfm": {
@@ -497,7 +499,7 @@
       "outdir_recon": "📁Output Directory",
       "runtime_recon": "⏳Runtime",
       "result_recon": "💡Result",
-      "log_recon": "📝Log",
+      "log_recon": "📝Execution Log",
       "outmodel": "🌐3D Reconstruction Result"
     },
     "vggt-slam": {
@@ -512,7 +514,7 @@
       "outdir_recon": "📁Output Directory",
       "runtime_recon": "⏳Runtime",
       "result_recon": "💡Result",
-      "log_recon": "📝Log",
+      "log_recon": "📝Execution Log",
       "outmodel": "🌐3D Reconstruction Result"
     },
     "streamvggt": {
@@ -526,7 +528,7 @@
       "outdir_recon": "📁Output Directory",
       "runtime_recon": "⏳Runtime",
       "result_recon": "💡Result",
-      "log_recon": "📝Log",
+      "log_recon": "📝Execution Log",
       "outmodel": "🌐3D Reconstruction Result"
     },
     "fastvggt": {
@@ -540,7 +542,7 @@
       "outdir_recon": "📁Output Directory",
       "runtime_recon": "⏳Runtime",
       "result_recon": "💡Result",
-      "log_recon": "📝Log",
+      "log_recon": "📝Execution Log",
       "outmodel": "🌐3D Reconstruction Result"
     },
     "pi3": {
@@ -554,7 +556,7 @@
       "outdir_recon": "📁Output Directory",
       "runtime_recon": "⏳Runtime",
       "result_recon": "💡Result",
-      "log_recon": "📝Log",
+      "log_recon": "📝Execution Log",
       "outmodel": "🌐3D Reconstruction Result"
     }
   }

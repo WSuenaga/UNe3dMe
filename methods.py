@@ -51,10 +51,10 @@ def run_subprocess(cmd, workdir):
 
     # ログの出力
     if returncode == 0:
-        status = "✅ 成功"
+        status = "✅ Success"
         log = f"{stdout_data.strip()}"
     else:
-        status = "❌ 失敗"
+        status = "❌ Failed"
         log = f"{stderr_data.strip()}"
 
     return run_time, status, log
@@ -300,14 +300,21 @@ def recon_vgs(mode, dataset, outputs_dir, sh_degree, data_device, lambde_dsiim, 
 
 # --- レンダリング&評価メソッド ---
 def render_eval_3dgs(model_path, skip_train, skip_test, iteration):
+    """
+    3DGS のレンダリング & 評価
+    """
+
+    workdir = os.path.join("models", "gaussian-splatting")
+
     # =========================
     # Render
     # =========================
-    render_script_path = os.path.join("models", "gaussian-splatting", "render.py")
+    render_script = "render.py"
     render_cmd = [
-        "conda", "run", "-n", "gaussian_splatting", "python", render_script_path,
+        "conda", "run", "-n", "gaussian_splatting", "python", render_script,
         "--model_path", model_path,
     ]
+
     if skip_train:
         render_cmd.append("--skip_train")
     if skip_test:
@@ -315,23 +322,13 @@ def render_eval_3dgs(model_path, skip_train, skip_test, iteration):
     if iteration is not None:
         render_cmd.extend(["--iteration", str(iteration)])
 
-    print("Running:", " ".join(map(str, render_cmd)))
+    runtime_r, status_r, log_r = run_subprocess(render_cmd, workdir)
 
-    render_proc = subprocess.Popen(
-        render_cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        shell=SHELL_FLAG,
-    )
-
-    render_stdout, render_stderr = render_proc.communicate()
-
-    if render_proc.returncode != 0:
+    if status_r != "✅ Success":
         return (
-            "レンダリングに失敗しました\n\nエラー内容:\n" + render_stderr.strip(),
+            runtime_r,
+            "❌ Failed",
+            "レンダリングに失敗しました\n\n" + log_r,
             [],
             [],
         )
@@ -339,29 +336,19 @@ def render_eval_3dgs(model_path, skip_train, skip_test, iteration):
     # =========================
     # Evaluation
     # =========================
-    eval_script_path = os.path.join("models", "gaussian-splatting", "metrics.py")
+    eval_script = "metrics.py"
     eval_cmd = [
-        "conda", "run", "-n", "gaussian_splatting", "python", eval_script_path,
+        "conda", "run", "-n", "gaussian_splatting", "python", eval_script,
         "--model_path", model_path,
     ]
 
-    print("Running:", " ".join(map(str, eval_cmd)))
+    runtime_e, status_e, log_e = run_subprocess(eval_cmd, workdir)
 
-    eval_proc = subprocess.Popen(
-        eval_cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        shell=SHELL_FLAG,
-    )
-
-    eval_stdout, eval_stderr = eval_proc.communicate()
-
-    if eval_proc.returncode != 0:
+    if status_e != "✅ Success":
         return (
-            "評価に失敗しました\n\nエラー内容:\n" + eval_stderr.strip(),
+            runtime_r + runtime_e,
+            "❌ Failed",
+            "評価に失敗しました\n\n" + log_e,
             [],
             [],
         )
@@ -371,13 +358,18 @@ def render_eval_3dgs(model_path, skip_train, skip_test, iteration):
     # =========================
     results_json = os.path.join(model_path, "results.json")
     values = []
+
     if os.path.exists(results_json):
         with open(results_json, "r", encoding="utf-8") as f:
             results_data = json.load(f)
 
         first_method = list(results_data.keys())[0]
         metrics = results_data[first_method]
-        values = [[metrics["PSNR"], metrics["SSIM"], metrics["LPIPS"]]]
+        values = [[
+            metrics.get("PSNR"),
+            metrics.get("SSIM"),
+            metrics.get("LPIPS"),
+        ]]
 
     # =========================
     # Load images
@@ -388,31 +380,34 @@ def render_eval_3dgs(model_path, skip_train, skip_test, iteration):
 
     if not os.path.exists(render_dir) or not os.path.exists(gt_dir):
         return (
-            f"結果を保存したディレクトリが見つかりません: {render_dir} または {gt_dir}",
-            [],
+            runtime_r + runtime_e,
+            "❌ Failed",
+            f"ディレクトリが見つかりません:\n{render_dir}\n{gt_dir}",
+            values,
             [],
         )
 
     gt_images = sorted(glob.glob(os.path.join(gt_dir, "*.png")))
     render_images = sorted(glob.glob(os.path.join(render_dir, "*.png")))
 
-    gallery_images = []
+    gallery = []
     for gt_img, render_img in zip(gt_images, render_images):
-        gallery_images.append(gt_img)
-        gallery_images.append(render_img)
+        gallery.append(gt_img)
+        gallery.append(render_img)
 
-    success_message = (
-    "レンダリングに成功しました\n\n"
-    "===== Render stdout =====\n"
-    f"{render_stdout.strip()}\n\n"
-    "===== Render stderr =====\n"
-    f"{render_stderr.strip()}\n\n"
-    "===== Eval stdout =====\n"
-    f"{eval_stdout.strip()}\n\n"
-    "===== Eval stderr =====\n"
-    f"{eval_stderr.strip()}")
+    # =========================
+    # Summary
+    # =========================
+    runtime = runtime_r + runtime_e
+    status = "✅ Success"
+    log = (
+        "===== Render =====\n"
+        + log_r
+        + "\n\n===== Eval =====\n"
+        + log_e
+    )
 
-    return success_message, values, gallery_images
+    return runtime, status, log, values, gallery
 
 """
 Mip-Splatting

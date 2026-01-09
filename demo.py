@@ -76,7 +76,7 @@ def update_ui(choice):
         # Vanilla NeRF
         gr.Tab(label=lang["nerf_tab"]["vnerf"]["title"]), # vnerf_tab
         gr.Markdown(lang["nerf_tab"]["vnerf"]["subtitle1"]), # vnerf_sub1
-        gr.Radio(choices=[lang["nerf_tab"]["vnerf"]["radio_newdata"], lang["nerf_tab"]["vnerf"]["radio_exdata"]],
+        gr.Radio(choices=[lang["nerf_tab"]["vnerf"]["radio_indata"], lang["nerf_tab"]["vnerf"]["radio_exdata"]],
                  label=lang["nerf_tab"]["vnerf"]["radio"]), # vnerf_radio
         gr.Markdown(lang["nerf_tab"]["vnerf"]["subtitle1_1"]), # vnerf_sub1_1
         gr.Markdown(lang["nerf_tab"]["vnerf"]["info1"]), # vnerf_info1
@@ -101,7 +101,7 @@ def update_ui(choice):
         # Nerfacto
         gr.Tab(label=lang["nerf_tab"]["nerfacto"]["title"]), # nerfacto_tab
         gr.Markdown(lang["nerf_tab"]["nerfacto"]["subtitle1"]), # nerfacto_sub1
-        gr.Radio(choices=[lang["nerf_tab"]["nerfacto"]["radio_newdata"], lang["nerf_tab"]["nerfacto"]["radio_exdata"]],
+        gr.Radio(choices=[lang["nerf_tab"]["nerfacto"]["radio_indata"], lang["nerf_tab"]["nerfacto"]["radio_exdata"]],
                  label=lang["nerf_tab"]["nerfacto"]["radio"]), # nerfacto_radio
         gr.Markdown(lang["nerf_tab"]["nerfacto"]["subtitle1_1"]), # nerfacto_sub1_1
         gr.Markdown(lang["nerf_tab"]["nerfacto"]["info1"]), # nerfacto_info1
@@ -126,7 +126,7 @@ def update_ui(choice):
         # mip-NeRF
         gr.Tab(label=lang["nerf_tab"]["mip-nerf"]["title"]), # mipnerf_tab
         gr.Markdown(lang["nerf_tab"]["mip-nerf"]["subtitle1"]), # mipnerf_sub1
-        gr.Radio(choices=[lang["nerf_tab"]["mip-nerf"]["radio_newdata"], lang["nerf_tab"]["mip-nerf"]["radio_exdata"]],
+        gr.Radio(choices=[lang["nerf_tab"]["mip-nerf"]["radio_indata"], lang["nerf_tab"]["mip-nerf"]["radio_exdata"]],
                  label=lang["nerf_tab"]["mip-nerf"]["radio"]), # mipnerf_radio
         gr.Markdown(lang["nerf_tab"]["mip-nerf"]["subtitle1_1"]), # mipnerf_sub1_1
         gr.Markdown(lang["nerf_tab"]["mip-nerf"]["info1"]), # mipnerf_info1
@@ -151,7 +151,7 @@ def update_ui(choice):
         # SeaThru-NeRF
         gr.Tab(label=lang["nerf_tab"]["seathru-nerf"]["title"]), # stnerf_tab
         gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["subtitle1"]), # stnerf_sub1
-        gr.Radio(choices=[lang["nerf_tab"]["seathru-nerf"]["radio_newdata"], lang["nerf_tab"]["seathru-nerf"]["radio_exdata"]],
+        gr.Radio(choices=[lang["nerf_tab"]["seathru-nerf"]["radio_indata"], lang["nerf_tab"]["seathru-nerf"]["radio_exdata"]],
                  label=lang["nerf_tab"]["seathru-nerf"]["radio"]), # stnerf_radio
         gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["subtitle1_1"]), # stnerf_sub1_1
         gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["info1"]), # stnerf_info1
@@ -179,7 +179,7 @@ def update_ui(choice):
         # Vanilla GS
         gr.Tab(label=lang["gs_tab"]["vgs"]["title"]), # vgs_tab
         gr.Markdown(lang["gs_tab"]["vgs"]["subtitle1"]), # vgs_sub1
-        gr.Radio(choices=[lang["gs_tab"]["vgs"]["radio_newdata"], lang["gs_tab"]["vgs"]["radio_exdata"]], 
+        gr.Radio(choices=[lang["gs_tab"]["vgs"]["radio_indata"], lang["gs_tab"]["vgs"]["radio_exdata"]], 
                  label = lang["gs_tab"]["vgs"]["radio"]), # vgs_radio
         gr.Markdown(lang["gs_tab"]["vgs"]["subtitle1_1"]), # vgs_sub1_1
         gr.Markdown(lang["gs_tab"]["vgs"]["info1"]), # vgs_info1
@@ -196,14 +196,16 @@ def update_ui(choice):
         gr.Markdown(lang["gs_tab"]["vgs"]["subtitle3"]), # vgs_sub3
         gr.Checkbox(label=lang["gs_tab"]["vgs"]["skip_train"]), # skip_train
         gr.Checkbox(value=True, label=lang["gs_tab"]["vgs"]["skip_test"]), # skip_test
-        gr.Button(value=lang["gs_tab"]["vgs"]["eval_vgs_btn"]), # eval_vgs_btn
-        gr.Textbox(label=lang["gs_tab"]["vgs"]["result_render_vgs"]), # result_render_vgs
-        gr.DataFrame(label=lang["gs_tab"]["vgs"]["eval_vgs"]), # eval_vgs
-        gr.Gallery(label=lang["gs_tab"]["vgs"]["gallery_vgs"]), # gallery_vgs
+        gr.Button(value=lang["gs_tab"]["vgs"]["eval_btn"]), # eval_vgs_btn
+        gr.Textbox(label=lang["gs_tab"]["vgs"]["runtime_eval"]), # runtime_eval_vgs
+        gr.Textbox(label=lang["gs_tab"]["vgs"]["result_eval"]), # result_render_vgs
+        gr.Textbox(label=lang["gs_tab"]["vgs"]["log_eval"]), # log_eval_vgs
+        gr.DataFrame(label=lang["gs_tab"]["vgs"]["metrics"]), # metrics_vgs
+        gr.Gallery(label=lang["gs_tab"]["vgs"]["gallery"]), # gallery_vgs
         # Mip-Splatting
         gr.Tab(label=lang["gs_tab"]["mip-splatting"]["title"]), # mips_tab
         gr.Markdown(lang["gs_tab"]["mip-splatting"]["subtitle1"]), # mips_sub1
-        gr.Radio(choices=[lang["gs_tab"]["mip-splatting"]["radio_newdata"], lang["gs_tab"]["mip-splatting"]["radio_exdata"]], 
+        gr.Radio(choices=[lang["gs_tab"]["mip-splatting"]["radio_indata"], lang["gs_tab"]["mip-splatting"]["radio_exdata"]], 
                  label = lang["gs_tab"]["mip-splatting"]["radio"]), # mips_radio
         gr.Markdown(lang["gs_tab"]["mip-splatting"]["subtitle1_1"]), # mips_sub1_1
         gr.Markdown(lang["gs_tab"]["mip-splatting"]["info1"]), # mips_info1
@@ -221,7 +223,7 @@ def update_ui(choice):
         # Splatfacto
         gr.Tab(label=lang["gs_tab"]["splatfacto"]["title"]), # sfacto_tab
         gr.Markdown(lang["gs_tab"]["splatfacto"]["subtitle1"]), # sfacto_sub1
-        gr.Radio(choices=[lang["gs_tab"]["splatfacto"]["radio_newdata"], lang["gs_tab"]["splatfacto"]["radio_exdata"]],
+        gr.Radio(choices=[lang["gs_tab"]["splatfacto"]["radio_indata"], lang["gs_tab"]["splatfacto"]["radio_exdata"]],
                  label=lang["gs_tab"]["splatfacto"]["radio"]), # sfacto_radio
         gr.Markdown(lang["gs_tab"]["splatfacto"]["subtitle1_1"]), # sfacto_sub1_1
         gr.Markdown(lang["gs_tab"]["splatfacto"]["info1"]), # sfacto_info1
@@ -246,7 +248,7 @@ def update_ui(choice):
         # 4D-Gaussians
         gr.Tab(label=lang["gs_tab"]["4d-gaussians"]["title"]), # gs4d_tab
         gr.Markdown(lang["gs_tab"]["4d-gaussians"]["subtitle1"]), # gs4d_sub1
-        gr.Radio(choices=[lang["gs_tab"]["4d-gaussians"]["radio_newdata"], lang["gs_tab"]["4d-gaussians"]["radio_exdata"]], 
+        gr.Radio(choices=[lang["gs_tab"]["4d-gaussians"]["radio_indata"], lang["gs_tab"]["4d-gaussians"]["radio_exdata"]], 
                  label = lang["gs_tab"]["4d-gaussians"]["radio"]), # gs4d_radio
         gr.Markdown(lang["gs_tab"]["4d-gaussians"]["subtitle1_1"]), # gs4d_sub1_1
         gr.Markdown(lang["gs_tab"]["4d-gaussians"]["info1"]), # gs4d_info1
@@ -575,7 +577,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             # Vanilla-NeRF
             with gr.Tab(label=lang["nerf_tab"]["vnerf"]["title"]) as vnerf_tab:
                 vnerf_sub1 = gr.Markdown(lang["nerf_tab"]["vnerf"]["subtitle1"])
-                vnerf_radio = gr.Radio(choices=[lang["nerf_tab"]["vnerf"]["radio_newdata"], lang["nerf_tab"]["vnerf"]["radio_exdata"]], label=lang["nerf_tab"]["vnerf"]["radio"])
+                vnerf_radio = gr.Radio(choices=[lang["nerf_tab"]["vnerf"]["radio_indata"], lang["nerf_tab"]["vnerf"]["radio_exdata"]], label=lang["nerf_tab"]["vnerf"]["radio"])
                 with gr.Column(visible=False) as ex_vnerf_col:
                     vnerf_sub1_1 = gr.Markdown(lang["nerf_tab"]["vnerf"]["subtitle1_1"])
                     vnerf_info1 = gr.Markdown(lang["nerf_tab"]["vnerf"]["info1"])
@@ -603,7 +605,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             # Nerfacto
             with gr.Tab(label=lang["nerf_tab"]["nerfacto"]["title"]) as nerfacto_tab:
                 nerfacto_sub1 = gr.Markdown(lang["nerf_tab"]["nerfacto"]["subtitle1"])
-                nerfacto_radio = gr.Radio(choices=[lang["nerf_tab"]["nerfacto"]["radio_newdata"], lang["nerf_tab"]["nerfacto"]["radio_exdata"]], label=lang["nerf_tab"]["nerfacto"]["radio"])
+                nerfacto_radio = gr.Radio(choices=[lang["nerf_tab"]["nerfacto"]["radio_indata"], lang["nerf_tab"]["nerfacto"]["radio_exdata"]], label=lang["nerf_tab"]["nerfacto"]["radio"])
                 with gr.Column(visible=False) as ex_nerfacto_col:
                     nerfacto_sub1_1 = gr.Markdown(lang["nerf_tab"]["nerfacto"]["subtitle1_1"])
                     nerfacto_info1 = gr.Markdown(lang["nerf_tab"]["nerfacto"]["info1"])
@@ -631,7 +633,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             # mip-NeRF
             with gr.Tab(label=lang["nerf_tab"]["mip-nerf"]["title"]) as mipnerf_tab:
                 mipnerf_sub1 = gr.Markdown(lang["nerf_tab"]["mip-nerf"]["subtitle1"])
-                mipnerf_radio = gr.Radio(choices=[lang["nerf_tab"]["mip-nerf"]["radio_newdata"], lang["nerf_tab"]["mip-nerf"]["radio_exdata"]], label=lang["nerf_tab"]["mip-nerf"]["radio"])
+                mipnerf_radio = gr.Radio(choices=[lang["nerf_tab"]["mip-nerf"]["radio_indata"], lang["nerf_tab"]["mip-nerf"]["radio_exdata"]], label=lang["nerf_tab"]["mip-nerf"]["radio"])
                 with gr.Column(visible=False) as ex_mipnerf_col:
                     mipnerf_sub1_1 = gr.Markdown(lang["nerf_tab"]["mip-nerf"]["subtitle1_1"])
                     mipnerf_info1 = gr.Markdown(lang["nerf_tab"]["mip-nerf"]["info1"])
@@ -659,7 +661,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             # SeaThru-NeRF
             with gr.Tab(label=lang["nerf_tab"]["seathru-nerf"]["title"]) as stnerf_tab:
                 stnerf_sub1 = gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["subtitle1"])
-                stnerf_radio = gr.Radio(choices=[lang["nerf_tab"]["seathru-nerf"]["radio_newdata"], lang["nerf_tab"]["seathru-nerf"]["radio_exdata"]], label=lang["nerf_tab"]["seathru-nerf"]["radio"])
+                stnerf_radio = gr.Radio(choices=[lang["nerf_tab"]["seathru-nerf"]["radio_indata"], lang["nerf_tab"]["seathru-nerf"]["radio_exdata"]], label=lang["nerf_tab"]["seathru-nerf"]["radio"])
                 with gr.Column(visible=False) as ex_stnerf_col:
                     stnerf_sub1_1 = gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["subtitle1_1"])
                     stnerf_info1 = gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["info1"])
@@ -690,7 +692,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             # Vanilla GS
             with gr.Tab(label=lang["gs_tab"]["vgs"]["title"]) as vgs_tab:
                 vgs_sub1 = gr.Markdown(lang["gs_tab"]["vgs"]["subtitle1"])
-                vgs_radio = gr.Radio(choices=[lang["gs_tab"]["vgs"]["radio_newdata"], lang["gs_tab"]["vgs"]["radio_exdata"]], label = lang["gs_tab"]["vgs"]["radio"])
+                vgs_radio = gr.Radio(choices=[lang["gs_tab"]["vgs"]["radio_indata"], lang["gs_tab"]["vgs"]["radio_exdata"]], label = lang["gs_tab"]["vgs"]["radio"])
                 with gr.Column(visible=False) as ex_vgs_col:
                     vgs_sub1_1 = gr.Markdown(lang["gs_tab"]["vgs"]["subtitle1_1"])
                     vgs_info1 = gr.Markdown(lang["gs_tab"]["vgs"]["info1"])
@@ -742,15 +744,17 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row():
                         skip_train = gr.Checkbox(value=True, label=lang["gs_tab"]["vgs"]["skip_train"])
                         skip_test = gr.Checkbox(value=False, label=lang["gs_tab"]["vgs"]["skip_test"])
-                    eval_vgs_btn = gr.Button(value=lang["gs_tab"]["vgs"]["eval_vgs_btn"])
-                    result_render_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["result_render_vgs"])
-                    eval_vgs = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label=lang["gs_tab"]["vgs"]["eval_vgs"])
-                    gallery_vgs = gr.Gallery(label=lang["gs_tab"]["vgs"]["gallery_vgs"], columns=2, height="auto")
+                    eval_vgs_btn = gr.Button(value=lang["gs_tab"]["vgs"]["eval_btn"])
+                    runtime_eval_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["runtime_eval"])
+                    result_render_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["result_eval"])
+                    log_eval_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["log_eval"])
+                    metrics_vgs = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label=lang["gs_tab"]["vgs"]["metrics"])
+                    gallery_vgs = gr.Gallery(label=lang["gs_tab"]["vgs"]["gallery"], columns=2, height="auto")
 
             # Mip-Splatting
             with gr.Tab(label=lang["gs_tab"]["mip-splatting"]["title"]) as mips_tab:
                 mips_sub1 = gr.Markdown(lang["gs_tab"]["mip-splatting"]["subtitle1"])
-                mips_radio = gr.Radio(choices=[lang["gs_tab"]["mip-splatting"]["radio_newdata"],lang["gs_tab"]["mip-splatting"]["radio_exdata"]], label = lang["gs_tab"]["mip-splatting"]["radio"])
+                mips_radio = gr.Radio(choices=[lang["gs_tab"]["mip-splatting"]["radio_indata"],lang["gs_tab"]["mip-splatting"]["radio_exdata"]], label = lang["gs_tab"]["mip-splatting"]["radio"])
                 with gr.Column(visible=False) as ex_mips_col:
                     mips_sub1_1 = gr.Markdown(lang["gs_tab"]["mip-splatting"]["subtitle1_1"])
                     mips_info1 = gr.Markdown(lang["gs_tab"]["mip-splatting"]["info1"])
@@ -770,7 +774,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             # Splatfacto
             with gr.Tab(label=lang["gs_tab"]["splatfacto"]["title"]) as sfacto_tab:
                 sfacto_sub1 = gr.Markdown(lang["gs_tab"]["splatfacto"]["subtitle1"])
-                sfacto_radio = gr.Radio(choices=[lang["gs_tab"]["splatfacto"]["radio_newdata"], lang["gs_tab"]["splatfacto"]["radio_exdata"]], label=lang["gs_tab"]["splatfacto"]["radio"])
+                sfacto_radio = gr.Radio(choices=[lang["gs_tab"]["splatfacto"]["radio_indata"], lang["gs_tab"]["splatfacto"]["radio_exdata"]], label=lang["gs_tab"]["splatfacto"]["radio"])
                 with gr.Column(visible=False) as ex_sfacto_col:
                     sfacto_sub1_1 = gr.Markdown(lang["gs_tab"]["splatfacto"]["subtitle1_1"])
                     sfacto_info1 = gr.Markdown(lang["gs_tab"]["splatfacto"]["info1"])
@@ -798,7 +802,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             # 4D-Gaussians
             with gr.Tab(label=lang["gs_tab"]["4d-gaussians"]["title"]) as gs4d_tab:
                 gs4d_sub1 = gr.Markdown(lang["gs_tab"]["4d-gaussians"]["subtitle1"])
-                gs4d_radio = gr.Radio(choices=[lang["gs_tab"]["4d-gaussians"]["radio_newdata"], lang["gs_tab"]["4d-gaussians"]["radio_exdata"]], label = lang["gs_tab"]["4d-gaussians"]["radio"])
+                gs4d_radio = gr.Radio(choices=[lang["gs_tab"]["4d-gaussians"]["radio_indata"], lang["gs_tab"]["4d-gaussians"]["radio_exdata"]], label = lang["gs_tab"]["4d-gaussians"]["radio"])
                 with gr.Column(visible=False) as ex_4dgs_col:
                     gs4d_sub1_1 = gr.Markdown(lang["gs_tab"]["4d-gaussians"]["subtitle1_1"])
                     gs4d_info1 = gr.Markdown(lang["gs_tab"]["4d-gaussians"]["info1"])
@@ -1233,8 +1237,10 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      skip_train,
                      skip_test,
                      eval_vgs_btn,
+                     runtime_eval_vgs,
                      result_render_vgs,
-                     eval_vgs,
+                     log_eval_vgs,
+                     metrics_vgs,
                      gallery_vgs,
                      mips_tab, # Mip-Splatting
                      mips_sub1,
@@ -1707,6 +1713,6 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         # レンダリング・評価
         eval_vgs_btn.click(fn=methods.render_eval_3dgs,
                     inputs=[outdir_recon_vgs, skip_train, skip_test, save_iter_3dgs],
-                    outputs=[result_render_vgs, eval_vgs, gallery_vgs])
+                    outputs=[runtime_eval_vgs, result_render_vgs, log_eval_vgs, metrics_vgs, gallery_vgs])
             
     demo.launch()
