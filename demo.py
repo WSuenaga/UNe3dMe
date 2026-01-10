@@ -195,7 +195,7 @@ def update_ui(choice):
         gr.Model3D(label=lang["gs_tab"]["vgs"]["outmodel"]), # outmodel_vgs
         gr.Markdown(lang["gs_tab"]["vgs"]["subtitle3"]), # vgs_sub3
         gr.Checkbox(label=lang["gs_tab"]["vgs"]["skip_train"]), # skip_train
-        gr.Checkbox(value=True, label=lang["gs_tab"]["vgs"]["skip_test"]), # skip_test
+        gr.Checkbox(label=lang["gs_tab"]["vgs"]["skip_test"]), # skip_test
         gr.Button(value=lang["gs_tab"]["vgs"]["eval_btn"]), # eval_vgs_btn
         gr.Textbox(label=lang["gs_tab"]["vgs"]["runtime_eval"]), # runtime_eval_vgs
         gr.Textbox(label=lang["gs_tab"]["vgs"]["result_eval"]), # result_render_vgs
