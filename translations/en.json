@@ -500,6 +500,12 @@
       "runtime_recon": "⏳Runtime",
       "result_recon": "💡Result",
       "log_recon": "📝Execution Log",
+      "subtitle2": "# 2. Export Point Cloud",
+      "export_btn": "🚀Export Point Cloud",
+      "outdir_export": "📁Output Directory",
+      "runtime_export": "⏳Runtime",
+      "result_export": "💡Result",
+      "log_export": "📝Execution Log",
       "outmodel": "🌐3D Reconstruction Result"
     },
     "vggt-slam": {

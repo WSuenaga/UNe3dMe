@@ -423,11 +423,18 @@ def update_ui(choice):
         gr.Markdown(lang["vgg_tab"]["vggsfm"]["subtitle1"]), # vggsfm_sub1
         gr.Accordion(label=lang["vgg_tab"]["vggsfm"]["option"]["title"]), # vggsfm_option
         gr.Radio(label= lang["vgg_tab"]["vggsfm"]["option"]["exe_mode"]), # exe_mode_vggsfm
-        gr.Button(value=lang["vgg_tab"]["vggsfm"]["recon_btn"]), # recon_vggtsfm_btn
-        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["outdir_recon"]), # outdir_recon_vggtsfm
-        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["runtime_recon"]), # runtime_recon_vggtsfm
-        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["result_recon"]), # result_recon_vggtsfm
-        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["log_recon"]), # log_recon_vggtsfm
+        gr.Button(value=lang["vgg_tab"]["vggsfm"]["recon_btn"]), # recon_vggsfm_btn
+        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["outdir_recon"]), # outdir_recon_vggsfm
+        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["runtime_recon"]), # runtime_recon_vggsfm
+        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["result_recon"]), # result_recon_vggsfm
+        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["log_recon"]), # log_recon_vggsfm
+        gr.Markdown(lang["vgg_tab"]["vggsfm"]["subtitle2"]), # vggsfm_sub2
+        gr.Button(value=lang["vgg_tab"]["vggsfm"]["export_btn"]), # export_vggsfm_btn
+        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["outdir_export"]), # outdir_export_vggsfm
+        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["runtime_export"]), # runtime_export_vggsfm
+        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["result_export"]), # result_export_vggsfm
+        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["log_export"]), # log_export_vggsfm
+        gr.Model3D(label=lang["vgg_tab"]["vggsfm"]["outmodel"]), # outmodel_vggsfm
         # VGGT-SLAM
         gr.Tab(label=lang["vgg_tab"]["vggt-slam"]["title"]), # vggtslam_tab
         gr.Markdown(lang["vgg_tab"]["vggt-slam"]["subtitle1"]), # vggtslam_sub1
@@ -1012,11 +1019,19 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 vggsfm_sub1 = gr.Markdown(lang["vgg_tab"]["vggsfm"]["subtitle1"])
                 with gr.Accordion(label=lang["vgg_tab"]["vggsfm"]["option"]["title"], open=False) as vggsfm_option:
                     exe_mode_vggsfm = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vgg_tab"]["vggsfm"]["option"]["exe_mode"])
-                recon_vggtsfm_btn = gr.Button(value=lang["vgg_tab"]["vggsfm"]["recon_btn"])
-                outdir_recon_vggtsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["outdir_recon"])
-                runtime_recon_vggtsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["runtime_recon"])
-                result_recon_vggtsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["result_recon"])
-                log_recon_vggtsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["log_recon"])
+                recon_vggsfm_btn = gr.Button(value=lang["vgg_tab"]["vggsfm"]["recon_btn"])
+                outdir_recon_vggsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["outdir_recon"])
+                runtime_recon_vggsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["runtime_recon"])
+                result_recon_vggsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["result_recon"])
+                log_recon_vggsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["log_recon"])
+                with gr.Column(visible=False) as export_vggsfm_col:
+                    vggsfm_sub2 = gr.Markdown(lang["vgg_tab"]["vggsfm"]["subtitle2"])
+                    export_vggsfm_btn = gr.Button(value=lang["vgg_tab"]["vggsfm"]["export_btn"])
+                    outdir_export_vggsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["outdir_export"])
+                    runtime_export_vggsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["runtime_export"])
+                    result_export_vggsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["result_export"])
+                    log_export_vggsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["log_export"])
+                    outmodel_vggsfm = gr.Model3D(label=lang["vgg_tab"]["vggsfm"]["outmodel"])
 
             # VGGT-SLAM
             with gr.Tab(label=lang["vgg_tab"]["vggt-slam"]["title"]) as vggtslam_tab:
@@ -1443,11 +1458,18 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      vggsfm_sub1,
                      vggsfm_option,
                      exe_mode_vggsfm,
-                     recon_vggtsfm_btn,
-                     outdir_recon_vggtsfm,
-                     runtime_recon_vggtsfm,
-                     result_recon_vggtsfm,
-                     log_recon_vggtsfm,
+                     recon_vggsfm_btn,
+                     outdir_recon_vggsfm,
+                     runtime_recon_vggsfm,
+                     result_recon_vggsfm,
+                     log_recon_vggsfm,
+                     vggsfm_sub2,
+                     export_vggsfm_btn,
+                     outdir_export_vggsfm,
+                     runtime_export_vggsfm,
+                     result_export_vggsfm,
+                     log_export_vggsfm,
+                     outmodel_vggsfm,
                      vggtslam_tab, # VGGT-SLAM
                      vggtslam_sub1,
                      vggtslam_option,
@@ -1677,9 +1699,9 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         recon_vggt_btn.click(fn=methods.recon_vggt,
                         inputs=[exe_mode_vggt, dataset, outputsdir_state], 
                         outputs=[outdir_recon_vggt, runtime_recon_vggt, result_recon_vggt, log_recon_vggt, outmodel_vggt])
-        recon_vggtsfm_btn.click(fn=methods.recon_vggsfm,
-                                inputs=[exe_mode_vggsfm, dataset, outputsdir_state],
-                                outputs=[outdir_recon_vggtsfm, runtime_recon_vggtsfm, result_recon_vggtsfm, log_recon_vggtsfm])
+        recon_vggsfm_btn.click(fn=methods.recon_vggsfm,
+                                inputs=[exe_mode_vggsfm, dataset],
+                                outputs=[outdir_recon_vggsfm, runtime_recon_vggsfm, result_recon_vggsfm, log_recon_vggsfm, export_vggsfm_col])
         recon_vggtslam_btn.click(fn=methods.recon_vggtslam,
                                  inputs=[exe_mode_vggtslam, dataset, outputsdir_state],
                                  outputs=[outdir_recon_vggtslam, runtime_recon_vggtslam, result_recon_vggtslam, log_recon_vggtslam, outmodel_vggtslam])
@@ -1695,20 +1717,23 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         
         # 点群出力（Nerfstudio）
         export_vnerf_btn.click(fn=methods.export_vnerf,
-                              inputs=[dataset, outputsdir_state],
+                              inputs=[exe_mode_vnerf, dataset, outputsdir_state],
                               outputs=[outdir_export_vnerf, runtime_export_vnerf, result_export_vnerf, log_export_vnerf])
         export_nerfacto_btn.click(fn=methods.export_nerfacto,
-                                  inputs=[dataset, outputsdir_state],
+                                  inputs=[exe_mode_nerfacto, dataset, outputsdir_state],
                                   outputs=[outdir_export_nerfacto, runtime_export_nerfacto, result_export_nerfacto, log_export_nerfacto])
         export_mipnerf_btn.click(fn=methods.export_mipnerf,
-                                 inputs=[dataset, outputsdir_state],
+                                 inputs=[exe_mode_mipnerf, dataset, outputsdir_state],
                                  outputs=[outdir_export_mipnerf, runtime_export_mipnerf, result_export_mipnerf, log_export_mipnerf])
         export_stnerf_btn.click(fn=methods.export_stnerf,
-                                inputs=[dataset, outputsdir_state],
+                                inputs=[exe_mode_stnerf, dataset, outputsdir_state],
                                 outputs=[outdir_export_stnerf, runtime_export_stnerf, result_export_stnerf, log_export_stnerf])
         export_sfacto_btn.click(fn=methods.export_sfacto,
-                                inputs=[dataset, outputsdir_state],
+                                inputs=[exe_mode_sfacto, dataset, outputsdir_state],
                                 outputs=[outdir_export_sfacto, runtime_export_sfacto, result_export_sfacto, log_export_sfacto])
+        export_vggsfm_btn.click(fn=methods.export_vggsfm,
+                                inputs=[dataset, outputsdir_state],
+                                outputs=[outdir_export_vggsfm, runtime_export_vggsfm, result_export_vggsfm, log_export_vggsfm, outmodel_vggsfm])
 
         # レンダリング・評価
         eval_vgs_btn.click(fn=methods.render_eval_3dgs,
