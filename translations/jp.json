@@ -491,6 +491,12 @@
       "runtime_recon": "⏳実行時間",
       "result_recon": "💡実行結果",
       "log_recon": "📝実行ログ",
+      "subtitle2": "# 2. 点群出力",
+      "export_btn": "🚀点群出力実行",
+      "outdir_export": "📁実行結果保存場所",
+      "runtime_export": "⏳実行時間",
+      "result_export": "💡実行結果",
+      "log_export": "📝実行ログ",
       "outmodel": "🌐3次元再構築結果"
     },
     "vggt-slam": {
