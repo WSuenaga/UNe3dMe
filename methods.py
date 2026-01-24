@@ -15,8 +15,57 @@ SHELL_FLAG = platform.system() == "Windows"
 # 保存先一時ディレクトリ
 TMPDIR = ""
 
+<<<<<<< HEAD
 # --- subprocess.Popen実行メソッド ---
 def run_subprocess_popen(cmd, workdir, log_dir=None):
+=======
+# subprocess.run実行メソッド
+def run_subprocess_run(cmd, workdir):
+    global SHELL_FLAG
+    print("Running:", " ".join(map(str, cmd)))
+    start_time = time.time()
+
+    try:
+        result = subprocess.run(
+            cmd,
+            cwd=workdir,
+            shell=SHELL_FLAG,
+            capture_output=True,      # stdout / stderr を取得
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            check=False               # returncode != 0 でも例外にしない
+        )
+
+        stdout_data = result.stdout
+        stderr_data = result.stderr
+        returncode = result.returncode
+
+    except Exception as e:
+        return "0時間0分0秒", "❌ 失敗 (Exception)", f"実行に失敗しました: {e}"
+
+    end_time = time.time()
+
+    # 実行時間の計算
+    run_seconds = int(end_time - start_time)
+    hours, remainder = divmod(run_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    run_time = f"{hours}時間{minutes}分{seconds}秒"
+
+    # ログの出力
+    if returncode == 0:
+        status = "✅ Success"
+        log = stdout_data.strip()
+    else:
+        status = "❌ Failed"
+        log = stderr_data.strip()
+
+    return run_time, status, log
+
+# subprocess.Popen実行メソッド
+def run_subprocess_popen(cmd, workdir):
+    # subprocess実行
+>>>>>>> c2fc9a9752d84e0183399cd5bbb050ab88fa2141
     global SHELL_FLAG
     global TMPDIR
 
@@ -125,7 +174,11 @@ def train_nerfstudio(dataset, outputs_dir, method_name, train_args=None):
 
     workdir = "./"
 
+<<<<<<< HEAD
     runtime, status, log = run_subprocess_popen(cmd, workdir)
+=======
+    runtime, status, log = run_subprocess_run(cmd, workdir)
+>>>>>>> c2fc9a9752d84e0183399cd5bbb050ab88fa2141
 
     return outdir, runtime, status, log, gr.Column(visible=True)
 
@@ -159,31 +212,36 @@ def export_nerfstudio(dataset, outputs_dir, method_name1, method_name2, filetype
     (学習済みの config.yml 必須)
     """
     name = os.path.basename(dataset)
+<<<<<<< HEAD
     outdir = os.path.join(outputs_dir, method_name1, name)
 
     # 学習結果の config.yml（そのまま）
     config_path = os.path.join(
         outdir, "results", method_name2, "results", "config.yml"
+=======
+    outdir = os.path.join(outputs_dir, method_name, name)
+
+    # 学習結果の config.yml（そのまま）
+    config_path = os.path.join(
+        outdir, "results", method_name, "results", "config.yml"
     )
 
-    export_cmd = [
+    cmd = [
         "conda", "run", "-n", "nerfstudio",
         "ns-export", filetype,
         "--load-config", config_path,
         "--output-dir", outdir,
-    ]
+        "--normal-method", "open3d",]
     if export_args:
-        export_cmd.extend(export_args)
+        cmd.extend(export_args)
 
-    workdir = "./"
-
-    run_time, success, log = run_subprocess_popen(export_cmd, workdir)
+    run_time, success, log = run_subprocess_popen(cmd)
 
     # -----------------------------
     # 出力整理（<method_name> 配下に集約）
     # -----------------------------
-    src_results_dir = os.path.join(outdir, "results", method_name2, "results")
-    dst_method_dir = os.path.join(outdir, method_name1)
+    src_results_dir = os.path.join(outdir, "results", method_name, "results")
+    dst_method_dir = os.path.join(outdir, method_name)
 
     if os.path.exists(src_results_dir):
         os.makedirs(dst_method_dir, exist_ok=True)
@@ -203,8 +261,8 @@ def export_nerfstudio(dataset, outputs_dir, method_name1, method_name2, filetype
 
         # 空ディレクトリ削除（下から順に）
         cleanup_dirs = [
-            os.path.join(outdir, "results", method_name2, "results"),
-            os.path.join(outdir, "results", method_name2),
+            os.path.join(outdir, "results", method_name, "results"),
+            os.path.join(outdir, "results", method_name),
             os.path.join(outdir, "results"),
         ]
 
@@ -212,6 +270,85 @@ def export_nerfstudio(dataset, outputs_dir, method_name1, method_name2, filetype
             if os.path.exists(d) and not os.listdir(d):
                 shutil.rmtree(d)
 
+    return outdir, run_time, success, log
+
+# --- ns-export呼び出しメソッド ---
+def export_nerfstudio_slurm(dataset, outputs_dir, method_name, filetype, export_args=None):
+    """
+    Nerfstudio モデルをエクスポートする関数
+    (学習済みの config.yml 必須)
+    """
+    name = os.path.basename(dataset)
+    outdir = os.path.join(outputs_dir, method_name, name)
+
+    # 学習結果の config.yml（そのまま）
+    config_path = os.path.join(
+        outdir, "results", method_name, "results", "config.yml"
+>>>>>>> c2fc9a9752d84e0183399cd5bbb050ab88fa2141
+    )
+
+    export_cmd = [
+        "conda", "run", "-n", "nerfstudio",
+        "ns-export", filetype,
+        "--load-config", config_path,
+        "--output-dir", outdir,
+    ]
+    if export_args:
+        export_cmd.extend(export_args)
+
+<<<<<<< HEAD
+    workdir = "./"
+
+    run_time, success, log = run_subprocess_popen(export_cmd, workdir)
+
+    # -----------------------------
+    # 出力整理（<method_name> 配下に集約）
+    # -----------------------------
+    src_results_dir = os.path.join(outdir, "results", method_name2, "results")
+    dst_method_dir = os.path.join(outdir, method_name1)
+=======
+    run_time, success, log = run_subprocess_popen(export_cmd)
+
+    # -----------------------------
+    # 出力整理（<method_name> 配下に集約）
+    # -----------------------------
+    src_results_dir = os.path.join(outdir, "results", method_name, "results")
+    dst_method_dir = os.path.join(outdir, method_name)
+>>>>>>> c2fc9a9752d84e0183399cd5bbb050ab88fa2141
+
+    if os.path.exists(src_results_dir):
+        os.makedirs(dst_method_dir, exist_ok=True)
+
+        for item in os.listdir(src_results_dir):
+            src = os.path.join(src_results_dir, item)
+            dst = os.path.join(dst_method_dir, item)
+
+            # 既存があれば削除（強制置換）
+            if os.path.exists(dst):
+                if os.path.isdir(dst):
+                    shutil.rmtree(dst)
+                else:
+                    os.remove(dst)
+
+            shutil.move(src, dst)
+
+        # 空ディレクトリ削除（下から順に）
+        cleanup_dirs = [
+<<<<<<< HEAD
+            os.path.join(outdir, "results", method_name2, "results"),
+            os.path.join(outdir, "results", method_name2),
+=======
+            os.path.join(outdir, "results", method_name, "results"),
+            os.path.join(outdir, "results", method_name),
+>>>>>>> c2fc9a9752d84e0183399cd5bbb050ab88fa2141
+            os.path.join(outdir, "results"),
+        ]
+
+        for d in cleanup_dirs:
+            if os.path.exists(d) and not os.listdir(d):
+                shutil.rmtree(d)
+
+<<<<<<< HEAD
     return outdir, run_time, success, log
 
 # --- ns-export呼び出しメソッド ---
@@ -274,6 +411,8 @@ def export_nerfstudio_slurm(dataset, outputs_dir, method_name1, method_name2, fi
             if os.path.exists(d) and not os.listdir(d):
                 shutil.rmtree(d)
 
+=======
+>>>>>>> c2fc9a9752d84e0183399cd5bbb050ab88fa2141
     return outdir, run_time, success, log
 
 # --- ns-render呼び出しメソッド ---
@@ -296,10 +435,16 @@ def recon_vnerf(mode, dataset, out_dir, iter):
 # --- 点群出力メソッド ---
 def export_vnerf(mode, dataset, out_dir):
     if mode == "local":
+<<<<<<< HEAD
         export_args = ["--normal-method", "open3d",
                        "--rgb-output-name", "rgb_fine", 
                        "--depth-output-name", "depth_fine"]
         return export_nerfstudio(dataset, out_dir, "vanilla-nerf", "vanilla-nerf" "pointcloud", export_args)
+=======
+        export_args = ["--rgb-output-name", "rgb_fine", 
+                    "--depth-output-name", "depth_fine"]
+        return export_nerfstudio(dataset, out_dir, "vanilla-nerf", "pointcloud", export_args)
+>>>>>>> c2fc9a9752d84e0183399cd5bbb050ab88fa2141
     elif mode == "slurm":
         return export_nerfstudio_slurm(dataset, out_dir, "vanilla-nerf")
 
@@ -319,10 +464,16 @@ def recon_nerfacto(mode, dataset, out_dir, iter):
 # --- 点群出力メソッド ---
 def export_nerfacto(mode, dataset, out_dir):
     if mode == "local":
+<<<<<<< HEAD
         export_args = ["--normal-method", "open3d",
                        "--rgb-output-name", "rgb", 
                        "--depth-output-name", "depth"]
         return export_nerfstudio(dataset, out_dir, "nerfacto-huge", "nerfacto", "pointcloud", export_args)
+=======
+        export_args = ["--rgb-output-name", "rgb", 
+                    "--depth-output-name", "depth"]
+        return export_nerfstudio(dataset, out_dir, "nerfacto", "pointcloud", export_args)
+>>>>>>> c2fc9a9752d84e0183399cd5bbb050ab88fa2141
     elif mode == "slurm":
         return export_nerfstudio_slurm(dataset, out_dir, "nerfacto")
 
@@ -342,10 +493,16 @@ def recon_mipnerf(mode, dataset, out_dir, iter):
 # --- 点群出力メソッド ---
 def export_mipnerf(mode, dataset, out_dir):
     if mode == "local":
+<<<<<<< HEAD
         export_args = ["--normal-method", "open3d",
                        "--rgb-output-name", "rgb_fine", 
                        "--depth-output-name", "depth_fine"]
         return export_nerfstudio(dataset, out_dir, "mipnerf", "mipnerf", "pointcloud", export_args)
+=======
+        export_args = ["--rgb-output-name", "rgb_fine", 
+                    "--depth-output-name", "depth_fine"]
+        return export_nerfstudio(dataset, out_dir, "mipnerf", "pointcloud", export_args)
+>>>>>>> c2fc9a9752d84e0183399cd5bbb050ab88fa2141
     elif mode == "slurm":
         return export_nerfstudio_slurm(dataset, out_dir, "mipnerf")
 
@@ -365,10 +522,16 @@ def recon_stnerf(mode, dataset, out_dir, iter):
 # --- 点群出力メソッド ---
 def export_stnerf(mode, dataset, out_dir):
     if mode == "local":
+<<<<<<< HEAD
         export_args = ["--normal-method", "open3d",
                        "--rgb-output-name", "rgb", 
                        "--depth-output-name", "depth"]
         return export_nerfstudio(dataset, out_dir, "seathru-nerf", "seathru-nerf", "pointcloud", export_args)
+=======
+        export_args = ["--rgb-output-name", "rgb", 
+                    "--depth-output-name", "depth"]
+        return export_nerfstudio(dataset, out_dir, "seathru-nerf", "pointcloud", export_args)
+>>>>>>> c2fc9a9752d84e0183399cd5bbb050ab88fa2141
     elif mode == "slurm":
         return export_nerfstudio_slurm(dataset, out_dir, "seathru-nerf")
 
@@ -603,8 +766,14 @@ def recon_sfacto(mode, dataset, out_dir, iter):
 # --- 点群出力メソッド ---
 def export_sfacto(mode, dataset, out_dir):
     if mode == "local":
+<<<<<<< HEAD
         export_args = []
         return export_nerfstudio(dataset, out_dir, "splatfacto-big", "splatfacto", "gaussian-splat", export_args)
+=======
+        export_args = ["--rgb-output-name", "rgb", 
+                    "--depth-output-name", "depth"]
+        return export_nerfstudio(dataset, out_dir, "splatfacto-big", "gaussian-splat", export_args)
+>>>>>>> c2fc9a9752d84e0183399cd5bbb050ab88fa2141
     elif mode == "slurm":
         return export_nerfstudio_slurm(dataset, out_dir, "splatfacto-big")
 
@@ -1316,7 +1485,11 @@ def recon_vggsfm(mode, dataset):
     # 推論実行
     runtime, status, log = run_subprocess_popen(cmd, workdir)
 
+<<<<<<< HEAD
     return outdir, runtime, status, log, gr.Column(visible=True)            
+=======
+    return outdir, runtime, status, log, gr.Column(visible=True)
+>>>>>>> c2fc9a9752d84e0183399cd5bbb050ab88fa2141
 # --- 点群出力メソッド ---
 def export_vggsfm(dataset, outputs_dir): # 軽量なのでlocalのみ
     # 出力ディレクトリの作成
