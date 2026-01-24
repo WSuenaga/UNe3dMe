@@ -20,5 +20,8 @@ if __name__ == '__main__':
         outputs = os.path.join(tmpdir, "outputs")
         os.mkdir(outputs)
 
+        import methods
+        methods.TMPDIR = tmpdir
+        
         # Gradio Demo起動
         main_demo(tmpdir, datasets, outputs)
