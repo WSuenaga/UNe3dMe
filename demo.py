@@ -1956,6 +1956,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         outputs=[result_colmap, dl_colmap_col]).success(fn=preprocess.zip_dataset,
                                                                         inputs=dataset,
                                                                         outputs=zipfile_colmap)
+        # --- 外部データセット ---
+        # NeRF Tab
         ex_dataset_vnerf.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_vnerf, datasetsdir_state],
                                outputs=[dataset, train_vnerf_col]).success(
@@ -1980,6 +1982,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_nerf)
+        # GS Tab
         ex_dataset_vgs.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_vgs, datasetsdir_state],
                                outputs=[dataset, train_vgs_col]).success(
@@ -2004,6 +2007,92 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_gs)
+        # 3sters Tab
+        ex_dataset_dust3r.upload(fn=preprocess.unzip_dataset,
+                               inputs=[ex_dataset_dust3r, datasetsdir_state],
+                               outputs=[dataset, infer_dust3r_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_3sters)
+        ex_dataset_mast3r.upload(fn=preprocess.unzip_dataset,
+                               inputs=[ex_dataset_mast3r, datasetsdir_state],
+                               outputs=[dataset, infer_mast3r_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_3sters)
+        ex_dataset_monst3r.upload(fn=preprocess.unzip_dataset,
+                               inputs=[ex_dataset_monst3r, datasetsdir_state],
+                               outputs=[dataset, infer_monst3r_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_3sters)
+        ex_dataset_easi3r.upload(fn=preprocess.unzip_dataset,
+                               inputs=[ex_dataset_easi3r, datasetsdir_state],
+                               outputs=[dataset, infer_easi3r_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_3sters)
+        ex_dataset_must3r.upload(fn=preprocess.unzip_dataset,
+                               inputs=[ex_dataset_must3r, datasetsdir_state],
+                               outputs=[dataset, infer_must3r_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_3sters)
+        ex_dataset_fast3r.upload(fn=preprocess.unzip_dataset,
+                               inputs=[ex_dataset_fast3r, datasetsdir_state],
+                               outputs=[dataset, infer_fast3r_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_3sters)
+        ex_dataset_cut3r.upload(fn=preprocess.unzip_dataset,
+                               inputs=[ex_dataset_cut3r, datasetsdir_state],
+                               outputs=[dataset, infer_cut3r_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_3sters)
+        ex_dataset_wint3r.upload(fn=preprocess.unzip_dataset,
+                               inputs=[ex_dataset_wint3r, datasetsdir_state],
+                               outputs=[dataset, infer_wint3r_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_3sters)
+        # vgg Tab
+        ex_dataset_vggt.upload(fn=preprocess.unzip_dataset,
+                               inputs=[ex_dataset_vggt, datasetsdir_state],
+                               outputs=[dataset, infer_vggt_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_vgg)
+        ex_dataset_vggsfm.upload(fn=preprocess.unzip_dataset,
+                               inputs=[ex_dataset_vggsfm, datasetsdir_state],
+                               outputs=[dataset, infer_vggsfm_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_vgg)
+        ex_dataset_vggtslam.upload(fn=preprocess.unzip_dataset,
+                               inputs=[ex_dataset_vggtslam, datasetsdir_state],
+                               outputs=[dataset, infer_vggtslam_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_vgg)
+        ex_dataset_stmvggt.upload(fn=preprocess.unzip_dataset,
+                               inputs=[ex_dataset_stmvggt, datasetsdir_state],
+                               outputs=[dataset, infer_stmvggt_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_vgg)
+        ex_dataset_fastvggt.upload(fn=preprocess.unzip_dataset,
+                               inputs=[ex_dataset_fastvggt, datasetsdir_state],
+                               outputs=[dataset, infer_fastvggt_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_vgg)
+        ex_dataset_pi3.upload(fn=preprocess.unzip_dataset,
+                               inputs=[ex_dataset_pi3, datasetsdir_state],
+                               outputs=[dataset, infer_pi3_col]).success(
+                                   fn=get_state_value,
+                                   inputs=dataset,
+                                   outputs=current_dataset_vgg)
         
         # 三次元再構築
         recon_vnerf_btn.click(fn=methods.recon_vnerf,
