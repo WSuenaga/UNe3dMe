@@ -547,7 +547,7 @@ def update_ui(choice):
         gr.Markdown(lang["vgg_tab"]["pi3"]["subtitle1_1"]), # pi3_sub1_1
         gr.Markdown(lang["vgg_tab"]["pi3"]["info1"]), # pi3_info1
         gr.File(label=lang["vgg_tab"]["pi3"]["ex_dataset"]), # ex_dataset_pi3
-        gr.Markdown(lang["vgg_tab"]["pi3"]["subtitle2"]), # pi3_sub2
+        gr.Markdown(lang["vgg_tab"]["pi3"]["subtitle1"]), # pi3_sub1
         gr.Accordion(label=lang["vgg_tab"]["pi3"]["option"]["title"]), # pi3_option
         gr.Radio(label= lang["vgg_tab"]["pi3"]["option"]["exe_mode"]), # exe_mode_pi3
         gr.Button(value=lang["vgg_tab"]["pi3"]["recon_btn"]), # recon_pi3_btn
@@ -1772,7 +1772,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      runtime_recon_vggsfm,
                      result_recon_vggsfm,
                      log_recon_vggsfm,
-                     vggsfm_sub3,
+                     vggsfm_sub2,
                      export_vggsfm_btn,
                      outdir_export_vggsfm,
                      runtime_export_vggsfm,
@@ -1831,7 +1831,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      pi3_sub1_1,
                      pi3_info1,
                      ex_dataset_pi3,
-                     pi3_sub2,
+                     pi3_sub1,
                      pi3_option,
                      exe_mode_pi3,
                      recon_pi3_btn,
@@ -1847,7 +1847,6 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         media_radio.change(fn=display_media_ui, 
                            inputs=media_radio, 
                            outputs=[image_col, video_col])
-        # Nerf Tab
         vnerf_radio.change(fn=display_dataset_ui,
                           inputs=vnerf_radio,
                           outputs=[train_vnerf_col, ex_vnerf_col])
@@ -1860,7 +1859,6 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         stnerf_radio.change(fn=display_dataset_ui,
                           inputs=stnerf_radio,
                           outputs=[train_stnerf_col, ex_stnerf_col])
-        # GS Tab
         vgs_radio.change(fn=display_dataset_ui,
                           inputs=vgs_radio,
                           outputs=[train_vgs_col, ex_vgs_col])
@@ -1873,55 +1871,12 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         gs4d_radio.change(fn=display_dataset_ui,
                           inputs=gs4d_radio,
                           outputs=[train_4dgs_col, ex_4dgs_col])
-        # 3sters Tab
         dust3r_radio.change(fn=display_dataset_ui,
-                            inputs=dust3r_radio,
-                            outputs=[infer_dust3r_col, ex_dust3r_col])
-        mast3r_radio.change(fn=display_dataset_ui,
-                            inputs=mast3r_radio,
-                            outputs=[infer_mast3r_col, ex_mast3r_col])
-        monst3r_radio.change(fn=display_dataset_ui,
-                    inputs=monst3r_radio,
-                    outputs=[infer_monst3r_col, ex_monst3r_col])
-        easi3r_radio.change(fn=display_dataset_ui,
-                    inputs=easi3r_radio,
-                    outputs=[infer_easi3r_col, ex_easi3r_col])
-        must3r_radio.change(fn=display_dataset_ui,
-                    inputs=must3r_radio,
-                    outputs=[infer_must3r_col, ex_must3r_col])
-        fast3r_radio.change(fn=display_dataset_ui,
-                    inputs=fast3r_radio,
-                    outputs=[infer_fast3r_col, ex_fast3r_col])
+                            inputs=dust3r_radio)
         img_splatt3r.change(fn=col_change, outputs=inference_splatt3r_col)
-        cut3r_radio.change(fn=display_dataset_ui,
-                    inputs=cut3r_radio,
-                    outputs=[infer_cut3r_col, ex_cut3r_col])
-        wint3r_radio.change(fn=display_dataset_ui,
-                    inputs=wint3r_radio,
-                    outputs=[infer_wint3r_col, ex_wint3r_col])
-        # mds Tab
         img_moge.change(fn=col_change, outputs=inference_moge_col)
         img_unik3d.change(fn=col_change, outputs=inference_unik3d_col)
-        # vggt Tab
-        vggt_radio.change(fn=display_dataset_ui,
-                          inputs=vggt_radio,
-                          outputs=[infer_vggt_col, ex_vggt_col])
-        vggsfm_radio.change(fn=display_dataset_ui,
-                            inputs=vggsfm_radio,
-                            outputs=[infer_vggsfm_col, ex_vggsfm_col])
-        vggtslam_radio.change(fn=display_dataset_ui,
-                              inputs=vggtslam_radio,
-                              outputs=[infer_vggtslam_col, ex_vggtslam_col])
-        stmvggt_radio.change(fn=display_dataset_ui,
-                             inputs=stmvggt_radio,
-                             outputs=[infer_stmvggt_col, ex_stmvggt_col])
-        fastvggt_radio.change(fn=display_dataset_ui,
-                              inputs=fastvggt_radio,
-                              outputs=[infer_fastvggt_col, ex_fastvggt_col])
-        pi3_radio.change(fn=display_dataset_ui,
-                         inputs=pi3_radio,
-                         outputs=[infer_pi3_col, ex_pi3_col])
-
+        
         # --- データセット作成 ---
         run_copy_btn.click(fn=preprocess.copy_images,
                        inputs=[images, datasetsdir_state, dataset_name],

@@ -127,7 +127,7 @@ def train_nerfstudio(dataset, outputs_dir, method_name, train_args=None):
 
     runtime, status, log = run_subprocess_popen(cmd, workdir)
 
-    return outdir, runtime, status, log, gr.Column(visible=True)
+    return outdir, runtime, status, log, gr.Column(visible=True), gr.Column(visible=True)
 
 # --- ns-train呼び出しメソッド（slurm） ---
 def train_nerfstudio_slurm(dataset, outputs_dir, method_name, iter, port):
@@ -161,10 +161,7 @@ def export_nerfstudio(dataset, outputs_dir, method_name1, method_name2, filetype
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, method_name1, name)
 
-    # 学習結果の config.yml（そのまま）
-    config_path = os.path.join(
-        outdir, "results", method_name2, "results", "config.yml"
-    )
+    config_path = os.path.join(outdir, "results", method_name2, "results", "config.yml")
 
     export_cmd = [
         "conda", "run", "-n", "nerfstudio",
@@ -178,39 +175,6 @@ def export_nerfstudio(dataset, outputs_dir, method_name1, method_name2, filetype
     workdir = "./"
 
     run_time, success, log = run_subprocess_popen(export_cmd, workdir)
-
-    # -----------------------------
-    # 出力整理（<method_name> 配下に集約）
-    # -----------------------------
-    src_results_dir = os.path.join(outdir, "results", method_name2, "results")
-    dst_method_dir = os.path.join(outdir, method_name1)
-
-    if os.path.exists(src_results_dir):
-        os.makedirs(dst_method_dir, exist_ok=True)
-
-        for item in os.listdir(src_results_dir):
-            src = os.path.join(src_results_dir, item)
-            dst = os.path.join(dst_method_dir, item)
-
-            # 既存があれば削除（強制置換）
-            if os.path.exists(dst):
-                if os.path.isdir(dst):
-                    shutil.rmtree(dst)
-                else:
-                    os.remove(dst)
-
-            shutil.move(src, dst)
-
-        # 空ディレクトリ削除（下から順に）
-        cleanup_dirs = [
-            os.path.join(outdir, "results", method_name2, "results"),
-            os.path.join(outdir, "results", method_name2),
-            os.path.join(outdir, "results"),
-        ]
-
-        for d in cleanup_dirs:
-            if os.path.exists(d) and not os.listdir(d):
-                shutil.rmtree(d)
 
     return outdir, run_time, success, log
 
@@ -276,8 +240,37 @@ def export_nerfstudio_slurm(dataset, outputs_dir, method_name1, method_name2, fi
 
     return outdir, run_time, success, log
 
-# --- ns-render呼び出しメソッド ---
-def render_nerfstudio():
+# --- ns-eval呼び出しメソッド ---
+def render_eval_nerfstudio(dataset, outputs_dir, method_name1, method_name2):
+    """
+    Nerfstudio モデルを評価する関数
+    (学習済みの config.yml 必須)
+    """
+    name = os.path.basename(dataset)
+    outdir = os.path.join(outputs_dir, method_name1, name)
+    renders = os.path.join(outdir, "renders")
+    eval = os.path.join(outdir, method_name1, name, "evals")
+    os.makedirs(renders, exist_ok=True)
+    os.makedirs(eval, exist_ok=True)
+
+    config_path = os.path.join(outdir, "results", method_name2, "results", "config.yml")
+
+    cmd = [
+        "conda", "run", "-n", "nerfstudio",
+        "ns-eval",
+        "--load-config", config_path,
+        "--output-dir", eval,
+        "--render-output-path", renders 
+    ]
+
+    workdir = "./"
+
+    run_time, success, log = run_subprocess_popen(cmd, workdir)
+
+    return outdir, run_time, success, log
+
+# --- ns-eval呼び出しメソッド ---
+def eval_nerfstudio_slurm(dataset, outputs_dir, method_name1, method_name2, eval_args=None):
     return
 
 """
@@ -299,10 +292,17 @@ def export_vnerf(mode, dataset, out_dir):
         export_args = ["--normal-method", "open3d",
                        "--rgb-output-name", "rgb_fine", 
                        "--depth-output-name", "depth_fine"]
-        return export_nerfstudio(dataset, out_dir, "vanilla-nerf", "vanilla-nerf" "pointcloud", export_args)
+        return export_nerfstudio(dataset, out_dir, "vanilla-nerf", "vanilla-nerf", "pointcloud", export_args)
     elif mode == "slurm":
         return export_nerfstudio_slurm(dataset, out_dir, "vanilla-nerf")
-
+    
+# --- レンダリング&評価指標メソッド ---
+def render_eval_vnerf(mode, dataset, out_dir):
+    if mode == "local":
+        return render_eval_nerfstudio(dataset, out_dir, "vanilla-nerf", "vanilla-nerf")
+    elif mode == "slurm":
+        return eval_nerfstudio_slurm(dataset, out_dir, "vanilla-nerf")
+    
 """
 Nerfacto
 """
@@ -312,7 +312,7 @@ def recon_nerfacto(mode, dataset, out_dir, iter):
     if mode == "local":
         train_args = ["--max-num-iterations", f"{iter}",
                       "--viewer.websocket-port-default", f"{port}"]
-        return train_nerfstudio(dataset, out_dir, "nerfacto-huge", train_args)
+        return train_nerfstudio(dataset, out_dir, "nerfacto-huge", train_args) 
     elif mode == "slurm":
         return train_nerfstudio_slurm(dataset, out_dir, "nerfacto-huge", iter, port)
     
@@ -325,6 +325,13 @@ def export_nerfacto(mode, dataset, out_dir):
         return export_nerfstudio(dataset, out_dir, "nerfacto-huge", "nerfacto", "pointcloud", export_args)
     elif mode == "slurm":
         return export_nerfstudio_slurm(dataset, out_dir, "nerfacto")
+
+# --- レンダリング&評価指標メソッド ---
+def render_eval_nerfacto(mode, dataset, out_dir):
+    if mode == "local":
+        return render_eval_nerfstudio(dataset, out_dir, "nerfacto-huge", "nerfacto")
+    elif mode == "slurm":
+        return eval_nerfstudio_slurm(dataset, out_dir, "nerfacto")
 
 """
 mip-NeRF
@@ -348,6 +355,13 @@ def export_mipnerf(mode, dataset, out_dir):
         return export_nerfstudio(dataset, out_dir, "mipnerf", "mipnerf", "pointcloud", export_args)
     elif mode == "slurm":
         return export_nerfstudio_slurm(dataset, out_dir, "mipnerf")
+    
+# --- レンダリング&評価指標メソッド ---
+def render_eval_mipnerf(mode, dataset, out_dir):
+    if mode == "local":
+        return render_eval_nerfstudio(dataset, out_dir, "mipnerf", "mipnerf")
+    elif mode == "slurm":
+        return eval_nerfstudio_slurm(dataset, out_dir, "mipnerf")
 
 """
 SeaThru-NeRF
@@ -371,6 +385,13 @@ def export_stnerf(mode, dataset, out_dir):
         return export_nerfstudio(dataset, out_dir, "seathru-nerf", "seathru-nerf", "pointcloud", export_args)
     elif mode == "slurm":
         return export_nerfstudio_slurm(dataset, out_dir, "seathru-nerf")
+    
+# --- レンダリング&評価指標メソッド ---
+def render_eval_stnerf(mode, dataset, out_dir):
+    if mode == "local":
+        return render_eval_nerfstudio(dataset, out_dir, "seathru-nerf", "seathru-nerf")
+    elif mode == "slurm":
+        return eval_nerfstudio_slurm(dataset, out_dir, "seathru-nerf")
 
 """
 Vanilla-GS
@@ -607,6 +628,13 @@ def export_sfacto(mode, dataset, out_dir):
         return export_nerfstudio(dataset, out_dir, "splatfacto-big", "splatfacto", "gaussian-splat", export_args)
     elif mode == "slurm":
         return export_nerfstudio_slurm(dataset, out_dir, "splatfacto-big")
+    
+# --- レンダリング&評価指標メソッド ---
+def render_eval_stnerf(mode, dataset, out_dir):
+    if mode == "local":
+        return render_eval_nerfstudio(dataset, out_dir, "splatfacto-big", "splatfacto")
+    elif mode == "slurm":
+        return eval_nerfstudio_slurm(dataset, out_dir, "splatfacto-big")
 
 """
 4D-Gaussians

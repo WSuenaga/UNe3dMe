@@ -29,16 +29,14 @@
         "ssim": "SSIM Threshold"
       },
       "run_ffmpeg_btn": "🚀Create Dataset",
-      "subtitle3": "# 3. Dataset Created",
       "output_video": "📁Dataset Save Location",
       "comp_rate": "📉Compression Rate",
       "sel_images_num": "👍Number of Selected Images",
       "rej_images_num": "🗑️Number of Deleted Images",
       "gallery_video": "Extracted Images",
-      "subtitle4": "# 4. Download Dataset",
-      "info3": "- You can download the created dataset as a ZIP file.\n- The ZIP file is created in the same directory as the dataset. You can download it from the right side of the displayed filename.",
-      "zip_images_btn": "💾Download Dataset",
-      "zipfile_images": "📦ZIP File"
+      "subtitle3": "# 3. Download Dataset",
+      "info3": "- You can download the created dataset as a ZIP file.",
+      "download_zipfile_btn": "💾Download Dataset"
     }
   },
   "colmap_tab": {
@@ -54,9 +52,8 @@
     "run_colmap_btn": "🚀Run COLMAP",
     "result_colmap": "📝Execution Result",
     "subtitle2": "# 2. Download Dataset",
-    "info2": "- You can download the processed dataset as a ZIP file.\n- The ZIP file is created in the same directory as the dataset. You can download it from the right side of the displayed filename.",
-    "zip_colmap_btn": "💾Download Dataset",
-    "zipfile_colmap": "📦ZIP File"
+    "info2": "- You can download the processed dataset as a ZIP file.",
+    "download_zipfile_btn": "💾Download Dataset"
   },
   "nerf_tab": {
     "title": "NeRF",
@@ -68,7 +65,7 @@
       "radio_exdata": "External Dataset",
       "radio": "Select the dataset for 3D reconstruction.",
       "subtitle1_1": "# 1.1 Upload Dataset",
-      "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Be careful because you can select non-ZIP files as well.",
+      "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
       "subtitle2": "# 2. Training",
       "option": {
@@ -97,7 +94,7 @@
       "radio_exdata": "External Dataset",
       "radio": "Select the dataset for 3D reconstruction.",
       "subtitle1_1": "# 1.1 Upload Dataset",
-      "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Be careful because you can select non-ZIP files as well.",
+      "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
       "subtitle2": "# 2. Training",
       "option": {
@@ -126,7 +123,7 @@
       "radio_exdata": "External Dataset",
       "radio": "Select the dataset for 3D reconstruction.",
       "subtitle1_1": "# 1.1 Upload Dataset",
-      "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Be careful because you can select non-ZIP files as well.",
+      "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
       "subtitle2": "# 2. Training",
       "option": {
@@ -155,7 +152,7 @@
       "radio_exdata": "External Dataset",
       "radio": "Select the dataset for 3D reconstruction.",
       "subtitle1_1": "# 1.1 Upload Dataset",
-      "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Be careful because you can select non-ZIP files as well.",
+      "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
       "subtitle2": "# 2. Training",
       "option": {
@@ -188,7 +185,7 @@
     "radio_exdata": "External Dataset",
     "radio": "Select the dataset for 3D reconstruction.",
     "subtitle1_1": "# 1.1 Upload Dataset",
-    "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Be careful because non-ZIP files can also be selected.",
+    "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
     "ex_dataset": "📂Select Dataset",
     "subtitle2": "# 2. Training",
     "option": {
@@ -218,7 +215,7 @@
     "radio_exdata": "External Dataset",
     "radio": "Select the dataset for 3D reconstruction.",
     "subtitle1_1": "# 1.1 Upload Dataset",
-    "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Note that non-ZIP files can also be selected.",
+    "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
     "ex_dataset": "📂Select Dataset",
     "subtitle2": "# 2. Training",
     "option": {
@@ -240,7 +237,7 @@
     "radio_exdata": "External Dataset",
     "radio": "Select the dataset for 3D reconstruction.",
     "subtitle1_1": "# 1.1 Upload Dataset",
-    "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Be careful because you can select non-ZIP files as well.",
+    "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
     "ex_dataset": "📂Select Dataset",
     "subtitle2": "# 2. Training",
     "option": {
@@ -269,7 +266,7 @@
     "radio_exdata": "External Dataset",
     "radio": "Select the dataset for 3D reconstruction.",
     "subtitle1_1": "# 1.1 Upload Dataset",
-    "info1": "- Please compress the dataset into a ZIP file before uploading.\n- Note that non-ZIP files can also be selected.",
+    "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
     "ex_dataset": "📂Select Dataset",
     "subtitle2": "# 2. Training",
     "option": {
@@ -291,7 +288,14 @@
 
     "dust3r": {
       "title": "DUSt3R",
-      "subtitle1": "# 1. Inference",
+      "subtitle1": "# 1. Select Dataset Type",
+      "radio_indata": "Internal Dataset",
+      "radio_exdata": "External Dataset",
+      "radio": "Select the dataset for 3D reconstruction.",
+      "subtitle1_1": "# 1.1 Upload Dataset",
+      "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
+      "ex_dataset": "📂Select Dataset",
+      "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
         "exe_mode": "Execution Environment"
@@ -307,7 +311,14 @@
 
     "mast3r": {
       "title": "MASt3R",
-      "subtitle1": "# 1. Inference",
+      "subtitle1": "# 1. Select Dataset Type",
+      "radio_indata": "Internal Dataset",
+      "radio_exdata": "External Dataset",
+      "radio": "Select the dataset for 3D reconstruction.",
+      "subtitle1_1": "# 1.1 Upload Dataset",
+      "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
+      "ex_dataset": "📂Select Dataset",
+      "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
         "exe_mode": "Execution Environment"
@@ -322,7 +333,14 @@
 
     "monst3r": {
       "title": "MonST3R",
-      "subtitle1": "# 1. Inference",
+      "subtitle1": "# 1. Select Dataset Type",
+      "radio_indata": "Internal Dataset",
+      "radio_exdata": "External Dataset",
+      "radio": "Select the dataset for 3D reconstruction.",
+      "subtitle1_1": "# 1.1 Upload Dataset",
+      "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
+      "ex_dataset": "📂Select Dataset",
+      "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
         "exe_mode": "Execution Environment"
@@ -337,8 +355,15 @@
 
     "easi3r": {
       "title": "Easi3R",
-      "subtitle1": "# 1. Inference",
-      "info1": "- Inference may fail if the number of input images is small.",
+      "subtitle1": "# 1. Select Dataset Type",
+      "radio_indata": "Internal Dataset",
+      "radio_exdata": "External Dataset",
+      "radio": "Select the dataset for 3D reconstruction.",
+      "subtitle1_1": "# 1.1 Upload Dataset",
+      "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
+      "ex_dataset": "📂Select Dataset",
+      "subtitle2": "# 2. Inference",
+      "info2": "- Inference may fail if the number of input images is small.",
       "option": {
         "title": "⚙️Options",
         "exe_mode": "Execution Environment"
@@ -353,7 +378,14 @@
 
     "must3r": {
       "title": "MUSt3R",
-      "subtitle1": "# 1. Inference",
+      "subtitle1": "# 1. Select Dataset Type",
+      "radio_indata": "Internal Dataset",
+      "radio_exdata": "External Dataset",
+      "radio": "Select the dataset for 3D reconstruction.",
+      "subtitle1_1": "# 1.1 Upload Dataset",
+      "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
+      "ex_dataset": "📂Select Dataset",
+      "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
         "exe_mode": "Execution Environment"
@@ -368,7 +400,14 @@
 
     "fast3r": {
       "title": "Fast3R",
-      "subtitle1": "# 1. Inference",
+      "subtitle1": "# 1. Select Dataset Type",
+      "radio_indata": "Internal Dataset",
+      "radio_exdata": "External Dataset",
+      "radio": "Select the dataset for 3D reconstruction.",
+      "subtitle1_1": "# 1.1 Upload Dataset",
+      "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
+      "ex_dataset": "📂Select Dataset",
+      "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
         "exe_mode": "Execution Environment"
@@ -401,7 +440,14 @@
 
     "cut3r": {
       "title": "CUT3R",
-      "subtitle1": "# 1. Inference",
+      "subtitle1": "# 1. Select Dataset Type",
+      "radio_indata": "Internal Dataset",
+      "radio_exdata": "External Dataset",
+      "radio": "Select the dataset for 3D reconstruction.",
+      "subtitle1_1": "# 1.1 Upload Dataset",
+      "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
+      "ex_dataset": "📂Select Dataset",
+      "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
         "exe_mode": "Execution Environment"
@@ -416,7 +462,14 @@
 
     "wint3r": {
       "title": "WinT3R",
-      "subtitle1": "# 1. Inference",
+      "subtitle1": "# 1. Select Dataset Type",
+      "radio_indata": "Internal Dataset",
+      "radio_exdata": "External Dataset",
+      "radio": "Select the dataset for 3D reconstruction.",
+      "subtitle1_1": "# 1.1 Upload Dataset",
+      "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
+      "ex_dataset": "📂Select Dataset",
+      "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
         "exe_mode": "Execution Environment"
@@ -475,7 +528,14 @@
     "current_dataset": "📂Current Dataset",
     "vggt": {
       "title": "VGGT",
-      "subtitle1": "# 1. Inference",
+      "subtitle1": "# 1. Select Dataset Type",
+      "radio_indata": "Internal Dataset",
+      "radio_exdata": "External Dataset",
+      "radio": "Select the dataset for 3D reconstruction.",
+      "subtitle1_1": "# 1.1 Upload Dataset",
+      "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
+      "ex_dataset": "📂Select Dataset",
+      "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
         "exe_mode": "Execution Environment",
@@ -490,7 +550,14 @@
     },
     "vggsfm": {
       "title": "VGGSfM",
-      "subtitle1": "# 1. Inference",
+      "subtitle1": "# 1. Select Dataset Type",
+      "radio_indata": "Internal Dataset",
+      "radio_exdata": "External Dataset",
+      "radio": "Select the dataset for 3D reconstruction.",
+      "subtitle1_1": "# 1.1 Upload Dataset",
+      "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
+      "ex_dataset": "📂Select Dataset",
+      "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
         "exe_mode": "Execution Environment"
@@ -500,7 +567,7 @@
       "runtime_recon": "⏳Runtime",
       "result_recon": "💡Result",
       "log_recon": "📝Execution Log",
-      "subtitle2": "# 2. Export Point Cloud",
+      "subtitle3": "# 2. Export Point Cloud",
       "export_btn": "🚀Export Point Cloud",
       "outdir_export": "📁Output Directory",
       "runtime_export": "⏳Runtime",
@@ -510,7 +577,14 @@
     },
     "vggt-slam": {
       "title": "VGGT-SLAM",
-      "subtitle1": "# 1. Inference",
+      "subtitle1": "# 1. Select Dataset Type",
+      "radio_indata": "Internal Dataset",
+      "radio_exdata": "External Dataset",
+      "radio": "Select the dataset for 3D reconstruction.",
+      "subtitle1_1": "# 1.1 Upload Dataset",
+      "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
+      "ex_dataset": "📂Select Dataset",
+      "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
         "exe_mode": "Execution Environment"
@@ -525,7 +599,14 @@
     },
     "streamvggt": {
       "title": "StreamVGGT",
-      "subtitle1": "# 1. Inference",
+      "subtitle1": "# 1. Select Dataset Type",
+      "radio_indata": "Internal Dataset",
+      "radio_exdata": "External Dataset",
+      "radio": "Select the dataset for 3D reconstruction.",
+      "subtitle1_1": "# 1.1 Upload Dataset",
+      "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
+      "ex_dataset": "📂Select Dataset",
+      "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
         "exe_mode": "Execution Environment"
@@ -539,7 +620,14 @@
     },
     "fastvggt": {
       "title": "FastVGGT",
-      "subtitle1": "# 1. Inference",
+      "subtitle1": "# 1. Select Dataset Type",
+      "radio_indata": "Internal Dataset",
+      "radio_exdata": "External Dataset",
+      "radio": "Select the dataset for 3D reconstruction.",
+      "subtitle1_1": "# 1.1 Upload Dataset",
+      "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
+      "ex_dataset": "📂Select Dataset",
+      "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
         "exe_mode": "Execution Environment"
@@ -553,7 +641,14 @@
     },
     "pi3": {
       "title": "Pi3",
-      "subtitle1": "# 1. Inference",
+      "subtitle1": "# 1. Select Dataset Type",
+      "radio_indata": "Internal Dataset",
+      "radio_exdata": "External Dataset",
+      "radio": "Select the dataset for 3D reconstruction.",
+      "subtitle1_1": "# 1.1 Upload Dataset",
+      "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
+      "ex_dataset": "📂Select Dataset",
+      "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
         "exe_mode": "Execution Environment"
