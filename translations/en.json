@@ -50,7 +50,7 @@
       "rebuild": "🛠️Rerun Preprocessing"
     },
     "run_colmap_btn": "🚀Run COLMAP",
-    "result_colmap": "📝Execution Result",
+    "result_colmap": "📝Execution Log",
     "subtitle2": "# 2. Download Dataset",
     "info2": "- You can download the processed dataset as a ZIP file.",
     "download_zipfile_btn": "💾Download Dataset"
@@ -67,6 +67,7 @@
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
+      "log_unzip": "📝Execution Log",
       "subtitle2": "# 2. Training",
       "option": {
         "title": "⚙️Options",
@@ -96,6 +97,7 @@
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
+      "log_unzip": "📝Execution Log",
       "subtitle2": "# 2. Training",
       "option": {
         "title": "⚙️Options",
@@ -125,6 +127,7 @@
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
+      "log_unzip": "📝Execution Log",
       "subtitle2": "# 2. Training",
       "option": {
         "title": "⚙️Options",
@@ -154,6 +157,7 @@
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
+      "log_unzip": "📝Execution Log",
       "subtitle2": "# 2. Training",
       "option": {
         "title": "⚙️Options",
@@ -187,6 +191,7 @@
     "subtitle1_1": "# 1.1 Upload Dataset",
     "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
     "ex_dataset": "📂Select Dataset",
+    "log_unzip": "📝Execution Log",
     "subtitle2": "# 2. Training",
     "option": {
       "title": "⚙️Options",
@@ -217,6 +222,7 @@
     "subtitle1_1": "# 1.1 Upload Dataset",
     "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
     "ex_dataset": "📂Select Dataset",
+    "log_unzip": "📝Execution Log",
     "subtitle2": "# 2. Training",
     "option": {
       "title": "⚙️Options",
@@ -239,6 +245,7 @@
     "subtitle1_1": "# 1.1 Upload Dataset",
     "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
     "ex_dataset": "📂Select Dataset",
+    "log_unzip": "📝Execution Log",
     "subtitle2": "# 2. Training",
     "option": {
       "title": "⚙️Options",
@@ -268,6 +275,7 @@
     "subtitle1_1": "# 1.1 Upload Dataset",
     "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
     "ex_dataset": "📂Select Dataset",
+    "log_unzip": "📝Execution Log",
     "subtitle2": "# 2. Training",
     "option": {
       "title": "⚙️Options",
@@ -295,6 +303,7 @@
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
+      "log_unzip": "📝Execution Log",
       "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
@@ -318,6 +327,7 @@
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
+      "log_unzip": "📝Execution Log",
       "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
@@ -340,6 +350,7 @@
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
+      "log_unzip": "📝Execution Log",
       "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
@@ -362,6 +373,7 @@
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
+      "log_unzip": "📝Execution Log",
       "subtitle2": "# 2. Inference",
       "info2": "- Inference may fail if the number of input images is small.",
       "option": {
@@ -385,6 +397,7 @@
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
+      "log_unzip": "📝Execution Log",
       "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
@@ -407,6 +420,7 @@
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
+      "log_unzip": "📝Execution Log",
       "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
@@ -447,6 +461,7 @@
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
+      "log_unzip": "📝Execution Log",
       "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
@@ -469,6 +484,7 @@
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
+      "log_unzip": "📝Execution Log",
       "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
@@ -535,6 +551,7 @@
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
+      "log_unzip": "📝Execution Log",
       "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
@@ -557,6 +574,7 @@
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
+      "log_unzip": "📝Execution Log",
       "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
@@ -584,6 +602,7 @@
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
+      "log_unzip": "📝Execution Log",
       "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
@@ -606,6 +625,7 @@
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
+      "log_unzip": "📝Execution Log",
       "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
@@ -627,6 +647,7 @@
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
+      "log_unzip": "📝Execution Log",
       "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",
@@ -648,6 +669,7 @@
       "subtitle1_1": "# 1.1 Upload Dataset",
       "info1": "- Please compress the files into a ZIP archive before uploading.\n- Note that non-ZIP files can also be selected, so please be careful.\n- For external datasets, make sure to create a `colmap` directory or an `images` directory as shown in the figure on the right.\n- Models implemented in Nerfstudio require a `transform.json` file.",
       "ex_dataset": "📂Select Dataset",
+      "log_unzip": "📝Execution Log",
       "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️Options",

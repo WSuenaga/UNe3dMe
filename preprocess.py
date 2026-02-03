@@ -1,9 +1,11 @@
 # 標準ライブラリ
 import glob
 import os
+import re
 import random
 import shutil
 import string
+import json
 import subprocess
 import platform
 import zipfile
@@ -17,10 +19,49 @@ from tqdm import tqdm
 # subprocessのshellフラグの設定
 SHELL_FLAG = platform.system() == "Windows"
 
-# 指定したディレクトリ内の画像パスをリスト化するメソッド
+# --- ディレクトリ内の画像パスをリスト化するメソッド ---
 def get_imagelist(dir):
     exts = ["*.png", "*.jpg", "*.jpeg", "*.webp"]
     files = sorted([f for ext in exts for f in glob.glob(os.path.join(dir, ext))])
+    return files
+
+# --- 評価指標ロードメソッド ---
+def load_json_nerfstudio(json_path):
+    if not os.path.exists(json_path):
+        return None
+
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    results = data.get("results", {})
+
+    return [[results.get("fine_psnr"),results.get("fine_ssim"),results.get("fine_lpips")]]
+
+# --- Nerfstudioモデルのレンダリング画像パスリスト取得メソッド ---
+def get_imagelist_nerfstudio(dir):
+    pattern = re.compile(r"eval_(img|depth|accumulation)_(\d+)\.(png|jpg|jpeg|webp)")
+    files = glob.glob(os.path.join(dir, "*"))
+
+    grouped = {}
+
+    for f in files:
+        name = os.path.basename(f)
+        m = pattern.match(name)
+        if not m:
+            continue
+
+        kind, idx, _ = m.groups()
+        idx = int(idx)
+
+        grouped.setdefault(idx, {})[kind] = f
+
+    files = []
+    for idx in sorted(grouped.keys()):
+        g = grouped[idx]
+        for key in ["img", "depth", "accumulation"]:
+            if key in g:
+                files.append(g[key])
+
     return files
 
 # 入力画像を1つのディレクトリにまとめるメソッド
@@ -133,17 +174,19 @@ def unzip_dataset(zip_file, datasets_parent):
     # zipファイル名（拡張子なし）をデータセット名にする
     basename = os.path.splitext(os.path.basename(zip_file.name))[0]
     dataset_path = os.path.join(datasets_parent, basename)
-    
+
+    log = ""
+
     if os.path.exists(dataset_path) and os.listdir(dataset_path):
-        print(f"既に展開済み: {dataset_path}")
-        return dataset_path, gr.Column(visible=True)
+        log = f"既に展開済みです: {dataset_path}"
+        return dataset_path, log, gr.Column(visible=True)
 
     # 解凍
     with zipfile.ZipFile(zip_file.name, "r") as zip_ref:
         zip_ref.extractall(dataset_path)
-    print(f"解凍しました: {dataset_path}")
 
-    return dataset_path, gr.Column(visible=True)
+    log = f"解凍しました: {dataset_path}"
+    return dataset_path, log, gr.Column(visible=True)
 
 def zip_dataset(dataset):
     dataset_path = os.path.abspath(dataset)

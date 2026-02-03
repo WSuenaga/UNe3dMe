@@ -249,9 +249,8 @@ def render_eval_nerfstudio(dataset, outputs_dir, method_name1, method_name2):
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, method_name1, name)
     renders = os.path.join(outdir, "renders")
-    eval = os.path.join(outdir, method_name1, name, "evals")
+    evals = os.path.join(outdir, "evals.json")
     os.makedirs(renders, exist_ok=True)
-    os.makedirs(eval, exist_ok=True)
 
     config_path = os.path.join(outdir, "results", method_name2, "results", "config.yml")
 
@@ -259,7 +258,7 @@ def render_eval_nerfstudio(dataset, outputs_dir, method_name1, method_name2):
         "conda", "run", "-n", "nerfstudio",
         "ns-eval",
         "--load-config", config_path,
-        "--output-dir", eval,
+        "--output-path", evals,
         "--render-output-path", renders 
     ]
 
@@ -267,7 +266,7 @@ def render_eval_nerfstudio(dataset, outputs_dir, method_name1, method_name2):
 
     run_time, success, log = run_subprocess_popen(cmd, workdir)
 
-    return outdir, run_time, success, log
+    return outdir, run_time, success, log, evals, renders
 
 # --- ns-eval呼び出しメソッド ---
 def eval_nerfstudio_slurm(dataset, outputs_dir, method_name1, method_name2, eval_args=None):

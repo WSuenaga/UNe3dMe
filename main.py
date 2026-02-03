@@ -5,7 +5,7 @@ from demo import main_demo
 if __name__ == '__main__':
     with tempfile.TemporaryDirectory(prefix='GradioDemo_') as tmpdir:
         # 作業ディレクトリの表示
-        title = "作業ディレクトリ"
+        title = "Working Directory"
         max_width = max(len(title), len(tmpdir))
         GREEN = "\033[0;32m"
         RESET = "\033[0m"

@@ -53,7 +53,8 @@ https://colmap.github.io/install.html
 
 ## 2.1. 学習済みモデルのダウンロード
 以下の手法は学習済みモデルを要求します．各リポジトリ内で以下を行ってください．
-- MUSt3R https://github.com/naver/must3r?tab=readme-ov-file#checkpoints
+- MUSt3R  
+https://github.com/naver/must3r?tab=readme-ov-file#checkpoints
     - 上記より以下をダウンロード.
         - MUSt3R_512.pth
         - MUSt3R_512_retrieval_codebook.pkl

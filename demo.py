@@ -666,6 +666,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         vnerf_info1 = gr.Markdown(lang["nerf_tab"]["vnerf"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_vnerf = gr.File(label=lang["nerf_tab"]["vnerf"]["ex_dataset"])
+                    log_unzip_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["log_unzip"])
                 with gr.Column(visible=False) as train_vnerf_col:
                     vnerf_sub2 = gr.Markdown(lang["nerf_tab"]["vnerf"]["subtitle2"])
                     with gr.Accordion(label=lang["nerf_tab"]["vnerf"]["option"]["title"], open=False) as vnerf_option:
@@ -687,13 +688,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 with gr.Column(visible=False) as eval_vnerf_col:
                     vnerf_sub4 = gr.Markdown("# 4.レンダリング&評価")
                     eval_vnerf_btn = gr.Button("レンダリング&評価実行")
-                    eval_vnerf_btn = gr.Button(value=lang["nerf_tab"]["vnerf"]["export_btn"])
                     outdir_eval_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["outdir_export"])
                     runtime_eval_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["runtime_export"])
                     result_eval_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["result_export"])
                     log_eval_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["log_export"])
+                    outvalues_vner = gr.State()
                     metrics_vnerf = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label="評価指標")
-                    gallery_vnerf = gr.Gallery(label=lang["nerf_tab"]["vnerf"]["gallery"], columns=2, height="auto")
+                    outimages_vnerf = gr.State()
+                    gallery_vnerf = gr.Gallery(label=lang["nerf_tab"]["vnerf"]["gallery"], columns=1, height="auto")
             
             # Nerfacto
             with gr.Tab(label=lang["nerf_tab"]["nerfacto"]["title"]) as nerfacto_tab:
@@ -705,6 +707,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         nerfacto_info1 = gr.Markdown(lang["nerf_tab"]["nerfacto"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_nerfacto = gr.File(label=lang["nerf_tab"]["nerfacto"]["ex_dataset"])
+                    log_unzip_nerfacto = gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["log_unzip"])
                 with gr.Column(visible=False) as train_nerfacto_col:
                     nerfacto_sub2 = gr.Markdown(lang["nerf_tab"]["nerfacto"]["subtitle2"])
                     with gr.Accordion(label=lang["nerf_tab"]["nerfacto"]["option"]["title"], open=False) as nerfacto_option:
@@ -744,6 +747,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         mipnerf_info1 = gr.Markdown(lang["nerf_tab"]["mip-nerf"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_mipnerf = gr.File(label=lang["nerf_tab"]["mip-nerf"]["ex_dataset"])
+                    log_unzip_mipnerf = gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["log_unzip"])
                 with gr.Column(visible=False) as train_mipnerf_col:
                     mipnerf_sub2 = gr.Markdown(lang["nerf_tab"]["mip-nerf"]["subtitle2"])
                     with gr.Accordion(label=lang["nerf_tab"]["mip-nerf"]["option"]["title"], open=False) as mipnerf_option:
@@ -783,6 +787,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         stnerf_info1 = gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_stnerf = gr.File(label=lang["nerf_tab"]["seathru-nerf"]["ex_dataset"])
+                    log_unzip_stnerf = gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["log_unzip"])
                 with gr.Column(visible=False) as train_stnerf_col:
                     stnerf_sub2 = gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["subtitle2"])
                     with gr.Accordion(label=lang["nerf_tab"]["seathru-nerf"]["option"]["title"], open=False) as stnerf_option:
@@ -827,6 +832,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         vgs_info1 = gr.Markdown(lang["gs_tab"]["vgs"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_vgs = gr.File(label=lang["gs_tab"]["vgs"]["ex_dataset"])
+                    log_unzip_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["log_unzip"])
                 with gr.Column(visible=False) as train_vgs_col:
                     vgs_sub2 = gr.Markdown(lang["gs_tab"]["vgs"]["subtitle2"])
                     with gr.Accordion(label=lang["gs_tab"]["vgs"]["option"]["title"], open=False) as vgs_option:
@@ -891,6 +897,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         mips_info1 = gr.Markdown(lang["gs_tab"]["mip-splatting"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_mips = gr.File(label=lang["gs_tab"]["mip-splatting"]["ex_dataset"])
+                    log_unzip_mips = gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["log_unzip"])
                 with gr.Column(visible=False) as train_mips_col:
                     mips_sub2 = gr.Markdown(lang["gs_tab"]["mip-splatting"]["subtitle2"])
                     with gr.Accordion(label=lang["gs_tab"]["mip-splatting"]["option"]["title"], open=False) as mips_option:
@@ -913,6 +920,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         sfacto_info1 = gr.Markdown(lang["gs_tab"]["splatfacto"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_sfacto = gr.File(label=lang["gs_tab"]["splatfacto"]["ex_dataset"])
+                    log_unzip_sfacto = gr.Textbox(label=lang["gs_tab"]["splatfacto"]["log_unzip"])
                 with gr.Column(visible=False) as train_sfacto_col:
                     sfacto_sub2 = gr.Markdown(lang["gs_tab"]["splatfacto"]["subtitle2"])
                     with gr.Accordion(label=lang["gs_tab"]["splatfacto"]["option"]["title"], open=False) as sfacto_option:
@@ -952,6 +960,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         gs4d_info1 = gr.Markdown(lang["gs_tab"]["4d-gaussians"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_4dgs = gr.File(label=lang["gs_tab"]["4d-gaussians"]["ex_dataset"])
+                    log_unzip_4dgs = gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["log_unzip"])
                 with gr.Column(visible=False) as train_4dgs_col:
                     gs4d_sub2 = gr.Markdown(lang["gs_tab"]["4d-gaussians"]["subtitle2"])
                     with gr.Accordion(lang["gs_tab"]["4d-gaussians"]["option"]["title"], open=False) as gs4d_option:
@@ -978,6 +987,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         dust3r_info1 = gr.Markdown(lang["3sters_tab"]["dust3r"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_dust3r = gr.File(label=lang["3sters_tab"]["dust3r"]["ex_dataset"])
+                    log_unzip_dust3r = gr.Textbox(label=lang["3sters_tab"]["dust3r"]["log_unzip"])
                 with gr.Column(visible=False) as infer_dust3r_col:
                     dust3r_sub2 = gr.Markdown(lang["3sters_tab"]["dust3r"]["subtitle2"])
                     with gr.Accordion(label=lang["3sters_tab"]["dust3r"]["option"]["title"], open=False) as dust3r_option:
@@ -1003,7 +1013,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     result_recon_dust3r = gr.Textbox(label=lang["3sters_tab"]["dust3r"]["result_recon"])
                     log_recon_dust3r = gr.Textbox(label=lang["3sters_tab"]["dust3r"]["log_recon"])
                     outmodel_dust3r = gr.Model3D(label=lang["3sters_tab"]["dust3r"]["outmodel"])
-                    outimgs_dust3r = gr.State()
+                    outimages_dust3r = gr.State()
                     gallery_dust3r = gr.Gallery(label=lang["3sters_tab"]["dust3r"]["gallery"], columns=3, height="auto")
 
             # MASt3R
@@ -1016,6 +1026,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         mast3r_info1 = gr.Markdown(lang["3sters_tab"]["mast3r"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_mast3r = gr.File(label=lang["3sters_tab"]["mast3r"]["ex_dataset"])
+                    log_unzip_mast3r = gr.Textbox(label=lang["3sters_tab"]["mast3r"]["log_unzip"])
                 with gr.Column(visible=False) as infer_mast3r_col:
                     mast3r_sub2 = gr.Markdown(lang["3sters_tab"]["mast3r"]["subtitle2"])
                     with gr.Accordion(lang["3sters_tab"]["mast3r"]["option"]["title"], open=False) as mast3r_option:
@@ -1037,6 +1048,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         monst3r_info1 = gr.Markdown(lang["3sters_tab"]["monst3r"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_monst3r = gr.File(label=lang["3sters_tab"]["monst3r"]["ex_dataset"])
+                    log_unzip_monst3r = gr.Textbox(label=lang["3sters_tab"]["monst3r"]["log_unzip"])
                 with gr.Column(visible=False) as infer_monst3r_col:
                     monst3r_sub2 = gr.Markdown(lang["3sters_tab"]["monst3r"]["subtitle2"])
                     with gr.Accordion(label=lang["3sters_tab"]["monst3r"]["option"]["title"], open=False) as monst3r_option:
@@ -1058,6 +1070,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         easi3r_info1 = gr.Markdown(lang["3sters_tab"]["easi3r"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_easi3r = gr.File(label=lang["3sters_tab"]["easi3r"]["ex_dataset"])
+                    log_unzip_easi3r = gr.Textbox(label=lang["3sters_tab"]["easi3r"]["log_unzip"])
                 with gr.Column(visible=False) as infer_easi3r_col:
                     easi3r_sub2 = gr.Markdown(lang["3sters_tab"]["easi3r"]["subtitle2"])
                     easi3r_info2 = gr.Markdown(lang["3sters_tab"]["easi3r"]["info2"])
@@ -1080,6 +1093,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         must3r_info1 = gr.Markdown(lang["3sters_tab"]["must3r"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_must3r = gr.File(label=lang["3sters_tab"]["must3r"]["ex_dataset"])
+                    log_unzip_must3r = gr.Textbox(label=lang["3sters_tab"]["must3r"]["log_unzip"])
                 with gr.Column(visible=False) as infer_must3r_col:
                     must3r_sub2 = gr.Markdown(lang["3sters_tab"]["must3r"]["subtitle2"])
                     with gr.Accordion(label=lang["3sters_tab"]["must3r"]["option"]["title"], open=False) as must3r_option:
@@ -1101,6 +1115,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         fast3r_info1 = gr.Markdown(lang["3sters_tab"]["fast3r"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_fast3r = gr.File(label=lang["3sters_tab"]["fast3r"]["ex_dataset"])
+                    log_unzip_fast3r = gr.Textbox(label=lang["3sters_tab"]["fast3r"]["log_unzip"])
                 with gr.Column(visible=False) as infer_fast3r_col:
                     fast3r_sub2 = gr.Markdown(lang["3sters_tab"]["fast3r"]["subtitle2"])
                     with gr.Accordion(label=lang["3sters_tab"]["fast3r"]["option"]["title"], open=False) as fast3r_option:
@@ -1139,6 +1154,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         cut3r_info1 = gr.Markdown(lang["3sters_tab"]["cut3r"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_cut3r = gr.File(label=lang["3sters_tab"]["cut3r"]["ex_dataset"])
+                    log_unzip_cut3r = gr.Textbox(label=lang["3sters_tab"]["cut3r"]["log_unzip"])
                 with gr.Column(visible=False) as infer_cut3r_col:
                     cut3r_sub2 = gr.Markdown(lang["3sters_tab"]["cut3r"]["subtitle2"])
                     with gr.Accordion(label=lang["3sters_tab"]["cut3r"]["option"]["title"], open=False) as cut3r_option:
@@ -1160,6 +1176,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         wint3r_info1 = gr.Markdown(lang["3sters_tab"]["wint3r"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_wint3r = gr.File(label=lang["3sters_tab"]["wint3r"]["ex_dataset"])
+                    log_unzip_wint3r = gr.Textbox(label=lang["3sters_tab"]["wint3r"]["log_unzip"])
                 with gr.Column(visible=False) as infer_wint3r_col:
                     wint3r_sub2 = gr.Markdown(lang["3sters_tab"]["wint3r"]["subtitle2"])
                     with gr.Accordion(label=lang["3sters_tab"]["wint3r"]["option"]["title"], open=False) as wint3r_option:
@@ -1223,6 +1240,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         vggt_info1 = gr.Markdown(lang["vgg_tab"]["vggt"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_vggt = gr.File(label=lang["vgg_tab"]["vggt"]["ex_dataset"])
+                    log_unzip_vggt = gr.Textbox(label=lang["vgg_tab"]["vggt"]["log_unzip"])
                 with gr.Column(visible=False) as infer_vggt_col:
                     vggt_sub2 = gr.Markdown(lang["vgg_tab"]["vggt"]["subtitle2"])
                     with gr.Accordion(label=lang["vgg_tab"]["vggt"]["option"]["title"], open=False) as vggt_option:
@@ -1245,6 +1263,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         vggsfm_info1 = gr.Markdown(lang["vgg_tab"]["vggsfm"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_vggsfm = gr.File(label=lang["vgg_tab"]["vggsfm"]["ex_dataset"])
+                    log_unzip_vggsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["log_unzip"])
                 with gr.Column(visible=False) as infer_vggsfm_col:
                     vggsfm_sub2 = gr.Markdown(lang["vgg_tab"]["vggsfm"]["subtitle2"])
                     with gr.Accordion(label=lang["vgg_tab"]["vggsfm"]["option"]["title"], open=False) as vggsfm_option:
@@ -1273,6 +1292,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         vggtslam_info1 = gr.Markdown(lang["vgg_tab"]["vggt-slam"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_vggtslam = gr.File(label=lang["vgg_tab"]["vggt-slam"]["ex_dataset"])
+                    log_unzip_vggtslam = gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["log_unzip"])
                 with gr.Column(visible=False) as infer_vggtslam_col:
                     vggtslam_sub2 = gr.Markdown(lang["vgg_tab"]["vggt-slam"]["subtitle2"])
                     with gr.Accordion(label=lang["vgg_tab"]["vggt-slam"]["option"]["title"], open=False) as vggtslam_option:
@@ -1295,6 +1315,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         stmvggt_info1 = gr.Markdown(lang["vgg_tab"]["streamvggt"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_stmvggt = gr.File(label=lang["vgg_tab"]["streamvggt"]["ex_dataset"])
+                    log_unzip_stmvggt = gr.Textbox(label=lang["vgg_tab"]["streamvggt"]["log_unzip"])
                 with gr.Column(visible=False) as infer_stmvggt_col:
                     stmvggt_sub2 = gr.Markdown(lang["vgg_tab"]["streamvggt"]["subtitle2"])
                     with gr.Accordion(label=lang["vgg_tab"]["streamvggt"]["option"]["title"], open=False) as stmvggt_option:
@@ -1316,6 +1337,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         fastvggt_info1 = gr.Markdown(lang["vgg_tab"]["fastvggt"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_fastvggt = gr.File(label=lang["vgg_tab"]["fastvggt"]["ex_dataset"])
+                    log_unzip_fastvggt = gr.Textbox(label=lang["vgg_tab"]["fastvggt"]["log_unzip"])
                 with gr.Column(visible=False) as infer_fastvggt_col:
                     fastvggt_sub2 = gr.Markdown(lang["vgg_tab"]["fastvggt"]["subtitle2"])
                     with gr.Accordion(label=lang["vgg_tab"]["fastvggt"]["option"]["title"], open=False) as fastvggt_option:
@@ -1337,6 +1359,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         pi3_info1 = gr.Markdown(lang["vgg_tab"]["pi3"]["info1"],)
                         gr.Image(value=ex_dataset_image)
                     ex_dataset_pi3 = gr.File(label=lang["vgg_tab"]["pi3"]["ex_dataset"])
+                    log_unzip_pi3 = gr.Textbox(label=lang["vgg_tab"]["pi3"]["log_unzip"])
                 with gr.Column(visible=False) as infer_pi3_col:
                     pi3_sub2 = gr.Markdown(lang["vgg_tab"]["pi3"]["subtitle2"])
                     with gr.Accordion(label=lang["vgg_tab"]["pi3"]["option"]["title"], open=False) as pi3_option:
@@ -1960,141 +1983,141 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         # NeRF Tab
         ex_dataset_vnerf.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_vnerf, datasetsdir_state],
-                               outputs=[dataset, train_vnerf_col]).success(
+                               outputs=[dataset, log_unzip_vnerf, train_vnerf_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_nerf)
         ex_dataset_nerfacto.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_nerfacto, datasetsdir_state],
-                               outputs=[dataset, train_nerfacto_col]).success(
+                               outputs=[dataset, log_unzip_nerfacto, train_nerfacto_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_nerf)
         ex_dataset_mipnerf.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_mipnerf, datasetsdir_state],
-                               outputs=[dataset, train_mipnerf_col]).success(
+                               outputs=[dataset, log_unzip_mipnerf, train_mipnerf_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_nerf)
         ex_dataset_stnerf.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_stnerf, datasetsdir_state],
-                               outputs=[dataset, train_stnerf_col]).success(
+                               outputs=[dataset, log_unzip_stnerf, train_stnerf_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_nerf)
         # GS Tab
         ex_dataset_vgs.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_vgs, datasetsdir_state],
-                               outputs=[dataset, train_vgs_col]).success(
+                               outputs=[dataset, log_unzip_vgs, train_vgs_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_gs)
         ex_dataset_mips.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_mips, datasetsdir_state],
-                               outputs=[dataset, train_mips_col]).success(
+                               outputs=[dataset, log_unzip_mips, train_mips_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_gs)
         ex_dataset_sfacto.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_sfacto, datasetsdir_state],
-                               outputs=[dataset, train_sfacto_col]).success(
+                               outputs=[dataset, log_unzip_sfacto, train_sfacto_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_gs)
         ex_dataset_4dgs.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_4dgs, datasetsdir_state],
-                               outputs=[dataset, train_4dgs_col]).success(
+                               outputs=[dataset, log_unzip_4dgs, train_4dgs_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_gs)
         # 3sters Tab
         ex_dataset_dust3r.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_dust3r, datasetsdir_state],
-                               outputs=[dataset, infer_dust3r_col]).success(
+                               outputs=[dataset, log_unzip_dust3r, infer_dust3r_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_3sters)
         ex_dataset_mast3r.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_mast3r, datasetsdir_state],
-                               outputs=[dataset, infer_mast3r_col]).success(
+                               outputs=[dataset, log_unzip_mast3r, infer_mast3r_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_3sters)
         ex_dataset_monst3r.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_monst3r, datasetsdir_state],
-                               outputs=[dataset, infer_monst3r_col]).success(
+                               outputs=[dataset, log_unzip_monst3r, infer_monst3r_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_3sters)
         ex_dataset_easi3r.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_easi3r, datasetsdir_state],
-                               outputs=[dataset, infer_easi3r_col]).success(
+                               outputs=[dataset, log_unzip_easi3r, infer_easi3r_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_3sters)
         ex_dataset_must3r.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_must3r, datasetsdir_state],
-                               outputs=[dataset, infer_must3r_col]).success(
+                               outputs=[dataset, log_unzip_must3r, infer_must3r_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_3sters)
         ex_dataset_fast3r.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_fast3r, datasetsdir_state],
-                               outputs=[dataset, infer_fast3r_col]).success(
+                               outputs=[dataset, log_unzip_fast3r, infer_fast3r_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_3sters)
         ex_dataset_cut3r.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_cut3r, datasetsdir_state],
-                               outputs=[dataset, infer_cut3r_col]).success(
+                               outputs=[dataset, log_unzip_cut3r, infer_cut3r_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_3sters)
         ex_dataset_wint3r.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_wint3r, datasetsdir_state],
-                               outputs=[dataset, infer_wint3r_col]).success(
+                               outputs=[dataset, log_unzip_wint3r, infer_wint3r_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_3sters)
         # vgg Tab
         ex_dataset_vggt.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_vggt, datasetsdir_state],
-                               outputs=[dataset, infer_vggt_col]).success(
+                               outputs=[dataset, log_unzip_vggt, infer_vggt_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_vgg)
         ex_dataset_vggsfm.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_vggsfm, datasetsdir_state],
-                               outputs=[dataset, infer_vggsfm_col]).success(
+                               outputs=[dataset, log_unzip_vggsfm, infer_vggsfm_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_vgg)
         ex_dataset_vggtslam.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_vggtslam, datasetsdir_state],
-                               outputs=[dataset, infer_vggtslam_col]).success(
+                               outputs=[dataset, log_unzip_vggtslam, infer_vggtslam_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_vgg)
         ex_dataset_stmvggt.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_stmvggt, datasetsdir_state],
-                               outputs=[dataset, infer_stmvggt_col]).success(
+                               outputs=[dataset, log_unzip_stmvggt, infer_stmvggt_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_vgg)
         ex_dataset_fastvggt.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_fastvggt, datasetsdir_state],
-                               outputs=[dataset, infer_fastvggt_col]).success(
+                               outputs=[dataset, log_unzip_fastvggt, infer_fastvggt_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_vgg)
         ex_dataset_pi3.upload(fn=preprocess.unzip_dataset,
                                inputs=[ex_dataset_pi3, datasetsdir_state],
-                               outputs=[dataset, infer_pi3_col]).success(
+                               outputs=[dataset, log_unzip_pi3, infer_pi3_col]).success(
                                    fn=get_state_value,
                                    inputs=dataset,
                                    outputs=current_dataset_vgg)
         
-        # 三次元再構築
+        # --- 三次元再構築 ---
         recon_vnerf_btn.click(fn=methods.recon_vnerf,
                              inputs=[exe_mode_vnerf, dataset, outputsdir_state, iter_vnerf],
                              outputs=[outdir_recon_vnerf, runtime_recon_vnerf, result_recon_vnerf, log_recon_vnerf, export_vnerf_col, eval_vnerf_col])
@@ -2125,9 +2148,9 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                              outputs=[outdir_recon_4dgs, runtime_recon_4dgs, result_recon_4dgs, log_recon_4dgs, outmodel_4dgs])
         recon_dust3r_btn.click(fn=methods.recon_dust3r,
                                inputs=[exe_mode_dust3r, dataset, outputsdir_state, schedule, niter, min_conf_thr, as_pointcloud,mask_sky, clean_depth, transparent_cams, cam_size,scenegraph_type, winsize, refid], 
-                               outputs=[outdir_recon_dust3r, runtime_recon_dust3r, result_recon_dust3r, log_recon_dust3r, outmodel_dust3r, outimgs_dust3r]).success(
+                               outputs=[outdir_recon_dust3r, runtime_recon_dust3r, result_recon_dust3r, log_recon_dust3r, outmodel_dust3r, outimages_dust3r]).success(
                                            fn=preprocess.get_imagelist,
-                                           inputs=outimgs_dust3r,
+                                           inputs=outimages_dust3r,
                                            outputs=gallery_dust3r)
         recon_mast3r_btn.click(fn=methods.recon_mast3r,
                         inputs=[exe_mode_mast3r, dataset, outputsdir_state], 
@@ -2178,7 +2201,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                             inputs=[exe_mode_pi3, dataset, outputsdir_state],
                             outputs=[outdir_recon_pi3, runtime_recon_pi3, result_recon_pi3, log_recon_pi3, outmodel_pi3])
         
-        # 点群出力（Nerfstudio）
+        # --- 点群出力（Nerfstudio）---
         export_vnerf_btn.click(fn=methods.export_vnerf,
                               inputs=[exe_mode_vnerf, dataset, outputsdir_state],
                               outputs=[outdir_export_vnerf, runtime_export_vnerf, result_export_vnerf, log_export_vnerf])
@@ -2198,10 +2221,17 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 inputs=[dataset, outputsdir_state],
                                 outputs=[outdir_export_vggsfm, runtime_export_vggsfm, result_export_vggsfm, log_export_vggsfm, outmodel_vggsfm])
 
-        # レンダリング・評価
+        # --- レンダリング・評価 ---
         eval_vnerf_btn.click(fn=methods.render_eval_vnerf,
                              inputs=[exe_mode_vnerf, dataset, outputsdir_state],
-                             outputs=[outdir_eval_vnerf, runtime_eval_vnerf, result_eval_vnerf, log_eval_vnerf])
+                             outputs=[outdir_eval_vnerf, runtime_eval_vnerf, result_eval_vnerf, log_eval_vnerf, outvalues_vner, outimages_vnerf]).success(
+                                 fn=preprocess.load_json_nerfstudio,
+                                 inputs=outvalues_vner,
+                                 outputs=metrics_vnerf
+                             ).success(
+                                 fn=preprocess.get_imagelist_nerfstudio,
+                                 inputs=outimages_vnerf,
+                                 outputs=gallery_vnerf)
         eval_vgs_btn.click(fn=methods.render_eval_3dgs,
                     inputs=[outdir_recon_vgs, skip_train, skip_test, save_iter_3dgs],
                     outputs=[runtime_eval_vgs, result_render_vgs, log_eval_vgs, metrics_vgs, gallery_vgs])
