@@ -176,8 +176,6 @@ def unzip_dataset(zip_file, datasets_parent):
     if zip_file is None:
         raise ValueError("ZIP が指定されていません")
 
-    print("zip_file type:", type(zip_file))
-
     if hasattr(zip_file, "read"):
         data = zip_file.read()
     elif isinstance(zip_file, (bytes, bytearray, memoryview)):
@@ -193,20 +191,26 @@ def unzip_dataset(zip_file, datasets_parent):
         f.write(data)
         zip_path = f.name
 
-    if not zipfile.is_zipfile(zip_path):
-        with open(zip_path, "rb") as f:
-            print("file head:", f.read(8))
-        raise ValueError("指定されたファイルは ZIP として認識できません")
+    try:
+        if not zipfile.is_zipfile(zip_path):
+            with open(zip_path, "rb") as f:
+                print("file head:", f.read(8))
+            raise ValueError("指定されたファイルは ZIP として認識できません")
 
-    # データセット名はZIPファイル名
-    basename = os.path.splitext(
-        os.path.basename(getattr(zip_file, "name", "dataset.zip"))
-    )[0]
+        # データセット名はZIPファイル名
+        basename = os.path.splitext(
+            os.path.basename(getattr(zip_file, "name", "dataset.zip"))
+        )[0]
 
-    dataset_path = os.path.join(datasets_parent, basename)
+        dataset_path = os.path.join(datasets_parent, basename)
 
-    with zipfile.ZipFile(zip_path, "r") as zip_ref:
-        zip_ref.extractall(dataset_path)
+        with zipfile.ZipFile(zip_path, "r") as zip_ref:
+            zip_ref.extractall(dataset_path)
+
+    finally:
+        # unzip 成功・失敗に関わらず ZIP を削除
+        if os.path.exists(zip_path):
+            os.remove(zip_path)
 
     return dataset_path, f"解凍しました: {dataset_path}", gr.Column(visible=True)
 
