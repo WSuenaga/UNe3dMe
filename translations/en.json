@@ -7,7 +7,7 @@
     "media_radio": "📂Please select the file type",
     "image_section": {
       "subtitle2": "# 2. Create Dataset",
-      "subtitle2_1": "## 2.1 Upload images\n- Be careful because you can select non-image files as well.",
+      "subtitle2_1": "## 2.1 Upload images\n",
       "images": "📷Select the image to use.",
       "subtitle2_2": "## 2.2 Enter an optional dataset name\n- If left empty, a random name will be assigned to the dataset.",
       "dataset_name": "🏷️Dataset Name",
@@ -86,7 +86,14 @@
       "runtime_export": "⏳Runtime",
       "result_export": "💡Execution Result",
       "log_export": "📝Execution Log",
-      "gallery": "🖼️Input & Rendered Images"
+      "subtitle4": "# 4. Rendering & Evaluation",
+      "eval_btn": "🚀Start Rendering & Evaluation",
+      "outdir_eval": "📁Output Directory",
+      "runtime_eval": "⏳Runtime",
+      "result_eval": "💡Rendering Result",
+      "log_eval": "📝Execution Log",
+      "metrics": "📊Evaluation Metrics",
+      "gallery": "🖼️ Ground Truth & Rendered Images / Depth / Accumulation"
     },
     "nerfacto": {
       "title": "Nerfacto",
@@ -116,7 +123,14 @@
       "runtime_export": "⏳Runtime",
       "result_export": "💡Execution Result",
       "log_export": "📝Execution Log",
-      "gallery": "🖼️Input & Rendered Images"
+      "subtitle4": "# 4. Rendering & Evaluation",
+      "eval_btn": "🚀Start Rendering & Evaluation",
+      "outdir_eval": "📁Output Directory",
+      "runtime_eval": "⏳Runtime",
+      "result_eval": "💡Rendering Result",
+      "log_eval": "📝Execution Log",
+      "metrics": "📊Evaluation Metrics",
+      "gallery": "🖼️Ground Truth & Rendered Images"
     },
     "mip-nerf": {
       "title": "mip-NeRF",
@@ -146,7 +160,14 @@
       "runtime_export": "⏳Runtime",
       "result_export": "💡Execution Result",
       "log_export": "📝Execution Log",
-      "gallery": "🖼️Input & Rendered Images"
+      "subtitle4": "# 4. Rendering & Evaluation",
+      "eval_btn": "🚀Start Rendering & Evaluation",
+      "outdir_eval": "📁Output Directory",
+      "runtime_eval": "⏳Runtime",
+      "result_eval": "💡Rendering Result",
+      "log_eval": "📝Execution Log",
+      "metrics": "📊Evaluation Metrics",
+      "gallery": "🖼️Ground Truth & Rendered Images"
     },
     "seathru-nerf": {
       "title": "SeaThru-NeRF",
@@ -176,7 +197,14 @@
       "runtime_export": "⏳Runtime",
       "result_export": "💡Execution Result",
       "log_export": "📝Execution Log",
-      "gallery": "🖼️Input & Rendered Images"
+      "subtitle4": "# 4. Rendering & Evaluation",
+      "eval_btn": "🚀Start Rendering & Evaluation",
+      "outdir_eval": "📁Output Directory",
+      "runtime_eval": "⏳Runtime",
+      "result_eval": "💡Rendering Result",
+      "log_eval": "📝Execution Log",
+      "metrics": "📊Evaluation Metrics",
+      "gallery": "🖼️ Ground Truth & Rendered Images / Depth / Accumulation"
     }
   },
   "gs_tab": {
@@ -234,7 +262,15 @@
     "runtime_recon": "⏳Runtime",
     "result_recon": "💡Training Result",
     "log_recon": "📝Execution Log",
-    "outmodel": "🌐3D Reconstruction Result"
+    "outmodel": "🌐3D Reconstruction Result",
+    "subtitle3": "# 3. Rendering & Evaluation",
+    "eval_btn": "🚀Start Rendering & Evaluation",
+    "outdir_eval": "📁Output Directory",
+    "runtime_eval": "⏳Runtime",
+    "result_eval": "💡Rendering Result",
+    "log_eval": "📝Execution Log",
+    "metrics": "📊Evaluation Metrics",
+    "gallery": "🖼️Ground Truth & Rendered Images"
     },
   "splatfacto": {
     "title": "Splatfacto",
@@ -264,7 +300,14 @@
     "runtime_export": "⏳Runtime",
     "result_export": "💡Execution Result",
     "log_export": "📝Execution Log",
-    "gallery": "🖼️Input & Rendered Images"
+    "subtitle4": "# 4. Rendering & Evaluation",
+    "eval_btn": "🚀Start Rendering & Evaluation",
+    "outdir_eval": "📁Output Directory",
+    "runtime_eval": "⏳Runtime",
+    "result_eval": "💡Rendering Result",
+    "log_eval": "📝Execution Log",
+    "metrics": "📊Evaluation Metrics",
+    "gallery": "🖼️Ground Truth & Rendered Images"
     },
   "4d-gaussians": {
     "title": "4D-Gaussians",
@@ -287,7 +330,15 @@
     "runtime_recon": "⏳Runtime",
     "result_recon": "💡Training Result",
     "log_recon": "📝Execution Log",
-    "outmodel": "🌐3D Reconstruction Result"
+    "outmodel": "🌐3D Reconstruction Result",
+    "subtitle3": "# 3. Rendering & Evaluation",
+    "eval_btn": "🚀Start Rendering & Evaluation",
+    "outdir_eval": "📁Output Directory",
+    "runtime_eval": "⏳Runtime",
+    "result_eval": "💡Rendering Result",
+    "log_eval": "📝Execution Log",
+    "metrics": "📊Evaluation Metrics",
+    "gallery": "🖼️Ground Truth & Rendered Images"
     } 
   },
   "3sters_tab": {

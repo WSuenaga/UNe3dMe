@@ -94,6 +94,14 @@ def update_ui(choice):
         gr.Textbox(label=lang["nerf_tab"]["vnerf"]["runtime_export"]), # runtime_export_vnerf
         gr.Textbox(label=lang["nerf_tab"]["vnerf"]["result_export"]), # result_export_vnerf
         gr.Textbox(label=lang["nerf_tab"]["vnerf"]["log_export"]), # log_export_vnerf
+        gr.Markdown(lang["nerf_tab"]["vnerf"]["subtitle4"]), # vnerf_sub4
+        gr.Button(value=lang["nerf_tab"]["vnerf"]["eval_btn"]), # eval_vnerf_btn
+        gr.Textbox(label=lang["nerf_tab"]["vnerf"]["outdir_eval"]), # outdir_eval_vnerf
+        gr.Textbox(label=lang["nerf_tab"]["vnerf"]["runtime_eval"]), # runtime_eval_vnerf
+        gr.Textbox(label=lang["nerf_tab"]["vnerf"]["result_eval"]), # result_eval_vnerf
+        gr.Textbox(label=lang["nerf_tab"]["vnerf"]["log_eval"]), # log_eval_vnerf
+        gr.DataFrame(label=lang["nerf_tab"]["vnerf"]["metrics"]), # metrics_vnerf
+        gr.Gallery(label=lang["nerf_tab"]["vnerf"]["gallery"]), # gallery_vnerf
         # Nerfacto
         gr.Tab(label=lang["nerf_tab"]["nerfacto"]["title"]), # nerfacto_tab
         gr.Markdown(lang["nerf_tab"]["nerfacto"]["subtitle1"]), # nerfacto_sub1
@@ -118,6 +126,14 @@ def update_ui(choice):
         gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["runtime_export"]), # runtime_export_nerfacto
         gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["result_export"]), # result_export_nerfacto
         gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["log_export"]), # log_export_nerfacto
+        gr.Markdown(lang["nerf_tab"]["nerfacto"]["subtitle4"]), # nerfacto_sub4
+        gr.Button(value=lang["nerf_tab"]["nerfacto"]["eval_btn"]), # eval_nerfacto_btn
+        gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["outdir_eval"]), # outdir_eval_nerfacto
+        gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["runtime_eval"]), # runtime_eval_nerfacto
+        gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["result_eval"]), # result_eval_nerfacto
+        gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["log_eval"]), # log_eval_nerfacto
+        gr.DataFrame(label=lang["nerf_tab"]["nerfacto"]["metrics"]), # metrics_nerfacto
+        gr.Gallery(label=lang["nerf_tab"]["nerfacto"]["gallery"]), # gallery_nerfacto
         # mip-NeRF
         gr.Tab(label=lang["nerf_tab"]["mip-nerf"]["title"]), # mipnerf_tab
         gr.Markdown(lang["nerf_tab"]["mip-nerf"]["subtitle1"]), # mipnerf_sub1
@@ -142,6 +158,14 @@ def update_ui(choice):
         gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["runtime_export"]), # runtime_export_mipnerf
         gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["result_export"]), # result_export_mipnerf
         gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["log_export"]), # log_export_mipnerf
+        gr.Markdown(lang["nerf_tab"]["mip-nerf"]["subtitle4"]), # mipnerf_sub4
+        gr.Button(value=lang["nerf_tab"]["mip-nerf"]["eval_btn"]), # eval_mipnerf_btn
+        gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["outdir_eval"]), # outdir_eval_mipnerf
+        gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["runtime_eval"]), # runtime_eval_mipnerf
+        gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["result_eval"]), # result_eval_mipnerf
+        gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["log_eval"]), # log_eval_mipnerf
+        gr.DataFrame(label=lang["nerf_tab"]["mip-nerf"]["metrics"]), # metrics_mipnerf
+        gr.Gallery(label=lang["nerf_tab"]["mip-nerf"]["gallery"]), # gallery_mipnerf
         # SeaThru-NeRF
         gr.Tab(label=lang["nerf_tab"]["seathru-nerf"]["title"]), # stnerf_tab
         gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["subtitle1"]), # stnerf_sub1
@@ -166,6 +190,14 @@ def update_ui(choice):
         gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["runtime_export"]), # runtime_export_stnerf
         gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["result_export"]), # result_export_stnerf
         gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["log_export"]), # log_export_stnerf
+        gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["subtitle4"]), # stnerf_sub4
+        gr.Button(value=lang["nerf_tab"]["seathru-nerf"]["eval_btn"]), # eval_stnerf_btn
+        gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["outdir_eval"]), # outdir_eval_stnerf
+        gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["runtime_eval"]), # runtime_eval_stnerf
+        gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["result_eval"]), # result_eval_stnerf
+        gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["log_eval"]), # log_eval_stnerf
+        gr.DataFrame(label=lang["nerf_tab"]["seathru-nerf"]["metrics"]), # metrics_stnerf
+        gr.Gallery(label=lang["nerf_tab"]["seathru-nerf"]["gallery"]), # gallery_stnerf
         # GSTab
         gr.Tab(label=lang["gs_tab"]["title"]), # gs_tab
         gr.Textbox(label=lang["gs_tab"]["current_dataset"]), # current_dataset_gs
@@ -213,6 +245,14 @@ def update_ui(choice):
         gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["result_recon"]), # result_recon_mips
         gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["log_recon"]), # log_recon_mips
         gr.Model3D(label=lang["gs_tab"]["mip-splatting"]["outmodel"]), # outmodel_mips
+        gr.Markdown(lang["gs_tab"]["mip-splatting"]["subtitle2"]), # mips_sub3
+        gr.Button(value=lang["gs_tab"]["mip-splatting"]["eval_btn"]), # eval_mips_btn
+        gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["outdir_eval"]), # outdir_eval_mips
+        gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["runtime_eval"]), # runtime_eval_mips
+        gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["result_eval"]), # result_eval_mips
+        gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["log_eval"]), # log_eval_mips
+        gr.DataFrame(label=lang["gs_tab"]["mip-splatting"]["metrics"]), # metrics_mips
+        gr.Gallery(label=lang["gs_tab"]["mip-splatting"]["gallery"]), # gallery_mips
         # Splatfacto
         gr.Tab(label=lang["gs_tab"]["splatfacto"]["title"]), # sfacto_tab
         gr.Markdown(lang["gs_tab"]["splatfacto"]["subtitle1"]), # sfacto_sub1
@@ -237,6 +277,14 @@ def update_ui(choice):
         gr.Textbox(label=lang["gs_tab"]["splatfacto"]["runtime_export"]), # runtime_export_sfacto
         gr.Textbox(label=lang["gs_tab"]["splatfacto"]["result_export"]), # result_export_sfacto
         gr.Textbox(label=lang["gs_tab"]["splatfacto"]["log_export"]), # log_export_sfacto
+        gr.Markdown(lang["gs_tab"]["splatfacto"]["subtitle4"]), # sfacto_sub4
+        gr.Button(value=lang["gs_tab"]["splatfacto"]["eval_btn"]), # eval_sfacto_btn
+        gr.Textbox(label=lang["gs_tab"]["splatfacto"]["outdir_eval"]), # outdir_eval_sfacto
+        gr.Textbox(label=lang["gs_tab"]["splatfacto"]["runtime_eval"]), # runtime_eval_sfacto
+        gr.Textbox(label=lang["gs_tab"]["splatfacto"]["result_eval"]), # result_eval_sfacto
+        gr.Textbox(label=lang["gs_tab"]["splatfacto"]["log_eval"]), # log_eval_sfacto
+        gr.DataFrame(label=lang["gs_tab"]["splatfacto"]["metrics"]), # metrics_sfacto
+        gr.Gallery(label=lang["gs_tab"]["splatfacto"]["gallery"]), # gallery_sfacto
         # 4D-Gaussians
         gr.Tab(label=lang["gs_tab"]["4d-gaussians"]["title"]), # gs4d_tab
         gr.Markdown(lang["gs_tab"]["4d-gaussians"]["subtitle1"]), # gs4d_sub1
@@ -606,7 +654,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             with gr.Column(visible=False) as image_col:
                 dataset_image_sub2 = gr.Markdown(lang["dataset_tab"]["image_section"]["subtitle2"])
                 dataset_image_sub2_1 = gr.Markdown(lang["dataset_tab"]["image_section"]["subtitle2_1"])
-                images = gr.File(label=lang["dataset_tab"]["image_section"]["images"], file_count="multiple")
+                images = gr.File(label=lang["dataset_tab"]["image_section"]["images"], file_types=["image"], file_count="multiple")
                 dataset_image_sub2_2 = gr.Markdown(lang["dataset_tab"]["image_section"]["subtitle2_2"])
                 dataset_name = gr.Textbox(label=lang["dataset_tab"]["image_section"]["dataset_name"])
                 run_copy_btn = gr.Button(value=lang["dataset_tab"]["image_section"]["run_copy_btn"])
@@ -665,7 +713,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         vnerf_info1 = gr.Markdown(lang["nerf_tab"]["vnerf"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_vnerf = gr.File(label=lang["nerf_tab"]["vnerf"]["ex_dataset"])
+                    ex_dataset_vnerf = gr.File(label=lang["nerf_tab"]["vnerf"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["log_unzip"])
                 with gr.Column(visible=False) as train_vnerf_col:
                     vnerf_sub2 = gr.Markdown(lang["nerf_tab"]["vnerf"]["subtitle2"])
@@ -686,16 +734,16 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     result_export_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["result_export"])
                     log_export_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["log_export"])
                 with gr.Column(visible=False) as eval_vnerf_col:
-                    vnerf_sub4 = gr.Markdown("# 4.レンダリング&評価")
-                    eval_vnerf_btn = gr.Button("レンダリング&評価実行")
-                    outdir_eval_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["outdir_export"])
-                    runtime_eval_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["runtime_export"])
-                    result_eval_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["result_export"])
-                    log_eval_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["log_export"])
-                    outvalues_vner = gr.State()
-                    metrics_vnerf = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label="評価指標")
+                    vnerf_sub4 = gr.Markdown(lang["nerf_tab"]["vnerf"]["subtitle4"])
+                    eval_vnerf_btn = gr.Button(value=lang["nerf_tab"]["vnerf"]["eval_btn"])
+                    outdir_eval_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["outdir_eval"])
+                    runtime_eval_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["runtime_eval"])
+                    result_eval_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["result_eval"])
+                    log_eval_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["log_eval"])
+                    outvalues_vnerf = gr.State()
+                    metrics_vnerf = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label=lang["nerf_tab"]["vnerf"]["metrics"])
                     outimages_vnerf = gr.State()
-                    gallery_vnerf = gr.Gallery(label=lang["nerf_tab"]["vnerf"]["gallery"], columns=1, height="auto")
+                    gallery_vnerf = gr.Gallery(label=lang["nerf_tab"]["vnerf"]["gallery"], columns=3, height="auto")
             
             # Nerfacto
             with gr.Tab(label=lang["nerf_tab"]["nerfacto"]["title"]) as nerfacto_tab:
@@ -706,7 +754,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         nerfacto_info1 = gr.Markdown(lang["nerf_tab"]["nerfacto"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_nerfacto = gr.File(label=lang["nerf_tab"]["nerfacto"]["ex_dataset"])
+                    ex_dataset_nerfacto = gr.File(label=lang["nerf_tab"]["nerfacto"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_nerfacto = gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["log_unzip"])
                 with gr.Column(visible=False) as train_nerfacto_col:
                     nerfacto_sub2 = gr.Markdown(lang["nerf_tab"]["nerfacto"]["subtitle2"])
@@ -727,15 +775,16 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     result_export_nerfacto = gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["result_export"])
                     log_export_nerfacto = gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["log_export"])
                 with gr.Column(visible=False) as eval_nerfacto_col:
-                    nerfacto_sub4 = gr.Markdown("# 4.レンダリング&評価")
-                    eval_nerfacto_btn = gr.Button("レンダリング&評価実行")
-                    eval_nerfacto_btn = gr.Button(value=lang["nerf_tab"]["vnerf"]["export_btn"])
-                    outdir_eval_nerfacto = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["outdir_export"])
-                    runtime_eval_nerfacto = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["runtime_export"])
-                    result_eval_nerfacto = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["result_export"])
-                    log_eval_nerfacto = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["log_export"])
-                    metrics_nerfacto = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label="評価指標")
-                    gallery_nerfacto = gr.Gallery(label=lang["nerf_tab"]["vnerf"]["gallery"], columns=2, height="auto")
+                    nerfacto_sub4 = gr.Markdown(lang["nerf_tab"]["nerfacto"]["subtitle4"])
+                    eval_nerfacto_btn = gr.Button(value=lang["nerf_tab"]["nerfacto"]["eval_btn"])
+                    outdir_eval_nerfacto = gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["outdir_eval"])
+                    runtime_eval_nerfacto = gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["runtime_eval"])
+                    result_eval_nerfacto = gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["result_eval"])
+                    log_eval_nerfacto = gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["log_eval"])
+                    outvalues_nerfacto = gr.State()
+                    metrics_nerfacto = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label=lang["nerf_tab"]["nerfacto"]["metrics"])
+                    outimages_nerfacto = gr.State()
+                    gallery_nerfacto = gr.Gallery(label=lang["nerf_tab"]["nerfacto"]["gallery"], columns=1, height="auto")
             
             # mip-NeRF
             with gr.Tab(label=lang["nerf_tab"]["mip-nerf"]["title"]) as mipnerf_tab:
@@ -746,7 +795,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         mipnerf_info1 = gr.Markdown(lang["nerf_tab"]["mip-nerf"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_mipnerf = gr.File(label=lang["nerf_tab"]["mip-nerf"]["ex_dataset"])
+                    ex_dataset_mipnerf = gr.File(label=lang["nerf_tab"]["mip-nerf"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_mipnerf = gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["log_unzip"])
                 with gr.Column(visible=False) as train_mipnerf_col:
                     mipnerf_sub2 = gr.Markdown(lang["nerf_tab"]["mip-nerf"]["subtitle2"])
@@ -767,15 +816,16 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     result_export_mipnerf = gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["result_export"])
                     log_export_mipnerf = gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["log_export"])
                 with gr.Column(visible=False) as eval_mipnerf_col:
-                    mipnerf_sub4 = gr.Markdown("# 4.レンダリング&評価")
-                    eval_mipnerf_btn = gr.Button("レンダリング&評価実行")
-                    eval_mipnerf_btn = gr.Button(value=lang["nerf_tab"]["vnerf"]["export_btn"])
-                    outdir_eval_mipnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["outdir_export"])
-                    runtime_eval_mipnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["runtime_export"])
-                    result_eval_mipnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["result_export"])
-                    log_eval_mipnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["log_export"])
-                    metrics_mipnerf = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label="評価指標")
-                    gallery_mipnerf = gr.Gallery(label=lang["nerf_tab"]["vnerf"]["gallery"], columns=2, height="auto")
+                    mipnerf_sub4 = gr.Markdown(lang["nerf_tab"]["mip-nerf"]["subtitle4"])
+                    eval_mipnerf_btn = gr.Button(value=lang["nerf_tab"]["mip-nerf"]["eval_btn"])
+                    outdir_eval_mipnerf = gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["outdir_eval"])
+                    runtime_eval_mipnerf = gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["runtime_eval"])
+                    result_eval_mipnerf = gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["result_eval"])
+                    log_eval_mipnerf = gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["log_eval"])
+                    outvalues_mipnerf = gr.State()
+                    metrics_mipnerf = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label=lang["nerf_tab"]["mip-nerf"]["metrics"])
+                    outimages_mipnerf = gr.State()
+                    gallery_mipnerf = gr.Gallery(label=lang["nerf_tab"]["mip-nerf"]["gallery"], columns=1, height="auto")
             
             # SeaThru-NeRF
             with gr.Tab(label=lang["nerf_tab"]["seathru-nerf"]["title"]) as stnerf_tab:
@@ -786,7 +836,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         stnerf_info1 = gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_stnerf = gr.File(label=lang["nerf_tab"]["seathru-nerf"]["ex_dataset"])
+                    ex_dataset_stnerf = gr.File(label=lang["nerf_tab"]["seathru-nerf"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_stnerf = gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["log_unzip"])
                 with gr.Column(visible=False) as train_stnerf_col:
                     stnerf_sub2 = gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["subtitle2"])
@@ -809,15 +859,16 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     log_export_stnerf = gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["log_export"])
                     gallery_stnerf = gr.Gallery(label=lang["nerf_tab"]["seathru-nerf"]["gallery"], columns=2, height="auto")
                 with gr.Column(visible=False) as eval_stnerf_col:
-                    stnerf_sub4 = gr.Markdown("# 4.レンダリング&評価")
-                    eval_stnerf_btn = gr.Button("レンダリング&評価実行")
-                    eval_stnerf_btn = gr.Button(value=lang["nerf_tab"]["vnerf"]["export_btn"])
-                    outdir_eval_stnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["outdir_export"])
-                    runtime_eval_stnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["runtime_export"])
-                    result_eval_stnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["result_export"])
-                    log_eval_stnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["log_export"])
-                    metrics_stnerf = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label="評価指標")
-                    gallery_stnerf = gr.Gallery(label=lang["nerf_tab"]["vnerf"]["gallery"], columns=2, height="auto")
+                    stnerf_sub4 = gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["subtitle4"])
+                    eval_stnerf_btn = gr.Button(value=lang["nerf_tab"]["seathru-nerf"]["eval_btn"])
+                    outdir_eval_stnerf = gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["outdir_eval"])
+                    runtime_eval_stnerf = gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["runtime_eval"])
+                    result_eval_stnerf = gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["result_eval"])
+                    log_eval_stnerf = gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["log_eval"])
+                    outvalues_stnerf = gr.State()
+                    metrics_stnerf = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label=lang["nerf_tab"]["seathru-nerf"]["metrics"])
+                    outimages_stnerf = gr.State()
+                    gallery_stnerf = gr.Gallery(label=lang["nerf_tab"]["seathru-nerf"]["gallery"], columns=1, height="auto")
 
         # GSTab         
         with gr.Tab(label=lang["gs_tab"]["title"]) as gs_tab:
@@ -831,7 +882,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         vgs_info1 = gr.Markdown(lang["gs_tab"]["vgs"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_vgs = gr.File(label=lang["gs_tab"]["vgs"]["ex_dataset"])
+                    ex_dataset_vgs = gr.File(label=lang["gs_tab"]["vgs"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["log_unzip"])
                 with gr.Column(visible=False) as train_vgs_col:
                     vgs_sub2 = gr.Markdown(lang["gs_tab"]["vgs"]["subtitle2"])
@@ -875,14 +926,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     result_recon_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["result_recon"])
                     log_recon_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["log_recon"])
                     outmodel_vgs = gr.Model3D(label=lang["gs_tab"]["vgs"]["outmodel"])
-                with gr.Column(visible=False) as render_vgs_col:            
+                with gr.Column(visible=False) as eval_vgs_col:            
                     vgs_sub3 = gr.Markdown(lang["gs_tab"]["vgs"]["subtitle3"])
                     with gr.Row():
                         skip_train = gr.Checkbox(value=True, label=lang["gs_tab"]["vgs"]["skip_train"])
                         skip_test = gr.Checkbox(value=False, label=lang["gs_tab"]["vgs"]["skip_test"])
                     eval_vgs_btn = gr.Button(value=lang["gs_tab"]["vgs"]["eval_btn"])
                     runtime_eval_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["runtime_eval"])
-                    result_render_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["result_eval"])
+                    result_eval_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["result_eval"])
                     log_eval_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["log_eval"])
                     metrics_vgs = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label=lang["gs_tab"]["vgs"]["metrics"])
                     gallery_vgs = gr.Gallery(label=lang["gs_tab"]["vgs"]["gallery"], columns=2, height="auto")
@@ -896,7 +947,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         mips_info1 = gr.Markdown(lang["gs_tab"]["mip-splatting"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_mips = gr.File(label=lang["gs_tab"]["mip-splatting"]["ex_dataset"])
+                    ex_dataset_mips = gr.File(label=lang["gs_tab"]["mip-splatting"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_mips = gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["log_unzip"])
                 with gr.Column(visible=False) as train_mips_col:
                     mips_sub2 = gr.Markdown(lang["gs_tab"]["mip-splatting"]["subtitle2"])
@@ -909,6 +960,15 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     result_recon_mips = gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["result_recon"])
                     log_recon_mips = gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["log_recon"])
                     outmodel_mips = gr.Model3D(label=lang["gs_tab"]["mip-splatting"]["outmodel"])
+                with gr.Column(visible=False) as eval_mips_col:
+                    mips_sub3 = gr.Markdown(lang["gs_tab"]["mip-splatting"]["subtitle3"])
+                    eval_mips_btn = gr.Button(value=lang["gs_tab"]["mip-splatting"]["eval_btn"])
+                    outdir_eval_mips = gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["outdir_eval"])
+                    runtime_eval_mips = gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["runtime_eval"])
+                    result_eval_mips = gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["result_eval"])
+                    log_eval_mips = gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["log_eval"])
+                    metrics_mips = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label=lang["gs_tab"]["mip-splatting"]["metrics"])
+                    gallery_mips = gr.Gallery(label=lang["gs_tab"]["mip-splatting"]["gallery"], columns=2, height="auto")
 
             # Splatfacto
             with gr.Tab(label=lang["gs_tab"]["splatfacto"]["title"]) as sfacto_tab:
@@ -919,7 +979,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         sfacto_info1 = gr.Markdown(lang["gs_tab"]["splatfacto"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_sfacto = gr.File(label=lang["gs_tab"]["splatfacto"]["ex_dataset"])
+                    ex_dataset_sfacto = gr.File(label=lang["gs_tab"]["splatfacto"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_sfacto = gr.Textbox(label=lang["gs_tab"]["splatfacto"]["log_unzip"])
                 with gr.Column(visible=False) as train_sfacto_col:
                     sfacto_sub2 = gr.Markdown(lang["gs_tab"]["splatfacto"]["subtitle2"])
@@ -940,15 +1000,16 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     result_export_sfacto = gr.Textbox(label=lang["gs_tab"]["splatfacto"]["result_export"])
                     log_export_sfacto = gr.Textbox(label=lang["gs_tab"]["splatfacto"]["log_export"])
                 with gr.Column(visible=False) as eval_sfacto_col:
-                    sfacto_sub4 = gr.Markdown("# 4.レンダリング&評価")
-                    eval_sfacto_btn = gr.Button("レンダリング&評価実行")
-                    eval_sfacto_btn = gr.Button(value=lang["nerf_tab"]["vnerf"]["export_btn"])
-                    outdir_eval_sfacto = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["outdir_export"])
-                    runtime_eval_sfacto = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["runtime_export"])
-                    result_eval_sfacto = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["result_export"])
-                    log_eval_sfacto = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["log_export"])
-                    metrics_sfacto = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label="評価指標")
-                    gallery_sfacto = gr.Gallery(label=lang["nerf_tab"]["vnerf"]["gallery"], columns=2, height="auto")
+                    sfacto_sub4 = gr.Markdown(lang["gs_tab"]["splatfacto"]["subtitle4"])
+                    eval_sfacto_btn = gr.Button(value=lang["gs_tab"]["splatfacto"]["eval_btn"])
+                    outdir_eval_sfacto = gr.Textbox(label=lang["gs_tab"]["splatfacto"]["outdir_eval"])
+                    runtime_eval_sfacto = gr.Textbox(label=lang["gs_tab"]["splatfacto"]["runtime_eval"])
+                    result_eval_sfacto = gr.Textbox(label=lang["gs_tab"]["splatfacto"]["result_eval"])
+                    log_eval_sfacto = gr.Textbox(label=lang["gs_tab"]["splatfacto"]["log_eval"])
+                    outvalues_sfacto = gr.State()
+                    metrics_sfacto = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label=lang["gs_tab"]["splatfacto"]["metrics"])
+                    outimages_sfacto = gr.State()
+                    gallery_sfacto = gr.Gallery(label=lang["gs_tab"]["splatfacto"]["gallery"], columns=1, height="auto")
 
             # 4D-Gaussians
             with gr.Tab(label=lang["gs_tab"]["4d-gaussians"]["title"]) as gs4d_tab:
@@ -959,7 +1020,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         gs4d_info1 = gr.Markdown(lang["gs_tab"]["4d-gaussians"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_4dgs = gr.File(label=lang["gs_tab"]["4d-gaussians"]["ex_dataset"])
+                    ex_dataset_4dgs = gr.File(label=lang["gs_tab"]["4d-gaussians"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_4dgs = gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["log_unzip"])
                 with gr.Column(visible=False) as train_4dgs_col:
                     gs4d_sub2 = gr.Markdown(lang["gs_tab"]["4d-gaussians"]["subtitle2"])
@@ -972,6 +1033,15 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     result_recon_4dgs = gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["result_recon"])
                     log_recon_4dgs = gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["log_recon"])
                     outmodel_4dgs = gr.Model3D(label=lang["gs_tab"]["4d-gaussians"]["outmodel"])
+                with gr.Column(visible=False) as eval_4dgs_col:
+                    gs4d_sub3 = gr.Markdown(lang["gs_tab"]["4d-gaussians"]["subtitle3"])
+                    eval_4dgs_btn = gr.Button(value=lang["gs_tab"]["4d-gaussians"]["eval_btn"])
+                    outdir_eval_4dgs = gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["outdir_eval"])
+                    runtime_eval_4dgs = gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["runtime_eval"])
+                    result_eval_4dgs = gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["result_eval"])
+                    log_eval_4dgs = gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["log_eval"])
+                    metrics_4dgs = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label=lang["gs_tab"]["4d-gaussians"]["metrics"])
+                    gallery_4dgs = gr.Gallery(label=lang["gs_tab"]["4d-gaussians"]["gallery"], columns=2, height="auto")
 
         # 3stersTab
         with gr.Tab(label=lang["3sters_tab"]["title"]) as esters_tab:
@@ -986,7 +1056,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         dust3r_info1 = gr.Markdown(lang["3sters_tab"]["dust3r"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_dust3r = gr.File(label=lang["3sters_tab"]["dust3r"]["ex_dataset"])
+                    ex_dataset_dust3r = gr.File(label=lang["3sters_tab"]["dust3r"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_dust3r = gr.Textbox(label=lang["3sters_tab"]["dust3r"]["log_unzip"])
                 with gr.Column(visible=False) as infer_dust3r_col:
                     dust3r_sub2 = gr.Markdown(lang["3sters_tab"]["dust3r"]["subtitle2"])
@@ -1025,7 +1095,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         mast3r_info1 = gr.Markdown(lang["3sters_tab"]["mast3r"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_mast3r = gr.File(label=lang["3sters_tab"]["mast3r"]["ex_dataset"])
+                    ex_dataset_mast3r = gr.File(label=lang["3sters_tab"]["mast3r"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_mast3r = gr.Textbox(label=lang["3sters_tab"]["mast3r"]["log_unzip"])
                 with gr.Column(visible=False) as infer_mast3r_col:
                     mast3r_sub2 = gr.Markdown(lang["3sters_tab"]["mast3r"]["subtitle2"])
@@ -1047,7 +1117,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         monst3r_info1 = gr.Markdown(lang["3sters_tab"]["monst3r"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_monst3r = gr.File(label=lang["3sters_tab"]["monst3r"]["ex_dataset"])
+                    ex_dataset_monst3r = gr.File(label=lang["3sters_tab"]["monst3r"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_monst3r = gr.Textbox(label=lang["3sters_tab"]["monst3r"]["log_unzip"])
                 with gr.Column(visible=False) as infer_monst3r_col:
                     monst3r_sub2 = gr.Markdown(lang["3sters_tab"]["monst3r"]["subtitle2"])
@@ -1069,7 +1139,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         easi3r_info1 = gr.Markdown(lang["3sters_tab"]["easi3r"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_easi3r = gr.File(label=lang["3sters_tab"]["easi3r"]["ex_dataset"])
+                    ex_dataset_easi3r = gr.File(label=lang["3sters_tab"]["easi3r"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_easi3r = gr.Textbox(label=lang["3sters_tab"]["easi3r"]["log_unzip"])
                 with gr.Column(visible=False) as infer_easi3r_col:
                     easi3r_sub2 = gr.Markdown(lang["3sters_tab"]["easi3r"]["subtitle2"])
@@ -1092,7 +1162,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         must3r_info1 = gr.Markdown(lang["3sters_tab"]["must3r"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_must3r = gr.File(label=lang["3sters_tab"]["must3r"]["ex_dataset"])
+                    ex_dataset_must3r = gr.File(label=lang["3sters_tab"]["must3r"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_must3r = gr.Textbox(label=lang["3sters_tab"]["must3r"]["log_unzip"])
                 with gr.Column(visible=False) as infer_must3r_col:
                     must3r_sub2 = gr.Markdown(lang["3sters_tab"]["must3r"]["subtitle2"])
@@ -1114,7 +1184,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         fast3r_info1 = gr.Markdown(lang["3sters_tab"]["fast3r"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_fast3r = gr.File(label=lang["3sters_tab"]["fast3r"]["ex_dataset"])
+                    ex_dataset_fast3r = gr.File(label=lang["3sters_tab"]["fast3r"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_fast3r = gr.Textbox(label=lang["3sters_tab"]["fast3r"]["log_unzip"])
                 with gr.Column(visible=False) as infer_fast3r_col:
                     fast3r_sub2 = gr.Markdown(lang["3sters_tab"]["fast3r"]["subtitle2"])
@@ -1153,7 +1223,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         cut3r_info1 = gr.Markdown(lang["3sters_tab"]["cut3r"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_cut3r = gr.File(label=lang["3sters_tab"]["cut3r"]["ex_dataset"])
+                    ex_dataset_cut3r = gr.File(label=lang["3sters_tab"]["cut3r"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_cut3r = gr.Textbox(label=lang["3sters_tab"]["cut3r"]["log_unzip"])
                 with gr.Column(visible=False) as infer_cut3r_col:
                     cut3r_sub2 = gr.Markdown(lang["3sters_tab"]["cut3r"]["subtitle2"])
@@ -1175,7 +1245,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         wint3r_info1 = gr.Markdown(lang["3sters_tab"]["wint3r"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_wint3r = gr.File(label=lang["3sters_tab"]["wint3r"]["ex_dataset"])
+                    ex_dataset_wint3r = gr.File(label=lang["3sters_tab"]["wint3r"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_wint3r = gr.Textbox(label=lang["3sters_tab"]["wint3r"]["log_unzip"])
                 with gr.Column(visible=False) as infer_wint3r_col:
                     wint3r_sub2 = gr.Markdown(lang["3sters_tab"]["wint3r"]["subtitle2"])
@@ -1239,7 +1309,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         vggt_info1 = gr.Markdown(lang["vgg_tab"]["vggt"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_vggt = gr.File(label=lang["vgg_tab"]["vggt"]["ex_dataset"])
+                    ex_dataset_vggt = gr.File(label=lang["vgg_tab"]["vggt"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_vggt = gr.Textbox(label=lang["vgg_tab"]["vggt"]["log_unzip"])
                 with gr.Column(visible=False) as infer_vggt_col:
                     vggt_sub2 = gr.Markdown(lang["vgg_tab"]["vggt"]["subtitle2"])
@@ -1262,7 +1332,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         vggsfm_info1 = gr.Markdown(lang["vgg_tab"]["vggsfm"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_vggsfm = gr.File(label=lang["vgg_tab"]["vggsfm"]["ex_dataset"])
+                    ex_dataset_vggsfm = gr.File(label=lang["vgg_tab"]["vggsfm"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_vggsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["log_unzip"])
                 with gr.Column(visible=False) as infer_vggsfm_col:
                     vggsfm_sub2 = gr.Markdown(lang["vgg_tab"]["vggsfm"]["subtitle2"])
@@ -1291,7 +1361,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         vggtslam_info1 = gr.Markdown(lang["vgg_tab"]["vggt-slam"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_vggtslam = gr.File(label=lang["vgg_tab"]["vggt-slam"]["ex_dataset"])
+                    ex_dataset_vggtslam = gr.File(label=lang["vgg_tab"]["vggt-slam"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_vggtslam = gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["log_unzip"])
                 with gr.Column(visible=False) as infer_vggtslam_col:
                     vggtslam_sub2 = gr.Markdown(lang["vgg_tab"]["vggt-slam"]["subtitle2"])
@@ -1314,7 +1384,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         stmvggt_info1 = gr.Markdown(lang["vgg_tab"]["streamvggt"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_stmvggt = gr.File(label=lang["vgg_tab"]["streamvggt"]["ex_dataset"])
+                    ex_dataset_stmvggt = gr.File(label=lang["vgg_tab"]["streamvggt"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_stmvggt = gr.Textbox(label=lang["vgg_tab"]["streamvggt"]["log_unzip"])
                 with gr.Column(visible=False) as infer_stmvggt_col:
                     stmvggt_sub2 = gr.Markdown(lang["vgg_tab"]["streamvggt"]["subtitle2"])
@@ -1336,7 +1406,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         fastvggt_info1 = gr.Markdown(lang["vgg_tab"]["fastvggt"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_fastvggt = gr.File(label=lang["vgg_tab"]["fastvggt"]["ex_dataset"])
+                    ex_dataset_fastvggt = gr.File(label=lang["vgg_tab"]["fastvggt"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_fastvggt = gr.Textbox(label=lang["vgg_tab"]["fastvggt"]["log_unzip"])
                 with gr.Column(visible=False) as infer_fastvggt_col:
                     fastvggt_sub2 = gr.Markdown(lang["vgg_tab"]["fastvggt"]["subtitle2"])
@@ -1358,7 +1428,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     with gr.Row(equal_height=True):
                         pi3_info1 = gr.Markdown(lang["vgg_tab"]["pi3"]["info1"],)
                         gr.Image(value=ex_dataset_image)
-                    ex_dataset_pi3 = gr.File(label=lang["vgg_tab"]["pi3"]["ex_dataset"])
+                    ex_dataset_pi3 = gr.File(label=lang["vgg_tab"]["pi3"]["ex_dataset"], file_types=[".zip"], type="filepath")
                     log_unzip_pi3 = gr.Textbox(label=lang["vgg_tab"]["pi3"]["log_unzip"])
                 with gr.Column(visible=False) as infer_pi3_col:
                     pi3_sub2 = gr.Markdown(lang["vgg_tab"]["pi3"]["subtitle2"])
@@ -1447,6 +1517,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      runtime_export_vnerf,
                      result_export_vnerf,
                      log_export_vnerf,
+                     vnerf_sub4,
+                     eval_vnerf_btn,
+                     outdir_eval_vnerf,
+                     runtime_eval_vnerf,
+                     result_eval_vnerf,
+                     log_eval_vnerf,
+                     metrics_vnerf,
+                     gallery_vnerf,
                      nerfacto_tab, # Nerfacto
                      nerfacto_sub1,
                      nerfacto_radio,
@@ -1469,6 +1547,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      runtime_export_nerfacto,
                      result_export_nerfacto,
                      log_export_nerfacto,
+                     nerfacto_sub4,
+                     eval_nerfacto_btn,
+                     outdir_eval_nerfacto,
+                     runtime_eval_nerfacto,
+                     result_eval_nerfacto,
+                     log_eval_nerfacto,
+                     metrics_nerfacto,
+                     gallery_nerfacto,
                      mipnerf_tab, # mip-NeRF
                      mipnerf_sub1,
                      mipnerf_radio,
@@ -1491,6 +1577,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      runtime_export_mipnerf,
                      result_export_mipnerf,
                      log_export_mipnerf,
+                     mipnerf_sub4,
+                     eval_mipnerf_btn,
+                     outdir_eval_mipnerf,
+                     runtime_eval_mipnerf,
+                     result_eval_mipnerf,
+                     log_eval_mipnerf,
+                     metrics_mipnerf,
+                     gallery_mipnerf,
                      stnerf_tab, # SeaThru-NeRF
                      stnerf_sub1,
                      stnerf_radio,
@@ -1513,6 +1607,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      runtime_export_stnerf,
                      result_export_stnerf,
                      log_export_stnerf,
+                     stnerf_sub4,
+                     eval_stnerf_btn,
+                     outdir_eval_stnerf,
+                     runtime_eval_stnerf,
+                     result_eval_stnerf,
+                     log_eval_stnerf,
+                     metrics_stnerf,
+                     gallery_stnerf,
                      # GSTab
                      gs_tab,
                      current_dataset_gs,
@@ -1536,7 +1638,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      skip_test,
                      eval_vgs_btn,
                      runtime_eval_vgs,
-                     result_render_vgs,
+                     result_eval_vgs,
                      log_eval_vgs,
                      metrics_vgs,
                      gallery_vgs,
@@ -1556,6 +1658,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      result_recon_mips,
                      log_recon_mips,
                      outmodel_mips,
+                     mips_sub3,
+                     eval_mips_btn,
+                     outdir_eval_mips,
+                     runtime_eval_mips,
+                     result_eval_mips,
+                     log_eval_mips,
+                     metrics_mips,
+                     gallery_mips,
                      sfacto_tab, # Splatfacto
                      sfacto_sub1,
                      sfacto_radio,
@@ -1578,6 +1688,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      runtime_export_sfacto,
                      result_export_sfacto,
                      log_export_sfacto,
+                     sfacto_sub4,
+                     eval_sfacto_btn,
+                     outdir_eval_sfacto,
+                     runtime_eval_sfacto,
+                     result_eval_sfacto,
+                     log_eval_sfacto,
+                     metrics_sfacto,
+                     gallery_sfacto,
                      gs4d_tab, # 4D-Gaussians
                      gs4d_sub1,
                      gs4d_radio,
@@ -1945,40 +2063,43 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                          inputs=pi3_radio,
                          outputs=[infer_pi3_col, ex_pi3_col])
 
-        # --- データセット作成 ---
+        # --- 内部データセット作成 ---
         run_copy_btn.click(fn=preprocess.copy_images,
                        inputs=[images, datasetsdir_state, dataset_name],
-                       outputs=[dataset, iresult_col, output_image, gallery_image]
-                       ).success(
-                           fn=get_state_values, 
-                           inputs=dataset, 
-                           outputs=[current_dataset_colmap,
-                                    current_dataset_nerf, 
-                                    current_dataset_gs,
-                                    current_dataset_3sters,
-                                    current_dataset_mds,
-                                    current_dataset_vgg])
+                       outputs=[dataset, iresult_col, output_image, gallery_image]).success(
+                             fn=preprocess.zip_dataset,
+                             inputs=dataset,
+                             outputs=zipfile_images).success(
+                                 fn=get_state_values, 
+                                 inputs=dataset, 
+                                 outputs=[current_dataset_colmap,
+                                          current_dataset_nerf, 
+                                          current_dataset_gs,
+                                          current_dataset_3sters,
+                                          current_dataset_mds,
+                                          current_dataset_vgg])
         # ffmpeg実行ボタン
         run_ffmpeg_btn.click(fn=preprocess.extract_frames_with_filter, 
                          inputs=[video, datasetsdir_state, fps, rsi, ssim], 
-                         outputs=[dataset, dl_images_col, output_video, comp_rate, sel_images_num, rej_images_num, gallery_video]
-                        ).success(
-                            fn=get_state_values, 
-                            inputs=dataset, 
-                            outputs=[current_dataset_colmap,
-                                     current_dataset_nerf, 
-                                     current_dataset_gs,
-                                     current_dataset_3sters,
-                                     current_dataset_mds,
-                                     current_dataset_vgg]).success(fn=preprocess.zip_dataset,
-                                                                   inputs=dataset,
-                                                                   outputs=zipfile_images)
+                         outputs=[dataset, dl_images_col, output_video, comp_rate, sel_images_num, rej_images_num, gallery_video]).success(
+                             fn=preprocess.zip_dataset,
+                             inputs=dataset,
+                             outputs=zipfile_images).success(
+                                 fn=get_state_values, 
+                                 inputs=dataset, 
+                                 outputs=[current_dataset_colmap,
+                                          current_dataset_nerf, 
+                                          current_dataset_gs,
+                                          current_dataset_3sters,
+                                          current_dataset_mds,
+                                          current_dataset_vgg])
         # colmap実行ボタン
         run_colmap_btn.click(fn=preprocess.run_colmap,
                         inputs=[dataset, rebuild],
                         outputs=[result_colmap, dl_colmap_col]).success(fn=preprocess.zip_dataset,
                                                                         inputs=dataset,
                                                                         outputs=zipfile_colmap)
+        
         # --- 外部データセット ---
         # NeRF Tab
         ex_dataset_vnerf.upload(fn=preprocess.unzip_dataset,
@@ -2136,16 +2257,16 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                      opacity_lr, scaling_lr, rotation_lr, position_lr_init, position_lr_final,
                                      position_lr_delay_mult, densify_from_iter, densify_until_iter, densify_grad_threshold,
                                      densification_interval, opacity_rest_interval, percent_dense], 
-                                     outputs=[outdir_recon_vgs, runtime_recon_vgs, result_recon_vgs, log_recon_vgs, outmodel_vgs, render_vgs_col ])
+                                     outputs=[outdir_recon_vgs, runtime_recon_vgs, result_recon_vgs, log_recon_vgs, outmodel_vgs, eval_vgs_col ])
         recon_mips_btn.click(fn=methods.recon_mipSplatting, 
                              inputs=[exe_mode_mips, dataset, outputsdir_state, save_iter_mips], 
-                             outputs=[outdir_recon_mips, runtime_recon_mips, result_recon_mips, log_recon_mips, outmodel_mips])
+                             outputs=[outdir_recon_mips, runtime_recon_mips, result_recon_mips, log_recon_mips, outmodel_mips, eval_mips_col])
         recon_sfacto_btn.click(fn=methods.recon_sfacto,
                              inputs=[exe_mode_sfacto, dataset, outputsdir_state, iter_sfacto],
                              outputs=[outdir_recon_sfacto, runtime_recon_sfacto, result_recon_sfacto, log_recon_sfacto, export_sfacto_col, eval_sfacto_col])
         recon_4dgs_btn.click(fn=methods.recon_4dGaussians, 
                              inputs=[exe_mode_4dgs, dataset, outputsdir_state, save_iter_4dgs], 
-                             outputs=[outdir_recon_4dgs, runtime_recon_4dgs, result_recon_4dgs, log_recon_4dgs, outmodel_4dgs])
+                             outputs=[outdir_recon_4dgs, runtime_recon_4dgs, result_recon_4dgs, log_recon_4dgs, outmodel_4dgs, eval_4dgs_col])
         recon_dust3r_btn.click(fn=methods.recon_dust3r,
                                inputs=[exe_mode_dust3r, dataset, outputsdir_state, schedule, niter, min_conf_thr, as_pointcloud,mask_sky, clean_depth, transparent_cams, cam_size,scenegraph_type, winsize, refid], 
                                outputs=[outdir_recon_dust3r, runtime_recon_dust3r, result_recon_dust3r, log_recon_dust3r, outmodel_dust3r, outimages_dust3r]).success(
@@ -2222,18 +2343,66 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                 outputs=[outdir_export_vggsfm, runtime_export_vggsfm, result_export_vggsfm, log_export_vggsfm, outmodel_vggsfm])
 
         # --- レンダリング・評価 ---
+        # Nerf Tab
         eval_vnerf_btn.click(fn=methods.render_eval_vnerf,
                              inputs=[exe_mode_vnerf, dataset, outputsdir_state],
-                             outputs=[outdir_eval_vnerf, runtime_eval_vnerf, result_eval_vnerf, log_eval_vnerf, outvalues_vner, outimages_vnerf]).success(
+                             outputs=[outdir_eval_vnerf, runtime_eval_vnerf, result_eval_vnerf, log_eval_vnerf, outvalues_vnerf, outimages_vnerf]).success(
                                  fn=preprocess.load_json_nerfstudio,
-                                 inputs=outvalues_vner,
+                                 inputs=[outvalues_vnerf, gr.State("fine_psnr"), gr.State("fine_ssim"), gr.State("fine_lpips")],
                                  outputs=metrics_vnerf
                              ).success(
                                  fn=preprocess.get_imagelist_nerfstudio,
                                  inputs=outimages_vnerf,
                                  outputs=gallery_vnerf)
+        eval_nerfacto_btn.click(fn=methods.render_eval_nerfacto,
+                             inputs=[exe_mode_nerfacto, dataset, outputsdir_state],
+                             outputs=[outdir_eval_nerfacto, runtime_eval_nerfacto, result_eval_nerfacto, log_eval_nerfacto, outvalues_nerfacto, outimages_nerfacto]).success(
+                                 fn=preprocess.load_json_nerfstudio,
+                                 inputs=[outvalues_nerfacto, gr.State("psnr"), gr.State("ssim"), gr.State("lpips")],
+                                 outputs=metrics_nerfacto
+                             ).success(
+                                 fn=preprocess.get_imagelist_nerfstudio,
+                                 inputs=outimages_nerfacto,
+                                 outputs=gallery_nerfacto)
+        eval_mipnerf_btn.click(fn=methods.render_eval_mipnerf,
+                             inputs=[exe_mode_mipnerf, dataset, outputsdir_state],
+                             outputs=[outdir_eval_mipnerf, runtime_eval_mipnerf, result_eval_mipnerf, log_eval_mipnerf, outvalues_mipnerf, outimages_mipnerf]).success(
+                                 fn=preprocess.load_json_nerfstudio,
+                                 inputs=[outvalues_mipnerf, gr.State("fine_psnr"), gr.State("fine_ssim"), gr.State("fine_lpips")],
+                                 outputs=metrics_mipnerf
+                             ).success(
+                                 fn=preprocess.get_imagelist_nerfstudio,
+                                 inputs=outimages_mipnerf,
+                                 outputs=gallery_mipnerf)
+        eval_stnerf_btn.click(fn=methods.render_eval_stnerf,
+                             inputs=[exe_mode_stnerf, dataset, outputsdir_state],
+                             outputs=[outdir_eval_stnerf, runtime_eval_stnerf, result_eval_stnerf, log_eval_stnerf, outvalues_stnerf, outimages_stnerf]).success(
+                                 fn=preprocess.load_json_nerfstudio,
+                                 inputs=[outvalues_stnerf, gr.State("psnr"), gr.State("ssim"), gr.State("lpips")],
+                                 outputs=metrics_stnerf
+                             ).success(
+                                 fn=preprocess.get_imagelist_nerfstudio,
+                                 inputs=outimages_stnerf,
+                                 outputs=gallery_stnerf)
+        # GS Tab
         eval_vgs_btn.click(fn=methods.render_eval_3dgs,
-                    inputs=[outdir_recon_vgs, skip_train, skip_test, save_iter_3dgs],
-                    outputs=[runtime_eval_vgs, result_render_vgs, log_eval_vgs, metrics_vgs, gallery_vgs])
+                           inputs=[outdir_recon_vgs, skip_train, skip_test, save_iter_3dgs],
+                           outputs=[runtime_eval_vgs, result_eval_vgs, log_eval_vgs, metrics_vgs, gallery_vgs])
+        eval_mips_btn.click(fn=methods.render_eval_mips,
+                            inputs=[outdir_recon_mips, skip_train, skip_test, save_iter_mips],
+                            outputs=[runtime_eval_mips, result_eval_mips, log_eval_mips, metrics_mips, gallery_mips])
+        eval_sfacto_btn.click(fn=methods.render_eval_sfacto,
+                             inputs=[exe_mode_sfacto, dataset, outputsdir_state],
+                             outputs=[outdir_eval_sfacto, runtime_eval_sfacto, result_eval_sfacto, log_eval_sfacto, outvalues_sfacto, outimages_sfacto]).success(
+                                 fn=preprocess.load_json_nerfstudio,
+                                 inputs=[outvalues_sfacto, gr.State("psnr"), gr.State("ssim"), gr.State("lpips")],
+                                 outputs=metrics_sfacto
+                             ).success(
+                                 fn=preprocess.get_imagelist_nerfstudio,
+                                 inputs=outimages_sfacto,
+                                 outputs=gallery_sfacto)
+        eval_4dgs_btn.click(fn=methods.render_eval_4dgs,
+                            inputs=[outdir_recon_4dgs, skip_train, skip_test, save_iter_4dgs],
+                            outputs=[runtime_eval_4dgs, result_eval_4dgs, log_eval_4dgs, metrics_4dgs, gallery_4dgs])
             
     demo.launch()

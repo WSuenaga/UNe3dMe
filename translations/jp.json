@@ -7,7 +7,7 @@
     "media_radio": "📂ファイルの種類を選択してください",
     "image_section": {
       "subtitle2": "# 2. データセットの作成",
-      "subtitle2_1": "## 2.1 画像を入力してください\n- 画像以外も選択できてしまうため注意してください．",
+      "subtitle2_1": "## 2.1 画像を入力してください\n",
       "images": "📷使用する画像を選択してください",
       "subtitle2_2": "## 2.2 任意のデータセットの名前を入力してください\n- 入力が無い場合，ランダムな名前がデータセットに付与されます．",
       "dataset_name": "🏷️データセットの名前",
@@ -86,7 +86,14 @@
       "runtime_export": "⏳実行時間",
       "result_export": "💡実行結果",
       "log_export": "📝実行ログ",
-      "gallery": "🖼️入力画像・レンダリング画像"
+      "subtitle4": "# 4. レンダリング・評価",
+      "eval_btn": "🚀レンダリング&評価実行",
+      "outdir_eval": "📁実行結果保存場所",
+      "runtime_eval": "⏳実行時間",
+      "result_eval": "💡実行結果",
+      "log_eval": "📝実行ログ",
+      "metrics": "📊評価指標",
+      "gallery": "🖼️入力画像・レンダリング画像・depth・accumlation"
     },
     "nerfacto": {
       "title": "Nerfacto",
@@ -116,6 +123,13 @@
       "runtime_export": "⏳実行時間",
       "result_export": "💡実行結果",
       "log_export": "📝実行ログ",
+      "subtitle4": "# 4. レンダリング・評価",
+      "eval_btn": "🚀レンダリング&評価実行",
+      "outdir_eval": "📁実行結果保存場所",
+      "runtime_eval": "⏳実行時間",
+      "result_eval": "💡実行結果",
+      "log_eval": "📝実行ログ",
+      "metrics": "📊評価指標",
       "gallery": "🖼️入力画像・レンダリング画像"
     },
     "mip-nerf": {
@@ -146,6 +160,13 @@
       "runtime_export": "⏳実行時間",
       "result_export": "💡実行結果",
       "log_export": "📝実行ログ",
+      "subtitle4": "# 4. レンダリング・評価",
+      "eval_btn": "🚀レンダリング&評価実行",
+      "outdir_eval": "📁実行結果保存場所",
+      "runtime_eval": "⏳実行時間",
+      "result_eval": "💡実行結果",
+      "log_eval": "📝実行ログ",
+      "metrics": "📊評価指標",
       "gallery": "🖼️入力画像・レンダリング画像"
     },
     "seathru-nerf": {
@@ -176,7 +197,14 @@
       "runtime_export": "⏳実行時間",
       "result_export": "💡実行結果",
       "log_export": "📝実行ログ",
-      "gallery": "🖼️入力画像・レンダリング画像"
+      "subtitle4": "# 4. レンダリング・評価",
+      "eval_btn": "🚀レンダリング&評価実行",
+      "outdir_eval": "📁実行結果保存場所",
+      "runtime_eval": "⏳実行時間",
+      "result_eval": "💡実行結果",
+      "log_eval": "📝実行ログ",
+      "metrics": "📊評価指標",
+      "gallery": "🖼️入力画像・レンダリング画像・depth・accumlation"
     }
   },
   "gs_tab": {
@@ -234,7 +262,15 @@
       "runtime_recon": "⏳実行時間",
       "result_recon": "💡実行結果",
       "log_recon": "📝実行ログ",
-      "outmodel": "🌐3次元再構築結果"
+      "outmodel": "🌐3次元再構築結果",
+      "subtitle3": "# 3. レンダリング・評価",
+      "eval_btn": "🚀レンダリング&評価実行",
+      "outdir_eval": "📁実行結果保存場所",
+      "runtime_eval": "⏳実行時間",
+      "result_eval": "💡実行結果",
+      "log_eval": "📝実行ログ",
+      "metrics": "📊評価指標",
+      "gallery": "🖼️Ground Truth・レンダリングされた画像"
     },
     "splatfacto": {
       "title": "Splatfacto",
@@ -264,6 +300,13 @@
       "runtime_export": "⏳実行時間",
       "result_export": "💡実行結果",
       "log_export": "📝実行ログ",
+      "subtitle4": "# 4. レンダリング・評価",
+      "eval_btn": "🚀レンダリング&評価実行",
+      "outdir_eval": "📁実行結果保存場所",
+      "runtime_eval": "⏳実行時間",
+      "result_eval": "💡実行結果",
+      "log_eval": "📝実行ログ",
+      "metrics": "📊評価指標",
       "gallery": "🖼️入力画像・レンダリング画像"
     },
     "4d-gaussians": {
@@ -287,7 +330,15 @@
       "runtime_recon": "⏳実行時間",
       "result_recon": "💡実行結果",
       "log_recon": "📝実行ログ",
-      "outmodel": "🌐3次元再構築結果"
+      "outmodel": "🌐3次元再構築結果",
+      "subtitle3": "# 3. レンダリング・評価",
+      "eval_btn": "🚀レンダリング&評価実行",
+      "outdir_eval": "📁実行結果保存場所",
+      "runtime_eval": "⏳実行時間",
+      "result_eval": "💡実行結果",
+      "log_eval": "📝実行ログ",
+      "metrics": "📊評価指標",
+      "gallery": "🖼️Ground Truth・レンダリングされた画像"
     }
   },
   "3sters_tab": {

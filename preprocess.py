@@ -9,6 +9,7 @@ import json
 import subprocess
 import platform
 import zipfile
+import tempfile
 from datetime import datetime
 # サードパーティライブラリ
 import cv2
@@ -26,7 +27,7 @@ def get_imagelist(dir):
     return files
 
 # --- 評価指標ロードメソッド ---
-def load_json_nerfstudio(json_path):
+def load_json_nerfstudio(json_path, psnr_key, ssim_key, lpips_key):
     if not os.path.exists(json_path):
         return None
 
@@ -35,7 +36,7 @@ def load_json_nerfstudio(json_path):
 
     results = data.get("results", {})
 
-    return [[results.get("fine_psnr"),results.get("fine_ssim"),results.get("fine_lpips")]]
+    return [[results.get(psnr_key),results.get(ssim_key),results.get(lpips_key)]]
 
 # --- Nerfstudioモデルのレンダリング画像パスリスト取得メソッド ---
 def get_imagelist_nerfstudio(dir):
@@ -170,23 +171,44 @@ def extract_frames_with_filter(video, parent_path, fps, remove_similar, ssim_thr
 
     return dataset_dir, gr.Column(visible=True), dataset_dir, comp_rate, sel_images_num, rej_images_num, imagelist
 
+# データセットロードメソッド
 def unzip_dataset(zip_file, datasets_parent):
-    # zipファイル名（拡張子なし）をデータセット名にする
-    basename = os.path.splitext(os.path.basename(zip_file.name))[0]
+    if zip_file is None:
+        raise ValueError("ZIP が指定されていません")
+
+    print("zip_file type:", type(zip_file))
+
+    if hasattr(zip_file, "read"):
+        data = zip_file.read()
+    elif isinstance(zip_file, (bytes, bytearray, memoryview)):
+        data = bytes(zip_file)
+    elif isinstance(zip_file, str):
+        with open(zip_file, "rb") as f:
+            data = f.read()
+    else:
+        raise ValueError(f"想定外の入力型です: {type(zip_file)}")
+
+    # tempfile に実体として保存
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".zip") as f:
+        f.write(data)
+        zip_path = f.name
+
+    if not zipfile.is_zipfile(zip_path):
+        with open(zip_path, "rb") as f:
+            print("file head:", f.read(8))
+        raise ValueError("指定されたファイルは ZIP として認識できません")
+
+    # データセット名はZIPファイル名
+    basename = os.path.splitext(
+        os.path.basename(getattr(zip_file, "name", "dataset.zip"))
+    )[0]
+
     dataset_path = os.path.join(datasets_parent, basename)
 
-    log = ""
-
-    if os.path.exists(dataset_path) and os.listdir(dataset_path):
-        log = f"既に展開済みです: {dataset_path}"
-        return dataset_path, log, gr.Column(visible=True)
-
-    # 解凍
-    with zipfile.ZipFile(zip_file.name, "r") as zip_ref:
+    with zipfile.ZipFile(zip_path, "r") as zip_ref:
         zip_ref.extractall(dataset_path)
 
-    log = f"解凍しました: {dataset_path}"
-    return dataset_path, log, gr.Column(visible=True)
+    return dataset_path, f"解凍しました: {dataset_path}", gr.Column(visible=True)
 
 def zip_dataset(dataset):
     dataset_path = os.path.abspath(dataset)
