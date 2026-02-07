@@ -93,7 +93,7 @@
       "result_eval": "💡Rendering Result",
       "log_eval": "📝Execution Log",
       "metrics": "📊Evaluation Metrics",
-      "gallery": "🖼️ Ground Truth & Rendered Images / Depth / Accumulation"
+      "gallery": "🖼️Ground Truth / Rendered Images"
     },
     "nerfacto": {
       "title": "Nerfacto",
@@ -130,7 +130,7 @@
       "result_eval": "💡Rendering Result",
       "log_eval": "📝Execution Log",
       "metrics": "📊Evaluation Metrics",
-      "gallery": "🖼️Ground Truth & Rendered Images"
+      "gallery": "🖼️Ground Truth / Rendered Images"
     },
     "mip-nerf": {
       "title": "mip-NeRF",
@@ -167,7 +167,7 @@
       "result_eval": "💡Rendering Result",
       "log_eval": "📝Execution Log",
       "metrics": "📊Evaluation Metrics",
-      "gallery": "🖼️Ground Truth & Rendered Images"
+      "gallery": "🖼️Ground Truth / Rendered Images"
     },
     "seathru-nerf": {
       "title": "SeaThru-NeRF",
@@ -204,7 +204,7 @@
       "result_eval": "💡Rendering Result",
       "log_eval": "📝Execution Log",
       "metrics": "📊Evaluation Metrics",
-      "gallery": "🖼️ Ground Truth & Rendered Images / Depth / Accumulation"
+      "gallery": "🖼️Ground Truth / Rendered Images"
     }
   },
   "gs_tab": {
@@ -235,11 +235,12 @@
     "skip_train": "Do not render training images",
     "skip_test": "Do not render test images",
     "eval_btn": "🚀Start Rendering & Evaluation",
+    "outdir_eval": "📁Output Directory",
     "runtime_eval": "⏳Runtime",
     "result_eval": "💡Rendering Result",
     "log_eval": "📝Execution Log",
     "metrics": "📊Evaluation Metrics",
-    "gallery": "🖼️Ground Truth & Rendered Images"
+    "gallery": "🖼️Ground Truth / Rendered Images"
     },
   "mip-splatting": {
     "title": "Mip-Splatting",
@@ -270,7 +271,7 @@
     "result_eval": "💡Rendering Result",
     "log_eval": "📝Execution Log",
     "metrics": "📊Evaluation Metrics",
-    "gallery": "🖼️Ground Truth & Rendered Images"
+    "gallery": "🖼️Ground Truth / Rendered Images"
     },
   "splatfacto": {
     "title": "Splatfacto",
@@ -307,7 +308,7 @@
     "result_eval": "💡Rendering Result",
     "log_eval": "📝Execution Log",
     "metrics": "📊Evaluation Metrics",
-    "gallery": "🖼️Ground Truth & Rendered Images"
+    "gallery": "🖼️Ground Truth / Rendered Images"
     },
   "4d-gaussians": {
     "title": "4D-Gaussians",
@@ -338,7 +339,7 @@
     "result_eval": "💡Rendering Result",
     "log_eval": "📝Execution Log",
     "metrics": "📊Evaluation Metrics",
-    "gallery": "🖼️Ground Truth & Rendered Images"
+    "gallery": "🖼️Ground Truth / Rendered Images"
     } 
   },
   "3sters_tab": {
@@ -733,5 +734,11 @@
       "log_recon": "📝Execution Log",
       "outmodel": "🌐3D Reconstruction Result"
     }
+  },
+  "metrics_tab": {
+  "title": "Evaluation Metrics",
+  "table": "Evaluation Metrics by Method",
+  "headers": ["", "PSNR ↑", "SSIM ↑", "MS-SSIM ↑", "LPIPS ↓", "FSIM ↑", "VIF ↑", "BRISQUE ↓", "FID ↓"],
+  "download_btn": "💾Download CSV"
   }
 }

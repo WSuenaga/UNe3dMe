@@ -8,7 +8,7 @@ import platform
 
 import gradio as gr
 
-from preprocess import get_imagelist
+from local_backend import get_imagelist, evaluate_all_metrics
 
 # subprocessのshellフラグの設定
 SHELL_FLAG = platform.system() == "Windows"
@@ -248,25 +248,45 @@ def render_eval_nerfstudio(dataset, outputs_dir, method_name1, method_name2):
     """
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, method_name1, name)
-    renders = os.path.join(outdir, "renders")
-    evals = os.path.join(outdir, "evals.json")
-    os.makedirs(renders, exist_ok=True)
 
     config_path = os.path.join(outdir, "results", method_name2, "results", "config.yml")
 
+    workdir = "./"  
+
     cmd = [
         "conda", "run", "-n", "nerfstudio",
-        "ns-eval",
+        "ns-render", "dataset",
         "--load-config", config_path,
-        "--output-path", evals,
-        "--render-output-path", renders 
+        "--rendered-output-names", "rgb",
+        "--output-path", outdir
     ]
+    run_subprocess_popen(cmd, workdir)
+    cmd = [
+        "conda", "run", "-n", "nerfstudio",
+        "ns-render", "dataset",
+        "--load-config", config_path,
+        "--rendered-output-names", "gt-rgb",
+        "--output-path", outdir
+    ]
+    run_subprocess_popen(cmd, workdir)
 
-    workdir = "./"
+    gt_dir = os.path.join(outdir, "test", "gt-rgb")
+    pred_dir = os.path.join(outdir, "test", "rgb")
 
-    run_time, success, log = run_subprocess_popen(cmd, workdir)
+    # 評価指標の計算
+    run_time, status, full_log, summary_list = evaluate_all_metrics(method_name2, gt_dir, pred_dir, outdir)
 
-    return outdir, run_time, success, log, evals, renders
+    # ファイル名をソートして一致させる
+    gt_files = sorted([os.path.join(gt_dir, f) for f in os.listdir(gt_dir) if f.lower().endswith((".png", ".jpg", ".jpeg"))])
+    pred_files = sorted([os.path.join(pred_dir, f) for f in os.listdir(pred_dir) if f.lower().endswith((".png", ".jpg", ".jpeg"))])
+
+    # ギャラリーの作成
+    gallery = []
+    for gt, pred in zip(gt_files, pred_files):
+        gallery.append(gt)
+        gallery.append(pred)
+
+    return outdir, run_time, status, full_log, summary_list, gallery
 
 # --- ns-eval呼び出しメソッド ---
 def eval_nerfstudio_slurm(dataset, outputs_dir, method_name1, method_name2, eval_args=None):
@@ -451,15 +471,9 @@ def recon_vgs(mode, dataset, outputs_dir, sh_degree, data_device, lambde_dsiim, 
 
 # --- レンダリング&評価メソッド ---
 def render_eval_3dgs(model_path, skip_train, skip_test, iteration):
-    """
-    3DGS のレンダリング & 評価
-    """
-
     workdir = os.path.join("models", "gaussian-splatting")
 
-    # =========================
-    # Render
-    # =========================
+    # レンダリング
     render_script = "render.py"
     render_cmd = [
         "conda", "run", "-n", "gaussian_splatting", "python", render_script,
@@ -484,81 +498,24 @@ def render_eval_3dgs(model_path, skip_train, skip_test, iteration):
             [],
         )
 
-    # =========================
-    # Evaluation
-    # =========================
-    eval_script = "metrics.py"
-    eval_cmd = [
-        "conda", "run", "-n", "gaussian_splatting", "python", eval_script,
-        "--model_path", model_path,
-    ]
-
-    runtime_e, status_e, log_e = run_subprocess_popen(eval_cmd, workdir)
-
-    if status_e != "✅ Success":
-        return (
-            runtime_r + runtime_e,
-            "❌ Failed",
-            "評価に失敗しました\n\n" + log_e,
-            [],
-            [],
-        )
-
-    # =========================
-    # Load metrics
-    # =========================
-    results_json = os.path.join(model_path, "results.json")
-    values = []
-
-    if os.path.exists(results_json):
-        with open(results_json, "r", encoding="utf-8") as f:
-            results_data = json.load(f)
-
-        first_method = list(results_data.keys())[0]
-        metrics = results_data[first_method]
-        values = [[
-            metrics.get("PSNR"),
-            metrics.get("SSIM"),
-            metrics.get("LPIPS"),
-        ]]
-
-    # =========================
-    # Load images
-    # =========================
     test_dir = os.path.join(model_path, "test", f"ours_{iteration}")
     gt_dir = os.path.join(test_dir, "gt")
-    render_dir = os.path.join(test_dir, "renders")
+    pred_dir = os.path.join(test_dir, "renders")
 
-    if not os.path.exists(render_dir) or not os.path.exists(gt_dir):
-        return (
-            runtime_r + runtime_e,
-            "❌ Failed",
-            f"ディレクトリが見つかりません:\n{render_dir}\n{gt_dir}",
-            values,
-            [],
-        )
+    # 評価指標の計算
+    run_time, status, full_log, summary_list = evaluate_all_metrics("gaussian-splatting", gt_dir, pred_dir, model_path)
 
-    gt_images = sorted(glob.glob(os.path.join(gt_dir, "*.png")))
-    render_images = sorted(glob.glob(os.path.join(render_dir, "*.png")))
+    # ファイル名をソートして一致させる
+    gt_files = sorted([os.path.join(gt_dir, f) for f in os.listdir(gt_dir) if f.lower().endswith((".png", ".jpg", ".jpeg"))])
+    pred_files = sorted([os.path.join(pred_dir, f) for f in os.listdir(pred_dir) if f.lower().endswith((".png", ".jpg", ".jpeg"))])
 
+    # ギャラリーの作成
     gallery = []
-    for gt_img, render_img in zip(gt_images, render_images):
-        gallery.append(gt_img)
-        gallery.append(render_img)
+    for gt, pred in zip(gt_files, pred_files):
+        gallery.append(gt)
+        gallery.append(pred)
 
-    # =========================
-    # Summary
-    # =========================
-    runtime = runtime_r + runtime_e
-    status = "✅ Success"
-    log = (
-        "===== Render =====\n"
-        + log_r
-        + "\n\n===== Eval =====\n"
-        + log_e
-    )
-
-    return runtime, status, log, values, gallery
+    return model_path, run_time, status, full_log, summary_list, gallery
 
 """
 Mip-Splatting
@@ -616,9 +573,7 @@ def recon_mipSplatting(mode, dataset, outputs_dir, save_iter):
 def render_eval_mips(model_path, skip_train, skip_test, iteration):
     workdir = os.path.join("models", "mip-splatting")
 
-    # =========================
-    # Render
-    # =========================
+    # レンダリング
     render_script = "render.py"
     render_cmd = [
         "conda", "run", "-n", "mip-splatting", "python", render_script,
@@ -643,81 +598,24 @@ def render_eval_mips(model_path, skip_train, skip_test, iteration):
             [],
         )
 
-    # =========================
-    # Evaluation
-    # =========================
-    eval_script = "metrics.py"
-    eval_cmd = [
-        "conda", "run", "-n", "mip-splatting", "python", eval_script,
-        "--model_path", model_path,
-    ]
-
-    runtime_e, status_e, log_e = run_subprocess_popen(eval_cmd, workdir)
-
-    if status_e != "✅ Success":
-        return (
-            runtime_r + runtime_e,
-            "❌ Failed",
-            "評価に失敗しました\n\n" + log_e,
-            [],
-            [],
-        )
-
-    # =========================
-    # Load metrics
-    # =========================
-    results_json = os.path.join(model_path, "results.json")
-    values = []
-
-    if os.path.exists(results_json):
-        with open(results_json, "r", encoding="utf-8") as f:
-            results_data = json.load(f)
-
-        first_method = list(results_data.keys())[0]
-        metrics = results_data[first_method]
-        values = [[
-            metrics.get("PSNR"),
-            metrics.get("SSIM"),
-            metrics.get("LPIPS"),
-        ]]
-
-    # =========================
-    # Load images
-    # =========================
     test_dir = os.path.join(model_path, "test", f"ours_{iteration}")
     gt_dir = os.path.join(test_dir, "gt_-1")
-    render_dir = os.path.join(test_dir, "test_preds_-1")
+    pred_dir = os.path.join(test_dir, "test_preds_-1")
 
-    if not os.path.exists(render_dir) or not os.path.exists(gt_dir):
-        return (
-            runtime_r + runtime_e,
-            "❌ Failed",
-            f"ディレクトリが見つかりません:\n{render_dir}\n{gt_dir}",
-            values,
-            [],
-        )
+    # 評価指標の計算
+    run_time, status, full_log, summary_list = evaluate_all_metrics("mip-splatting", gt_dir, pred_dir, model_path)
 
-    gt_images = sorted(glob.glob(os.path.join(gt_dir, "*.png")))
-    render_images = sorted(glob.glob(os.path.join(render_dir, "*.png")))
+    # ファイル名をソートして一致させる
+    gt_files = sorted([os.path.join(gt_dir, f) for f in os.listdir(gt_dir) if f.lower().endswith((".png", ".jpg", ".jpeg"))])
+    pred_files = sorted([os.path.join(pred_dir, f) for f in os.listdir(pred_dir) if f.lower().endswith((".png", ".jpg", ".jpeg"))])
 
+    # ギャラリーの作成
     gallery = []
-    for gt_img, render_img in zip(gt_images, render_images):
-        gallery.append(gt_img)
-        gallery.append(render_img)
+    for gt, pred in zip(gt_files, pred_files):
+        gallery.append(gt)
+        gallery.append(pred)
 
-    # =========================
-    # Summary
-    # =========================
-    runtime = runtime_r + runtime_e
-    status = "✅ Success"
-    log = (
-        "===== Render =====\n"
-        + log_r
-        + "\n\n===== Eval =====\n"
-        + log_e
-    )
-
-    return runtime, status, log, values, gallery
+    return model_path, run_time, status, full_log, summary_list, gallery
 
 """
 Splatfacto
@@ -801,15 +699,9 @@ def recon_4dGaussians(mode, dataset, outputs_dir, save_iter):
 
 # --- レンダリング&評価メソッド ---
 def render_eval_4dgs(model_path, skip_train, skip_test, iteration):
-    """
-    3DGS のレンダリング & 評価
-    """
-
     workdir = os.path.join("models", "4DGaussians")
 
-    # =========================
-    # Render
-    # =========================
+    # レンダリング
     render_script = "render.py"
     render_cmd = [
         "conda", "run", "-n", "Gaussians4D", "python", render_script,
@@ -834,82 +726,24 @@ def render_eval_4dgs(model_path, skip_train, skip_test, iteration):
             [],
         )
 
-    # =========================
-    # Evaluation
-    # =========================
-    eval_script = "metrics.py"
-    eval_cmd = [
-        "conda", "run", "-n", "Gaussians4D", "python", eval_script,
-        "-m", model_path,
-    ]
-
-    runtime_e, status_e, log_e = run_subprocess_popen(eval_cmd, workdir)
-
-    if status_e != "✅ Success":
-        return (
-            runtime_r + runtime_e,
-            "❌ Failed",
-            "評価に失敗しました\n\n" + log_e,
-            [],
-            [],
-        )
-
-    # =========================
-    # Load metrics
-    # =========================
-    results_json = os.path.join(model_path, "results.json")
-    values = []
-
-    if os.path.exists(results_json):
-        with open(results_json, "r", encoding="utf-8") as f:
-            results_data = json.load(f)
-
-        first_method = next(iter(results_data))
-        metrics = results_data[first_method]
-
-        values = [[
-            metrics.get("PSNR"),
-            metrics.get("SSIM"),
-            metrics.get("LPIPS-vgg"),
-        ]]
-
-    # =========================
-    # Load images
-    # =========================
     test_dir = os.path.join(model_path, "test", f"ours_{iteration}")
     gt_dir = os.path.join(test_dir, "gt")
-    render_dir = os.path.join(test_dir, "renders")
+    pred_dir = os.path.join(test_dir, "renders")
 
-    if not os.path.exists(render_dir) or not os.path.exists(gt_dir):
-        return (
-            runtime_r + runtime_e,
-            "❌ Failed",
-            f"ディレクトリが見つかりません:\n{render_dir}\n{gt_dir}",
-            values,
-            [],
-        )
+    # 評価指標の計算
+    run_time, status, full_log, summary_list = evaluate_all_metrics("4d-gaussians", gt_dir, pred_dir, model_path)
 
-    gt_images = sorted(glob.glob(os.path.join(gt_dir, "*.png")))
-    render_images = sorted(glob.glob(os.path.join(render_dir, "*.png")))
+    # ファイル名をソートして一致させる
+    gt_files = sorted([os.path.join(gt_dir, f) for f in os.listdir(gt_dir) if f.lower().endswith((".png", ".jpg", ".jpeg"))])
+    pred_files = sorted([os.path.join(pred_dir, f) for f in os.listdir(pred_dir) if f.lower().endswith((".png", ".jpg", ".jpeg"))])
 
+    # ギャラリーの作成
     gallery = []
-    for gt_img, render_img in zip(gt_images, render_images):
-        gallery.append(gt_img)
-        gallery.append(render_img)
+    for gt, pred in zip(gt_files, pred_files):
+        gallery.append(gt)
+        gallery.append(pred)
 
-    # =========================
-    # Summary
-    # =========================
-    runtime = runtime_r + runtime_e
-    status = "✅ Success"
-    log = (
-        "===== Render =====\n"
-        + log_r
-        + "\n\n===== Eval =====\n"
-        + log_e
-    )
-
-    return runtime, status, log, values, gallery
+    return model_path, run_time, status, full_log, summary_list, gallery
 
 """
 DUSt3R

@@ -1,8 +1,9 @@
 import os
 import json
+import pandas as pd
 import gradio as gr
 
-import preprocess
+import local_backend
 import methods
 
 # 言語データロードメソッド
@@ -603,7 +604,11 @@ def update_ui(choice):
         gr.Textbox(label=lang["vgg_tab"]["pi3"]["runtime_recon"]), # runtime_recon_pi3
         gr.Textbox(label=lang["vgg_tab"]["pi3"]["result_recon"]), # result_recon_pi3
         gr.Textbox(label=lang["vgg_tab"]["pi3"]["log_recon"]), # log_recon_pi3
-        gr.Model3D(label=lang["vgg_tab"]["pi3"]["outmodel"]) # outmodel_pi3
+        gr.Model3D(label=lang["vgg_tab"]["pi3"]["outmodel"]), # outmodel_pi3
+        # Metrics Tab
+        gr.Tab(label=lang["metrics_tab"]["title"]), # metrics_tab
+        gr.DataFrame(label=lang["metrics_tab"]["table"]), # method_metrics
+        gr.DownloadButton(label=lang["metrics_tab"]["download_btn"]), # download_csv
     )
 
 # メディアUI切り替えメソッド
@@ -626,6 +631,18 @@ def get_state_value(state):
 def get_state_values(state):
     return state, state, state, state, state, state
 
+# 評価指標タブのテーブル更新メソッド
+def update_method_metrics(table, values, save_dir):
+    # CSV ファイル名
+    csv_path = os.path.join(save_dir, "method_metrics.csv")
+
+    # DataFrame を更新
+    table = pd.concat([table, values], ignore_index=True)
+    # CSV に保存
+    table.to_csv(csv_path, index=False)
+
+    return table, csv_path
+
 # GradioUI
 def main_demo(tmpdir, datasetsdir, outputsdir):
     # デフォルト言語
@@ -639,7 +656,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         datasetsdir_state = gr.State(datasetsdir)
         outputsdir_state = gr.State(outputsdir)
         lang_state = gr.State("jp")
-        dataset = gr.State("")
+        dataset_state = gr.State("")
 
         # 言語切り替えボタン
         language_radio = gr.Radio(choices=["日本語", "ENGLISH"], value="日本語", label="🌐言語 / Language")
@@ -740,10 +757,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     runtime_eval_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["runtime_eval"])
                     result_eval_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["result_eval"])
                     log_eval_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["log_eval"])
-                    outvalues_vnerf = gr.State()
-                    metrics_vnerf = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label=lang["nerf_tab"]["vnerf"]["metrics"])
-                    outimages_vnerf = gr.State()
-                    gallery_vnerf = gr.Gallery(label=lang["nerf_tab"]["vnerf"]["gallery"], columns=3, height="auto")
+                    metrics_vnerf = gr.DataFrame(headers=lang["metrics_tab"]["headers"], label=lang["nerf_tab"]["vnerf"]["metrics"])
+                    gallery_vnerf = gr.Gallery(label=lang["nerf_tab"]["vnerf"]["gallery"], columns=2, height="auto")
             
             # Nerfacto
             with gr.Tab(label=lang["nerf_tab"]["nerfacto"]["title"]) as nerfacto_tab:
@@ -781,10 +796,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     runtime_eval_nerfacto = gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["runtime_eval"])
                     result_eval_nerfacto = gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["result_eval"])
                     log_eval_nerfacto = gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["log_eval"])
-                    outvalues_nerfacto = gr.State()
-                    metrics_nerfacto = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label=lang["nerf_tab"]["nerfacto"]["metrics"])
-                    outimages_nerfacto = gr.State()
-                    gallery_nerfacto = gr.Gallery(label=lang["nerf_tab"]["nerfacto"]["gallery"], columns=1, height="auto")
+                    metrics_nerfacto = gr.DataFrame(headers=lang["metrics_tab"]["headers"], label=lang["nerf_tab"]["nerfacto"]["metrics"])
+                    gallery_nerfacto = gr.Gallery(label=lang["nerf_tab"]["nerfacto"]["gallery"], columns=2, height="auto")
             
             # mip-NeRF
             with gr.Tab(label=lang["nerf_tab"]["mip-nerf"]["title"]) as mipnerf_tab:
@@ -822,10 +835,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     runtime_eval_mipnerf = gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["runtime_eval"])
                     result_eval_mipnerf = gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["result_eval"])
                     log_eval_mipnerf = gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["log_eval"])
-                    outvalues_mipnerf = gr.State()
-                    metrics_mipnerf = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label=lang["nerf_tab"]["mip-nerf"]["metrics"])
-                    outimages_mipnerf = gr.State()
-                    gallery_mipnerf = gr.Gallery(label=lang["nerf_tab"]["mip-nerf"]["gallery"], columns=1, height="auto")
+                    metrics_mipnerf = gr.DataFrame(headers=lang["metrics_tab"]["headers"], label=lang["nerf_tab"]["mip-nerf"]["metrics"])
+                    gallery_mipnerf = gr.Gallery(label=lang["nerf_tab"]["mip-nerf"]["gallery"], columns=2, height="auto")
             
             # SeaThru-NeRF
             with gr.Tab(label=lang["nerf_tab"]["seathru-nerf"]["title"]) as stnerf_tab:
@@ -865,10 +876,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     runtime_eval_stnerf = gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["runtime_eval"])
                     result_eval_stnerf = gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["result_eval"])
                     log_eval_stnerf = gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["log_eval"])
-                    outvalues_stnerf = gr.State()
-                    metrics_stnerf = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label=lang["nerf_tab"]["seathru-nerf"]["metrics"])
-                    outimages_stnerf = gr.State()
-                    gallery_stnerf = gr.Gallery(label=lang["nerf_tab"]["seathru-nerf"]["gallery"], columns=1, height="auto")
+                    metrics_stnerf = gr.DataFrame(headers=lang["metrics_tab"]["headers"], label=lang["nerf_tab"]["seathru-nerf"]["metrics"])
+                    gallery_stnerf = gr.Gallery(label=lang["nerf_tab"]["seathru-nerf"]["gallery"], columns=2, height="auto")
 
         # GSTab         
         with gr.Tab(label=lang["gs_tab"]["title"]) as gs_tab:
@@ -932,10 +941,11 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         skip_train = gr.Checkbox(value=True, label=lang["gs_tab"]["vgs"]["skip_train"])
                         skip_test = gr.Checkbox(value=False, label=lang["gs_tab"]["vgs"]["skip_test"])
                     eval_vgs_btn = gr.Button(value=lang["gs_tab"]["vgs"]["eval_btn"])
+                    outdir_eval_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["outdir_eval"])
                     runtime_eval_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["runtime_eval"])
                     result_eval_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["result_eval"])
                     log_eval_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["log_eval"])
-                    metrics_vgs = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label=lang["gs_tab"]["vgs"]["metrics"])
+                    metrics_vgs = gr.DataFrame(headers=lang["metrics_tab"]["headers"], label=lang["gs_tab"]["vgs"]["metrics"])
                     gallery_vgs = gr.Gallery(label=lang["gs_tab"]["vgs"]["gallery"], columns=2, height="auto")
 
             # Mip-Splatting
@@ -967,7 +977,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     runtime_eval_mips = gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["runtime_eval"])
                     result_eval_mips = gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["result_eval"])
                     log_eval_mips = gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["log_eval"])
-                    metrics_mips = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label=lang["gs_tab"]["mip-splatting"]["metrics"])
+                    metrics_mips = gr.DataFrame(headers=lang["metrics_tab"]["headers"], label=lang["gs_tab"]["mip-splatting"]["metrics"])
                     gallery_mips = gr.Gallery(label=lang["gs_tab"]["mip-splatting"]["gallery"], columns=2, height="auto")
 
             # Splatfacto
@@ -1006,10 +1016,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     runtime_eval_sfacto = gr.Textbox(label=lang["gs_tab"]["splatfacto"]["runtime_eval"])
                     result_eval_sfacto = gr.Textbox(label=lang["gs_tab"]["splatfacto"]["result_eval"])
                     log_eval_sfacto = gr.Textbox(label=lang["gs_tab"]["splatfacto"]["log_eval"])
-                    outvalues_sfacto = gr.State()
-                    metrics_sfacto = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label=lang["gs_tab"]["splatfacto"]["metrics"])
-                    outimages_sfacto = gr.State()
-                    gallery_sfacto = gr.Gallery(label=lang["gs_tab"]["splatfacto"]["gallery"], columns=1, height="auto")
+                    metrics_sfacto = gr.DataFrame(headers=lang["metrics_tab"]["headers"], label=lang["gs_tab"]["splatfacto"]["metrics"])
+                    gallery_sfacto = gr.Gallery(label=lang["gs_tab"]["splatfacto"]["gallery"], columns=2, height="auto")
 
             # 4D-Gaussians
             with gr.Tab(label=lang["gs_tab"]["4d-gaussians"]["title"]) as gs4d_tab:
@@ -1040,7 +1048,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     runtime_eval_4dgs = gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["runtime_eval"])
                     result_eval_4dgs = gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["result_eval"])
                     log_eval_4dgs = gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["log_eval"])
-                    metrics_4dgs = gr.DataFrame(headers=["PSNR", "SSIM", "LPIPS"], label=lang["gs_tab"]["4d-gaussians"]["metrics"])
+                    metrics_4dgs = gr.DataFrame(headers=lang["metrics_tab"]["headers"], label=lang["gs_tab"]["4d-gaussians"]["metrics"])
                     gallery_4dgs = gr.Gallery(label=lang["gs_tab"]["4d-gaussians"]["gallery"], columns=2, height="auto")
 
         # 3stersTab
@@ -1440,6 +1448,11 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     result_recon_pi3 = gr.Textbox(label=lang["vgg_tab"]["pi3"]["result_recon"])
                     log_recon_pi3 = gr.Textbox(label=lang["vgg_tab"]["pi3"]["log_recon"])
                     outmodel_pi3 = gr.Model3D(label=lang["vgg_tab"]["pi3"]["outmodel"])
+
+        # vggTab
+        with gr.Tab(label=lang["metrics_tab"]["title"]) as metrics_tab:
+            method_metrics = gr.DataFrame(label=lang["metrics_tab"]["table"], headers=lang["metrics_tab"]["headers"])
+            download_csv = gr.DownloadButton(label=lang["metrics_tab"]["download_btn"])
 
         """
         イベントリスナ
@@ -1980,7 +1993,11 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      runtime_recon_pi3,
                      result_recon_pi3,
                      log_recon_pi3,
-                     outmodel_pi3
+                     outmodel_pi3,
+                     # Metrics Tab
+                     metrics_tab,
+                     method_metrics,
+                     download_csv
                      ]
         )
 
@@ -2064,14 +2081,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                          outputs=[infer_pi3_col, ex_pi3_col])
 
         # --- 内部データセット作成 ---
-        run_copy_btn.click(fn=preprocess.copy_images,
+        run_copy_btn.click(fn=local_backend.copy_images,
                        inputs=[images, datasetsdir_state, dataset_name],
-                       outputs=[dataset, iresult_col, output_image, gallery_image]).success(
-                             fn=preprocess.zip_dataset,
-                             inputs=dataset,
+                       outputs=[dataset_state, iresult_col, output_image, gallery_image]).success(
+                             fn=local_backend.zip_dataset,
+                             inputs=dataset_state,
                              outputs=zipfile_images).success(
                                  fn=get_state_values, 
-                                 inputs=dataset, 
+                                 inputs=dataset_state, 
                                  outputs=[current_dataset_colmap,
                                           current_dataset_nerf, 
                                           current_dataset_gs,
@@ -2079,14 +2096,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                           current_dataset_mds,
                                           current_dataset_vgg])
         # ffmpeg実行ボタン
-        run_ffmpeg_btn.click(fn=preprocess.extract_frames_with_filter, 
+        run_ffmpeg_btn.click(fn=local_backend.extract_frames_with_filter, 
                          inputs=[video, datasetsdir_state, fps, rsi, ssim], 
-                         outputs=[dataset, dl_images_col, output_video, comp_rate, sel_images_num, rej_images_num, gallery_video]).success(
-                             fn=preprocess.zip_dataset,
-                             inputs=dataset,
+                         outputs=[dataset_state, dl_images_col, output_video, comp_rate, sel_images_num, rej_images_num, gallery_video]).success(
+                             fn=local_backend.zip_dataset,
+                             inputs=dataset_state,
                              outputs=zipfile_images).success(
                                  fn=get_state_values, 
-                                 inputs=dataset, 
+                                 inputs=dataset_state, 
                                  outputs=[current_dataset_colmap,
                                           current_dataset_nerf, 
                                           current_dataset_gs,
@@ -2094,205 +2111,205 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                           current_dataset_mds,
                                           current_dataset_vgg])
         # colmap実行ボタン
-        run_colmap_btn.click(fn=preprocess.run_colmap,
-                        inputs=[dataset, rebuild],
-                        outputs=[result_colmap, dl_colmap_col]).success(fn=preprocess.zip_dataset,
-                                                                        inputs=dataset,
+        run_colmap_btn.click(fn=local_backend.run_colmap,
+                        inputs=[dataset_state, rebuild],
+                        outputs=[result_colmap, dl_colmap_col]).success(fn=local_backend.zip_dataset,
+                                                                        inputs=dataset_state,
                                                                         outputs=zipfile_colmap)
         
         # --- 外部データセット ---
         # NeRF Tab
-        ex_dataset_vnerf.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_vnerf.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_vnerf, datasetsdir_state],
-                               outputs=[dataset, log_unzip_vnerf, train_vnerf_col]).success(
+                               outputs=[dataset_state, log_unzip_vnerf, train_vnerf_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_nerf)
-        ex_dataset_nerfacto.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_nerfacto.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_nerfacto, datasetsdir_state],
-                               outputs=[dataset, log_unzip_nerfacto, train_nerfacto_col]).success(
+                               outputs=[dataset_state, log_unzip_nerfacto, train_nerfacto_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_nerf)
-        ex_dataset_mipnerf.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_mipnerf.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_mipnerf, datasetsdir_state],
-                               outputs=[dataset, log_unzip_mipnerf, train_mipnerf_col]).success(
+                               outputs=[dataset_state, log_unzip_mipnerf, train_mipnerf_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_nerf)
-        ex_dataset_stnerf.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_stnerf.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_stnerf, datasetsdir_state],
-                               outputs=[dataset, log_unzip_stnerf, train_stnerf_col]).success(
+                               outputs=[dataset_state, log_unzip_stnerf, train_stnerf_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_nerf)
         # GS Tab
-        ex_dataset_vgs.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_vgs.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_vgs, datasetsdir_state],
-                               outputs=[dataset, log_unzip_vgs, train_vgs_col]).success(
+                               outputs=[dataset_state, log_unzip_vgs, train_vgs_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_gs)
-        ex_dataset_mips.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_mips.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_mips, datasetsdir_state],
-                               outputs=[dataset, log_unzip_mips, train_mips_col]).success(
+                               outputs=[dataset_state, log_unzip_mips, train_mips_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_gs)
-        ex_dataset_sfacto.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_sfacto.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_sfacto, datasetsdir_state],
-                               outputs=[dataset, log_unzip_sfacto, train_sfacto_col]).success(
+                               outputs=[dataset_state, log_unzip_sfacto, train_sfacto_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_gs)
-        ex_dataset_4dgs.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_4dgs.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_4dgs, datasetsdir_state],
-                               outputs=[dataset, log_unzip_4dgs, train_4dgs_col]).success(
+                               outputs=[dataset_state, log_unzip_4dgs, train_4dgs_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_gs)
         # 3sters Tab
-        ex_dataset_dust3r.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_dust3r.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_dust3r, datasetsdir_state],
-                               outputs=[dataset, log_unzip_dust3r, infer_dust3r_col]).success(
+                               outputs=[dataset_state, log_unzip_dust3r, infer_dust3r_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_3sters)
-        ex_dataset_mast3r.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_mast3r.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_mast3r, datasetsdir_state],
-                               outputs=[dataset, log_unzip_mast3r, infer_mast3r_col]).success(
+                               outputs=[dataset_state, log_unzip_mast3r, infer_mast3r_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_3sters)
-        ex_dataset_monst3r.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_monst3r.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_monst3r, datasetsdir_state],
-                               outputs=[dataset, log_unzip_monst3r, infer_monst3r_col]).success(
+                               outputs=[dataset_state, log_unzip_monst3r, infer_monst3r_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_3sters)
-        ex_dataset_easi3r.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_easi3r.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_easi3r, datasetsdir_state],
-                               outputs=[dataset, log_unzip_easi3r, infer_easi3r_col]).success(
+                               outputs=[dataset_state, log_unzip_easi3r, infer_easi3r_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_3sters)
-        ex_dataset_must3r.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_must3r.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_must3r, datasetsdir_state],
-                               outputs=[dataset, log_unzip_must3r, infer_must3r_col]).success(
+                               outputs=[dataset_state, log_unzip_must3r, infer_must3r_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_3sters)
-        ex_dataset_fast3r.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_fast3r.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_fast3r, datasetsdir_state],
-                               outputs=[dataset, log_unzip_fast3r, infer_fast3r_col]).success(
+                               outputs=[dataset_state, log_unzip_fast3r, infer_fast3r_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_3sters)
-        ex_dataset_cut3r.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_cut3r.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_cut3r, datasetsdir_state],
-                               outputs=[dataset, log_unzip_cut3r, infer_cut3r_col]).success(
+                               outputs=[dataset_state, log_unzip_cut3r, infer_cut3r_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_3sters)
-        ex_dataset_wint3r.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_wint3r.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_wint3r, datasetsdir_state],
-                               outputs=[dataset, log_unzip_wint3r, infer_wint3r_col]).success(
+                               outputs=[dataset_state, log_unzip_wint3r, infer_wint3r_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_3sters)
         # vgg Tab
-        ex_dataset_vggt.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_vggt.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_vggt, datasetsdir_state],
-                               outputs=[dataset, log_unzip_vggt, infer_vggt_col]).success(
+                               outputs=[dataset_state, log_unzip_vggt, infer_vggt_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_vgg)
-        ex_dataset_vggsfm.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_vggsfm.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_vggsfm, datasetsdir_state],
-                               outputs=[dataset, log_unzip_vggsfm, infer_vggsfm_col]).success(
+                               outputs=[dataset_state, log_unzip_vggsfm, infer_vggsfm_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_vgg)
-        ex_dataset_vggtslam.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_vggtslam.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_vggtslam, datasetsdir_state],
-                               outputs=[dataset, log_unzip_vggtslam, infer_vggtslam_col]).success(
+                               outputs=[dataset_state, log_unzip_vggtslam, infer_vggtslam_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_vgg)
-        ex_dataset_stmvggt.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_stmvggt.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_stmvggt, datasetsdir_state],
-                               outputs=[dataset, log_unzip_stmvggt, infer_stmvggt_col]).success(
+                               outputs=[dataset_state, log_unzip_stmvggt, infer_stmvggt_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_vgg)
-        ex_dataset_fastvggt.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_fastvggt.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_fastvggt, datasetsdir_state],
-                               outputs=[dataset, log_unzip_fastvggt, infer_fastvggt_col]).success(
+                               outputs=[dataset_state, log_unzip_fastvggt, infer_fastvggt_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_vgg)
-        ex_dataset_pi3.upload(fn=preprocess.unzip_dataset,
+        ex_dataset_pi3.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_pi3, datasetsdir_state],
-                               outputs=[dataset, log_unzip_pi3, infer_pi3_col]).success(
+                               outputs=[dataset_state, log_unzip_pi3, infer_pi3_col]).success(
                                    fn=get_state_value,
-                                   inputs=dataset,
+                                   inputs=dataset_state,
                                    outputs=current_dataset_vgg)
         
         # --- 三次元再構築 ---
         recon_vnerf_btn.click(fn=methods.recon_vnerf,
-                             inputs=[exe_mode_vnerf, dataset, outputsdir_state, iter_vnerf],
+                             inputs=[exe_mode_vnerf, dataset_state, outputsdir_state, iter_vnerf],
                              outputs=[outdir_recon_vnerf, runtime_recon_vnerf, result_recon_vnerf, log_recon_vnerf, export_vnerf_col, eval_vnerf_col])
         recon_nerfacto_btn.click(fn=methods.recon_nerfacto,
-                                 inputs=[exe_mode_nerfacto, dataset, outputsdir_state, iter_nerfacto],
+                                 inputs=[exe_mode_nerfacto, dataset_state, outputsdir_state, iter_nerfacto],
                                  outputs=[outdir_recon_nerfacto, runtime_recon_nerfacto, result_recon_nerfacto, log_recon_nerfacto, export_nerfacto_col, eval_nerfacto_col])
         recon_mipnerf_btn.click(fn=methods.recon_mipnerf,
-                             inputs=[exe_mode_mipnerf, dataset, outputsdir_state, iter_mipnerf],
+                             inputs=[exe_mode_mipnerf, dataset_state, outputsdir_state, iter_mipnerf],
                              outputs=[outdir_recon_mipnerf, runtime_recon_mipnerf, result_recon_mipnerf, log_recon_mipnerf, export_mipnerf_col, eval_mipnerf_col])
         recon_stnerf_btn.click(fn=methods.recon_stnerf,
-                             inputs=[exe_mode_stnerf, dataset, outputsdir_state, iter_stnerf],
+                             inputs=[exe_mode_stnerf, dataset_state, outputsdir_state, iter_stnerf],
                              outputs=[outdir_recon_stnerf, runtime_recon_stnerf, result_recon_stnerf, log_recon_stnerf, export_stnerf_col, eval_stnerf_col])
         recon_vgs_btn.click(fn=methods.recon_vgs, 
-                             inputs=[exe_mode_vgs, dataset, outputsdir_state, sh_degree, data_device, lambda_dssim, iter_3dgs,
+                             inputs=[exe_mode_vgs, dataset_state, outputsdir_state, sh_degree, data_device, lambda_dssim, iter_3dgs,
                                      test_iter_3dgs, save_iter_3dgs, feature_lr,
                                      opacity_lr, scaling_lr, rotation_lr, position_lr_init, position_lr_final,
                                      position_lr_delay_mult, densify_from_iter, densify_until_iter, densify_grad_threshold,
                                      densification_interval, opacity_rest_interval, percent_dense], 
                                      outputs=[outdir_recon_vgs, runtime_recon_vgs, result_recon_vgs, log_recon_vgs, outmodel_vgs, eval_vgs_col ])
         recon_mips_btn.click(fn=methods.recon_mipSplatting, 
-                             inputs=[exe_mode_mips, dataset, outputsdir_state, save_iter_mips], 
+                             inputs=[exe_mode_mips, dataset_state, outputsdir_state, save_iter_mips], 
                              outputs=[outdir_recon_mips, runtime_recon_mips, result_recon_mips, log_recon_mips, outmodel_mips, eval_mips_col])
         recon_sfacto_btn.click(fn=methods.recon_sfacto,
-                             inputs=[exe_mode_sfacto, dataset, outputsdir_state, iter_sfacto],
+                             inputs=[exe_mode_sfacto, dataset_state, outputsdir_state, iter_sfacto],
                              outputs=[outdir_recon_sfacto, runtime_recon_sfacto, result_recon_sfacto, log_recon_sfacto, export_sfacto_col, eval_sfacto_col])
         recon_4dgs_btn.click(fn=methods.recon_4dGaussians, 
-                             inputs=[exe_mode_4dgs, dataset, outputsdir_state, save_iter_4dgs], 
+                             inputs=[exe_mode_4dgs, dataset_state, outputsdir_state, save_iter_4dgs], 
                              outputs=[outdir_recon_4dgs, runtime_recon_4dgs, result_recon_4dgs, log_recon_4dgs, outmodel_4dgs, eval_4dgs_col])
         recon_dust3r_btn.click(fn=methods.recon_dust3r,
-                               inputs=[exe_mode_dust3r, dataset, outputsdir_state, schedule, niter, min_conf_thr, as_pointcloud,mask_sky, clean_depth, transparent_cams, cam_size,scenegraph_type, winsize, refid], 
+                               inputs=[exe_mode_dust3r, dataset_state, outputsdir_state, schedule, niter, min_conf_thr, as_pointcloud,mask_sky, clean_depth, transparent_cams, cam_size,scenegraph_type, winsize, refid], 
                                outputs=[outdir_recon_dust3r, runtime_recon_dust3r, result_recon_dust3r, log_recon_dust3r, outmodel_dust3r, outimages_dust3r]).success(
-                                           fn=preprocess.get_imagelist,
+                                           fn=local_backend.get_imagelist,
                                            inputs=outimages_dust3r,
                                            outputs=gallery_dust3r)
         recon_mast3r_btn.click(fn=methods.recon_mast3r,
-                        inputs=[exe_mode_mast3r, dataset, outputsdir_state], 
+                        inputs=[exe_mode_mast3r, dataset_state, outputsdir_state], 
                         outputs=[outdir_recon_mast3r, runtime_recon_mast3r, result_recon_mast3r, log_recon_mast3r, outmodel_mast3r])
         recon_monst3r_btn.click(fn=methods.recon_monst3r,
-                        inputs=[exe_mode_monst3r, dataset, outputsdir_state], 
+                        inputs=[exe_mode_monst3r, dataset_state, outputsdir_state], 
                         outputs=[outdir_recon_monst3r, runtime_recon_monst3r, result_recon_monst3r, log_recon_monst3r, outmodel_monst3r])
         recon_easi3r_btn.click(fn=methods.recon_easi3r,
-                        inputs=[exe_mode_easi3r, dataset, outputsdir_state], 
+                        inputs=[exe_mode_easi3r, dataset_state, outputsdir_state], 
                         outputs=[outdir_recon_easi3r, runtime_recon_easi3r, result_recon_easi3r, log_recon_easi3r, outmodel_easi3r])
         recon_must3r_btn.click(fn=methods.recon_must3r,
-                        inputs=[exe_mode_must3r, dataset, outputsdir_state], 
+                        inputs=[exe_mode_must3r, dataset_state, outputsdir_state], 
                         outputs=[outdir_recon_must3r, runtime_recon_must3r, result_recon_must3r, log_recon_must3r, outmodel_must3r])
         recon_fast3r_btn.click(fn=methods.recon_fast3r,
-                        inputs=[exe_mode_fast3r, dataset, outputsdir_state], 
+                        inputs=[exe_mode_fast3r, dataset_state, outputsdir_state], 
                         outputs=[outdir_recon_fast3r, runtime_recon_fast3r, result_recon_fast3r, log_recon_fast3r, outmodel_fast3r])
         recon_cut3r_btn.click(fn=methods.recon_cut3r,
-                        inputs=[exe_mode_cut3r, dataset, outputsdir_state], 
+                        inputs=[exe_mode_cut3r, dataset_state, outputsdir_state], 
                         outputs=[outdir_recon_cut3r, runtime_recon_cut3r, result_recon_cut3r, log_recon_cut3r, outmodel_cut3r])
         recon_wint3r_btn.click(fn=methods.recon_wint3r,
-                        inputs=[exe_mode_wint3r, dataset, outputsdir_state], 
+                        inputs=[exe_mode_wint3r, dataset_state, outputsdir_state], 
                         outputs=[outdir_recon_wint3r, runtime_recon_wint3r, result_recon_wint3r, log_recon_wint3r, outmodel_wint3r])
         recon_splatt3r_btn.click(fn=methods.recon_splatt3r,
                         inputs=[exe_mode_splatt3r, img_splatt3r, outputsdir_state], 
@@ -2304,105 +2321,94 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                         inputs=[exe_mode_unik3d, img_unik3d, outputsdir_state], 
                         outputs=[outdir_recon_unik3d, runtime_recon_unik3d, result_recon_unik3d, log_recon_unik3d, outmodel_unik3d])
         recon_vggt_btn.click(fn=methods.recon_vggt,
-                        inputs=[exe_mode_vggt, dataset, outputsdir_state], 
+                        inputs=[exe_mode_vggt, dataset_state, outputsdir_state], 
                         outputs=[outdir_recon_vggt, runtime_recon_vggt, result_recon_vggt, log_recon_vggt, outmodel_vggt])
         recon_vggsfm_btn.click(fn=methods.recon_vggsfm,
-                                inputs=[exe_mode_vggsfm, dataset],
+                                inputs=[exe_mode_vggsfm, dataset_state],
                                 outputs=[outdir_recon_vggsfm, runtime_recon_vggsfm, result_recon_vggsfm, log_recon_vggsfm, export_vggsfm_col])
         recon_vggtslam_btn.click(fn=methods.recon_vggtslam,
-                                 inputs=[exe_mode_vggtslam, dataset, outputsdir_state],
+                                 inputs=[exe_mode_vggtslam, dataset_state, outputsdir_state],
                                  outputs=[outdir_recon_vggtslam, runtime_recon_vggtslam, result_recon_vggtslam, log_recon_vggtslam, outmodel_vggtslam])
         recon_stmvggt_btn.click(fn=methods.recon_stmvggt,
-                        inputs=[exe_mode_stmvggt, dataset, outputsdir_state], 
+                        inputs=[exe_mode_stmvggt, dataset_state, outputsdir_state], 
                         outputs=[outdir_recon_stmvggt, runtime_recon_stmvggt, result_recon_stmvggt, log_recon_stmvggt, outmodel_stmvggt])
         recon_fastvggt_btn.click(fn=methods.recon_fastvggt,
-                        inputs=[exe_mode_fastvggt, dataset, outputsdir_state], 
+                        inputs=[exe_mode_fastvggt, dataset_state, outputsdir_state], 
                         outputs=[outdir_recon_fastvggt, runtime_recon_fastvggt, result_recon_fastvggt, log_recon_fastvggt, outmodel_fastvggt])
         recon_pi3_btn.click(fn=methods.recon_pi3,
-                            inputs=[exe_mode_pi3, dataset, outputsdir_state],
+                            inputs=[exe_mode_pi3, dataset_state, outputsdir_state],
                             outputs=[outdir_recon_pi3, runtime_recon_pi3, result_recon_pi3, log_recon_pi3, outmodel_pi3])
         
         # --- 点群出力（Nerfstudio）---
         export_vnerf_btn.click(fn=methods.export_vnerf,
-                              inputs=[exe_mode_vnerf, dataset, outputsdir_state],
+                              inputs=[exe_mode_vnerf, dataset_state, outputsdir_state],
                               outputs=[outdir_export_vnerf, runtime_export_vnerf, result_export_vnerf, log_export_vnerf])
         export_nerfacto_btn.click(fn=methods.export_nerfacto,
-                                  inputs=[exe_mode_nerfacto, dataset, outputsdir_state],
+                                  inputs=[exe_mode_nerfacto, dataset_state, outputsdir_state],
                                   outputs=[outdir_export_nerfacto, runtime_export_nerfacto, result_export_nerfacto, log_export_nerfacto])
         export_mipnerf_btn.click(fn=methods.export_mipnerf,
-                                 inputs=[exe_mode_mipnerf, dataset, outputsdir_state],
+                                 inputs=[exe_mode_mipnerf, dataset_state, outputsdir_state],
                                  outputs=[outdir_export_mipnerf, runtime_export_mipnerf, result_export_mipnerf, log_export_mipnerf])
         export_stnerf_btn.click(fn=methods.export_stnerf,
-                                inputs=[exe_mode_stnerf, dataset, outputsdir_state],
+                                inputs=[exe_mode_stnerf, dataset_state, outputsdir_state],
                                 outputs=[outdir_export_stnerf, runtime_export_stnerf, result_export_stnerf, log_export_stnerf])
         export_sfacto_btn.click(fn=methods.export_sfacto,
-                                inputs=[exe_mode_sfacto, dataset, outputsdir_state],
+                                inputs=[exe_mode_sfacto, dataset_state, outputsdir_state],
                                 outputs=[outdir_export_sfacto, runtime_export_sfacto, result_export_sfacto, log_export_sfacto])
         export_vggsfm_btn.click(fn=methods.export_vggsfm,
-                                inputs=[dataset, outputsdir_state],
+                                inputs=[dataset_state, outputsdir_state],
                                 outputs=[outdir_export_vggsfm, runtime_export_vggsfm, result_export_vggsfm, log_export_vggsfm, outmodel_vggsfm])
 
         # --- レンダリング・評価 ---
         # Nerf Tab
         eval_vnerf_btn.click(fn=methods.render_eval_vnerf,
-                             inputs=[exe_mode_vnerf, dataset, outputsdir_state],
-                             outputs=[outdir_eval_vnerf, runtime_eval_vnerf, result_eval_vnerf, log_eval_vnerf, outvalues_vnerf, outimages_vnerf]).success(
-                                 fn=preprocess.load_json_nerfstudio,
-                                 inputs=[outvalues_vnerf, gr.State("fine_psnr"), gr.State("fine_ssim"), gr.State("fine_lpips")],
-                                 outputs=metrics_vnerf
-                             ).success(
-                                 fn=preprocess.get_imagelist_nerfstudio,
-                                 inputs=outimages_vnerf,
-                                 outputs=gallery_vnerf)
+                             inputs=[exe_mode_vnerf, dataset_state, outputsdir_state],
+                             outputs=[outdir_eval_vnerf, runtime_eval_vnerf, result_eval_vnerf, log_eval_vnerf, metrics_vnerf, gallery_vnerf]).success(
+                                 fn=update_method_metrics,
+                                 inputs=[method_metrics, metrics_vnerf, tmpdir_state],
+                                 outputs=[method_metrics, download_csv])
         eval_nerfacto_btn.click(fn=methods.render_eval_nerfacto,
-                             inputs=[exe_mode_nerfacto, dataset, outputsdir_state],
-                             outputs=[outdir_eval_nerfacto, runtime_eval_nerfacto, result_eval_nerfacto, log_eval_nerfacto, outvalues_nerfacto, outimages_nerfacto]).success(
-                                 fn=preprocess.load_json_nerfstudio,
-                                 inputs=[outvalues_nerfacto, gr.State("psnr"), gr.State("ssim"), gr.State("lpips")],
-                                 outputs=metrics_nerfacto
-                             ).success(
-                                 fn=preprocess.get_imagelist_nerfstudio,
-                                 inputs=outimages_nerfacto,
-                                 outputs=gallery_nerfacto)
+                             inputs=[exe_mode_nerfacto, dataset_state, outputsdir_state],
+                             outputs=[outdir_eval_nerfacto, runtime_eval_nerfacto, result_eval_nerfacto, log_eval_nerfacto, metrics_nerfacto, gallery_nerfacto]).success(
+                                 fn=update_method_metrics,
+                                 inputs=[method_metrics, metrics_nerfacto, tmpdir_state],
+                                 outputs=[method_metrics, download_csv])
         eval_mipnerf_btn.click(fn=methods.render_eval_mipnerf,
-                             inputs=[exe_mode_mipnerf, dataset, outputsdir_state],
-                             outputs=[outdir_eval_mipnerf, runtime_eval_mipnerf, result_eval_mipnerf, log_eval_mipnerf, outvalues_mipnerf, outimages_mipnerf]).success(
-                                 fn=preprocess.load_json_nerfstudio,
-                                 inputs=[outvalues_mipnerf, gr.State("fine_psnr"), gr.State("fine_ssim"), gr.State("fine_lpips")],
-                                 outputs=metrics_mipnerf
-                             ).success(
-                                 fn=preprocess.get_imagelist_nerfstudio,
-                                 inputs=outimages_mipnerf,
-                                 outputs=gallery_mipnerf)
+                             inputs=[exe_mode_mipnerf, dataset_state, outputsdir_state],
+                             outputs=[outdir_eval_mipnerf, runtime_eval_mipnerf, result_eval_mipnerf, log_eval_mipnerf, metrics_mipnerf, gallery_mipnerf]).success(
+                                 fn=update_method_metrics,
+                                 inputs=[method_metrics, metrics_mipnerf, tmpdir_state],
+                                 outputs=[method_metrics, download_csv])
         eval_stnerf_btn.click(fn=methods.render_eval_stnerf,
-                             inputs=[exe_mode_stnerf, dataset, outputsdir_state],
-                             outputs=[outdir_eval_stnerf, runtime_eval_stnerf, result_eval_stnerf, log_eval_stnerf, outvalues_stnerf, outimages_stnerf]).success(
-                                 fn=preprocess.load_json_nerfstudio,
-                                 inputs=[outvalues_stnerf, gr.State("psnr"), gr.State("ssim"), gr.State("lpips")],
-                                 outputs=metrics_stnerf
-                             ).success(
-                                 fn=preprocess.get_imagelist_nerfstudio,
-                                 inputs=outimages_stnerf,
-                                 outputs=gallery_stnerf)
+                             inputs=[exe_mode_stnerf, dataset_state, outputsdir_state],
+                             outputs=[outdir_eval_stnerf, runtime_eval_stnerf, result_eval_stnerf, log_eval_stnerf, metrics_stnerf, gallery_stnerf]).success(
+                                 fn=update_method_metrics,
+                                 inputs=[method_metrics, metrics_stnerf, tmpdir_state],
+                                 outputs=[method_metrics, download_csv])
         # GS Tab
         eval_vgs_btn.click(fn=methods.render_eval_3dgs,
                            inputs=[outdir_recon_vgs, skip_train, skip_test, save_iter_3dgs],
-                           outputs=[runtime_eval_vgs, result_eval_vgs, log_eval_vgs, metrics_vgs, gallery_vgs])
+                           outputs=[outdir_eval_vgs, runtime_eval_vgs, result_eval_vgs, log_eval_vgs, metrics_vgs, gallery_vgs]).success(
+                                 fn=update_method_metrics,
+                                 inputs=[method_metrics, metrics_vgs, tmpdir_state],
+                                 outputs=[method_metrics, download_csv])
         eval_mips_btn.click(fn=methods.render_eval_mips,
                             inputs=[outdir_recon_mips, skip_train, skip_test, save_iter_mips],
-                            outputs=[runtime_eval_mips, result_eval_mips, log_eval_mips, metrics_mips, gallery_mips])
+                            outputs=[outdir_eval_mips, runtime_eval_mips, result_eval_mips, log_eval_mips, metrics_mips, gallery_mips]).success(
+                                 fn=update_method_metrics,
+                                 inputs=[method_metrics, metrics_mips, tmpdir_state],
+                                 outputs=[method_metrics, download_csv])
         eval_sfacto_btn.click(fn=methods.render_eval_sfacto,
-                             inputs=[exe_mode_sfacto, dataset, outputsdir_state],
-                             outputs=[outdir_eval_sfacto, runtime_eval_sfacto, result_eval_sfacto, log_eval_sfacto, outvalues_sfacto, outimages_sfacto]).success(
-                                 fn=preprocess.load_json_nerfstudio,
-                                 inputs=[outvalues_sfacto, gr.State("psnr"), gr.State("ssim"), gr.State("lpips")],
-                                 outputs=metrics_sfacto
-                             ).success(
-                                 fn=preprocess.get_imagelist_nerfstudio,
-                                 inputs=outimages_sfacto,
-                                 outputs=gallery_sfacto)
+                             inputs=[exe_mode_sfacto, dataset_state, outputsdir_state],
+                             outputs=[outdir_eval_sfacto, runtime_eval_sfacto, result_eval_sfacto, log_eval_sfacto, metrics_sfacto, gallery_sfacto]).success(
+                                 fn=update_method_metrics,
+                                 inputs=[method_metrics, metrics_sfacto, tmpdir_state],
+                                 outputs=[method_metrics, download_csv])
         eval_4dgs_btn.click(fn=methods.render_eval_4dgs,
                             inputs=[outdir_recon_4dgs, skip_train, skip_test, save_iter_4dgs],
-                            outputs=[runtime_eval_4dgs, result_eval_4dgs, log_eval_4dgs, metrics_4dgs, gallery_4dgs])
+                            outputs=[outdir_eval_4dgs, runtime_eval_4dgs, result_eval_4dgs, log_eval_4dgs, metrics_4dgs, gallery_4dgs]).success(
+                                 fn=update_method_metrics,
+                                 inputs=[method_metrics, metrics_4dgs, tmpdir_state],
+                                 outputs=[method_metrics, download_csv])
             
     demo.launch()

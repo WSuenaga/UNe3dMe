@@ -1,20 +1,42 @@
+# ------------------------
 # 標準ライブラリ
-import glob
+# ------------------------
 import os
 import re
-import random
-import shutil
-import string
+import time
 import json
-import subprocess
-import platform
+import glob
+import shutil
+import random
+import string
 import zipfile
 import tempfile
+import traceback
+import subprocess
+import platform
 from datetime import datetime
-# サードパーティライブラリ
+
+# ------------------------
+# 画像・数値処理関連
+# ------------------------
+import numpy as np
+from PIL import Image
 import cv2
-import gradio as gr
 from skimage.metrics import structural_similarity as ssim
+
+# ------------------------
+# PyTorch / ML 関連
+# ------------------------
+import torch
+import torchvision.transforms as T
+import lpips
+import piq
+from torch_fidelity import calculate_metrics
+
+# ------------------------
+# UI / 進捗表示
+# ------------------------
+import gradio as gr
 from tqdm import tqdm
 
 # subprocessのshellフラグの設定
@@ -37,33 +59,6 @@ def load_json_nerfstudio(json_path, psnr_key, ssim_key, lpips_key):
     results = data.get("results", {})
 
     return [[results.get(psnr_key),results.get(ssim_key),results.get(lpips_key)]]
-
-# --- Nerfstudioモデルのレンダリング画像パスリスト取得メソッド ---
-def get_imagelist_nerfstudio(dir):
-    pattern = re.compile(r"eval_(img|depth|accumulation)_(\d+)\.(png|jpg|jpeg|webp)")
-    files = glob.glob(os.path.join(dir, "*"))
-
-    grouped = {}
-
-    for f in files:
-        name = os.path.basename(f)
-        m = pattern.match(name)
-        if not m:
-            continue
-
-        kind, idx, _ = m.groups()
-        idx = int(idx)
-
-        grouped.setdefault(idx, {})[kind] = f
-
-    files = []
-    for idx in sorted(grouped.keys()):
-        g = grouped[idx]
-        for key in ["img", "depth", "accumulation"]:
-            if key in g:
-                files.append(g[key])
-
-    return files
 
 # 入力画像を1つのディレクトリにまとめるメソッド
 def copy_images(image_paths, parent_path, name):
@@ -348,3 +343,108 @@ def run_colmap(dataset, rebuild):
         return "ns-process-data images 実行に失敗しました\n\n" + "\n".join(all_logs), gr.Column(visible=False)
 
     return "\n".join(all_logs), gr.Column(visible=True)
+
+# --- 評価計算メソッド ---
+def evaluate_all_metrics(method_name, gt_dir, render_dir, output_dir):
+    start_time = time.perf_counter()
+    log_lines = []
+    returncode = 0
+    summary_list = None
+
+    try:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        log_lines.append(f"[INFO] device = {device}\n")
+
+        to_tensor = T.ToTensor()
+        lpips_fn = lpips.LPIPS(net="vgg").to(device)
+
+        def load_image(path):
+            img = Image.open(path).convert("RGB")
+            return to_tensor(img).unsqueeze(0).to(device)
+
+        # ------------------------
+        # Per-image metrics
+        # ------------------------
+        per_image = []
+        gt_files = sorted(os.listdir(gt_dir))
+
+        for fname in tqdm(gt_files, desc="Evaluating image pairs", ncols=80):
+            gt_path = os.path.join(gt_dir, fname)
+            pred_path = os.path.join(render_dir, fname)
+
+            if not os.path.isfile(gt_path):
+                continue
+            if not os.path.exists(pred_path):
+                log_lines.append(f"[WARN] missing: {fname}\n")
+                continue
+
+            gt = load_image(gt_path)
+            pred = load_image(pred_path)
+
+            metrics = {
+                "image": fname,
+                "psnr": piq.psnr(pred, gt, data_range=1.0).item(),
+                "ssim": piq.ssim(pred, gt, data_range=1.0).item(),
+                "ms_ssim": piq.multi_scale_ssim(pred, gt, data_range=1.0).item(),
+                "lpips": lpips_fn(pred, gt).item(),
+                "fsim": piq.fsim(pred, gt, data_range=1.0).item(),
+                "vif": piq.vif_p(pred, gt, data_range=1.0).item(),
+                "brisque": getattr(piq, "brisque", lambda x: float("nan"))(pred).item()
+            }
+            per_image.append(metrics)
+            log_lines.append(f"[INFO] evaluated {fname}\n")  # ここで逐次ログに追加
+
+        if len(per_image) == 0:
+            raise RuntimeError("No valid image pairs found.")
+
+        metric_order = [
+            "psnr", "ssim", "ms_ssim", "lpips",
+            "fsim", "vif", "brisque", "fid"
+        ]
+
+        summary_dict = {
+            k: float(np.mean([m[k] for m in per_image]))
+            for k in metric_order
+            if k in per_image[0]
+        }
+
+        # ------------------------
+        # FID
+        # ------------------------
+        metrics = calculate_metrics(
+            input1=gt_dir,
+            input2=render_dir,
+            cuda=torch.cuda.is_available(),
+            isc=False,
+            fid=True,
+            kid=False
+        )
+        summary_dict["fid"] = float(metrics["frechet_inception_distance"])
+
+        # ------------------------
+        # Output
+        # ------------------------
+        summary_list = [[method_name] + [round(summary_dict.get(k, float("nan")), 3) for k in metric_order]]
+
+        os.makedirs(output_dir, exist_ok=True)
+        with open(os.path.join(output_dir, "metrics_per_image.json"), "w", encoding="utf-8") as f:
+            json.dump(per_image, f, indent=2)
+
+        with open(os.path.join(output_dir, "metrics_summary.json"), "w", encoding="utf-8") as f:
+            json.dump(summary_dict, f, indent=2)
+
+        log_lines.append("[INFO] metric evaluation finished successfully\n")
+
+    except Exception as e:
+        returncode = 1
+        log_lines.append("[ERROR] metric evaluation failed\n")
+        log_lines.append(str(e) + "\n")
+        log_lines.append(traceback.format_exc())
+        summary_list = None
+
+    # 最終ログを行ごとに整形
+    full_log = "".join(log_lines)
+    status = "✅ Success" if returncode == 0 else "❌ Failed"
+    run_time = time.perf_counter() - start_time
+
+    return run_time, status, full_log, summary_list
