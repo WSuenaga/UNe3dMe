@@ -3,31 +3,32 @@
 このシステムは様々な3次元再構築手法を Web UI で一元的に扱えるようにしたものです.  
 1つの UI 上で前処理，各手法による3次元再構築，可視化および評価を簡単に実行できます．
 ## 実装手法一覧
-- Vanilla NeRF（Nerfstudio）
-- Nerfacto（Nerfstudio）
-- mip-NeRF（Nerfstudio）
-- SeaThru-NeRF（Nerfstudio）
-- Vanilla GS
-- Mip-Splatting
-- Splatfacto（Nerfstudio）
-- 4D-Gaussians
-- DUSt3R
-- MASt3R
-- MonST3R
-- Easi3R
-- MUSt3R
-- Fast3R
-- Splatt3R
-- CUT3R
-- WinT3R
-- MoGe
-- UniK3D
-- VGGT
-- VGGSfM
-- VGGT-SLAM
-- StreamVGGT
-- FastVGGT
-- Pi3
+- [Nerfstudio](https://github.com/nerfstudio-project/nerfstudio/)
+- [Vanilla NeRF（Nerfstudio）](https://github.com/bmild/nerf)
+- [Nerfacto（Nerfstudio）](https://github.com/nerfstudio-project/nerfstudio/)
+- [mip-NeRF（Nerfstudio）](https://github.com/google/mipnerf)
+- [SeaThru-NeRF（Nerfstudio）](https://github.com/deborahLevy130/seathru_NeRF)
+- [Vanilla GS](https://github.com/graphdeco-inria/gaussian-splatting)
+- [Mip-Splatting](https://github.com/autonomousvision/mip-splatting)
+- [Splatfacto（Nerfstudio）](https://github.com/nerfstudio-project/nerfstudio/)
+- [4D-Gaussians](https://github.com/hustvl/4DGaussians)
+- [DUSt3R](https://github.com/naver/dust3r)
+- [MASt3R](https://github.com/naver/mast3r)
+- [MonST3R](https://github.com/Junyi42/monst3r)
+- [Easi3R](https://github.com/Inception3D/Easi3R)
+- [MUSt3R](https://github.com/naver/must3r)
+- [Fast3R](https://github.com/facebookresearch/fast3r)
+- [Splatt3R](https://github.com/btsmart/splatt3r)
+- [CUT3R](https://github.com/CUT3R/CUT3R)
+- [WinT3R](https://github.com/LiZizun/WinT3R)
+- [MoGe](https://github.com/microsoft/MoGe)
+- [UniK3D](https://github.com/lpiccinelli-eth/UniK3D)
+- [VGGT](https://github.com/facebookresearch/vggt)
+- [VGGSfM](https://github.com/facebookresearch/vggsfm)
+- [VGGT-SLAM](https://github.com/MIT-SPARK/VGGT-SLAM)
+- [StreamVGGT](https://github.com/wzzheng/StreamVGGT)
+- [FastVGGT](https://github.com/mystorm16/FastVGGT)
+- [Pi3](https://github.com/yyfz/Pi3)
 # 2. インストール
 このシステムは Ubuntu を対象としています．
 
