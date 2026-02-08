@@ -1,8 +1,4 @@
-# ------------------------
-# 標準ライブラリ
-# ------------------------
 import os
-import re
 import time
 import json
 import glob
@@ -16,26 +12,17 @@ import subprocess
 import platform
 from datetime import datetime
 
-# ------------------------
-# 画像・数値処理関連
-# ------------------------
 import numpy as np
 from PIL import Image
 import cv2
 from skimage.metrics import structural_similarity as ssim
 
-# ------------------------
-# PyTorch / ML 関連
-# ------------------------
 import torch
 import torchvision.transforms as T
 import lpips
 import piq
 from torch_fidelity import calculate_metrics
 
-# ------------------------
-# UI / 進捗表示
-# ------------------------
 import gradio as gr
 from tqdm import tqdm
 
@@ -85,35 +72,46 @@ def copy_images(image_paths, parent_path, name):
 
     return dataset_dir, gr.Column(visible=True), dataset_dir, imagelist
 
-def remove_similar_images(input_dir: str, ssim_threshold: float = 0.95):
+def remove_similar_images(input_dir: str, ssim_threshold: float = 0.8):
     """
     フォルダ内の類似画像をSSIMで判定し削除する
-    削除枚数と圧縮率(残存率)を返す
+    ・縮小のみ
     """
-    def compute_ssim(img1, img2):
-        return ssim(img1, img2, data_range=img2.max() - img2.min(), channel_axis=-1)
+    def preprocess(img, size=256):
+        h, w = img.shape[:2]
+        scale = size / max(h, w)
+        new_w = int(w * scale)
+        new_h = int(h * scale)
+        resized = cv2.resize(img, (new_w, new_h), interpolation=cv2.INTER_AREA)
+        return resized
 
-    images = sorted(os.listdir(input_dir))
+    images = sorted([f for f in os.listdir(input_dir) if f.endswith(".png")])
     if not images:
-        print("入力フォルダに画像がありません")
-        return 0, 0.0
+        return "0%", "0", "0"
 
     reference_path = os.path.join(input_dir, images[0])
-    reference_img = cv2.imread(reference_path)
-    if reference_img is None:
-        print(f"基準画像の読み込みに失敗: {images[0]}")
-        return 0, 0.0
+    ref_raw = cv2.imread(reference_path)
+    if ref_raw is None:
+        return "0%", "0", "0"
 
-    original_count = len([f for f in images if f.endswith(".png")])
+    reference_img = preprocess(ref_raw)
+    original_count = len(images)
 
-    # 最初の画像は残す
     for img_name in tqdm(images[1:], desc="Removing similar images"):
         img_path = os.path.join(input_dir, img_name)
-        current_img = cv2.imread(img_path)
-        if current_img is None:
+        raw = cv2.imread(img_path)
+        if raw is None:
             continue
 
-        ssim_val = compute_ssim(reference_img, current_img)
+        current_img = preprocess(raw)
+
+        ssim_val = ssim(
+            reference_img,
+            current_img,
+            channel_axis=2,  # ← カラーSSIM
+            data_range=255
+        )
+
         if ssim_val < ssim_threshold:
             reference_img = current_img
         else:
@@ -121,13 +119,9 @@ def remove_similar_images(input_dir: str, ssim_threshold: float = 0.95):
 
     selected_count = len([f for f in os.listdir(input_dir) if f.endswith(".png")])
     rejected_count = original_count - selected_count
+    compression_rate = f"{(selected_count / original_count * 100):.3g}%"
 
-    compression_rate = 0.0
-    if original_count > 0:
-        compression_rate = (selected_count / original_count) * 100
-        compression_rate = float(f"{compression_rate:.3g}")
-
-    return f"{compression_rate}%", f"{selected_count}", f"{rejected_count}"
+    return compression_rate, str(selected_count), str(rejected_count)
 
 def extract_frames_with_filter(video, parent_path, fps, remove_similar, ssim_threshold):
     video_name = os.path.splitext(os.path.basename(video))[0]

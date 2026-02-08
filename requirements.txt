@@ -1,0 +1,12 @@
+numpy<2
+
+gradio==5.35.0
+requests
+opencv-python
+scikit-image
+lpips
+torch-fidelity
+piq
+
+pillow
+tqdm
