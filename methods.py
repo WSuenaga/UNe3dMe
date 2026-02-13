@@ -1595,8 +1595,8 @@ def recon_pi3(mode, dataset, outputs_dir):
     # データセットパス
     dataset = os.path.join(dataset, "images")
 
-    # 出力パス
-    outdir = os.path.join(outdir, "recon.ply")
+    # 再構築結果のパス
+    model_path = os.path.join(outdir, "recon.ply")
 
     if mode=="local":
         # 再構築スクリプトパス
@@ -1606,7 +1606,7 @@ def recon_pi3(mode, dataset, outputs_dir):
         cmd = [
             "conda", "run", "-n", "Pi3", "python", recon_script,
             "--data_path", dataset,
-            "--save_path", outdir
+            "--save_path", model_path
         ]
 
         # 実行ディレクトリ
@@ -1626,8 +1626,5 @@ def recon_pi3(mode, dataset, outputs_dir):
 
     # 推論実行
     runtime, status, log = run_subprocess_popen(cmd, workdir)
-
-    # 再構築結果のパス
-    model_path = os.path.join(outdir, "recon.ply")
 
     return outdir, runtime, status, log, model_path
