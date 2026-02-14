@@ -582,8 +582,8 @@
       "outmodel": "🌐3次元再構築結果"
     }
   },
-  "vgg_tab": {
-    "title": "VGG",
+  "vggt_tab": {
+    "title": "VGGT",
     "current_dataset": "📂現在セットされているデータセット",
     "vggt": {
       "title": "VGGT",

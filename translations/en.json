@@ -591,8 +591,8 @@
       "outmodel": "🌐3D Reconstruction Result"
     }
   },
-  "vgg_tab": {
-    "title": "VGG",
+  "vggt_tab": {
+    "title": "VGGT",
     "current_dataset": "📂Current Dataset",
     "vggt": {
       "title": "VGGT",
