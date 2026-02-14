@@ -459,6 +459,119 @@ def update_ui(choice):
         gr.Textbox(label=lang["3sters_tab"]["wint3r"]["result_recon"]), # result_recon_wint3r
         gr.Textbox(label=lang["3sters_tab"]["wint3r"]["log_recon"]), # log_recon_wint3r
         gr.Model3D(label=lang["3sters_tab"]["wint3r"]["outmodel"]), # outmodel_wint3r
+        # vggtTab
+        gr.Tab(label=lang["vggt_tab"]["title"]), # vggt_tab
+        gr.Textbox(label=lang["vggt_tab"]["current_dataset"]), # current_dataset_vggt
+        # VGGT
+        gr.Tab(label=lang["vggt_tab"]["vggt"]["title"]), # vggt_tab
+        gr.Markdown(lang["vggt_tab"]["vggt"]["subtitle1"]), # vggt_sub1
+        gr.Radio(choices=[lang["vggt_tab"]["vggt"]["radio_indata"], lang["vggt_tab"]["vggt"]["radio_exdata"]], 
+                 label = lang["vggt_tab"]["vggt"]["radio"]), # vggt_radio
+        gr.Markdown(lang["vggt_tab"]["vggt"]["subtitle1_1"]), # vggt_sub1_1
+        gr.Markdown(lang["vggt_tab"]["vggt"]["info1"]), # vggt_info1
+        gr.File(label=lang["vggt_tab"]["vggt"]["ex_dataset"]), # ex_dataset_vggt
+        gr.Markdown(lang["vggt_tab"]["vggt"]["subtitle2"]), # vggt_sub2
+        gr.Accordion(label=lang["vggt_tab"]["vggt"]["option"]["title"]), # vggt_option
+        gr.Radio(label= lang["vggt_tab"]["vggt"]["option"]["exe_mode"]), # exe_mode_vggt
+        gr.Radio(label=lang["vggt_tab"]["vggt"]["option"]["mode_vggt"]), # mode_vggt
+        gr.Button(value=lang["vggt_tab"]["vggt"]["recon_btn"]), # recon_vggt_btn
+        gr.Textbox(label=lang["vggt_tab"]["vggt"]["outdir_recon"]), # outdir_recon_vggt
+        gr.Textbox(label=lang["vggt_tab"]["vggt"]["runtime_recon"]), # runtime_recon_vggt
+        gr.Textbox(label=lang["vggt_tab"]["vggt"]["result_recon"]), # result_recon_vggt
+        gr.Textbox(label=lang["vggt_tab"]["vggt"]["log_recon"]), # log_recon_vggt
+        gr.Textbox(label=lang["vggt_tab"]["vggt"]["outmodel"]), # outmodel_vggt
+        # VGGSfM
+        gr.Tab(label=lang["vggt_tab"]["vggsfm"]["title"]), # vggsfm_tab
+        gr.Markdown(lang["vggt_tab"]["vggsfm"]["subtitle1"]), # vggsfm_sub1
+        gr.Radio(choices=[lang["vggt_tab"]["vggsfm"]["radio_indata"], lang["vggt_tab"]["vggsfm"]["radio_exdata"]], 
+                 label = lang["vggt_tab"]["vggsfm"]["radio"]), # vggsfm_radio
+        gr.Markdown(lang["vggt_tab"]["vggsfm"]["subtitle1_1"]), # vggsfm_sub1_1
+        gr.Markdown(lang["vggt_tab"]["vggsfm"]["info1"]), # vggsfm_info1
+        gr.File(label=lang["vggt_tab"]["vggsfm"]["ex_dataset"]), # ex_dataset_vggsfm
+        gr.Markdown(lang["vggt_tab"]["vggsfm"]["subtitle2"]), # vggsfm_sub2
+        gr.Accordion(label=lang["vggt_tab"]["vggsfm"]["option"]["title"]), # vggsfm_option
+        gr.Radio(label= lang["vggt_tab"]["vggsfm"]["option"]["exe_mode"]), # exe_mode_vggsfm
+        gr.Button(value=lang["vggt_tab"]["vggsfm"]["recon_btn"]), # recon_vggsfm_btn
+        gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["outdir_recon"]), # outdir_recon_vggsfm
+        gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["runtime_recon"]), # runtime_recon_vggsfm
+        gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["result_recon"]), # result_recon_vggsfm
+        gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["log_recon"]), # log_recon_vggsfm
+        gr.Markdown(lang["vggt_tab"]["vggsfm"]["subtitle3"]), # vggsfm_sub3
+        gr.Button(value=lang["vggt_tab"]["vggsfm"]["export_btn"]), # export_vggsfm_btn
+        gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["outdir_export"]), # outdir_export_vggsfm
+        gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["runtime_export"]), # runtime_export_vggsfm
+        gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["result_export"]), # result_export_vggsfm
+        gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["log_export"]), # log_export_vggsfm
+        gr.Model3D(label=lang["vggt_tab"]["vggsfm"]["outmodel"]), # outmodel_vggsfm
+        # VGGT-SLAM
+        gr.Tab(label=lang["vggt_tab"]["vggt-slam"]["title"]), # vggtslam_tab
+        gr.Markdown(lang["vggt_tab"]["vggt-slam"]["subtitle1"]), # vggtslam_sub1
+        gr.Radio(choices=[lang["vggt_tab"]["vggt-slam"]["radio_indata"], lang["vggt_tab"]["vggt-slam"]["radio_exdata"]], 
+                 label = lang["vggt_tab"]["vggt-slam"]["radio"]), # vggtslam_radio
+        gr.Markdown(lang["vggt_tab"]["vggt-slam"]["subtitle1_1"]), # vggtslam_sub1_1
+        gr.Markdown(lang["vggt_tab"]["vggt-slam"]["info1"]), # vggtslam_info1
+        gr.File(label=lang["vggt_tab"]["vggt-slam"]["ex_dataset"]), # ex_dataset_vggtslam
+        gr.Markdown(lang["vggt_tab"]["vggt-slam"]["subtitle2"]), # vggtslam_sub2
+        gr.Accordion(label=lang["vggt_tab"]["vggt-slam"]["option"]["title"]), # vggtslam_option
+        gr.Radio(label= lang["vggt_tab"]["vggt-slam"]["option"]["exe_mode"]), # exe_mode_vggtslam
+        gr.Button(value=lang["vggt_tab"]["vggt-slam"]["recon_btn"]), # recon_vggtslam_btn
+        gr.Markdown(lang["vggt_tab"]["vggt-slam"]["viewer"]), # vggtslam_viewer
+        gr.Textbox(label=lang["vggt_tab"]["vggt-slam"]["outdir_recon"]), # outdir_recon_vggtslam
+        gr.Textbox(label=lang["vggt_tab"]["vggt-slam"]["runtime_recon"]), # runtime_recon_vggtslam
+        gr.Textbox(label=lang["vggt_tab"]["vggt-slam"]["result_recon"]), # result_recon_vggtslam
+        gr.Textbox(label=lang["vggt_tab"]["vggt-slam"]["log_recon"]), # log_recon_vggtslam
+        gr.Model3D(label=lang["vggt_tab"]["vggt-slam"]["outmodel"]), # outmodel_vggtslam
+        # StreamVGGT
+        gr.Tab(label=lang["vggt_tab"]["streamvggt"]["title"]), # stmvggt_tab
+        gr.Markdown(lang["vggt_tab"]["streamvggt"]["subtitle1"]), # stmvggt_sub1
+        gr.Radio(choices=[lang["vggt_tab"]["streamvggt"]["radio_indata"], lang["vggt_tab"]["streamvggt"]["radio_exdata"]], 
+                 label = lang["vggt_tab"]["streamvggt"]["radio"]), # stmvggt_radio
+        gr.Markdown(lang["vggt_tab"]["streamvggt"]["subtitle1_1"]), # stmvggt_sub1_1
+        gr.Markdown(lang["vggt_tab"]["streamvggt"]["info1"]), # stmvggt_info1
+        gr.File(label=lang["vggt_tab"]["streamvggt"]["ex_dataset"]), # ex_dataset_stmvggt
+        gr.Markdown(lang["vggt_tab"]["streamvggt"]["subtitle2"]), # stmvggt_sub2
+        gr.Accordion(label=lang["vggt_tab"]["streamvggt"]["option"]["title"]), # stmvggt_option
+        gr.Radio(label= lang["vggt_tab"]["streamvggt"]["option"]["exe_mode"]), # exe_mode_stmvggt
+        gr.Button(value=lang["vggt_tab"]["streamvggt"]["recon_btn"]), # recon_stmvggt_btn
+        gr.Textbox(label=lang["vggt_tab"]["streamvggt"]["outdir_recon"]), # outdir_recon_stmvggt
+        gr.Textbox(label=lang["vggt_tab"]["streamvggt"]["runtime_recon"]), # runtime_recon_stmvggt
+        gr.Textbox(label=lang["vggt_tab"]["streamvggt"]["result_recon"]), # result_recon_stmvggt
+        gr.Textbox(label=lang["vggt_tab"]["streamvggt"]["log_recon"]), # log_recon_stmvggt
+        gr.Model3D(label=lang["vggt_tab"]["streamvggt"]["outmodel"]), # outmodel_stmvggt
+        # FastVGGT
+        gr.Tab(label=lang["vggt_tab"]["fastvggt"]["title"]), # fastvggt_tab
+        gr.Markdown(lang["vggt_tab"]["fastvggt"]["subtitle1"]), # fastvggt_sub1
+        gr.Radio(choices=[lang["vggt_tab"]["fastvggt"]["radio_indata"], lang["vggt_tab"]["fastvggt"]["radio_exdata"]], 
+                 label = lang["vggt_tab"]["fastvggt"]["radio"]), # fastvggt_radio
+        gr.Markdown(lang["vggt_tab"]["fastvggt"]["subtitle1_1"]), # fastvggt_sub1_1
+        gr.Markdown(lang["vggt_tab"]["fastvggt"]["info1"]), # fastvggt_info1
+        gr.File(label=lang["vggt_tab"]["fastvggt"]["ex_dataset"]), # ex_dataset_fastvggt
+        gr.Markdown(lang["vggt_tab"]["fastvggt"]["subtitle2"]), # fastvggt_sub2
+        gr.Accordion(label=lang["vggt_tab"]["fastvggt"]["option"]["title"]), # fastvggt_option
+        gr.Radio(label= lang["vggt_tab"]["fastvggt"]["option"]["exe_mode"]), # exe_mode_fastvggt
+        gr.Button(value=lang["vggt_tab"]["fastvggt"]["recon_btn"]), # recon_fastvggt_btn
+        gr.Textbox(label=lang["vggt_tab"]["fastvggt"]["outdir_recon"]), # outdir_recon_fastvggt
+        gr.Textbox(label=lang["vggt_tab"]["fastvggt"]["runtime_recon"]), # runtime_recon_fastvggt
+        gr.Textbox(label=lang["vggt_tab"]["fastvggt"]["result_recon"]), # result_recon_fastvggt
+        gr.Textbox(label=lang["vggt_tab"]["fastvggt"]["log_recon"]), # log_recon_fastvggt
+        gr.Model3D(label=lang["vggt_tab"]["fastvggt"]["outmodel"]), # outmodel_fastvggt
+        # Pi3
+        gr.Tab(label=lang["vggt_tab"]["pi3"]["title"]), # pi3_tab
+        gr.Markdown(lang["vggt_tab"]["pi3"]["subtitle1"]), # pi3_sub1
+        gr.Radio(choices=[lang["vggt_tab"]["pi3"]["radio_indata"], lang["vggt_tab"]["pi3"]["radio_exdata"]], 
+                 label = lang["vggt_tab"]["pi3"]["radio"]), # pi3_radio
+        gr.Markdown(lang["vggt_tab"]["pi3"]["subtitle1_1"]), # pi3_sub1_1
+        gr.Markdown(lang["vggt_tab"]["pi3"]["info1"]), # pi3_info1
+        gr.File(label=lang["vggt_tab"]["pi3"]["ex_dataset"]), # ex_dataset_pi3
+        gr.Markdown(lang["vggt_tab"]["pi3"]["subtitle2"]), # pi3_sub2
+        gr.Accordion(label=lang["vggt_tab"]["pi3"]["option"]["title"]), # pi3_option
+        gr.Radio(label= lang["vggt_tab"]["pi3"]["option"]["exe_mode"]), # exe_mode_pi3
+        gr.Button(value=lang["vggt_tab"]["pi3"]["recon_btn"]), # recon_pi3_btn
+        gr.Textbox(label=lang["vggt_tab"]["pi3"]["outdir_recon"]), # outdir_recon_pi3
+        gr.Textbox(label=lang["vggt_tab"]["pi3"]["runtime_recon"]), # runtime_recon_pi3
+        gr.Textbox(label=lang["vggt_tab"]["pi3"]["result_recon"]), # result_recon_pi3
+        gr.Textbox(label=lang["vggt_tab"]["pi3"]["log_recon"]), # log_recon_pi3
+        gr.Model3D(label=lang["vggt_tab"]["pi3"]["outmodel"]), # outmodel_pi3
         # mdsTab
         gr.Tab(label=lang["mds_tab"]["title"]), # mds_tab
         gr.Textbox(label=lang["mds_tab"]["current_dataset"]), # current_dataset
@@ -492,119 +605,6 @@ def update_ui(choice):
         gr.Textbox(label=lang["mds_tab"]["unik3d"]["result_recon"]), # result_recon_unik3d
         gr.Textbox(label=lang["mds_tab"]["unik3d"]["log_recon"]), # log_recon_unik3d
         gr.Model3D(label=lang["mds_tab"]["unik3d"]["outmodel"]), # outmodel_unik3d
-        # vggTab
-        gr.Tab(label=lang["vgg_tab"]["title"]), # vgg_tab
-        gr.Textbox(label=lang["vgg_tab"]["current_dataset"]), # current_dataset_vgg
-        # VGGT
-        gr.Tab(label=lang["vgg_tab"]["vggt"]["title"]), # vggt_tab
-        gr.Markdown(lang["vgg_tab"]["vggt"]["subtitle1"]), # vggt_sub1
-        gr.Radio(choices=[lang["vgg_tab"]["vggt"]["radio_indata"], lang["vgg_tab"]["vggt"]["radio_exdata"]], 
-                 label = lang["vgg_tab"]["vggt"]["radio"]), # vggt_radio
-        gr.Markdown(lang["vgg_tab"]["vggt"]["subtitle1_1"]), # vggt_sub1_1
-        gr.Markdown(lang["vgg_tab"]["vggt"]["info1"]), # vggt_info1
-        gr.File(label=lang["vgg_tab"]["vggt"]["ex_dataset"]), # ex_dataset_vggt
-        gr.Markdown(lang["vgg_tab"]["vggt"]["subtitle2"]), # vggt_sub2
-        gr.Accordion(label=lang["vgg_tab"]["vggt"]["option"]["title"]), # vggt_option
-        gr.Radio(label= lang["vgg_tab"]["vggt"]["option"]["exe_mode"]), # exe_mode_vggt
-        gr.Radio(label=lang["vgg_tab"]["vggt"]["option"]["mode_vggt"]), # mode_vggt
-        gr.Button(value=lang["vgg_tab"]["vggt"]["recon_btn"]), # recon_vggt_btn
-        gr.Textbox(label=lang["vgg_tab"]["vggt"]["outdir_recon"]), # outdir_recon_vggt
-        gr.Textbox(label=lang["vgg_tab"]["vggt"]["runtime_recon"]), # runtime_recon_vggt
-        gr.Textbox(label=lang["vgg_tab"]["vggt"]["result_recon"]), # result_recon_vggt
-        gr.Textbox(label=lang["vgg_tab"]["vggt"]["log_recon"]), # log_recon_vggt
-        gr.Textbox(label=lang["vgg_tab"]["vggt"]["outmodel"]), # outmodel_vggt
-        # VGGSfM
-        gr.Tab(label=lang["vgg_tab"]["vggsfm"]["title"]), # vggsfm_tab
-        gr.Markdown(lang["vgg_tab"]["vggsfm"]["subtitle1"]), # vggsfm_sub1
-        gr.Radio(choices=[lang["vgg_tab"]["vggsfm"]["radio_indata"], lang["vgg_tab"]["vggsfm"]["radio_exdata"]], 
-                 label = lang["vgg_tab"]["vggsfm"]["radio"]), # vggsfm_radio
-        gr.Markdown(lang["vgg_tab"]["vggsfm"]["subtitle1_1"]), # vggsfm_sub1_1
-        gr.Markdown(lang["vgg_tab"]["vggsfm"]["info1"]), # vggsfm_info1
-        gr.File(label=lang["vgg_tab"]["vggsfm"]["ex_dataset"]), # ex_dataset_vggsfm
-        gr.Markdown(lang["vgg_tab"]["vggsfm"]["subtitle2"]), # vggsfm_sub2
-        gr.Accordion(label=lang["vgg_tab"]["vggsfm"]["option"]["title"]), # vggsfm_option
-        gr.Radio(label= lang["vgg_tab"]["vggsfm"]["option"]["exe_mode"]), # exe_mode_vggsfm
-        gr.Button(value=lang["vgg_tab"]["vggsfm"]["recon_btn"]), # recon_vggsfm_btn
-        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["outdir_recon"]), # outdir_recon_vggsfm
-        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["runtime_recon"]), # runtime_recon_vggsfm
-        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["result_recon"]), # result_recon_vggsfm
-        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["log_recon"]), # log_recon_vggsfm
-        gr.Markdown(lang["vgg_tab"]["vggsfm"]["subtitle3"]), # vggsfm_sub3
-        gr.Button(value=lang["vgg_tab"]["vggsfm"]["export_btn"]), # export_vggsfm_btn
-        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["outdir_export"]), # outdir_export_vggsfm
-        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["runtime_export"]), # runtime_export_vggsfm
-        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["result_export"]), # result_export_vggsfm
-        gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["log_export"]), # log_export_vggsfm
-        gr.Model3D(label=lang["vgg_tab"]["vggsfm"]["outmodel"]), # outmodel_vggsfm
-        # VGGT-SLAM
-        gr.Tab(label=lang["vgg_tab"]["vggt-slam"]["title"]), # vggtslam_tab
-        gr.Markdown(lang["vgg_tab"]["vggt-slam"]["subtitle1"]), # vggtslam_sub1
-        gr.Radio(choices=[lang["vgg_tab"]["vggt-slam"]["radio_indata"], lang["vgg_tab"]["vggt-slam"]["radio_exdata"]], 
-                 label = lang["vgg_tab"]["vggt-slam"]["radio"]), # vggtslam_radio
-        gr.Markdown(lang["vgg_tab"]["vggt-slam"]["subtitle1_1"]), # vggtslam_sub1_1
-        gr.Markdown(lang["vgg_tab"]["vggt-slam"]["info1"]), # vggtslam_info1
-        gr.File(label=lang["vgg_tab"]["vggt-slam"]["ex_dataset"]), # ex_dataset_vggtslam
-        gr.Markdown(lang["vgg_tab"]["vggt-slam"]["subtitle2"]), # vggtslam_sub2
-        gr.Accordion(label=lang["vgg_tab"]["vggt-slam"]["option"]["title"]), # vggtslam_option
-        gr.Radio(label= lang["vgg_tab"]["vggt-slam"]["option"]["exe_mode"]), # exe_mode_vggtslam
-        gr.Button(value=lang["vgg_tab"]["vggt-slam"]["recon_btn"]), # recon_vggtslam_btn
-        gr.Markdown(lang["vgg_tab"]["vggt-slam"]["viewer"]), # vggtslam_viewer
-        gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["outdir_recon"]), # outdir_recon_vggtslam
-        gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["runtime_recon"]), # runtime_recon_vggtslam
-        gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["result_recon"]), # result_recon_vggtslam
-        gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["log_recon"]), # log_recon_vggtslam
-        gr.Model3D(label=lang["vgg_tab"]["vggt-slam"]["outmodel"]), # outmodel_vggtslam
-        # StreamVGGT
-        gr.Tab(label=lang["vgg_tab"]["streamvggt"]["title"]), # stmvggt_tab
-        gr.Markdown(lang["vgg_tab"]["streamvggt"]["subtitle1"]), # stmvggt_sub1
-        gr.Radio(choices=[lang["vgg_tab"]["streamvggt"]["radio_indata"], lang["vgg_tab"]["streamvggt"]["radio_exdata"]], 
-                 label = lang["vgg_tab"]["streamvggt"]["radio"]), # stmvggt_radio
-        gr.Markdown(lang["vgg_tab"]["streamvggt"]["subtitle1_1"]), # stmvggt_sub1_1
-        gr.Markdown(lang["vgg_tab"]["streamvggt"]["info1"]), # stmvggt_info1
-        gr.File(label=lang["vgg_tab"]["streamvggt"]["ex_dataset"]), # ex_dataset_stmvggt
-        gr.Markdown(lang["vgg_tab"]["streamvggt"]["subtitle2"]), # stmvggt_sub2
-        gr.Accordion(label=lang["vgg_tab"]["streamvggt"]["option"]["title"]), # stmvggt_option
-        gr.Radio(label= lang["vgg_tab"]["streamvggt"]["option"]["exe_mode"]), # exe_mode_stmvggt
-        gr.Button(value=lang["vgg_tab"]["streamvggt"]["recon_btn"]), # recon_stmvggt_btn
-        gr.Textbox(label=lang["vgg_tab"]["streamvggt"]["outdir_recon"]), # outdir_recon_stmvggt
-        gr.Textbox(label=lang["vgg_tab"]["streamvggt"]["runtime_recon"]), # runtime_recon_stmvggt
-        gr.Textbox(label=lang["vgg_tab"]["streamvggt"]["result_recon"]), # result_recon_stmvggt
-        gr.Textbox(label=lang["vgg_tab"]["streamvggt"]["log_recon"]), # log_recon_stmvggt
-        gr.Model3D(label=lang["vgg_tab"]["streamvggt"]["outmodel"]), # outmodel_stmvggt
-        # FastVGGT
-        gr.Tab(label=lang["vgg_tab"]["fastvggt"]["title"]), # fastvggt_tab
-        gr.Markdown(lang["vgg_tab"]["fastvggt"]["subtitle1"]), # fastvggt_sub1
-        gr.Radio(choices=[lang["vgg_tab"]["fastvggt"]["radio_indata"], lang["vgg_tab"]["fastvggt"]["radio_exdata"]], 
-                 label = lang["vgg_tab"]["fastvggt"]["radio"]), # fastvggt_radio
-        gr.Markdown(lang["vgg_tab"]["fastvggt"]["subtitle1_1"]), # fastvggt_sub1_1
-        gr.Markdown(lang["vgg_tab"]["fastvggt"]["info1"]), # fastvggt_info1
-        gr.File(label=lang["vgg_tab"]["fastvggt"]["ex_dataset"]), # ex_dataset_fastvggt
-        gr.Markdown(lang["vgg_tab"]["fastvggt"]["subtitle2"]), # fastvggt_sub2
-        gr.Accordion(label=lang["vgg_tab"]["fastvggt"]["option"]["title"]), # fastvggt_option
-        gr.Radio(label= lang["vgg_tab"]["fastvggt"]["option"]["exe_mode"]), # exe_mode_fastvggt
-        gr.Button(value=lang["vgg_tab"]["fastvggt"]["recon_btn"]), # recon_fastvggt_btn
-        gr.Textbox(label=lang["vgg_tab"]["fastvggt"]["outdir_recon"]), # outdir_recon_fastvggt
-        gr.Textbox(label=lang["vgg_tab"]["fastvggt"]["runtime_recon"]), # runtime_recon_fastvggt
-        gr.Textbox(label=lang["vgg_tab"]["fastvggt"]["result_recon"]), # result_recon_fastvggt
-        gr.Textbox(label=lang["vgg_tab"]["fastvggt"]["log_recon"]), # log_recon_fastvggt
-        gr.Model3D(label=lang["vgg_tab"]["fastvggt"]["outmodel"]), # outmodel_fastvggt
-        # Pi3
-        gr.Tab(label=lang["vgg_tab"]["pi3"]["title"]), # pi3_tab
-        gr.Markdown(lang["vgg_tab"]["pi3"]["subtitle1"]), # pi3_sub1
-        gr.Radio(choices=[lang["vgg_tab"]["pi3"]["radio_indata"], lang["vgg_tab"]["pi3"]["radio_exdata"]], 
-                 label = lang["vgg_tab"]["pi3"]["radio"]), # pi3_radio
-        gr.Markdown(lang["vgg_tab"]["pi3"]["subtitle1_1"]), # pi3_sub1_1
-        gr.Markdown(lang["vgg_tab"]["pi3"]["info1"]), # pi3_info1
-        gr.File(label=lang["vgg_tab"]["pi3"]["ex_dataset"]), # ex_dataset_pi3
-        gr.Markdown(lang["vgg_tab"]["pi3"]["subtitle2"]), # pi3_sub2
-        gr.Accordion(label=lang["vgg_tab"]["pi3"]["option"]["title"]), # pi3_option
-        gr.Radio(label= lang["vgg_tab"]["pi3"]["option"]["exe_mode"]), # exe_mode_pi3
-        gr.Button(value=lang["vgg_tab"]["pi3"]["recon_btn"]), # recon_pi3_btn
-        gr.Textbox(label=lang["vgg_tab"]["pi3"]["outdir_recon"]), # outdir_recon_pi3
-        gr.Textbox(label=lang["vgg_tab"]["pi3"]["runtime_recon"]), # runtime_recon_pi3
-        gr.Textbox(label=lang["vgg_tab"]["pi3"]["result_recon"]), # result_recon_pi3
-        gr.Textbox(label=lang["vgg_tab"]["pi3"]["log_recon"]), # log_recon_pi3
-        gr.Model3D(label=lang["vgg_tab"]["pi3"]["outmodel"]), # outmodel_pi3
         # Metrics Tab
         gr.Tab(label=lang["metrics_tab"]["title"]), # metrics_tab
         gr.DataFrame(label=lang["metrics_tab"]["table"]), # method_metrics
@@ -628,7 +628,11 @@ def col_change():
 # State_value代入メソッド
 def get_state_value(state):
     return state
-def get_state_values(state):
+
+def get_state_value2(state):
+    return state, state
+
+def get_state_value6(state):
     return state, state, state, state, state, state
 
 # 評価指標タブのテーブル更新メソッド
@@ -1265,6 +1269,151 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     result_recon_wint3r = gr.Textbox(label=lang["3sters_tab"]["wint3r"]["result_recon"])
                     log_recon_wint3r = gr.Textbox(label=lang["3sters_tab"]["wint3r"]["log_recon"])
                     outmodel_wint3r = gr.Model3D(label=lang["3sters_tab"]["wint3r"]["outmodel"])
+        
+        # vggtTab
+        with gr.Tab(label=lang["vggt_tab"]["title"]) as vggt_tab:
+            current_dataset_vggt = gr.Textbox(label=lang["vggt_tab"]["current_dataset"])
+
+            # VGGT
+            with gr.Tab(label=lang["vggt_tab"]["vggt"]["title"]) as vggt_tab:
+                vggt_sub1 = gr.Markdown(lang["vggt_tab"]["vggt"]["subtitle1"])
+                vggt_radio = gr.Radio(choices=[lang["vggt_tab"]["vggt"]["radio_indata"], lang["vggt_tab"]["vggt"]["radio_exdata"]], label = lang["vggt_tab"]["vggt"]["radio"])
+                with gr.Column(visible=False) as ex_vggt_col:
+                    vggt_sub1_1 = gr.Markdown(lang["vggt_tab"]["vggt"]["subtitle1_1"])
+                    with gr.Row(equal_height=True):
+                        vggt_info1 = gr.Markdown(lang["vggt_tab"]["vggt"]["info1"],)
+                        gr.Image(value=ex_dataset_image)
+                    ex_dataset_vggt = gr.File(label=lang["vggt_tab"]["vggt"]["ex_dataset"], file_types=[".zip"], type="filepath")
+                    log_unzip_vggt = gr.Textbox(label=lang["vggt_tab"]["vggt"]["log_unzip"])
+                with gr.Column(visible=False) as infer_vggt_col:
+                    vggt_sub2 = gr.Markdown(lang["vggt_tab"]["vggt"]["subtitle2"])
+                    with gr.Accordion(label=lang["vggt_tab"]["vggt"]["option"]["title"], open=False) as vggt_option:
+                        exe_mode_vggt = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vggt_tab"]["vggt"]["option"]["exe_mode"])
+                        mode_vggt = gr.Radio(choices=["crop","pad"], value="crop", label=lang["vggt_tab"]["vggt"]["option"]["mode_vggt"])
+                    recon_vggt_btn = gr.Button(value=lang["vggt_tab"]["vggt"]["recon_btn"])
+                    outdir_recon_vggt = gr.Textbox(label=lang["vggt_tab"]["vggt"]["outdir_recon"])
+                    runtime_recon_vggt = gr.Textbox(label=lang["vggt_tab"]["vggt"]["runtime_recon"])
+                    result_recon_vggt = gr.Textbox(label=lang["vggt_tab"]["vggt"]["result_recon"])
+                    log_recon_vggt = gr.Textbox(label=lang["vggt_tab"]["vggt"]["log_recon"])
+                    outmodel_vggt = gr.Model3D(label=lang["vggt_tab"]["vggt"]["outmodel"])
+            
+            # VGGSfM
+            with gr.Tab(label=lang["vggt_tab"]["vggsfm"]["title"]) as vggsfm_tab:
+                vggsfm_sub1 = gr.Markdown(lang["vggt_tab"]["vggsfm"]["subtitle1"])
+                vggsfm_radio = gr.Radio(choices=[lang["vggt_tab"]["vggsfm"]["radio_indata"], lang["vggt_tab"]["vggsfm"]["radio_exdata"]], label = lang["vggt_tab"]["vggsfm"]["radio"])
+                with gr.Column(visible=False) as ex_vggsfm_col:
+                    vggsfm_sub1_1 = gr.Markdown(lang["vggt_tab"]["vggsfm"]["subtitle1_1"])
+                    with gr.Row(equal_height=True):
+                        vggsfm_info1 = gr.Markdown(lang["vggt_tab"]["vggsfm"]["info1"],)
+                        gr.Image(value=ex_dataset_image)
+                    ex_dataset_vggsfm = gr.File(label=lang["vggt_tab"]["vggsfm"]["ex_dataset"], file_types=[".zip"], type="filepath")
+                    log_unzip_vggsfm = gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["log_unzip"])
+                with gr.Column(visible=False) as infer_vggsfm_col:
+                    vggsfm_sub2 = gr.Markdown(lang["vggt_tab"]["vggsfm"]["subtitle2"])
+                    with gr.Accordion(label=lang["vggt_tab"]["vggsfm"]["option"]["title"], open=False) as vggsfm_option:
+                        exe_mode_vggsfm = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vggt_tab"]["vggsfm"]["option"]["exe_mode"])
+                    recon_vggsfm_btn = gr.Button(value=lang["vggt_tab"]["vggsfm"]["recon_btn"])
+                    outdir_recon_vggsfm = gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["outdir_recon"])
+                    runtime_recon_vggsfm = gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["runtime_recon"])
+                    result_recon_vggsfm = gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["result_recon"])
+                    log_recon_vggsfm = gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["log_recon"])
+                    with gr.Column(visible=False) as export_vggsfm_col:
+                        vggsfm_sub3 = gr.Markdown(lang["vggt_tab"]["vggsfm"]["subtitle3"])
+                        export_vggsfm_btn = gr.Button(value=lang["vggt_tab"]["vggsfm"]["export_btn"])
+                        outdir_export_vggsfm = gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["outdir_export"])
+                        runtime_export_vggsfm = gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["runtime_export"])
+                        result_export_vggsfm = gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["result_export"])
+                        log_export_vggsfm = gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["log_export"])
+                        outmodel_vggsfm = gr.Model3D(label=lang["vggt_tab"]["vggsfm"]["outmodel"])
+
+            # VGGT-SLAM
+            with gr.Tab(label=lang["vggt_tab"]["vggt-slam"]["title"]) as vggtslam_tab:
+                vggtslam_sub1 = gr.Markdown(lang["vggt_tab"]["vggt-slam"]["subtitle1"])
+                vggtslam_radio = gr.Radio(choices=[lang["vggt_tab"]["vggt-slam"]["radio_indata"], lang["vggt_tab"]["vggt-slam"]["radio_exdata"]], label = lang["vggt_tab"]["vggt-slam"]["radio"])
+                with gr.Column(visible=False) as ex_vggtslam_col:
+                    vggtslam_sub1_1 = gr.Markdown(lang["vggt_tab"]["vggt-slam"]["subtitle1_1"])
+                    with gr.Row(equal_height=True):
+                        vggtslam_info1 = gr.Markdown(lang["vggt_tab"]["vggt-slam"]["info1"],)
+                        gr.Image(value=ex_dataset_image)
+                    ex_dataset_vggtslam = gr.File(label=lang["vggt_tab"]["vggt-slam"]["ex_dataset"], file_types=[".zip"], type="filepath")
+                    log_unzip_vggtslam = gr.Textbox(label=lang["vggt_tab"]["vggt-slam"]["log_unzip"])
+                with gr.Column(visible=False) as infer_vggtslam_col:
+                    vggtslam_sub2 = gr.Markdown(lang["vggt_tab"]["vggt-slam"]["subtitle2"])
+                    with gr.Accordion(label=lang["vggt_tab"]["vggt-slam"]["option"]["title"], open=False) as vggtslam_option:
+                        exe_mode_vggtslam = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vggt_tab"]["vggt-slam"]["option"]["exe_mode"])
+                    recon_vggtslam_btn = gr.Button(value=lang["vggt_tab"]["vggt-slam"]["recon_btn"])
+                    vggtslam_viewer = gr.Markdown(lang["vggt_tab"]["vggt-slam"]["viewer"])
+                    outdir_recon_vggtslam = gr.Textbox(label=lang["vggt_tab"]["vggt-slam"]["outdir_recon"])
+                    runtime_recon_vggtslam = gr.Textbox(label=lang["vggt_tab"]["vggt-slam"]["runtime_recon"])
+                    result_recon_vggtslam = gr.Textbox(label=lang["vggt_tab"]["vggt-slam"]["result_recon"])
+                    log_recon_vggtslam = gr.Textbox(label=lang["vggt_tab"]["vggt-slam"]["log_recon"])
+                    outmodel_vggtslam = gr.Model3D(label=lang["vggt_tab"]["vggt-slam"]["outmodel"])
+
+            # StreamVGGT
+            with gr.Tab(label=lang["vggt_tab"]["streamvggt"]["title"]) as stmvggt_tab:
+                stmvggt_sub1 = gr.Markdown(lang["vggt_tab"]["streamvggt"]["subtitle1"])
+                stmvggt_radio = gr.Radio(choices=[lang["vggt_tab"]["streamvggt"]["radio_indata"], lang["vggt_tab"]["streamvggt"]["radio_exdata"]], label = lang["vggt_tab"]["streamvggt"]["radio"])
+                with gr.Column(visible=False) as ex_stmvggt_col:
+                    stmvggt_sub1_1 = gr.Markdown(lang["vggt_tab"]["streamvggt"]["subtitle1_1"])
+                    with gr.Row(equal_height=True):
+                        stmvggt_info1 = gr.Markdown(lang["vggt_tab"]["streamvggt"]["info1"],)
+                        gr.Image(value=ex_dataset_image)
+                    ex_dataset_stmvggt = gr.File(label=lang["vggt_tab"]["streamvggt"]["ex_dataset"], file_types=[".zip"], type="filepath")
+                    log_unzip_stmvggt = gr.Textbox(label=lang["vggt_tab"]["streamvggt"]["log_unzip"])
+                with gr.Column(visible=False) as infer_stmvggt_col:
+                    stmvggt_sub2 = gr.Markdown(lang["vggt_tab"]["streamvggt"]["subtitle2"])
+                    with gr.Accordion(label=lang["vggt_tab"]["streamvggt"]["option"]["title"], open=False) as stmvggt_option:
+                        exe_mode_stmvggt = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vggt_tab"]["streamvggt"]["option"]["exe_mode"])
+                    recon_stmvggt_btn = gr.Button(value=lang["vggt_tab"]["streamvggt"]["recon_btn"])
+                    outdir_recon_stmvggt = gr.Textbox(label=lang["vggt_tab"]["streamvggt"]["outdir_recon"])
+                    runtime_recon_stmvggt = gr.Textbox(label=lang["vggt_tab"]["streamvggt"]["runtime_recon"])
+                    result_recon_stmvggt = gr.Textbox(label=lang["vggt_tab"]["streamvggt"]["result_recon"])
+                    log_recon_stmvggt = gr.Textbox(label=lang["vggt_tab"]["streamvggt"]["log_recon"])
+                    outmodel_stmvggt = gr.Model3D(label=lang["vggt_tab"]["streamvggt"]["outmodel"])
+
+            # FastVGGT
+            with gr.Tab(label=lang["vggt_tab"]["fastvggt"]["title"]) as fastvggt_tab:
+                fastvggt_sub1 = gr.Markdown(lang["vggt_tab"]["fastvggt"]["subtitle1"])
+                fastvggt_radio = gr.Radio(choices=[lang["vggt_tab"]["fastvggt"]["radio_indata"], lang["vggt_tab"]["fastvggt"]["radio_exdata"]], label = lang["vggt_tab"]["fastvggt"]["radio"])
+                with gr.Column(visible=False) as ex_fastvggt_col:
+                    fastvggt_sub1_1 = gr.Markdown(lang["vggt_tab"]["fastvggt"]["subtitle1_1"])
+                    with gr.Row(equal_height=True):
+                        fastvggt_info1 = gr.Markdown(lang["vggt_tab"]["fastvggt"]["info1"],)
+                        gr.Image(value=ex_dataset_image)
+                    ex_dataset_fastvggt = gr.File(label=lang["vggt_tab"]["fastvggt"]["ex_dataset"], file_types=[".zip"], type="filepath")
+                    log_unzip_fastvggt = gr.Textbox(label=lang["vggt_tab"]["fastvggt"]["log_unzip"])
+                with gr.Column(visible=False) as infer_fastvggt_col:
+                    fastvggt_sub2 = gr.Markdown(lang["vggt_tab"]["fastvggt"]["subtitle2"])
+                    with gr.Accordion(label=lang["vggt_tab"]["fastvggt"]["option"]["title"], open=False) as fastvggt_option:
+                        exe_mode_fastvggt = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vggt_tab"]["fastvggt"]["option"]["exe_mode"])
+                    recon_fastvggt_btn = gr.Button(value=lang["vggt_tab"]["fastvggt"]["recon_btn"])
+                    outdir_recon_fastvggt = gr.Textbox(label=lang["vggt_tab"]["fastvggt"]["outdir_recon"])
+                    runtime_recon_fastvggt = gr.Textbox(label=lang["vggt_tab"]["fastvggt"]["runtime_recon"])
+                    result_recon_fastvggt = gr.Textbox(label=lang["vggt_tab"]["fastvggt"]["result_recon"])
+                    log_recon_fastvggt = gr.Textbox(label=lang["vggt_tab"]["fastvggt"]["log_recon"])
+                    outmodel_fastvggt = gr.Model3D(label=lang["vggt_tab"]["fastvggt"]["outmodel"])
+
+            # Pi3
+            with gr.Tab(label=lang["vggt_tab"]["pi3"]["title"]) as pi3_tab:
+                pi3_sub1 = gr.Markdown(lang["vggt_tab"]["pi3"]["subtitle1"])
+                pi3_radio = gr.Radio(choices=[lang["vggt_tab"]["pi3"]["radio_indata"], lang["vggt_tab"]["pi3"]["radio_exdata"]], label = lang["vggt_tab"]["pi3"]["radio"])
+                with gr.Column(visible=False) as ex_pi3_col:
+                    pi3_sub1_1 = gr.Markdown(lang["vggt_tab"]["pi3"]["subtitle1_1"])
+                    with gr.Row(equal_height=True):
+                        pi3_info1 = gr.Markdown(lang["vggt_tab"]["pi3"]["info1"],)
+                        gr.Image(value=ex_dataset_image)
+                    ex_dataset_pi3 = gr.File(label=lang["vggt_tab"]["pi3"]["ex_dataset"], file_types=[".zip"], type="filepath")
+                    log_unzip_pi3 = gr.Textbox(label=lang["vggt_tab"]["pi3"]["log_unzip"])
+                with gr.Column(visible=False) as infer_pi3_col:
+                    pi3_sub2 = gr.Markdown(lang["vggt_tab"]["pi3"]["subtitle2"])
+                    with gr.Accordion(label=lang["vggt_tab"]["pi3"]["option"]["title"], open=False) as pi3_option:
+                        exe_mode_pi3 = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vggt_tab"]["pi3"]["option"]["exe_mode"])
+                    recon_pi3_btn = gr.Button(value=lang["vggt_tab"]["pi3"]["recon_btn"])
+                    outdir_recon_pi3 = gr.Textbox(label=lang["vggt_tab"]["pi3"]["outdir_recon"])
+                    runtime_recon_pi3 = gr.Textbox(label=lang["vggt_tab"]["pi3"]["runtime_recon"])
+                    result_recon_pi3 = gr.Textbox(label=lang["vggt_tab"]["pi3"]["result_recon"])
+                    log_recon_pi3 = gr.Textbox(label=lang["vggt_tab"]["pi3"]["log_recon"])
+                    outmodel_pi3 = gr.Model3D(label=lang["vggt_tab"]["pi3"]["outmodel"])
 
         # mdsTab
         with gr.Tab(label=lang["mds_tab"]["title"]) as mds_tab:
@@ -1303,153 +1452,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     result_recon_unik3d = gr.Textbox(label=lang["mds_tab"]["unik3d"]["result_recon"])
                     log_recon_unik3d = gr.Textbox(label=lang["mds_tab"]["unik3d"]["log_recon"])
                     outmodel_unik3d = gr.Model3D(label=lang["mds_tab"]["unik3d"]["outmodel"])
-        
-        # vggTab
-        with gr.Tab(label=lang["vgg_tab"]["title"]) as vgg_tab:
-            current_dataset_vgg = gr.Textbox(label=lang["vgg_tab"]["current_dataset"])
 
-            # VGGT
-            with gr.Tab(label=lang["vgg_tab"]["vggt"]["title"]) as vggt_tab:
-                vggt_sub1 = gr.Markdown(lang["vgg_tab"]["vggt"]["subtitle1"])
-                vggt_radio = gr.Radio(choices=[lang["vgg_tab"]["vggt"]["radio_indata"], lang["vgg_tab"]["vggt"]["radio_exdata"]], label = lang["vgg_tab"]["vggt"]["radio"])
-                with gr.Column(visible=False) as ex_vggt_col:
-                    vggt_sub1_1 = gr.Markdown(lang["vgg_tab"]["vggt"]["subtitle1_1"])
-                    with gr.Row(equal_height=True):
-                        vggt_info1 = gr.Markdown(lang["vgg_tab"]["vggt"]["info1"],)
-                        gr.Image(value=ex_dataset_image)
-                    ex_dataset_vggt = gr.File(label=lang["vgg_tab"]["vggt"]["ex_dataset"], file_types=[".zip"], type="filepath")
-                    log_unzip_vggt = gr.Textbox(label=lang["vgg_tab"]["vggt"]["log_unzip"])
-                with gr.Column(visible=False) as infer_vggt_col:
-                    vggt_sub2 = gr.Markdown(lang["vgg_tab"]["vggt"]["subtitle2"])
-                    with gr.Accordion(label=lang["vgg_tab"]["vggt"]["option"]["title"], open=False) as vggt_option:
-                        exe_mode_vggt = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vgg_tab"]["vggt"]["option"]["exe_mode"])
-                        mode_vggt = gr.Radio(choices=["crop","pad"], value="crop", label=lang["vgg_tab"]["vggt"]["option"]["mode_vggt"])
-                    recon_vggt_btn = gr.Button(value=lang["vgg_tab"]["vggt"]["recon_btn"])
-                    outdir_recon_vggt = gr.Textbox(label=lang["vgg_tab"]["vggt"]["outdir_recon"])
-                    runtime_recon_vggt = gr.Textbox(label=lang["vgg_tab"]["vggt"]["runtime_recon"])
-                    result_recon_vggt = gr.Textbox(label=lang["vgg_tab"]["vggt"]["result_recon"])
-                    log_recon_vggt = gr.Textbox(label=lang["vgg_tab"]["vggt"]["log_recon"])
-                    outmodel_vggt = gr.Model3D(label=lang["vgg_tab"]["vggt"]["outmodel"])
-            
-            # VGGSfM
-            with gr.Tab(label=lang["vgg_tab"]["vggsfm"]["title"]) as vggsfm_tab:
-                vggsfm_sub1 = gr.Markdown(lang["vgg_tab"]["vggsfm"]["subtitle1"])
-                vggsfm_radio = gr.Radio(choices=[lang["vgg_tab"]["vggsfm"]["radio_indata"], lang["vgg_tab"]["vggsfm"]["radio_exdata"]], label = lang["vgg_tab"]["vggsfm"]["radio"])
-                with gr.Column(visible=False) as ex_vggsfm_col:
-                    vggsfm_sub1_1 = gr.Markdown(lang["vgg_tab"]["vggsfm"]["subtitle1_1"])
-                    with gr.Row(equal_height=True):
-                        vggsfm_info1 = gr.Markdown(lang["vgg_tab"]["vggsfm"]["info1"],)
-                        gr.Image(value=ex_dataset_image)
-                    ex_dataset_vggsfm = gr.File(label=lang["vgg_tab"]["vggsfm"]["ex_dataset"], file_types=[".zip"], type="filepath")
-                    log_unzip_vggsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["log_unzip"])
-                with gr.Column(visible=False) as infer_vggsfm_col:
-                    vggsfm_sub2 = gr.Markdown(lang["vgg_tab"]["vggsfm"]["subtitle2"])
-                    with gr.Accordion(label=lang["vgg_tab"]["vggsfm"]["option"]["title"], open=False) as vggsfm_option:
-                        exe_mode_vggsfm = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vgg_tab"]["vggsfm"]["option"]["exe_mode"])
-                    recon_vggsfm_btn = gr.Button(value=lang["vgg_tab"]["vggsfm"]["recon_btn"])
-                    outdir_recon_vggsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["outdir_recon"])
-                    runtime_recon_vggsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["runtime_recon"])
-                    result_recon_vggsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["result_recon"])
-                    log_recon_vggsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["log_recon"])
-                    with gr.Column(visible=False) as export_vggsfm_col:
-                        vggsfm_sub3 = gr.Markdown(lang["vgg_tab"]["vggsfm"]["subtitle3"])
-                        export_vggsfm_btn = gr.Button(value=lang["vgg_tab"]["vggsfm"]["export_btn"])
-                        outdir_export_vggsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["outdir_export"])
-                        runtime_export_vggsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["runtime_export"])
-                        result_export_vggsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["result_export"])
-                        log_export_vggsfm = gr.Textbox(label=lang["vgg_tab"]["vggsfm"]["log_export"])
-                        outmodel_vggsfm = gr.Model3D(label=lang["vgg_tab"]["vggsfm"]["outmodel"])
-
-            # VGGT-SLAM
-            with gr.Tab(label=lang["vgg_tab"]["vggt-slam"]["title"]) as vggtslam_tab:
-                vggtslam_sub1 = gr.Markdown(lang["vgg_tab"]["vggt-slam"]["subtitle1"])
-                vggtslam_radio = gr.Radio(choices=[lang["vgg_tab"]["vggt-slam"]["radio_indata"], lang["vgg_tab"]["vggt-slam"]["radio_exdata"]], label = lang["vgg_tab"]["vggt-slam"]["radio"])
-                with gr.Column(visible=False) as ex_vggtslam_col:
-                    vggtslam_sub1_1 = gr.Markdown(lang["vgg_tab"]["vggt-slam"]["subtitle1_1"])
-                    with gr.Row(equal_height=True):
-                        vggtslam_info1 = gr.Markdown(lang["vgg_tab"]["vggt-slam"]["info1"],)
-                        gr.Image(value=ex_dataset_image)
-                    ex_dataset_vggtslam = gr.File(label=lang["vgg_tab"]["vggt-slam"]["ex_dataset"], file_types=[".zip"], type="filepath")
-                    log_unzip_vggtslam = gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["log_unzip"])
-                with gr.Column(visible=False) as infer_vggtslam_col:
-                    vggtslam_sub2 = gr.Markdown(lang["vgg_tab"]["vggt-slam"]["subtitle2"])
-                    with gr.Accordion(label=lang["vgg_tab"]["vggt-slam"]["option"]["title"], open=False) as vggtslam_option:
-                        exe_mode_vggtslam = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vgg_tab"]["vggt-slam"]["option"]["exe_mode"])
-                    recon_vggtslam_btn = gr.Button(value=lang["vgg_tab"]["vggt-slam"]["recon_btn"])
-                    vggtslam_viewer = gr.Markdown(lang["vgg_tab"]["vggt-slam"]["viewer"])
-                    outdir_recon_vggtslam = gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["outdir_recon"])
-                    runtime_recon_vggtslam = gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["runtime_recon"])
-                    result_recon_vggtslam = gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["result_recon"])
-                    log_recon_vggtslam = gr.Textbox(label=lang["vgg_tab"]["vggt-slam"]["log_recon"])
-                    outmodel_vggtslam = gr.Model3D(label=lang["vgg_tab"]["vggt-slam"]["outmodel"])
-
-            # StreamVGGT
-            with gr.Tab(label=lang["vgg_tab"]["streamvggt"]["title"]) as stmvggt_tab:
-                stmvggt_sub1 = gr.Markdown(lang["vgg_tab"]["streamvggt"]["subtitle1"])
-                stmvggt_radio = gr.Radio(choices=[lang["vgg_tab"]["streamvggt"]["radio_indata"], lang["vgg_tab"]["streamvggt"]["radio_exdata"]], label = lang["vgg_tab"]["streamvggt"]["radio"])
-                with gr.Column(visible=False) as ex_stmvggt_col:
-                    stmvggt_sub1_1 = gr.Markdown(lang["vgg_tab"]["streamvggt"]["subtitle1_1"])
-                    with gr.Row(equal_height=True):
-                        stmvggt_info1 = gr.Markdown(lang["vgg_tab"]["streamvggt"]["info1"],)
-                        gr.Image(value=ex_dataset_image)
-                    ex_dataset_stmvggt = gr.File(label=lang["vgg_tab"]["streamvggt"]["ex_dataset"], file_types=[".zip"], type="filepath")
-                    log_unzip_stmvggt = gr.Textbox(label=lang["vgg_tab"]["streamvggt"]["log_unzip"])
-                with gr.Column(visible=False) as infer_stmvggt_col:
-                    stmvggt_sub2 = gr.Markdown(lang["vgg_tab"]["streamvggt"]["subtitle2"])
-                    with gr.Accordion(label=lang["vgg_tab"]["streamvggt"]["option"]["title"], open=False) as stmvggt_option:
-                        exe_mode_stmvggt = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vgg_tab"]["streamvggt"]["option"]["exe_mode"])
-                    recon_stmvggt_btn = gr.Button(value=lang["vgg_tab"]["streamvggt"]["recon_btn"])
-                    outdir_recon_stmvggt = gr.Textbox(label=lang["vgg_tab"]["streamvggt"]["outdir_recon"])
-                    runtime_recon_stmvggt = gr.Textbox(label=lang["vgg_tab"]["streamvggt"]["runtime_recon"])
-                    result_recon_stmvggt = gr.Textbox(label=lang["vgg_tab"]["streamvggt"]["result_recon"])
-                    log_recon_stmvggt = gr.Textbox(label=lang["vgg_tab"]["streamvggt"]["log_recon"])
-                    outmodel_stmvggt = gr.Model3D(label=lang["vgg_tab"]["streamvggt"]["outmodel"])
-
-            # FastVGGT
-            with gr.Tab(label=lang["vgg_tab"]["fastvggt"]["title"]) as fastvggt_tab:
-                fastvggt_sub1 = gr.Markdown(lang["vgg_tab"]["fastvggt"]["subtitle1"])
-                fastvggt_radio = gr.Radio(choices=[lang["vgg_tab"]["fastvggt"]["radio_indata"], lang["vgg_tab"]["fastvggt"]["radio_exdata"]], label = lang["vgg_tab"]["fastvggt"]["radio"])
-                with gr.Column(visible=False) as ex_fastvggt_col:
-                    fastvggt_sub1_1 = gr.Markdown(lang["vgg_tab"]["fastvggt"]["subtitle1_1"])
-                    with gr.Row(equal_height=True):
-                        fastvggt_info1 = gr.Markdown(lang["vgg_tab"]["fastvggt"]["info1"],)
-                        gr.Image(value=ex_dataset_image)
-                    ex_dataset_fastvggt = gr.File(label=lang["vgg_tab"]["fastvggt"]["ex_dataset"], file_types=[".zip"], type="filepath")
-                    log_unzip_fastvggt = gr.Textbox(label=lang["vgg_tab"]["fastvggt"]["log_unzip"])
-                with gr.Column(visible=False) as infer_fastvggt_col:
-                    fastvggt_sub2 = gr.Markdown(lang["vgg_tab"]["fastvggt"]["subtitle2"])
-                    with gr.Accordion(label=lang["vgg_tab"]["fastvggt"]["option"]["title"], open=False) as fastvggt_option:
-                        exe_mode_fastvggt = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vgg_tab"]["fastvggt"]["option"]["exe_mode"])
-                    recon_fastvggt_btn = gr.Button(value=lang["vgg_tab"]["fastvggt"]["recon_btn"])
-                    outdir_recon_fastvggt = gr.Textbox(label=lang["vgg_tab"]["fastvggt"]["outdir_recon"])
-                    runtime_recon_fastvggt = gr.Textbox(label=lang["vgg_tab"]["fastvggt"]["runtime_recon"])
-                    result_recon_fastvggt = gr.Textbox(label=lang["vgg_tab"]["fastvggt"]["result_recon"])
-                    log_recon_fastvggt = gr.Textbox(label=lang["vgg_tab"]["fastvggt"]["log_recon"])
-                    outmodel_fastvggt = gr.Model3D(label=lang["vgg_tab"]["fastvggt"]["outmodel"])
-
-            # Pi3
-            with gr.Tab(label=lang["vgg_tab"]["pi3"]["title"]) as pi3_tab:
-                pi3_sub1 = gr.Markdown(lang["vgg_tab"]["pi3"]["subtitle1"])
-                pi3_radio = gr.Radio(choices=[lang["vgg_tab"]["pi3"]["radio_indata"], lang["vgg_tab"]["pi3"]["radio_exdata"]], label = lang["vgg_tab"]["pi3"]["radio"])
-                with gr.Column(visible=False) as ex_pi3_col:
-                    pi3_sub1_1 = gr.Markdown(lang["vgg_tab"]["pi3"]["subtitle1_1"])
-                    with gr.Row(equal_height=True):
-                        pi3_info1 = gr.Markdown(lang["vgg_tab"]["pi3"]["info1"],)
-                        gr.Image(value=ex_dataset_image)
-                    ex_dataset_pi3 = gr.File(label=lang["vgg_tab"]["pi3"]["ex_dataset"], file_types=[".zip"], type="filepath")
-                    log_unzip_pi3 = gr.Textbox(label=lang["vgg_tab"]["pi3"]["log_unzip"])
-                with gr.Column(visible=False) as infer_pi3_col:
-                    pi3_sub2 = gr.Markdown(lang["vgg_tab"]["pi3"]["subtitle2"])
-                    with gr.Accordion(label=lang["vgg_tab"]["pi3"]["option"]["title"], open=False) as pi3_option:
-                        exe_mode_pi3 = gr.Radio(choices=["local", "slurm"], value="local", label= lang["vgg_tab"]["pi3"]["option"]["exe_mode"])
-                    recon_pi3_btn = gr.Button(value=lang["vgg_tab"]["pi3"]["recon_btn"])
-                    outdir_recon_pi3 = gr.Textbox(label=lang["vgg_tab"]["pi3"]["outdir_recon"])
-                    runtime_recon_pi3 = gr.Textbox(label=lang["vgg_tab"]["pi3"]["runtime_recon"])
-                    result_recon_pi3 = gr.Textbox(label=lang["vgg_tab"]["pi3"]["result_recon"])
-                    log_recon_pi3 = gr.Textbox(label=lang["vgg_tab"]["pi3"]["log_recon"])
-                    outmodel_pi3 = gr.Model3D(label=lang["vgg_tab"]["pi3"]["outmodel"])
-
-        # vggTab
+        # 評価指標Tab
         with gr.Tab(label=lang["metrics_tab"]["title"]) as metrics_tab:
             method_metrics = gr.DataFrame(label=lang["metrics_tab"]["table"], headers=lang["metrics_tab"]["headers"])
             download_csv = gr.DownloadButton(label=lang["metrics_tab"]["download_btn"])
@@ -1863,39 +1867,9 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      result_recon_wint3r,
                      log_recon_wint3r,
                      outmodel_wint3r,
-                     # mdsTab
-                     mds_tab,
-                     current_dataset_mds,
-                     moge_tab, # MoGe
-                     moge_sub1,
-                     moge_info1,
-                     img_moge,
-                     moge_sub2,
-                     moge_option,
-                     exe_mode_moge,
-                     img_type_moge,
-                     recon_moge_btn,
-                     outdir_recon_moge,
-                     runtime_recon_moge,
-                     result_recon_moge,
-                     log_recon_moge,
-                     outmodel_moge,
-                     unik3d_tab, # UniK3D
-                     unik3d_sub1,
-                     unik3d_info1,
-                     img_unik3d,
-                     unik3d_sub2,
-                     unik3d_option,
-                     exe_mode_unik3d,
-                     recon_unik3d_btn,
-                     outdir_recon_unik3d,
-                     runtime_recon_unik3d,
-                     result_recon_unik3d,
-                     log_recon_unik3d,
-                     outmodel_unik3d,
                      # vggTab
-                     vgg_tab,
-                     current_dataset_vgg,
+                     vggt_tab,
+                     current_dataset_vggt,
                      vggt_tab, # VGGT
                      vggt_sub1,
                      vggt_radio,
@@ -1994,6 +1968,36 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      result_recon_pi3,
                      log_recon_pi3,
                      outmodel_pi3,
+                     # mdsTab
+                     mds_tab,
+                     current_dataset_mds,
+                     moge_tab, # MoGe
+                     moge_sub1,
+                     moge_info1,
+                     img_moge,
+                     moge_sub2,
+                     moge_option,
+                     exe_mode_moge,
+                     img_type_moge,
+                     recon_moge_btn,
+                     outdir_recon_moge,
+                     runtime_recon_moge,
+                     result_recon_moge,
+                     log_recon_moge,
+                     outmodel_moge,
+                     unik3d_tab, # UniK3D
+                     unik3d_sub1,
+                     unik3d_info1,
+                     img_unik3d,
+                     unik3d_sub2,
+                     unik3d_option,
+                     exe_mode_unik3d,
+                     recon_unik3d_btn,
+                     outdir_recon_unik3d,
+                     runtime_recon_unik3d,
+                     result_recon_unik3d,
+                     log_recon_unik3d,
+                     outmodel_unik3d,
                      # Metrics Tab
                      metrics_tab,
                      method_metrics,
@@ -2057,9 +2061,6 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         wint3r_radio.change(fn=display_dataset_ui,
                     inputs=wint3r_radio,
                     outputs=[infer_wint3r_col, ex_wint3r_col])
-        # mds Tab
-        img_moge.change(fn=col_change, outputs=inference_moge_col)
-        img_unik3d.change(fn=col_change, outputs=inference_unik3d_col)
         # vggt Tab
         vggt_radio.change(fn=display_dataset_ui,
                           inputs=vggt_radio,
@@ -2079,6 +2080,9 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         pi3_radio.change(fn=display_dataset_ui,
                          inputs=pi3_radio,
                          outputs=[infer_pi3_col, ex_pi3_col])
+        # mds Tab
+        img_moge.change(fn=col_change, outputs=inference_moge_col)
+        img_unik3d.change(fn=col_change, outputs=inference_unik3d_col)
 
         # --- 内部データセット作成 ---
         run_copy_btn.click(fn=local_backend.copy_images,
@@ -2087,14 +2091,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                              fn=local_backend.zip_dataset,
                              inputs=dataset_state,
                              outputs=zipfile_images).success(
-                                 fn=get_state_values, 
+                                 fn=get_state_value6, 
                                  inputs=dataset_state, 
                                  outputs=[current_dataset_colmap,
                                           current_dataset_nerf, 
                                           current_dataset_gs,
                                           current_dataset_3sters,
                                           current_dataset_mds,
-                                          current_dataset_vgg])
+                                          current_dataset_vggt])
         # ffmpeg実行ボタン
         run_ffmpeg_btn.click(fn=local_backend.extract_frames_with_filter, 
                          inputs=[video, datasetsdir_state, fps, rsi, ssim], 
@@ -2102,14 +2106,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                              fn=local_backend.zip_dataset,
                              inputs=dataset_state,
                              outputs=zipfile_images).success(
-                                 fn=get_state_values, 
+                                 fn=get_state_value6, 
                                  inputs=dataset_state, 
                                  outputs=[current_dataset_colmap,
                                           current_dataset_nerf, 
                                           current_dataset_gs,
                                           current_dataset_3sters,
                                           current_dataset_mds,
-                                          current_dataset_vgg])
+                                          current_dataset_vggt])
         # colmap実行ボタン
         run_colmap_btn.click(fn=local_backend.run_colmap,
                         inputs=[dataset_state, rebuild],
@@ -2122,138 +2126,138 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         ex_dataset_vnerf.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_vnerf, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_vnerf, train_vnerf_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_nerf)
+                                   outputs=[current_dataset_nerf, current_dataset_gs])
         ex_dataset_nerfacto.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_nerfacto, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_nerfacto, train_nerfacto_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_nerf)
+                                   outputs=[current_dataset_nerf, current_dataset_gs])
         ex_dataset_mipnerf.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_mipnerf, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_mipnerf, train_mipnerf_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_nerf)
+                                   outputs=[current_dataset_nerf, current_dataset_gs])
         ex_dataset_stnerf.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_stnerf, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_stnerf, train_stnerf_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_nerf)
+                                   outputs=[current_dataset_nerf, current_dataset_gs])
         # GS Tab
         ex_dataset_vgs.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_vgs, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_vgs, train_vgs_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_gs)
+                                   outputs=[current_dataset_nerf, current_dataset_gs])
         ex_dataset_mips.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_mips, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_mips, train_mips_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_gs)
+                                   outputs=[current_dataset_nerf, current_dataset_gs])
         ex_dataset_sfacto.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_sfacto, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_sfacto, train_sfacto_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_gs)
+                                   outputs=[current_dataset_nerf, current_dataset_gs])
         ex_dataset_4dgs.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_4dgs, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_4dgs, train_4dgs_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_gs)
+                                   outputs=[current_dataset_nerf, current_dataset_gs])
         # 3sters Tab
         ex_dataset_dust3r.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_dust3r, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_dust3r, infer_dust3r_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_3sters)
+                                   outputs=[current_dataset_3sters, current_dataset_vggt])
         ex_dataset_mast3r.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_mast3r, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_mast3r, infer_mast3r_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_3sters)
+                                   outputs=[current_dataset_3sters, current_dataset_vggt])
         ex_dataset_monst3r.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_monst3r, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_monst3r, infer_monst3r_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_3sters)
+                                   outputs=[current_dataset_3sters, current_dataset_vggt])
         ex_dataset_easi3r.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_easi3r, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_easi3r, infer_easi3r_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_3sters)
+                                   outputs=[current_dataset_3sters, current_dataset_vggt])
         ex_dataset_must3r.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_must3r, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_must3r, infer_must3r_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_3sters)
+                                   outputs=[current_dataset_3sters, current_dataset_vggt])
         ex_dataset_fast3r.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_fast3r, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_fast3r, infer_fast3r_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_3sters)
+                                   outputs=[current_dataset_3sters, current_dataset_vggt])
         ex_dataset_cut3r.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_cut3r, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_cut3r, infer_cut3r_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_3sters)
+                                   outputs=[current_dataset_3sters, current_dataset_vggt])
         ex_dataset_wint3r.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_wint3r, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_wint3r, infer_wint3r_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_3sters)
-        # vgg Tab
+                                   outputs=[current_dataset_3sters, current_dataset_vggt])
+        # vggt Tab
         ex_dataset_vggt.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_vggt, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_vggt, infer_vggt_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_vgg)
+                                   outputs=[current_dataset_3sters, current_dataset_vggt])
         ex_dataset_vggsfm.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_vggsfm, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_vggsfm, infer_vggsfm_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_vgg)
+                                   outputs=[current_dataset_3sters, current_dataset_vggt])
         ex_dataset_vggtslam.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_vggtslam, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_vggtslam, infer_vggtslam_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_vgg)
+                                   outputs=[current_dataset_3sters, current_dataset_vggt])
         ex_dataset_stmvggt.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_stmvggt, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_stmvggt, infer_stmvggt_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_vgg)
+                                   outputs=[current_dataset_3sters, current_dataset_vggt])
         ex_dataset_fastvggt.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_fastvggt, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_fastvggt, infer_fastvggt_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_vgg)
+                                   outputs=[current_dataset_3sters, current_dataset_vggt])
         ex_dataset_pi3.upload(fn=local_backend.unzip_dataset,
                                inputs=[ex_dataset_pi3, datasetsdir_state],
                                outputs=[dataset_state, log_unzip_pi3, infer_pi3_col]).success(
-                                   fn=get_state_value,
+                                   fn=get_state_value2,
                                    inputs=dataset_state,
-                                   outputs=current_dataset_vgg)
+                                   outputs=[current_dataset_3sters, current_dataset_vggt])
         
         # --- 三次元再構築 ---
         recon_vnerf_btn.click(fn=methods.recon_vnerf,
@@ -2314,12 +2318,6 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         recon_splatt3r_btn.click(fn=methods.recon_splatt3r,
                         inputs=[exe_mode_splatt3r, img_splatt3r, outputsdir_state], 
                         outputs=[outdir_recon_splatt3r, runtime_recon_splatt3r, result_recon_splatt3r, log_recon_splatt3r, outmodel_splatt3r])
-        recon_moge_btn.click(fn=methods.recon_moge,
-                        inputs=[exe_mode_moge, img_moge, outputsdir_state, img_type_moge], 
-                        outputs=[outdir_recon_moge, runtime_recon_moge, result_recon_moge, log_recon_moge, outmodel_moge])
-        recon_unik3d_btn.click(fn=methods.recon_unik3d,
-                        inputs=[exe_mode_unik3d, img_unik3d, outputsdir_state], 
-                        outputs=[outdir_recon_unik3d, runtime_recon_unik3d, result_recon_unik3d, log_recon_unik3d, outmodel_unik3d])
         recon_vggt_btn.click(fn=methods.recon_vggt,
                         inputs=[exe_mode_vggt, dataset_state, outputsdir_state], 
                         outputs=[outdir_recon_vggt, runtime_recon_vggt, result_recon_vggt, log_recon_vggt, outmodel_vggt])
@@ -2338,6 +2336,12 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         recon_pi3_btn.click(fn=methods.recon_pi3,
                             inputs=[exe_mode_pi3, dataset_state, outputsdir_state],
                             outputs=[outdir_recon_pi3, runtime_recon_pi3, result_recon_pi3, log_recon_pi3, outmodel_pi3])
+        recon_moge_btn.click(fn=methods.recon_moge,
+                        inputs=[exe_mode_moge, img_moge, outputsdir_state, img_type_moge], 
+                        outputs=[outdir_recon_moge, runtime_recon_moge, result_recon_moge, log_recon_moge, outmodel_moge])
+        recon_unik3d_btn.click(fn=methods.recon_unik3d,
+                        inputs=[exe_mode_unik3d, img_unik3d, outputsdir_state], 
+                        outputs=[outdir_recon_unik3d, runtime_recon_unik3d, result_recon_unik3d, log_recon_unik3d, outmodel_unik3d])
         
         # --- 点群出力（Nerfstudio）---
         export_vnerf_btn.click(fn=methods.export_vnerf,
