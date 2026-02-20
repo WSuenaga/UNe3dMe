@@ -68,9 +68,7 @@ def copy_images(image_paths, parent_path, name):
     
     imagelist = get_imagelist(output_path)
 
-    dataset_dir = output_path = os.path.join(parent_path, name)
-
-    return dataset_dir, gr.Column(visible=True), dataset_dir, imagelist
+    return output_path, output_path, imagelist, gr.Column(visible=True)
 
 def remove_similar_images(input_dir: str, ssim_threshold: float = 0.8):
     """
@@ -158,50 +156,67 @@ def extract_frames_with_filter(video, parent_path, fps, remove_similar, ssim_thr
         for f in os.listdir(output_path) if f.endswith(".png")
     ])
 
-    return dataset_dir, gr.Column(visible=True), dataset_dir, comp_rate, sel_images_num, rej_images_num, imagelist
+    return output_path, output_path, comp_rate, sel_images_num, rej_images_num, imagelist, gr.Column(visible=True)
 
 # データセットロードメソッド
 def unzip_dataset(zip_file, datasets_parent):
     if zip_file is None:
-        raise ValueError("ZIP が指定されていません")
-
-    if hasattr(zip_file, "read"):
-        data = zip_file.read()
-    elif isinstance(zip_file, (bytes, bytearray, memoryview)):
-        data = bytes(zip_file)
-    elif isinstance(zip_file, str):
-        with open(zip_file, "rb") as f:
-            data = f.read()
-    else:
-        raise ValueError(f"想定外の入力型です: {type(zip_file)}")
-
-    # tempfile に実体として保存
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".zip") as f:
-        f.write(data)
-        zip_path = f.name
+        return None, None, "❌ ZIP が指定されていません"
 
     try:
-        if not zipfile.is_zipfile(zip_path):
-            with open(zip_path, "rb") as f:
-                print("file head:", f.read(8))
-            raise ValueError("指定されたファイルは ZIP として認識できません")
+        # ZIPデータの読み込み
+        if hasattr(zip_file, "read"):
+            data = zip_file.read()
+        elif isinstance(zip_file, (bytes, bytearray, memoryview)):
+            data = bytes(zip_file)
+        elif isinstance(zip_file, str):
+            with open(zip_file, "rb") as f:
+                data = f.read()
+        else:
+            return None, None, f"❌ 想定外の入力型です: {type(zip_file)}"
 
-        # データセット名はZIPファイル名
-        basename = os.path.splitext(
-            os.path.basename(getattr(zip_file, "name", "dataset.zip"))
-        )[0]
+        # 一時ファイルに保存
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".zip") as f:
+            f.write(data)
+            zip_path = f.name
 
-        dataset_path = os.path.join(datasets_parent, basename)
+        try:
+            if not zipfile.is_zipfile(zip_path):
+                with open(zip_path, "rb") as f:
+                    print("file head:", f.read(8))
+                return None, None, "❌ 指定されたファイルは ZIP として認識できません"
 
-        with zipfile.ZipFile(zip_path, "r") as zip_ref:
-            zip_ref.extractall(dataset_path)
+            # 展開先パスを決定
+            basename = os.path.splitext(os.path.basename(getattr(zip_file, "name", "dataset.zip")))[0]
+            dataset_path = os.path.join(datasets_parent, basename)
+            os.makedirs(dataset_path, exist_ok=True)
 
-    finally:
-        # unzip 成功・失敗に関わらず ZIP を削除
-        if os.path.exists(zip_path):
-            os.remove(zip_path)
+            # 解凍処理
+            with zipfile.ZipFile(zip_path, "r") as zip_ref:
+                zip_ref.extractall(dataset_path)
 
-    return dataset_path, f"解凍しました: {dataset_path}", gr.Column(visible=True)
+            # ディレクトリ確認
+            image_path = os.path.join(dataset_path, "images")
+            colmap_path = os.path.join(dataset_path, "colmap")
+
+            has_images = os.path.isdir(image_path)
+            has_colmap = os.path.isdir(colmap_path)
+
+            if not has_images and not has_colmap:
+                return None, None, "⚠️ ZIP内に 'images' または 'colmap' ディレクトリが見つかりません"
+
+            return (
+                image_path if has_images else None,
+                colmap_path if has_colmap else None,
+                f"✅ 解凍しました: {dataset_path}"
+            )
+
+        finally:
+            if os.path.exists(zip_path):
+                os.remove(zip_path)
+
+    except Exception as e:
+        return None, None, f"❌ 解凍中にエラーが発生しました: {e}"
 
 def zip_dataset(dataset):
     dataset_path = os.path.abspath(dataset)
@@ -239,104 +254,191 @@ def zip_dataset(dataset):
 
     return zip_path
 
-def run_colmap(dataset, rebuild):
-    if dataset == "":
-        return "データセットがセットされていません", gr.Column(visible=False)
+# --- colmap実行デバイスを判断するメソッド ---
+def detect_colmap_gpu():
+    try:
+        result = subprocess.run(
+            ["colmap", "feature_extractor", "-h"],
+            capture_output=True,
+            text=True
+        )
+        if "use_gpu" in result.stdout:
+            import torch
+            return "1" if torch.cuda.is_available() else "0"
+        return "0"
+    except Exception:
+        return "0"
+
+# --- colmap用画像リサイズメソッド ---
+def make_multiscale_images(
+    src_dir,
+    out_root,
+    scales=(2, 4, 8),
+    exts=(".jpg", ".jpeg", ".png")
+):
+    img_files = [
+        f for f in os.listdir(src_dir)
+        if os.path.splitext(f)[1].lower() in exts
+    ]
+
+    for s in scales:
+        out_dir = os.path.join(out_root, f"images_{s}")
+        os.makedirs(out_dir, exist_ok=True)
+
+        for f in img_files:
+            src = os.path.join(src_dir, f)
+            dst = os.path.join(out_dir, f)
+
+            with Image.open(src) as im:
+                w, h = im.size
+                im.resize(
+                    (w // s, h // s),
+                    Image.LANCZOS
+                ).save(dst)
+    
+# --- colmap 実行メソッド ---
+def run_colmap(image_dataset, rebuild):
+    if not image_dataset:
+        return "", "画像データセットがセットされていません", gr.Column(visible=False)
 
     global SHELL_FLAG
     all_logs = []
 
-    images_dir = os.path.join(dataset, "images")
-    out_dir = os.path. join(dataset, "colmap")
+    dataset = os.path.dirname(image_dataset)
+    out_dir = os.path.join(dataset, "colmap")
     input_dir = os.path.join(out_dir, "input")
+    distorted_dir = os.path.join(out_dir, "distorted")
 
-    # --- rebuild フラグに応じた colmap ディレクトリ処理 ---
+    # ===== rebuild 処理 =====
     if rebuild and os.path.exists(out_dir):
         shutil.rmtree(out_dir)
-        all_logs.append("colmapディレクトリを削除しました．")
-    
+        all_logs.append("colmap ディレクトリを削除しました．")
+
     if not rebuild and os.path.exists(out_dir):
-        all_logs.append("処理済みです．")
-        return "\n".join(all_logs), gr.Column(visible=True)
-    
-    # colmap/input ディレクトリ作成
+        all_logs.append("既に COLMAP 処理済みです．")
+        return out_dir, "\n".join(all_logs), gr.Column(visible=True)
+
     os.makedirs(input_dir, exist_ok=True)
+    os.makedirs(distorted_dir, exist_ok=True)
+    os.makedirs(os.path.join(distorted_dir, "sparse"), exist_ok=True)
 
-    for image_file in os.listdir(images_dir):
-        full_image_path = os.path.join(images_dir, image_file)
-        # ファイルかつ画像形式か確認
-        if os.path.isfile(full_image_path) and os.path.splitext(image_file)[1].lower() in [".jpg", ".jpeg", ".png", ".bmp", ".tiff"]:
-            shutil.copy(full_image_path, input_dir)
+    # ===== images → colmap/input =====
+    for f in os.listdir(image_dataset):
+        src = os.path.join(image_dataset, f)
+        if (
+            os.path.isfile(src)
+            and os.path.splitext(f)[1].lower()
+            in [".jpg", ".jpeg", ".png", ".bmp", ".tiff"]
+        ):
+            shutil.copy2(src, input_dir)
 
-    # --- COLMAP実行 ---
-    script_path = "convert.py"
-    cmd_colmap = [
-        "conda", "run", "-n", "gaussian_splatting", "python", script_path,
-        "--source_path", out_dir,
-        "--resize"
-    ]
+    use_gpu = detect_colmap_gpu()
 
-    print("Running:", " ".join(cmd_colmap))
-    cwd_colmap = os.path.join("models", "gaussian-splatting")
-    result = subprocess.run(
-        cmd_colmap,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        cwd=cwd_colmap,
-        shell=SHELL_FLAG
-    )
+    def run(cmd, cwd=None):
+        all_logs.append(" ".join(cmd))
+        try:
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                cwd=cwd,
+                shell=SHELL_FLAG
+            )
+            if result.stdout:
+                all_logs.append(result.stdout.strip())
+            if result.stderr:
+                all_logs.append("【STDERR】")
+                all_logs.append(result.stderr.strip())
+            if result.returncode != 0:
+                all_logs.append(f"コマンドが異常終了しました（コード: {result.returncode}）")
+                return False
+            return True
+        except Exception as e:
+            all_logs.append(f"コマンド実行中に例外が発生しました: {e}")
+            return False
 
-    stdout_colmap = result.stdout.strip()
-    stderr_colmap = result.stderr.strip()
-    all_logs.append("【COLMAP実行ログ】")
-    all_logs.append(stdout_colmap)
-    if stderr_colmap:
-        all_logs.append("【COLMAPエラー】")
-        all_logs.append(stderr_colmap)
+    try:
+        # ===== COLMAP =====
+        run([
+            "colmap", "feature_extractor",
+            "--database_path", os.path.join(distorted_dir, "database.db"),
+            "--image_path", input_dir,
+            "--ImageReader.single_camera", "1",
+            "--ImageReader.camera_model", "OPENCV",
+            "--SiftExtraction.use_gpu", use_gpu
+        ])
 
-    if result.returncode != 0:
-        return "COLMAP変換に失敗しました\n\n" + "\n".join(all_logs), gr.Column(visible=False)
+        run([
+            "colmap", "exhaustive_matcher",
+            "--database_path", os.path.join(distorted_dir, "database.db"),
+            "--SiftMatching.use_gpu", use_gpu
+        ])
 
-    # --- ns-process-data 実行 ---
-    colmap_model_path = os.path.join(out_dir, "sparse", "0")
-    cmd_ns = [
-        "conda", "run", "-n", "nerfstudio",
-        "ns-process-data", "images",
-        "--data", input_dir,
-        "--output-dir", out_dir,
-        "--skip-colmap",
-        "--colmap-model-path", colmap_model_path,
-        "--skip-image-processing",
-        "--camera-type", "perspective",
-        "--same-dimensions"
-    ]
+        run([
+            "colmap", "mapper",
+            "--database_path", os.path.join(distorted_dir, "database.db"),
+            "--image_path", input_dir,
+            "--output_path", os.path.join(distorted_dir, "sparse"),
+            "--Mapper.ba_global_function_tolerance", "1e-6"
+        ])
 
-    print("Running:", " ".join(cmd_ns))
-    cwd_nerfstudio = os.path.join("models", "nerfstudio")
-    result_ns = subprocess.run(
-        cmd_ns,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        cwd=cwd_nerfstudio,
-        shell=SHELL_FLAG
-    )
+        run([
+            "colmap", "image_undistorter",
+            "--image_path", input_dir,
+            "--input_path", os.path.join(distorted_dir, "sparse", "0"),
+            "--output_path", out_dir,
+            "--output_type", "COLMAP"
+        ])
 
-    stdout_ns = result_ns.stdout.strip()
-    stderr_ns = result_ns.stderr.strip()
-    all_logs.append("\n【Nerfstudio変換ログ】")
-    all_logs.append(stdout_ns)
-    if stderr_ns:
-        all_logs.append("【Nerfstudioエラー】")
-        all_logs.append(stderr_ns)
+        all_logs.append("COLMAP 変換完了．")
 
-    if result_ns.returncode != 0:
-        return "ns-process-data images 実行に失敗しました\n\n" + "\n".join(all_logs), gr.Column(visible=False)
+        # ===== sparse/0 を作成（mip-splatting / GS 互換）=====
+        sparse_root = os.path.join(out_dir, "sparse")
+        sparse0 = os.path.join(sparse_root, "0")
+        os.makedirs(sparse0, exist_ok=True)
 
-    return "\n".join(all_logs), gr.Column(visible=True)
+        for name in ["cameras.bin", "images.bin", "points3D.bin"]:
+            src = os.path.join(sparse_root, name)
+            if os.path.exists(src):
+                shutil.move(src, os.path.join(sparse0, name))
+
+        all_logs.append("sparse/0 を作成しました．")
+
+        # ===== GS 用マルチスケール画像生成 =====
+        undistorted_images = os.path.join(out_dir, "images")
+        make_multiscale_images(
+            src_dir=undistorted_images,
+            out_root=out_dir,
+            scales=(2, 4, 8)
+        )
+        all_logs.append("GS 用 images_2 / images_4 / images_8 を生成しました．")
+
+        # ===== Nerfstudio =====
+        colmap_model_path = os.path.join(out_dir, "sparse", "0")
+
+        cmd_ns = [
+            "conda", "run", "-n", "nerfstudio",
+            "ns-process-data", "images",
+            "--data", input_dir,
+            "--output-dir", out_dir,
+            "--skip-colmap",
+            "--colmap-model-path", colmap_model_path,
+            "--skip-image-processing",
+            "--camera-type", "perspective",
+            "--same-dimensions"
+        ]
+
+        run(cmd_ns, cwd=os.path.join("models", "nerfstudio"))
+
+        all_logs.append("Nerfstudio データ変換完了．")
+        return out_dir, "\n".join(all_logs), gr.Column(visible=True)
+
+    except Exception as e:
+        all_logs.append(f"エラー: {e}")
+        return "", "\n".join(all_logs), gr.Column(visible=False)
+
 
 # --- 評価計算メソッド ---
 def evaluate_all_metrics(method_name, gt_dir, render_dir, output_dir):
@@ -375,11 +477,17 @@ def evaluate_all_metrics(method_name, gt_dir, render_dir, output_dir):
             gt = load_image(gt_path)
             pred = load_image(pred_path)
 
+            _, _, h, w = pred.shape
+            if h < 161 or w < 161:
+                ms_ssim_val = float("nan")
+            else:
+                ms_ssim_val = piq.multi_scale_ssim(pred, gt, data_range=1.0).item()
+
             metrics = {
                 "image": fname,
                 "psnr": piq.psnr(pred, gt, data_range=1.0).item(),
                 "ssim": piq.ssim(pred, gt, data_range=1.0).item(),
-                "ms_ssim": piq.multi_scale_ssim(pred, gt, data_range=1.0).item(),
+                "ms_ssim": ms_ssim_val,
                 "lpips": lpips_fn(pred, gt).item(),
                 "fsim": piq.fsim(pred, gt, data_range=1.0).item(),
                 "vif": piq.vif_p(pred, gt, data_range=1.0).item(),

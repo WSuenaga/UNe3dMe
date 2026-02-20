@@ -64,6 +64,16 @@ if __name__ == "__main__":
     weights_path = f"naver/{args.model_name}"
     model = AsymmetricMASt3R.from_pretrained(weights_path).to(args.device)
 
+    class DummySceneState:
+        def __init__(self, outfile_name):
+            self.should_delete = False
+            self.cache_dir = None
+            self.outfile_name = outfile_name
+
+    # 例：出力ファイル名を指定
+    custom_outfile = os.path.join(args.outdir, "scene.glb")
+    scene_state = DummySceneState(outfile_name=custom_outfile)
+
     # 再構築実行
     print("Running reconstruction...")
     scene_state, outfile = demo.get_reconstructed_scene(
@@ -74,7 +84,7 @@ if __name__ == "__main__":
         device=args.device,
         silent=args.silent,
         image_size=args.image_size,
-        current_scene_state=None,
+        current_scene_state=scene_state,
         filelist=args.filelist,
         optim_level=args.optim_level,
         lr1=args.lr1,
