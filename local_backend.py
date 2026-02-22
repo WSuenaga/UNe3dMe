@@ -219,7 +219,8 @@ def unzip_dataset(zip_file, datasets_parent):
         return None, None, f"❌ 解凍中にエラーが発生しました: {e}"
 
 def zip_dataset(dataset):
-    dataset_path = os.path.abspath(dataset)
+    dirname = os.path.dirname(dataset)
+    dataset_path = os.path.abspath(dirname)
 
     if not os.path.isdir(dataset_path):
         raise ValueError("dataset_path はディレクトリである必要があります")
