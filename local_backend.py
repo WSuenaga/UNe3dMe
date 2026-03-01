@@ -298,7 +298,7 @@ def make_multiscale_images(
                 ).save(dst)
     
 # --- colmap 実行メソッド ---
-def run_colmap(image_dataset, rebuild):
+def run_colmap(exe_mode, image_dataset, rebuild):
     if not image_dataset:
         return "", "画像データセットがセットされていません", gr.Column(visible=False)
 
@@ -361,79 +361,94 @@ def run_colmap(image_dataset, rebuild):
             return False
 
     try:
-        # ===== COLMAP =====
-        run([
-            "colmap", "feature_extractor",
-            "--database_path", os.path.join(distorted_dir, "database.db"),
-            "--image_path", input_dir,
-            "--ImageReader.single_camera", "1",
-            "--ImageReader.camera_model", "OPENCV",
-            "--SiftExtraction.use_gpu", use_gpu
-        ])
+        if exe_mode == "local":
 
-        run([
-            "colmap", "exhaustive_matcher",
-            "--database_path", os.path.join(distorted_dir, "database.db"),
-            "--SiftMatching.use_gpu", use_gpu
-        ])
+            # ===== COLMAP =====
+            run([
+                "colmap", "feature_extractor",
+                "--database_path", os.path.join(distorted_dir, "database.db"),
+                "--image_path", input_dir,
+                "--ImageReader.single_camera", "1",
+                "--ImageReader.camera_model", "OPENCV",
+                "--SiftExtraction.use_gpu", use_gpu
+            ])
 
-        run([
-            "colmap", "mapper",
-            "--database_path", os.path.join(distorted_dir, "database.db"),
-            "--image_path", input_dir,
-            "--output_path", os.path.join(distorted_dir, "sparse"),
-            "--Mapper.ba_global_function_tolerance", "1e-6"
-        ])
+            run([
+                "colmap", "exhaustive_matcher",
+                "--database_path", os.path.join(distorted_dir, "database.db"),
+                "--SiftMatching.use_gpu", use_gpu
+            ])
 
-        run([
-            "colmap", "image_undistorter",
-            "--image_path", input_dir,
-            "--input_path", os.path.join(distorted_dir, "sparse", "0"),
-            "--output_path", out_dir,
-            "--output_type", "COLMAP"
-        ])
+            run([
+                "colmap", "mapper",
+                "--database_path", os.path.join(distorted_dir, "database.db"),
+                "--image_path", input_dir,
+                "--output_path", os.path.join(distorted_dir, "sparse"),
+                "--Mapper.ba_global_function_tolerance", "1e-6"
+            ])
 
-        all_logs.append("COLMAP 変換完了．")
+            run([
+                "colmap", "image_undistorter",
+                "--image_path", input_dir,
+                "--input_path", os.path.join(distorted_dir, "sparse", "0"),
+                "--output_path", out_dir,
+                "--output_type", "COLMAP"
+            ])
 
-        # ===== sparse/0 を作成（mip-splatting / GS 互換）=====
-        sparse_root = os.path.join(out_dir, "sparse")
-        sparse0 = os.path.join(sparse_root, "0")
-        os.makedirs(sparse0, exist_ok=True)
+            all_logs.append("COLMAP 変換完了．")
 
-        for name in ["cameras.bin", "images.bin", "points3D.bin"]:
-            src = os.path.join(sparse_root, name)
-            if os.path.exists(src):
-                shutil.move(src, os.path.join(sparse0, name))
+            # ===== sparse/0 =====
+            sparse_root = os.path.join(out_dir, "sparse")
+            sparse0 = os.path.join(sparse_root, "0")
+            os.makedirs(sparse0, exist_ok=True)
 
-        all_logs.append("sparse/0 を作成しました．")
+            for name in ["cameras.bin", "images.bin", "points3D.bin"]:
+                src = os.path.join(sparse_root, name)
+                if os.path.exists(src):
+                    shutil.move(src, os.path.join(sparse0, name))
 
-        # ===== GS 用マルチスケール画像生成 =====
-        undistorted_images = os.path.join(out_dir, "images")
-        make_multiscale_images(
-            src_dir=undistorted_images,
-            out_root=out_dir,
-            scales=(2, 4, 8)
-        )
-        all_logs.append("GS 用 images_2 / images_4 / images_8 を生成しました．")
+            # ===== GS マルチスケール =====
+            undistorted_images = os.path.join(out_dir, "images")
+            make_multiscale_images(
+                src_dir=undistorted_images,
+                out_root=out_dir,
+                scales=(2, 4, 8)
+            )
 
-        # ===== Nerfstudio =====
-        colmap_model_path = os.path.join(out_dir, "sparse", "0")
+            # ===== Nerfstudio =====
+            colmap_model_path = os.path.join(out_dir, "sparse", "0")
 
-        cmd_ns = [
-            "conda", "run", "-n", "nerfstudio",
-            "ns-process-data", "images",
-            "--data", input_dir,
-            "--output-dir", out_dir,
-            "--skip-colmap",
-            "--colmap-model-path", colmap_model_path,
-            "--skip-image-processing",
-            "--camera-type", "perspective",
-            "--same-dimensions"
-        ]
+            run([
+                "conda", "run", "-n", "nerfstudio",
+                "ns-process-data", "images",
+                "--data", input_dir,
+                "--output-dir", out_dir,
+                "--skip-colmap",
+                "--colmap-model-path", colmap_model_path,
+                "--skip-image-processing",
+                "--camera-type", "perspective",
+                "--same-dimensions"
+            ], cwd=os.path.join("models", "nerfstudio"))
 
-        run(cmd_ns, cwd=os.path.join("models", "nerfstudio"))
+            all_logs.append("Nerfstudio データ変換完了．")
 
-        all_logs.append("Nerfstudio データ変換完了．")
+        elif exe_mode == "slurm":
+
+            # ===== sbatch 実行 =====
+            sbatch_script = os.path.join("scripts", "run_colmap.sh")
+
+            cmd = [
+                "sbatch",
+                sbatch_script,
+                input_dir,
+                out_dir,
+                distorted_dir,
+                use_gpu
+            ]
+
+            run(cmd, cwd="./")
+            all_logs.append("SLURM ジョブを投入しました．")
+
         return out_dir, "\n".join(all_logs), gr.Column(visible=True)
 
     except Exception as e:

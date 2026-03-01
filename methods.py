@@ -1525,7 +1525,7 @@ def recon_pi3(mode, dataset, outputs_dir):
 MoGe
 """
 # --- 再構築メソッド ---
-def recon_moge(mode, dataset, outputs_dir, img_type):
+def recon_moge2(mode, dataset, outputs_dir, img_type):
     # 出力ディレクトリの作成
     name = os.path.splitext(os.path.basename(dataset))[0]
     outdir = os.path.join(outputs_dir, "moge")
@@ -1616,3 +1616,90 @@ def recon_unik3d(mode, dataset, outputs_dir):
     model_path = os.path.join(outdir, f"{name}.ply") 
 
     return outdir, runtime, status, log, model_path
+
+"""
+Depth-Anything-V2
+"""
+# --- 画像推論メソッド ---
+def run_image_da2(mode, dataset, outputs_dir, encoder):
+    # 出力ディレクトリの作成
+    name = os.path.splitext(os.path.basename(dataset))[0]
+    outdir = os.path.join(outputs_dir, "Depth-Anything-V2", name)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
+    if mode=="local":
+        # 再構築スクリプトパス
+        recon_script = "run.py"
+
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "DA2", "python", recon_script,
+            "--img-path", dataset, 
+            "--outdir", outdir,
+            "--encoder", encoder
+        ]
+
+        # 実行ディレクトリ
+        workdir = os.path.join("models", "Depth-Anything-V2")
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_da2.sh")
+
+        # 推論スクリプトパス
+        infer_script = os.path.join("models", "Depth-Anything-V2", "run.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, infer_script, dataset, outdir]
+
+        # 実行ディレクトリ
+        workdir = "./"
+
+    # 推論実行
+    runtime, status, log = run_subprocess_popen(cmd, workdir)
+
+
+    return outdir, runtime, status, log, outdir
+
+# --- 動画推論メソッド ---
+def run_video_da2(mode, dataset, outputs_dir, encoder):
+    # 出力ディレクトリの作成
+    name = os.path.splitext(os.path.basename(dataset))[0]
+    outdir = os.path.join(outputs_dir, "Depth-Anything-V2", name)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
+    if mode=="local":
+        # 再構築スクリプトパス
+        recon_script = "run_video.py"
+
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "DA2", "python", recon_script,
+            "--video-path", dataset, 
+            "--outdir", outdir,
+            "--encoder", encoder
+        ]
+
+        # 実行ディレクトリ
+        workdir = os.path.join("models", "Depth-Anything-V2")
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_da2.sh")
+
+        # 推論スクリプトパス
+        infer_script = os.path.join("models", "Depth-Anything-V2", "run.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, infer_script, dataset, outdir]
+
+        # 実行ディレクトリ
+        workdir = "./"
+
+    # 推論実行
+    runtime, status, log = run_subprocess_popen(cmd, workdir)
+
+    # 出力動画
+    outvideo_path = os.path.join(outdir, f"{name}.mp4")
+
+    return outdir, runtime, status, log, outvideo_path

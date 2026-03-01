@@ -453,22 +453,22 @@ def update_ui(choice):
         gr.Model3D(label=lang["vggt_tab"]["pi3"]["outmodel"]), # outmodel_pi3
         # mdsTab
         gr.Tab(label=lang["mds_tab"]["title"]), # mds_tab
-        # MoGe
-        gr.Tab(label=lang["mds_tab"]["moge"]["title"]), # moge_tab
-        gr.Markdown(lang["mds_tab"]["moge"]["subtitle1"]), # moge_sub1
-        gr.Markdown(lang["mds_tab"]["moge"]["info1"]), # moge_info1
-        gr.Image(label=lang["mds_tab"]["moge"]["image"]), # img_moge
-        gr.Markdown(lang["mds_tab"]["moge"]["subtitle2"]), # moge_sub2
-        gr.Accordion(label=lang["mds_tab"]["moge"]["option"]["title"]), # moge_option
-        gr.Radio(label= lang["mds_tab"]["moge"]["option"]["exe_mode"]), # exe_mode_moge
-        gr.Radio(choices=[lang["mds_tab"]["moge"]["option"]["radio_standard"], lang["mds_tab"]["moge"]["option"]["radio_panorama"]], 
-                 value=lang["mds_tab"]["moge"]["option"]["radio_default"]), # img_type_moge
-        gr.Button(value=lang["mds_tab"]["moge"]["recon_btn"]), # recon_moge_btn
-        gr.Textbox(label=lang["mds_tab"]["moge"]["outdir_recon"]), # outdir_recon_moge
-        gr.Textbox(label=lang["mds_tab"]["moge"]["runtime_recon"]), # runtime_recon_moge
-        gr.Textbox(label=lang["mds_tab"]["moge"]["result_recon"]), # result_recon_moge
-        gr.Textbox(label=lang["mds_tab"]["moge"]["log_recon"]), # log_recon_moge
-        gr.Model3D(label=lang["mds_tab"]["moge"]["outmodel"]), # outmodel_moge
+        # moge2
+        gr.Tab(label=lang["mds_tab"]["moge2"]["title"]), # moge2_tab
+        gr.Markdown(lang["mds_tab"]["moge2"]["subtitle1"]), # moge2_sub1
+        gr.Markdown(lang["mds_tab"]["moge2"]["info1"]), # moge2_info1
+        gr.Image(label=lang["mds_tab"]["moge2"]["image"]), # img_moge2
+        gr.Markdown(lang["mds_tab"]["moge2"]["subtitle2"]), # moge2_sub2
+        gr.Accordion(label=lang["mds_tab"]["moge2"]["option"]["title"]), # moge2_option
+        gr.Radio(label= lang["mds_tab"]["moge2"]["option"]["exe_mode"]), # exe_mode_moge2
+        gr.Radio(choices=[lang["mds_tab"]["moge2"]["option"]["radio_standard"], lang["mds_tab"]["moge2"]["option"]["radio_panorama"]], 
+                 value=lang["mds_tab"]["moge2"]["option"]["radio_default"]), # img_type_moge2
+        gr.Button(value=lang["mds_tab"]["moge2"]["recon_btn"]), # recon_moge2_btn
+        gr.Textbox(label=lang["mds_tab"]["moge2"]["outdir_recon"]), # outdir_recon_moge2
+        gr.Textbox(label=lang["mds_tab"]["moge2"]["runtime_recon"]), # runtime_recon_moge2
+        gr.Textbox(label=lang["mds_tab"]["moge2"]["result_recon"]), # result_recon_moge2
+        gr.Textbox(label=lang["mds_tab"]["moge2"]["log_recon"]), # log_recon_moge2
+        gr.Model3D(label=lang["mds_tab"]["moge2"]["outmodel"]), # outmodel_moge2
         # UniK3D
         gr.Tab(label=lang["mds_tab"]["unik3d"]["title"]), # unik3d_tab
         gr.Markdown(lang["mds_tab"]["unik3d"]["subtitle1"]), # unik3d_sub1
@@ -483,6 +483,40 @@ def update_ui(choice):
         gr.Textbox(label=lang["mds_tab"]["unik3d"]["result_recon"]), # result_recon_unik3d
         gr.Textbox(label=lang["mds_tab"]["unik3d"]["log_recon"]), # log_recon_unik3d
         gr.Model3D(label=lang["mds_tab"]["unik3d"]["outmodel"]), # outmodel_unik3d
+        # DA2
+        gr.Tab(label=lang["mds_tab"]["da2"]["title"]), #da2_tab
+        gr.Markdown(lang["mds_tab"]["da2"]["subtitle1"]), # da2_sub1
+        gr.Radio(choices=[lang["mds_tab"]["da2"]["radio_image"], lang["mds_tab"]["da2"]["radio_video"]], 
+                 label=lang["mds_tab"]["da2"]["input_radio"]), # da2_input_radio
+        gr.Markdown(lang["mds_tab"]["da2"]["image_section"]["subtitle1"]), # da2_iamge_sub1
+        gr.Markdown(lang["mds_tab"]["da2"]["image_section"]["info1"]), # da2_iamge_info1
+        gr.Image(type="filepath", label=lang["mds_tab"]["da2"]["image_section"]["image"]), # image_da2
+        gr.Accordion(label=lang["mds_tab"]["da2"]["option"]["title"], open=False), #da2_option
+        gr.Radio(label=lang["mds_tab"]["da2"]["option"]["exe_mode"]), # exe_mode_image_da2
+        gr.Radio(label=lang["mds_tab"]["da2"]["option"]["exe_model"]), # exe_model_image_da2
+        gr.Button(value=lang["mds_tab"]["da2"]["run_btn"]), # run_image_da2_btn
+        gr.Textbox(label=lang["mds_tab"]["da2"]["outdir_recon"]), # outdir_image_da2
+        gr.Textbox(label=lang["mds_tab"]["da2"]["runtime_recon"]), # runtime_image_da2
+        gr.Textbox(label=lang["mds_tab"]["da2"]["result_recon"]), # result_image_da2
+        gr.Textbox(label=lang["mds_tab"]["da2"]["log_recon"]), # log_image_da2
+        gr.Gallery(label=lang["mds_tab"]["da2"]["output"]), # outimage_da2
+        gr.Markdown(lang["mds_tab"]["da2"]["video_section"]["subtitle1"]), # da2_video_sub1
+        gr.Markdown(lang["mds_tab"]["da2"]["video_section"]["info1"]), # da2_video_info1
+        gr.Video(label=lang["mds_tab"]["da2"]["video_section"]["video"]), # video_da2
+        gr.Accordion(label=lang["mds_tab"]["da2"]["option"]["title"]), # da2_option
+        gr.Radio(label=lang["mds_tab"]["da2"]["option"]["exe_mode"]), # exe_mode_video_da2
+        gr.Radio(label=lang["mds_tab"]["da2"]["option"]["exe_model"]), # exe_model_video_da2
+        gr.Button(value=lang["mds_tab"]["da2"]["run_btn"]), # run_video_da2_btn
+        gr.Textbox(label=lang["mds_tab"]["da2"]["outdir_recon"]), # outdir_video_da2
+        gr.Textbox(label=lang["mds_tab"]["da2"]["runtime_recon"]), # runtime_video_da2
+        gr.Textbox(label=lang["mds_tab"]["da2"]["result_recon"]), # result_video_da2
+        gr.Textbox(label=lang["mds_tab"]["da2"]["log_recon"]), # log_video_da2
+        gr.Video(label=lang["mds_tab"]["da2"]["output"]), # outvideo_da2
+        # DA3
+        gr.Tab(label=lang["mds_tab"]["da3"]["title"]), #da3_tab
+        gr.Markdown(lang["mds_tab"]["da3"]["subtitle1"]), # da3_sub1
+        gr.Radio(choices=[lang["mds_tab"]["da3"]["radio_image"], lang["mds_tab"]["da3"]["radio_video"]], 
+                 label=lang["mds_tab"]["da3"]["input_radio"]), # da3_input_radio
         # Metrics Tab
         gr.Tab(label=lang["metrics_tab"]["title"]), # metrics_tab
         gr.DataFrame(label=lang["metrics_tab"]["table"]), # method_metrics
@@ -505,6 +539,15 @@ def switch_media_ui(choice, lang_code):
         return gr.Column(visible=True), gr.Column(visible=False)
     elif choice == lang["dataset_tab"]["new_dataset_section"]["radio_video"] : 
         return gr.Column(visible=False), gr.Column(visible=True)
+
+def switch_da2_ui(choice, lang_code):
+    lang = load_translations(lang_code)
+
+    if choice == lang["mds_tab"]["da2"]["radio_image"] :
+        return gr.Column(visible=True), gr.Column(visible=False)
+    elif choice == lang["mds_tab"]["da2"]["radio_video"] : 
+        return gr.Column(visible=False), gr.Column(visible=True)
+
 
 def col_change():
     return gr.Column(visible=True)
@@ -609,6 +652,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             colmap_sub1 = gr.Markdown(lang["colmap_tab"]["subtitle1"])
             colmap_info1 = gr.Markdown(lang["colmap_tab"]["info1"])
             with gr.Accordion(label=lang["colmap_tab"]["option"]["title"], open=False) as colmap_option:
+                exe_mode_colmap = gr.Radio(choices=["local", "slurm"], value="local", label= lang["colmap_tab"]["option"]["exe_mode"])
                 colmap_option_info1 = gr.Markdown(lang["colmap_tab"]["option"]["info1"])
                 rebuild = gr.Checkbox(label=lang["colmap_tab"]["option"]["rebuild"], value=False)
             run_colmap_btn = gr.Button(value=lang["colmap_tab"]["run_colmap_btn"])
@@ -1091,23 +1135,23 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         # mdsTab
         with gr.Tab(label=lang["mds_tab"]["title"]) as mds_tab:
 
-            # MoGe
-            with gr.Tab(label=lang["mds_tab"]["moge"]["title"]) as moge_tab:
-                moge_sub1 = gr.Markdown(lang["mds_tab"]["moge"]["subtitle1"])
-                moge_info1 = gr.Markdown(lang["mds_tab"]["moge"]["info1"])
-                img_moge = gr.Image(type="filepath", label=lang["mds_tab"]["moge"]["image"])
+            # moge2
+            with gr.Tab(label=lang["mds_tab"]["moge2"]["title"]) as moge2_tab:
+                moge2_sub1 = gr.Markdown(lang["mds_tab"]["moge2"]["subtitle1"])
+                moge2_info1 = gr.Markdown(lang["mds_tab"]["moge2"]["info1"])
+                img_moge2 = gr.Image(type="filepath", label=lang["mds_tab"]["moge2"]["image"])
                 # 推論UI
-                with gr.Column(visible=False) as infer_moge_col:
-                    moge_sub2 = gr.Markdown(lang["mds_tab"]["moge"]["subtitle2"])
-                    with gr.Accordion(label=lang["mds_tab"]["moge"]["option"]["title"], open=False) as moge_option:
-                        exe_mode_moge = gr.Radio(choices=["local", "slurm"], value="local", label= lang["mds_tab"]["moge"]["option"]["exe_mode"])
-                        img_type_moge = gr.Radio(choices=[lang["mds_tab"]["moge"]["option"]["radio_standard"], lang["mds_tab"]["moge"]["option"]["radio_panorama"]], value=lang["mds_tab"]["moge"]["option"]["radio_default"])
-                    recon_moge_btn = gr.Button(value=lang["mds_tab"]["moge"]["recon_btn"])
-                    outdir_recon_moge = gr.Textbox(label=lang["mds_tab"]["moge"]["outdir_recon"])
-                    runtime_recon_moge = gr.Textbox(label=lang["mds_tab"]["moge"]["runtime_recon"])
-                    result_recon_moge = gr.Textbox(label=lang["mds_tab"]["moge"]["result_recon"])
-                    log_recon_moge = gr.Textbox(label=lang["mds_tab"]["moge"]["log_recon"])
-                    outmodel_moge = gr.Model3D(label=lang["mds_tab"]["moge"]["outmodel"])
+                with gr.Column(visible=False) as infer_moge2_col:
+                    moge2_sub2 = gr.Markdown(lang["mds_tab"]["moge2"]["subtitle2"])
+                    with gr.Accordion(label=lang["mds_tab"]["moge2"]["option"]["title"], open=False) as moge2_option:
+                        exe_mode_moge2 = gr.Radio(choices=["local", "slurm"], value="local", label= lang["mds_tab"]["moge2"]["option"]["exe_mode"])
+                        img_type_moge2 = gr.Radio(choices=[lang["mds_tab"]["moge2"]["option"]["radio_standard"], lang["mds_tab"]["moge2"]["option"]["radio_panorama"]], value=lang["mds_tab"]["moge2"]["option"]["radio_default"])
+                    recon_moge2_btn = gr.Button(value=lang["mds_tab"]["moge2"]["recon_btn"])
+                    outdir_recon_moge2 = gr.Textbox(label=lang["mds_tab"]["moge2"]["outdir_recon"])
+                    runtime_recon_moge2 = gr.Textbox(label=lang["mds_tab"]["moge2"]["runtime_recon"])
+                    result_recon_moge2 = gr.Textbox(label=lang["mds_tab"]["moge2"]["result_recon"])
+                    log_recon_moge2 = gr.Textbox(label=lang["mds_tab"]["moge2"]["log_recon"])
+                    outmodel_moge2 = gr.Model3D(label=lang["mds_tab"]["moge2"]["outmodel"])
 
             # UniK3D
             with gr.Tab(label=lang["mds_tab"]["unik3d"]["title"]) as unik3d_tab:
@@ -1125,6 +1169,69 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     result_recon_unik3d = gr.Textbox(label=lang["mds_tab"]["unik3d"]["result_recon"])
                     log_recon_unik3d = gr.Textbox(label=lang["mds_tab"]["unik3d"]["log_recon"])
                     outmodel_unik3d = gr.Model3D(label=lang["mds_tab"]["unik3d"]["outmodel"])
+            # DA2
+            with gr.Tab(label=lang["mds_tab"]["da2"]["title"]) as da2_tab:
+                da2_sub1 = gr.Markdown(lang["mds_tab"]["da2"]["subtitle1"])
+                da2_input_radio = gr.Radio(choices=[lang["mds_tab"]["da2"]["radio_image"], lang["mds_tab"]["da2"]["radio_video"]], 
+                                           label=lang["mds_tab"]["da2"]["input_radio"])
+                with gr.Column(visible=False) as da2_image_col:
+                    da2_iamge_sub1 = gr.Markdown(lang["mds_tab"]["da2"]["image_section"]["subtitle1"])
+                    da2_iamge_info1 = gr.Markdown(lang["mds_tab"]["da2"]["image_section"]["info1"])
+                    image_da2 = gr.Image(type="filepath", label=lang["mds_tab"]["da2"]["image_section"]["image"])
+                    with gr.Accordion(label=lang["mds_tab"]["da2"]["option"]["title"], open=False) as da2_option:
+                        exe_mode_image_da2 = gr.Radio(choices=["local", "slurm"], value="local", label=lang["mds_tab"]["da2"]["option"]["exe_mode"])
+                        exe_model_image_da2 = gr.Radio(choices=["vits", "vitb", "vitl", "vitg"], value="vitl", label=lang["mds_tab"]["da2"]["option"]["exe_model"])
+                    run_image_da2_btn =  gr.Button(value=lang["mds_tab"]["da2"]["run_btn"])
+                    outdir_image_da2 = gr.Textbox(label=lang["mds_tab"]["da2"]["outdir_recon"])
+                    runtime_image_da2 = gr.Textbox(label=lang["mds_tab"]["da2"]["runtime_recon"])
+                    result_image_da2 = gr.Textbox(label=lang["mds_tab"]["da2"]["result_recon"])
+                    log_image_da2 = gr.Textbox(label=lang["mds_tab"]["da2"]["log_recon"])
+                    outimage_da2 = gr.Gallery(label=lang["mds_tab"]["da2"]["output"], height="auto")
+                with gr.Column(visible=False) as da2_video_col:
+                    da2_video_sub1 = gr.Markdown(lang["mds_tab"]["da2"]["video_section"]["subtitle1"])
+                    da2_video_info1 = gr.Markdown(lang["mds_tab"]["da2"]["video_section"]["info1"])
+                    video_da2 = gr.Video(label=lang["mds_tab"]["da2"]["video_section"]["video"], height="auto")
+                    with gr.Accordion(label=lang["mds_tab"]["da2"]["option"]["title"], open=False) as da2_option:
+                        exe_mode_video_da2 = gr.Radio(choices=["local", "slurm"], value="local", label=lang["mds_tab"]["da2"]["option"]["exe_mode"])
+                        exe_model_video_da2 = gr.Radio(choices=["vits", "vitb", "vitl", "vitg"], value="vitl", label=lang["mds_tab"]["da2"]["option"]["exe_model"])
+                    run_video_da2_btn =  gr.Button(value=lang["mds_tab"]["da2"]["run_btn"])
+                    outdir_video_da2 = gr.Textbox(label=lang["mds_tab"]["da2"]["outdir_recon"])
+                    runtime_video_da2 = gr.Textbox(label=lang["mds_tab"]["da2"]["runtime_recon"])
+                    result_video_da2 = gr.Textbox(label=lang["mds_tab"]["da2"]["result_recon"])
+                    log_video_da2 = gr.Textbox(label=lang["mds_tab"]["da2"]["log_recon"])
+                    outvideo_da2 = gr.Video(label=lang["mds_tab"]["da2"]["output"], height="auto")
+
+            # DA3
+            with gr.Tab(label=lang["mds_tab"]["da3"]["title"]) as da3_tab:
+                da3_sub1 = gr.Markdown(lang["mds_tab"]["da3"]["subtitle1"])
+                da3_input_radio = gr.Radio(choices=[lang["mds_tab"]["da3"]["radio_image"], lang["mds_tab"]["da3"]["radio_video"]], 
+                                           label=lang["mds_tab"]["da3"]["input_radio"])
+                with gr.Column(visible=False) as da3_image_col:
+                    da3_iamge_sub1 = gr.Markdown(lang["mds_tab"]["da3"]["image_section"]["subtitle1"])
+                    da3_iamge_info1 = gr.Markdown(lang["mds_tab"]["da3"]["image_section"]["info1"])
+                    image_da3 = gr.Image(type="filepath", label=lang["mds_tab"]["da3"]["image_section"]["image"])
+                    with gr.Accordion(label=lang["mds_tab"]["da3"]["option"]["title"], open=False) as da3_option:
+                        exe_mode_image_da3 = gr.Radio(choices=["local", "slurm"], value="local", label=lang["mds_tab"]["da3"]["option"]["exe_mode"])
+                        exe_model_image_da3 = gr.Radio(choices=["vits", "vitb", "vitl", "vitg"], value="vitl", label=lang["mds_tab"]["da3"]["option"]["exe_model"])
+                    run_image_da3_btn =  gr.Button(value=lang["mds_tab"]["da3"]["run_btn"])
+                    outdir_image_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["outdir_recon"])
+                    runtime_image_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["runtime_recon"])
+                    result_image_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["result_recon"])
+                    log_image_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["log_recon"])
+                    outimage_da3 = gr.Gallery(label=lang["mds_tab"]["da3"]["output"], height="auto")
+                with gr.Column(visible=False) as da3_video_col:
+                    da3_iamge_sub1 = gr.Markdown(lang["mds_tab"]["da3"]["video_section"]["subtitle1"])
+                    da3_iamge_info1 = gr.Markdown(lang["mds_tab"]["da3"]["video_section"]["info1"])
+                    video_da3 = gr.Video(label=lang["mds_tab"]["da3"]["video_section"]["video"], height="auto")
+                    with gr.Accordion(label=lang["mds_tab"]["da3"]["option"]["title"], open=False) as da3_option:
+                        exe_mode_video_da3 = gr.Radio(choices=["local", "slurm"], value="local", label=lang["mds_tab"]["da3"]["option"]["exe_mode"])
+                        exe_model_video_da3 = gr.Radio(choices=["vits", "vitb", "vitl", "vitg"], value="vitl", label=lang["mds_tab"]["da3"]["option"]["exe_model"])
+                    run_video_da3_btn =  gr.Button(value=lang["mds_tab"]["da3"]["run_btn"])
+                    outdir_video_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["outdir_recon"])
+                    runtime_video_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["runtime_recon"])
+                    result_video_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["result_recon"])
+                    log_video_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["log_recon"])
+                    outvideo_da3 = gr.Video(label=lang["mds_tab"]["da3"]["output"], height="auto")
 
         # 評価指標Tab
         with gr.Tab(label=lang["metrics_tab"]["title"]) as metrics_tab:
@@ -1543,21 +1650,22 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      outmodel_pi3,
                      # mdsTab
                      mds_tab,
-                     moge_tab, # MoGe
-                     moge_sub1,
-                     moge_info1,
-                     img_moge,
-                     moge_sub2,
-                     moge_option,
-                     exe_mode_moge,
-                     img_type_moge,
-                     recon_moge_btn,
-                     outdir_recon_moge,
-                     runtime_recon_moge,
-                     result_recon_moge,
-                     log_recon_moge,
-                     outmodel_moge,
-                     unik3d_tab, # UniK3D
+                     moge2_tab, # moge2
+                     moge2_sub1,
+                     moge2_info1,
+                     img_moge2,
+                     moge2_sub2,
+                     moge2_option,
+                     exe_mode_moge2,
+                     img_type_moge2,
+                     recon_moge2_btn,
+                     outdir_recon_moge2,
+                     runtime_recon_moge2,
+                     result_recon_moge2,
+                     log_recon_moge2,
+                     outmodel_moge2,
+                     # UniK3D
+                     unik3d_tab, 
                      unik3d_sub1,
                      unik3d_info1,
                      img_unik3d,
@@ -1570,6 +1678,38 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      result_recon_unik3d,
                      log_recon_unik3d,
                      outmodel_unik3d,
+                     # DA2 tab
+                     da2_tab,
+                     da2_sub1,
+                     da2_input_radio,
+                     da2_iamge_sub1,
+                     da2_iamge_info1,
+                     image_da2,
+                     da2_option,
+                     exe_mode_image_da2,
+                     exe_model_image_da2,
+                     run_image_da2_btn,
+                     outdir_image_da2,
+                     runtime_image_da2,
+                     result_image_da2,
+                     log_image_da2,
+                     outimage_da2,
+                     da2_video_sub1,
+                     da2_video_info1,
+                     video_da2,
+                     da2_option,
+                     exe_mode_video_da2,
+                     exe_model_video_da2,
+                     run_video_da2_btn,
+                     outdir_video_da2,
+                     runtime_video_da2,
+                     result_video_da2,
+                     log_video_da2,
+                     outvideo_da2,
+                     # DA3 tab
+                     da3_tab, 
+                     da3_sub1,
+                     da3_input_radio,
                      # Metrics Tab
                      metrics_tab,
                      method_metrics,
@@ -1585,8 +1725,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                            inputs=[media_radio, lang_state],
                            outputs=[image_col, video_col])
         img_splatt3r.change(fn=col_change, outputs=infer_splatt3r_col)
-        img_moge.change(fn=col_change, outputs=infer_moge_col)
+        img_moge2.change(fn=col_change, outputs=infer_moge2_col)
         img_unik3d.change(fn=col_change, outputs=infer_unik3d_col)
+        da2_input_radio.change(fn=switch_da2_ui,
+                               inputs=[da2_input_radio, lang_state],
+                               outputs=[da2_image_col,  da2_video_col])
+        da3_input_radio.change(fn=switch_da2_ui,
+                               inputs=[da3_input_radio, lang_state],
+                               outputs=[da3_image_col,  da3_video_col])
 
         # --- データセット ---
         # 画像データセット作成
@@ -1610,7 +1756,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                  outputs=current_dataset_images)
         # colmapデータセット作成
         run_colmap_btn.click(fn=local_backend.run_colmap,
-                        inputs=[image_dataset_state, rebuild],
+                        inputs=[exe_mode_colmap, image_dataset_state, rebuild],
                         outputs=[colmap_dataset_state, result_colmap, dl_colmap_col]).success(
                             fn=local_backend.zip_dataset,
                             inputs=colmap_dataset_state,
@@ -1706,12 +1852,19 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         recon_pi3_btn.click(fn=methods.recon_pi3,
                             inputs=[exe_mode_pi3, image_dataset_state, outputsdir_state],
                             outputs=[outdir_recon_pi3, runtime_recon_pi3, result_recon_pi3, log_recon_pi3, outmodel_pi3])
-        recon_moge_btn.click(fn=methods.recon_moge,
-                        inputs=[exe_mode_moge, img_moge, outputsdir_state, img_type_moge], 
-                        outputs=[outdir_recon_moge, runtime_recon_moge, result_recon_moge, log_recon_moge, outmodel_moge])
+        recon_moge2_btn.click(fn=methods.recon_moge2,
+                        inputs=[exe_mode_moge2, img_moge2, outputsdir_state, img_type_moge2], 
+                        outputs=[outdir_recon_moge2, runtime_recon_moge2, result_recon_moge2, log_recon_moge2, outmodel_moge2])
         recon_unik3d_btn.click(fn=methods.recon_unik3d,
                         inputs=[exe_mode_unik3d, img_unik3d, outputsdir_state], 
                         outputs=[outdir_recon_unik3d, runtime_recon_unik3d, result_recon_unik3d, log_recon_unik3d, outmodel_unik3d])
+        # DA2
+        run_image_da2_btn.click(fn=methods.run_image_da2,
+                                inputs=[exe_mode_image_da2, image_da2, outputsdir_state, exe_model_image_da2],
+                                outputs=[outdir_image_da2, runtime_image_da2, result_image_da2, log_image_da2, outimage_da2])
+        run_video_da2_btn.click(fn=methods.run_video_da2,
+                                inputs=[exe_mode_video_da2, video_da2, outputsdir_state, exe_model_video_da2],
+                                outputs=[outdir_video_da2, runtime_video_da2, result_video_da2, log_video_da2, outvideo_da2])
         
         # --- 点群出力（Nerfstudio）---
         export_vnerf_btn.click(fn=methods.export_vnerf,
