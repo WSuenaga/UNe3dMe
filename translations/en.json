@@ -569,58 +569,49 @@
     "da2": {
       "title": "Depth Anything V2",
       "subtitle1": "# 1. Select File Type",
-      "radio_image": "📷Image",
-      "radio_video": "🎥Video",
-      "input_radio": "📂Select the file type to use for inference",
+      "radio_image": "📷 Image",
+      "radio_video": "🎥 Video",
+      "input_radio": "📂 Please select the type of file to use for inference",
       "image_section": {
-        "subtitle1": "# 1. Select Image",
-        "info1": "- Please select an image for inference.",
-        "image": "📷Please select one image"
+        "subtitle2": "# 2. Select Image",
+        "info1": "- Please select the image to use for inference.",
+        "image": "📷 Please select one image"
       },
       "video_section": {
-        "subtitle1": "# 1. Select Video",
-        "info1": "- Please select a video for inference.",
-        "video": "🎥Please select one video"
+        "subtitle2": "# 2. Select Video",
+        "info1": "- Please select the video to use for inference.",
+        "video": "🎥 Please select one video"
       },
+      "subtitle3": "# 3. Inference",
       "option": {
-        "title": "⚙️Options",
+        "title": "⚙️ Options",
         "exe_mode": "Execution Environment",
-        "exe_model": "Model Scale"
+        "exe_model": "Model to Use"
       },
-      "run_btn": "🚀Run Inference",
-      "outdir_recon": "📁Output Directory",
-      "runtime_recon": "⏳Inference Time",
-      "result_recon": "💡Results",
-      "log_recon": "📝Execution Log",
-      "output": "Input Image / Estimated Depth Map"
+      "run_btn": "🚀 Run Inference",
+      "outdir_recon": "📁 Output Directory",
+      "runtime_recon": "⏳ Runtime",
+      "result_recon": "💡 Results",
+      "log_recon": "📝 Execution Log",
+      "outimage": "Input Image / Estimated Depth",
+      "outvideo": "Input Video / Estimated Depth"
     },
     "da3": {
       "title": "Depth Anything 3",
-      "subtitle1": "# 1. Select File Type",
-      "radio_image": "📷Image",
-      "radio_video": "🎥Video",
-      "input_radio": "📂Select the file type to use for inference",
-      "image_section": {
-        "subtitle1": "# 1. Select Image",
-        "info1": "- Please select an image for inference.",
-        "image": "📷Please select one image"
-      },
-      "video_section": {
-        "subtitle1": "# 1. Select Video",
-        "info1": "- Please select a video for inference.",
-        "video": "🎥Please select one video"
-      },
+      "subtitle1": "# 1. Inference",
       "option": {
-        "title": "⚙️Options",
-        "exe_mode": "Execution Environment",
-        "exe_model": "Model Scale"
+        "title": "⚙️ Options",
+        "exe_mode": "Execution Environment"
       },
-      "run_btn": "🚀Run Inference",
-      "outdir_recon": "📁Output Directory",
-      "runtime_recon": "⏳Inference Time",
-      "result_recon": "💡Results",
-      "log_recon": "📝Execution Log",
-      "output": "Input Image / Estimated Depth Map"
+      "run_btn": "🚀 Run Inference",
+      "outdir_recon": "📁 Output Directory",
+      "runtime_recon": "⏳ Runtime",
+      "result_recon": "💡 Results",
+      "log_recon": "📝 Execution Log",
+      "outmodel": "🌐 3D Reconstruction Result",
+      "outimage": "Input Image / Estimated Depth",
+      "outvideo": "Input Image / Estimated Depth",
+      "outGSvideo": "GS / Estimated Depth"
     }
   },
   "metrics_tab": {

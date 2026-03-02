@@ -488,9 +488,10 @@ def update_ui(choice):
         gr.Markdown(lang["mds_tab"]["da2"]["subtitle1"]), # da2_sub1
         gr.Radio(choices=[lang["mds_tab"]["da2"]["radio_image"], lang["mds_tab"]["da2"]["radio_video"]], 
                  label=lang["mds_tab"]["da2"]["input_radio"]), # da2_input_radio
-        gr.Markdown(lang["mds_tab"]["da2"]["image_section"]["subtitle1"]), # da2_iamge_sub1
+        gr.Markdown(lang["mds_tab"]["da2"]["image_section"]["subtitle2"]), # da2_iamge_sub2
         gr.Markdown(lang["mds_tab"]["da2"]["image_section"]["info1"]), # da2_iamge_info1
         gr.Image(type="filepath", label=lang["mds_tab"]["da2"]["image_section"]["image"]), # image_da2
+        gr.Markdown(lang["mds_tab"]["da2"]["subtitle3"]), # da2_image_sub3
         gr.Accordion(label=lang["mds_tab"]["da2"]["option"]["title"], open=False), #da2_option
         gr.Radio(label=lang["mds_tab"]["da2"]["option"]["exe_mode"]), # exe_mode_image_da2
         gr.Radio(label=lang["mds_tab"]["da2"]["option"]["exe_model"]), # exe_model_image_da2
@@ -499,10 +500,11 @@ def update_ui(choice):
         gr.Textbox(label=lang["mds_tab"]["da2"]["runtime_recon"]), # runtime_image_da2
         gr.Textbox(label=lang["mds_tab"]["da2"]["result_recon"]), # result_image_da2
         gr.Textbox(label=lang["mds_tab"]["da2"]["log_recon"]), # log_image_da2
-        gr.Gallery(label=lang["mds_tab"]["da2"]["output"]), # outimage_da2
-        gr.Markdown(lang["mds_tab"]["da2"]["video_section"]["subtitle1"]), # da2_video_sub1
+        gr.Gallery(label=lang["mds_tab"]["da2"]["outimage"]), # outimage_da2
+        gr.Markdown(lang["mds_tab"]["da2"]["video_section"]["subtitle2"]), # da2_video_sub2
         gr.Markdown(lang["mds_tab"]["da2"]["video_section"]["info1"]), # da2_video_info1
         gr.Video(label=lang["mds_tab"]["da2"]["video_section"]["video"]), # video_da2
+        gr.Markdown(lang["mds_tab"]["da2"]["subtitle3"]), # da2_video_sub3
         gr.Accordion(label=lang["mds_tab"]["da2"]["option"]["title"]), # da2_option
         gr.Radio(label=lang["mds_tab"]["da2"]["option"]["exe_mode"]), # exe_mode_video_da2
         gr.Radio(label=lang["mds_tab"]["da2"]["option"]["exe_model"]), # exe_model_video_da2
@@ -511,12 +513,20 @@ def update_ui(choice):
         gr.Textbox(label=lang["mds_tab"]["da2"]["runtime_recon"]), # runtime_video_da2
         gr.Textbox(label=lang["mds_tab"]["da2"]["result_recon"]), # result_video_da2
         gr.Textbox(label=lang["mds_tab"]["da2"]["log_recon"]), # log_video_da2
-        gr.Video(label=lang["mds_tab"]["da2"]["output"]), # outvideo_da2
+        gr.Video(label=lang["mds_tab"]["da2"]["outvideo"]), # outvideo_da2
         # DA3
-        gr.Tab(label=lang["mds_tab"]["da3"]["title"]), #da3_tab
         gr.Markdown(lang["mds_tab"]["da3"]["subtitle1"]), # da3_sub1
-        gr.Radio(choices=[lang["mds_tab"]["da3"]["radio_image"], lang["mds_tab"]["da3"]["radio_video"]], 
-                 label=lang["mds_tab"]["da3"]["input_radio"]), # da3_input_radio
+        gr.Accordion(label=lang["mds_tab"]["da3"]["option"]["title"]), # da3_option
+        gr.Radio(label=lang["mds_tab"]["da3"]["option"]["exe_mode"]), # exe_mode_da3
+        gr.Button(value=lang["mds_tab"]["da3"]["run_btn"]), # recon_da3_btn
+        gr.Textbox(label=lang["mds_tab"]["da3"]["outdir_recon"]), # outdir_da3
+        gr.Textbox(label=lang["mds_tab"]["da3"]["runtime_recon"]), # runtime_da3
+        gr.Textbox(label=lang["mds_tab"]["da3"]["result_recon"]), # result_da3
+        gr.Textbox(label=lang["mds_tab"]["da3"]["log_recon"]), # log_da3
+        gr.Model3D(label=lang["mds_tab"]["da3"]["outmodel"]), # outmodel_da3
+        gr.Gallery(label=lang["mds_tab"]["da3"]["outimage"]), # gallery_da3
+        gr.Video(label=lang["mds_tab"]["da3"]["outvideo"]), # outvideo_da3
+        gr.Video(label=lang["mds_tab"]["da3"]["outGSvideo"]), # outGSvideo_da3
         # Metrics Tab
         gr.Tab(label=lang["metrics_tab"]["title"]), # metrics_tab
         gr.DataFrame(label=lang["metrics_tab"]["table"]), # method_metrics
@@ -1175,10 +1185,11 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 da2_input_radio = gr.Radio(choices=[lang["mds_tab"]["da2"]["radio_image"], lang["mds_tab"]["da2"]["radio_video"]], 
                                            label=lang["mds_tab"]["da2"]["input_radio"])
                 with gr.Column(visible=False) as da2_image_col:
-                    da2_iamge_sub1 = gr.Markdown(lang["mds_tab"]["da2"]["image_section"]["subtitle1"])
+                    da2_iamge_sub2 = gr.Markdown(lang["mds_tab"]["da2"]["image_section"]["subtitle2"])
                     da2_iamge_info1 = gr.Markdown(lang["mds_tab"]["da2"]["image_section"]["info1"])
                     image_da2 = gr.Image(type="filepath", label=lang["mds_tab"]["da2"]["image_section"]["image"])
-                    with gr.Accordion(label=lang["mds_tab"]["da2"]["option"]["title"], open=False) as da2_option:
+                    da2_image_sub3 = gr.Markdown(lang["mds_tab"]["da2"]["subtitle3"])
+                    with gr.Accordion(label=lang["mds_tab"]["da2"]["option"]["title"], open=False) as da2_image_option:
                         exe_mode_image_da2 = gr.Radio(choices=["local", "slurm"], value="local", label=lang["mds_tab"]["da2"]["option"]["exe_mode"])
                         exe_model_image_da2 = gr.Radio(choices=["vits", "vitb", "vitl", "vitg"], value="vitl", label=lang["mds_tab"]["da2"]["option"]["exe_model"])
                     run_image_da2_btn =  gr.Button(value=lang["mds_tab"]["da2"]["run_btn"])
@@ -1186,12 +1197,13 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     runtime_image_da2 = gr.Textbox(label=lang["mds_tab"]["da2"]["runtime_recon"])
                     result_image_da2 = gr.Textbox(label=lang["mds_tab"]["da2"]["result_recon"])
                     log_image_da2 = gr.Textbox(label=lang["mds_tab"]["da2"]["log_recon"])
-                    outimage_da2 = gr.Gallery(label=lang["mds_tab"]["da2"]["output"], height="auto")
+                    outimage_da2 = gr.Gallery(label=lang["mds_tab"]["da2"]["outimage"], columns=1, height="auto")
                 with gr.Column(visible=False) as da2_video_col:
-                    da2_video_sub1 = gr.Markdown(lang["mds_tab"]["da2"]["video_section"]["subtitle1"])
+                    da2_video_sub2 = gr.Markdown(lang["mds_tab"]["da2"]["video_section"]["subtitle2"])
                     da2_video_info1 = gr.Markdown(lang["mds_tab"]["da2"]["video_section"]["info1"])
                     video_da2 = gr.Video(label=lang["mds_tab"]["da2"]["video_section"]["video"], height="auto")
-                    with gr.Accordion(label=lang["mds_tab"]["da2"]["option"]["title"], open=False) as da2_option:
+                    da2_video_sub3 = gr.Markdown(lang["mds_tab"]["da2"]["subtitle3"])
+                    with gr.Accordion(label=lang["mds_tab"]["da2"]["option"]["title"], open=False) as da2_video_option:
                         exe_mode_video_da2 = gr.Radio(choices=["local", "slurm"], value="local", label=lang["mds_tab"]["da2"]["option"]["exe_mode"])
                         exe_model_video_da2 = gr.Radio(choices=["vits", "vitb", "vitl", "vitg"], value="vitl", label=lang["mds_tab"]["da2"]["option"]["exe_model"])
                     run_video_da2_btn =  gr.Button(value=lang["mds_tab"]["da2"]["run_btn"])
@@ -1199,39 +1211,23 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     runtime_video_da2 = gr.Textbox(label=lang["mds_tab"]["da2"]["runtime_recon"])
                     result_video_da2 = gr.Textbox(label=lang["mds_tab"]["da2"]["result_recon"])
                     log_video_da2 = gr.Textbox(label=lang["mds_tab"]["da2"]["log_recon"])
-                    outvideo_da2 = gr.Video(label=lang["mds_tab"]["da2"]["output"], height="auto")
+                    outvideo_da2 = gr.Video(label=lang["mds_tab"]["da2"]["outvideo"], height="auto")
 
             # DA3
             with gr.Tab(label=lang["mds_tab"]["da3"]["title"]) as da3_tab:
                 da3_sub1 = gr.Markdown(lang["mds_tab"]["da3"]["subtitle1"])
-                da3_input_radio = gr.Radio(choices=[lang["mds_tab"]["da3"]["radio_image"], lang["mds_tab"]["da3"]["radio_video"]], 
-                                           label=lang["mds_tab"]["da3"]["input_radio"])
-                with gr.Column(visible=False) as da3_image_col:
-                    da3_iamge_sub1 = gr.Markdown(lang["mds_tab"]["da3"]["image_section"]["subtitle1"])
-                    da3_iamge_info1 = gr.Markdown(lang["mds_tab"]["da3"]["image_section"]["info1"])
-                    image_da3 = gr.Image(type="filepath", label=lang["mds_tab"]["da3"]["image_section"]["image"])
-                    with gr.Accordion(label=lang["mds_tab"]["da3"]["option"]["title"], open=False) as da3_option:
-                        exe_mode_image_da3 = gr.Radio(choices=["local", "slurm"], value="local", label=lang["mds_tab"]["da3"]["option"]["exe_mode"])
-                        exe_model_image_da3 = gr.Radio(choices=["vits", "vitb", "vitl", "vitg"], value="vitl", label=lang["mds_tab"]["da3"]["option"]["exe_model"])
-                    run_image_da3_btn =  gr.Button(value=lang["mds_tab"]["da3"]["run_btn"])
-                    outdir_image_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["outdir_recon"])
-                    runtime_image_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["runtime_recon"])
-                    result_image_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["result_recon"])
-                    log_image_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["log_recon"])
-                    outimage_da3 = gr.Gallery(label=lang["mds_tab"]["da3"]["output"], height="auto")
-                with gr.Column(visible=False) as da3_video_col:
-                    da3_iamge_sub1 = gr.Markdown(lang["mds_tab"]["da3"]["video_section"]["subtitle1"])
-                    da3_iamge_info1 = gr.Markdown(lang["mds_tab"]["da3"]["video_section"]["info1"])
-                    video_da3 = gr.Video(label=lang["mds_tab"]["da3"]["video_section"]["video"], height="auto")
-                    with gr.Accordion(label=lang["mds_tab"]["da3"]["option"]["title"], open=False) as da3_option:
-                        exe_mode_video_da3 = gr.Radio(choices=["local", "slurm"], value="local", label=lang["mds_tab"]["da3"]["option"]["exe_mode"])
-                        exe_model_video_da3 = gr.Radio(choices=["vits", "vitb", "vitl", "vitg"], value="vitl", label=lang["mds_tab"]["da3"]["option"]["exe_model"])
-                    run_video_da3_btn =  gr.Button(value=lang["mds_tab"]["da3"]["run_btn"])
-                    outdir_video_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["outdir_recon"])
-                    runtime_video_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["runtime_recon"])
-                    result_video_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["result_recon"])
-                    log_video_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["log_recon"])
-                    outvideo_da3 = gr.Video(label=lang["mds_tab"]["da3"]["output"], height="auto")
+                with gr.Accordion(label=lang["mds_tab"]["da3"]["option"]["title"], open=False) as da3_option:
+                    exe_mode_da3 = gr.Radio(choices=["local", "slurm"], value="local", label=lang["mds_tab"]["da3"]["option"]["exe_mode"])
+                recon_da3_btn =  gr.Button(value=lang["mds_tab"]["da3"]["run_btn"])
+                outdir_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["outdir_recon"])
+                runtime_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["runtime_recon"])
+                result_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["result_recon"])
+                log_da3 = gr.Textbox(label=lang["mds_tab"]["da3"]["log_recon"])
+                outmodel_da3 = gr.Model3D(label=lang["mds_tab"]["da3"]["outmodel"])
+                outimages_da3 = gr.State()
+                gallery_da3 = gr.Gallery(label=lang["mds_tab"]["da3"]["outimage"], columns=1, height="auto")
+                outvideo_da3 = gr.Video(label=lang["mds_tab"]["da3"]["outvideo"], height="auto")
+                outGSvideo_da3 = gr.Video(label=lang["mds_tab"]["da3"]["outGSvideo"], height="auto")
 
         # 評価指標Tab
         with gr.Tab(label=lang["metrics_tab"]["title"]) as metrics_tab:
@@ -1247,473 +1243,112 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             outputs=[lang_state, 
                      current_dataset_images,
                      current_dataset_colmap,
-                     # Dataset Tab
-                     dataset_tab,
-                     dataset_sub1,
-                     dataset_info1,
-                     dataset_radio,
-                     dataset_new_sub2,
-                     media_radio,
-                     dataset_image_sub3,
-                     images,
-                     dataset_name,
-                     run_copy_btn,
-                     dataset_image_sub4,
-                     output_image,
-                     gallery_image,
-                     dataset_video_sub3,
-                     video,
-                     fps,
-                     dataset_video_option,
-                     dataset_video_option_subtitle,
-                     dataset_video_option_info1,
-                     rsi,
-                     dataset_video_option_info2,
-                     ssim,
-                     run_ffmpeg_btn,
-                     output_video,
-                     comp_rate,
-                     sel_images_num,
-                     rej_images_num,
-                     gallery_video,
-                     dataset_video_sub4,
-                     dataset_video_info1,
-                     zipfile_images,
-                     dataset_load_sub2,
-                     load_dataset_info1,
-                     load_dataset,
-                     log_unzip,
-                     # COLMAPTab
-                     colmap_tab,
-                     colmap_sub1,
-                     colmap_info1,
-                     colmap_option,
-                     colmap_option_info1,
-                     rebuild,
-                     run_colmap_btn,
-                     result_colmap,
-                     colmap_sub2,
-                     colmap_info2,
-                     zipfile_colmap,
-                     # NeRFTab
+                     # --- DatasetTab ---
+                     dataset_tab, dataset_sub1, dataset_info1, dataset_radio, dataset_new_sub2, media_radio, dataset_image_sub3, images, dataset_name, run_copy_btn,
+                     dataset_image_sub4, output_image, gallery_image, dataset_video_sub3, video, fps, dataset_video_option, dataset_video_option_subtitle,
+                     dataset_video_option_info1, rsi, dataset_video_option_info2, ssim, run_ffmpeg_btn, output_video, comp_rate, sel_images_num, rej_images_num,
+                     gallery_video, dataset_video_sub4, dataset_video_info1, zipfile_images, dataset_load_sub2, load_dataset_info1, load_dataset, log_unzip,
+                     # --- COLMAPTab ---
+                     colmap_tab, colmap_sub1, colmap_info1, colmap_option, colmap_option_info1, rebuild, run_colmap_btn, result_colmap, colmap_sub2, colmap_info2, zipfile_colmap,
+                     # --- NeRFTab ---
                      nerf_tab,
-                     vnerf_tab, # Vanilla NeRF
-                     vnerf_sub1,
-                     vnerf_option,
-                     exe_mode_vnerf,
-                     iter_vnerf,
-                     recon_vnerf_btn,
-                     vnerf_viewer,
-                     outdir_recon_vnerf,
-                     runtime_recon_vnerf,
-                     result_recon_vnerf,
-                     log_recon_vnerf,
-                     vnerf_sub2,
-                     export_vnerf_btn,
-                     outdir_export_vnerf,
-                     runtime_export_vnerf,
-                     result_export_vnerf,
-                     log_export_vnerf,
-                     vnerf_sub3,
-                     eval_vnerf_btn,
-                     outdir_eval_vnerf,
-                     runtime_eval_vnerf,
-                     result_eval_vnerf,
-                     log_eval_vnerf,
-                     metrics_vnerf,
-                     gallery_vnerf,
-                     nerfacto_tab, # Nerfacto
-                     nerfacto_sub1,
-                     nerfacto_option,
-                     exe_mode_nerfacto,
-                     iter_nerfacto,
-                     recon_nerfacto_btn,
-                     nerfacto_viewer,
-                     outdir_recon_nerfacto,
-                     runtime_recon_nerfacto,
-                     result_recon_nerfacto,
-                     log_recon_nerfacto,
-                     nerfacto_sub2,
-                     export_nerfacto_btn,
-                     outdir_export_nerfacto,
-                     runtime_export_nerfacto,
-                     result_export_nerfacto,
-                     log_export_nerfacto,
-                     nerfacto_sub3,
-                     eval_nerfacto_btn,
-                     outdir_eval_nerfacto,
-                     runtime_eval_nerfacto,
-                     result_eval_nerfacto,
-                     log_eval_nerfacto,
-                     metrics_nerfacto,
-                     gallery_nerfacto,
-                     mipnerf_tab, # mip-NeRF
-                     mipnerf_sub1,
-                     mipnerf_option,
-                     exe_mode_mipnerf,
-                     iter_mipnerf,
-                     recon_mipnerf_btn,
-                     mipnerf_viewer,
-                     outdir_recon_mipnerf,
-                     runtime_recon_mipnerf,
-                     result_recon_mipnerf,
-                     log_recon_mipnerf,
-                     mipnerf_sub2,
-                     export_mipnerf_btn,
-                     outdir_export_mipnerf,
-                     runtime_export_mipnerf,
-                     result_export_mipnerf,
-                     log_export_mipnerf,
-                     mipnerf_sub3,
-                     eval_mipnerf_btn,
-                     outdir_eval_mipnerf,
-                     runtime_eval_mipnerf,
-                     result_eval_mipnerf,
-                     log_eval_mipnerf,
-                     metrics_mipnerf,
-                     gallery_mipnerf,
-                     stnerf_tab, # SeaThru-NeRF
-                     stnerf_sub1,
-                     stnerf_option,
-                     exe_mode_stnerf,
-                     iter_stnerf,
-                     recon_stnerf_btn,
-                     stnerf_viewer,
-                     outdir_recon_stnerf,
-                     runtime_recon_stnerf,
-                     result_recon_stnerf,
-                     log_recon_stnerf,
-                     stnerf_sub2,
-                     export_stnerf_btn,
-                     outdir_export_stnerf,
-                     runtime_export_stnerf,
-                     result_export_stnerf,
-                     log_export_stnerf,
-                     stnerf_sub3,
-                     eval_stnerf_btn,
-                     outdir_eval_stnerf,
-                     runtime_eval_stnerf,
-                     result_eval_stnerf,
-                     log_eval_stnerf,
-                     metrics_stnerf,
-                     gallery_stnerf,
-                     # GSTab
+                     # Vanilla NeRF
+                     vnerf_tab, vnerf_sub1, vnerf_option, exe_mode_vnerf, iter_vnerf, recon_vnerf_btn, vnerf_viewer, outdir_recon_vnerf, runtime_recon_vnerf,
+                     result_recon_vnerf, log_recon_vnerf, vnerf_sub2, export_vnerf_btn, outdir_export_vnerf, runtime_export_vnerf, result_export_vnerf, log_export_vnerf,
+                     vnerf_sub3, eval_vnerf_btn, outdir_eval_vnerf, runtime_eval_vnerf, result_eval_vnerf, log_eval_vnerf, metrics_vnerf, gallery_vnerf,
+                     # Nerfacto
+                     nerfacto_tab, nerfacto_sub1, nerfacto_option, exe_mode_nerfacto, iter_nerfacto, recon_nerfacto_btn, nerfacto_viewer, outdir_recon_nerfacto,
+                     runtime_recon_nerfacto, result_recon_nerfacto, log_recon_nerfacto, nerfacto_sub2, export_nerfacto_btn, outdir_export_nerfacto, runtime_export_nerfacto, 
+                     result_export_nerfacto, log_export_nerfacto, nerfacto_sub3, eval_nerfacto_btn, outdir_eval_nerfacto, runtime_eval_nerfacto, result_eval_nerfacto,
+                     log_eval_nerfacto, metrics_nerfacto, gallery_nerfacto,
+                     # mip-NeRF
+                     mipnerf_tab, mipnerf_sub1, mipnerf_option, exe_mode_mipnerf, iter_mipnerf, recon_mipnerf_btn, mipnerf_viewer, outdir_recon_mipnerf, runtime_recon_mipnerf,
+                     result_recon_mipnerf, log_recon_mipnerf, mipnerf_sub2, export_mipnerf_btn, outdir_export_mipnerf, runtime_export_mipnerf, result_export_mipnerf,
+                     log_export_mipnerf, mipnerf_sub3, eval_mipnerf_btn, outdir_eval_mipnerf, runtime_eval_mipnerf, result_eval_mipnerf, log_eval_mipnerf, metrics_mipnerf, gallery_mipnerf,
+                     # SeaThru-NeRF
+                     stnerf_tab, stnerf_sub1, stnerf_option, exe_mode_stnerf, iter_stnerf, recon_stnerf_btn, stnerf_viewer, outdir_recon_stnerf, runtime_recon_stnerf,
+                     result_recon_stnerf, log_recon_stnerf, stnerf_sub2, export_stnerf_btn, outdir_export_stnerf, runtime_export_stnerf, result_export_stnerf,log_export_stnerf, stnerf_sub3,
+                     eval_stnerf_btn, outdir_eval_stnerf, runtime_eval_stnerf, result_eval_stnerf, log_eval_stnerf, metrics_stnerf, gallery_stnerf,
+                     # --- GSTab ---
                      gs_tab,
-                     vgs_tab, # Vanilla GS
-                     vgs_sub1,
-                     vgs_option,
-                     exe_mode_vgs,
-                     recon_vgs_btn,
-                     outdir_recon_vgs,
-                     runtime_recon_vgs,
-                     result_recon_vgs,
-                     log_recon_vgs,
-                     outmodel_vgs,
-                     vgs_sub2,
-                     skip_train,
-                     skip_test,
-                     eval_vgs_btn,
-                     runtime_eval_vgs,
-                     result_eval_vgs,
-                     log_eval_vgs,
-                     metrics_vgs,
-                     gallery_vgs,
-                     mips_tab, # Mip-Splatting
-                     mips_sub1,
-                     mips_option,
-                     exe_mode_mips,
-                     save_iter_mips,
-                     recon_mips_btn,
-                     outdir_recon_mips,
-                     runtime_recon_mips,
-                     result_recon_mips,
-                     log_recon_mips,
-                     outmodel_mips,
-                     mips_sub2,
-                     eval_mips_btn,
-                     outdir_eval_mips,
-                     runtime_eval_mips,
-                     result_eval_mips,
-                     log_eval_mips,
-                     metrics_mips,
-                     gallery_mips,
-                     sfacto_tab, # Splatfacto
-                     sfacto_sub1,
-                     sfacto_option,
-                     exe_mode_sfacto,
-                     iter_sfacto,
-                     recon_sfacto_btn,
-                     sfacto_viewer,
-                     outdir_recon_sfacto,
-                     runtime_recon_sfacto,
-                     result_recon_sfacto,
-                     log_recon_sfacto,
-                     sfacto_sub2,
-                     export_sfacto_btn,
-                     outdir_export_sfacto,
-                     runtime_export_sfacto,
-                     result_export_sfacto,
-                     log_export_sfacto,
-                     sfacto_sub3,
-                     eval_sfacto_btn,
-                     outdir_eval_sfacto,
-                     runtime_eval_sfacto,
-                     result_eval_sfacto,
-                     log_eval_sfacto,
-                     metrics_sfacto,
-                     gallery_sfacto,
-                     gs4d_tab, # 4D-Gaussians
-                     gs4d_sub1,
-                     gs4d_option,
-                     exe_mode_4dgs,
-                     save_iter_4dgs,
-                     recon_4dgs_btn,
-                     outdir_recon_4dgs,
-                     runtime_recon_4dgs,
-                     result_recon_4dgs,
-                     log_recon_4dgs,
-                     outmodel_4dgs,
-                     gs4d_sub2,
-                     eval_4dgs_btn,
-                     outdir_eval_4dgs,
-                     runtime_eval_4dgs,
-                     result_eval_4dgs,
-                     log_eval_4dgs,
-                     metrics_4dgs,
-                     gallery_4dgs,
-                     # 3stersTab
+                     # Vanilla GS
+                     vgs_tab, vgs_sub1, vgs_option, exe_mode_vgs, recon_vgs_btn, outdir_recon_vgs, runtime_recon_vgs, result_recon_vgs, log_recon_vgs, outmodel_vgs, vgs_sub2,
+                     skip_train, skip_test, eval_vgs_btn, runtime_eval_vgs, result_eval_vgs, log_eval_vgs, metrics_vgs, gallery_vgs,
+                     # Mip-Splatting
+                     mips_tab, mips_sub1, mips_option, exe_mode_mips, save_iter_mips, recon_mips_btn, outdir_recon_mips, runtime_recon_mips, result_recon_mips, log_recon_mips,
+                     outmodel_mips, mips_sub2, eval_mips_btn, outdir_eval_mips, runtime_eval_mips, result_eval_mips, log_eval_mips, metrics_mips, gallery_mips,
+                     # Splatfacto
+                     sfacto_tab, sfacto_sub1, sfacto_option, exe_mode_sfacto, iter_sfacto, recon_sfacto_btn, sfacto_viewer, outdir_recon_sfacto, runtime_recon_sfacto,
+                     result_recon_sfacto, log_recon_sfacto, sfacto_sub2, export_sfacto_btn, outdir_export_sfacto, runtime_export_sfacto, result_export_sfacto,
+                     log_export_sfacto, sfacto_sub3, eval_sfacto_btn, outdir_eval_sfacto, runtime_eval_sfacto, result_eval_sfacto, log_eval_sfacto, metrics_sfacto, gallery_sfacto,
+                     # 4D-Gaussians
+                     gs4d_tab, gs4d_sub1, gs4d_option, exe_mode_4dgs, save_iter_4dgs, recon_4dgs_btn, outdir_recon_4dgs, runtime_recon_4dgs, result_recon_4dgs,
+                     log_recon_4dgs, outmodel_4dgs, gs4d_sub2, eval_4dgs_btn, outdir_eval_4dgs, runtime_eval_4dgs, result_eval_4dgs, log_eval_4dgs, metrics_4dgs, gallery_4dgs,
+                     # --- 3stersTab ---
                      esters_tab,
-                     dust3r_tab, # DUSt3R
-                     dust3r_sub1,
-                     dust3r_option,
-                     exe_mode_dust3r,
-                     recon_dust3r_btn,
-                     outdir_recon_dust3r,
-                     runtime_recon_dust3r,
-                     result_recon_dust3r,
-                     log_recon_dust3r,
-                     outmodel_dust3r,
-                     gallery_dust3r,
-                     mast3r_tab, # MASt3R
-                     mast3r_sub1,
-                     mast3r_option,
-                     exe_mode_mast3r,
-                     recon_mast3r_btn,
-                     outdir_recon_mast3r,
-                     runtime_recon_mast3r,
-                     result_recon_mast3r,
-                     log_recon_mast3r,
-                     outmodel_mast3r,
-                     monst3r_tab, # MonST3R
-                     monst3r_sub1,
-                     monst3r_option,
-                     exe_mode_monst3r,
-                     recon_monst3r_btn,
-                     outdir_recon_monst3r,
-                     runtime_recon_monst3r,
-                     result_recon_monst3r,
-                     log_recon_monst3r,
-                     outmodel_monst3r,
-                     easi3r_tab, # Easi3R
-                     easi3r_sub1,
-                     easi3r_info1,
-                     easi3r_option,
-                     exe_mode_easi3r,
-                     recon_easi3r_btn,
-                     outdir_recon_easi3r,
-                     runtime_recon_easi3r,
-                     result_recon_easi3r,
-                     log_recon_easi3r,
-                     outmodel_easi3r,
-                     must3r_tab, # MUSt3R
-                     must3r_sub1,
-                     must3r_option,
-                     exe_mode_must3r,
-                     recon_must3r_btn,
-                     outdir_recon_must3r,
-                     runtime_recon_must3r,
-                     result_recon_must3r,
-                     log_recon_must3r,
-                     outmodel_must3r,
-                     fast3r_tab, # Fast3R
-                     fast3r_sub1,
-                     fast3r_option,
-                     exe_mode_fast3r,
-                     recon_fast3r_btn,
-                     outdir_recon_fast3r,
-                     runtime_recon_fast3r,
-                     result_recon_fast3r,
-                     log_recon_fast3r,
-                     outmodel_fast3r,
-                     splatt3r_tab, # Splatt3R
-                     splatt3r_sub1,
-                     splatt3r_info1,
-                     img_splatt3r,
-                     splatt3r_sub2,
-                     splatt3r_option,
-                     exe_mode_splatt3r,
-                     recon_splatt3r_btn,
-                     outdir_recon_splatt3r,
-                     runtime_recon_splatt3r,
-                     result_recon_splatt3r,
-                     log_recon_splatt3r,
-                     outmodel_splatt3r,
-                     cut3r_tab, # CUT3R
-                     cut3r_sub1,
-                     cut3r_option,
-                     exe_mode_cut3r,
-                     recon_cut3r_btn,
-                     outdir_recon_cut3r,
-                     runtime_recon_cut3r,
-                     result_recon_cut3r,
-                     log_recon_cut3r,
-                     outmodel_cut3r,
-                     wint3r_tab, # WinT3R
-                     wint3r_sub1,
-                     wint3r_option,
-                     exe_mode_wint3r,
-                     recon_wint3r_btn,
-                     outdir_recon_wint3r,
-                     runtime_recon_wint3r,
-                     result_recon_wint3r,
-                     log_recon_wint3r,
-                     outmodel_wint3r,
-                     # vggTab
+                     # DUSt3R
+                     dust3r_tab, dust3r_sub1, dust3r_option, exe_mode_dust3r, recon_dust3r_btn, outdir_recon_dust3r, runtime_recon_dust3r, result_recon_dust3r,
+                     log_recon_dust3r, outmodel_dust3r, gallery_dust3r,
+                     # MASt3R
+                     mast3r_tab, mast3r_sub1, mast3r_option, exe_mode_mast3r, recon_mast3r_btn, outdir_recon_mast3r, runtime_recon_mast3r, result_recon_mast3r,
+                     log_recon_mast3r, outmodel_mast3r,
+                     # MonST3R
+                     monst3r_tab, monst3r_sub1, monst3r_option, exe_mode_monst3r, recon_monst3r_btn, outdir_recon_monst3r, runtime_recon_monst3r, result_recon_monst3r,
+                     log_recon_monst3r, outmodel_monst3r,
+                     # Easi3R
+                     easi3r_tab, easi3r_sub1, easi3r_info1, easi3r_option, exe_mode_easi3r, recon_easi3r_btn, outdir_recon_easi3r,runtime_recon_easi3r,
+                     result_recon_easi3r, log_recon_easi3r, outmodel_easi3r,
+                     # MUSt3R
+                     must3r_tab, must3r_sub1, must3r_option, exe_mode_must3r, recon_must3r_btn, outdir_recon_must3r, runtime_recon_must3r, result_recon_must3r,
+                     log_recon_must3r, outmodel_must3r,
+                     # Fast3R
+                     fast3r_tab, fast3r_sub1, fast3r_option, exe_mode_fast3r, recon_fast3r_btn, outdir_recon_fast3r, runtime_recon_fast3r, result_recon_fast3r,
+                     log_recon_fast3r, outmodel_fast3r,
+                     # Splatt3R
+                     splatt3r_tab, splatt3r_sub1, splatt3r_info1, img_splatt3r, splatt3r_sub2, splatt3r_option, exe_mode_splatt3r, recon_splatt3r_btn, outdir_recon_splatt3r,
+                     runtime_recon_splatt3r, result_recon_splatt3r, log_recon_splatt3r, outmodel_splatt3r,
+                     # CUT3R
+                     cut3r_tab, cut3r_sub1, cut3r_option, exe_mode_cut3r, recon_cut3r_btn, outdir_recon_cut3r, runtime_recon_cut3r, result_recon_cut3r,
+                     log_recon_cut3r, outmodel_cut3r,
+                     # WinT3R
+                     wint3r_tab, wint3r_sub1, wint3r_option, exe_mode_wint3r, recon_wint3r_btn, outdir_recon_wint3r, runtime_recon_wint3r, result_recon_wint3r,
+                     log_recon_wint3r, outmodel_wint3r,
+                     # ---vggTab ---
                      vggt_tab,
-                     vggt_tab, # VGGT
-                     vggt_sub1,
-                     vggt_option,
-                     exe_mode_vggt,
-                     mode_vggt,
-                     recon_vggt_btn,
-                     outdir_recon_vggt,
-                     runtime_recon_vggt,
-                     result_recon_vggt,
-                     log_recon_vggt,
-                     outmodel_vggt,
-                     vggsfm_tab, # VGGSfM
-                     vggsfm_sub1,
-                     vggsfm_option,
-                     exe_mode_vggsfm,
-                     recon_vggsfm_btn,
-                     outdir_recon_vggsfm,
-                     runtime_recon_vggsfm,
-                     result_recon_vggsfm,
-                     log_recon_vggsfm,
-                     vggsfm_sub2,
-                     export_vggsfm_btn,
-                     outdir_export_vggsfm,
-                     runtime_export_vggsfm,
-                     result_export_vggsfm,
-                     log_export_vggsfm,
-                     outmodel_vggsfm,
-                     vggtslam_tab, # VGGT-SLAM
-                     vggtslam_sub1,
-                     vggtslam_option,
-                     exe_mode_vggtslam,
-                     recon_vggtslam_btn,
-                     vggtslam_viewer,
-                     outdir_recon_vggtslam,
-                     runtime_recon_vggtslam,
-                     result_recon_vggtslam,
-                     log_recon_vggtslam,
-                     outmodel_vggtslam,
-                     stmvggt_tab, # StreamVGGT
-                     stmvggt_sub1,
-                     stmvggt_option,
-                     exe_mode_stmvggt,
-                     recon_stmvggt_btn,
-                     outdir_recon_stmvggt,
-                     runtime_recon_stmvggt,
-                     result_recon_stmvggt,
-                     log_recon_stmvggt,
-                     outmodel_stmvggt,
-                     fastvggt_tab, # FastVGGT
-                     fastvggt_sub1,
-                     fastvggt_option,
-                     exe_mode_fastvggt,
-                     recon_fastvggt_btn,
-                     outdir_recon_fastvggt,
-                     runtime_recon_fastvggt,
-                     result_recon_fastvggt,
-                     log_recon_fastvggt,
-                     outmodel_fastvggt,
-                     pi3_tab, # Pi3
-                     pi3_sub1,
-                     pi3_option,
-                     exe_mode_pi3,
-                     recon_pi3_btn,
-                     outdir_recon_pi3,
-                     runtime_recon_pi3,
-                     result_recon_pi3,
-                     log_recon_pi3,
-                     outmodel_pi3,
-                     # mdsTab
+                     # VGGT
+                     vggt_tab, vggt_sub1, vggt_option, exe_mode_vggt, mode_vggt, recon_vggt_btn, outdir_recon_vggt, runtime_recon_vggt, result_recon_vggt,
+                     log_recon_vggt, outmodel_vggt,
+                     # VGGSfM
+                     vggsfm_tab, vggsfm_sub1, vggsfm_option, exe_mode_vggsfm, recon_vggsfm_btn, outdir_recon_vggsfm, runtime_recon_vggsfm, result_recon_vggsfm,
+                     log_recon_vggsfm, vggsfm_sub2, export_vggsfm_btn, outdir_export_vggsfm, runtime_export_vggsfm, result_export_vggsfm, log_export_vggsfm, outmodel_vggsfm,
+                     # VGGT-SLAM
+                     vggtslam_tab, vggtslam_sub1, vggtslam_option, exe_mode_vggtslam, recon_vggtslam_btn, vggtslam_viewer, outdir_recon_vggtslam, runtime_recon_vggtslam,
+                     result_recon_vggtslam, log_recon_vggtslam, outmodel_vggtslam,
+                     # StreamVGGT
+                     stmvggt_tab, stmvggt_sub1, stmvggt_option, exe_mode_stmvggt, recon_stmvggt_btn, outdir_recon_stmvggt, runtime_recon_stmvggt, result_recon_stmvggt,
+                     log_recon_stmvggt, outmodel_stmvggt,
+                     # FastVGGT
+                     fastvggt_tab, fastvggt_sub1, fastvggt_option, exe_mode_fastvggt, recon_fastvggt_btn, outdir_recon_fastvggt, runtime_recon_fastvggt, result_recon_fastvggt,
+                     log_recon_fastvggt, outmodel_fastvggt,
+                     # Pi3
+                     pi3_tab, pi3_sub1, pi3_option, exe_mode_pi3, recon_pi3_btn, outdir_recon_pi3, runtime_recon_pi3, result_recon_pi3, log_recon_pi3, outmodel_pi3,
+                     # --- mdsTab ---
                      mds_tab,
-                     moge2_tab, # moge2
-                     moge2_sub1,
-                     moge2_info1,
-                     img_moge2,
-                     moge2_sub2,
-                     moge2_option,
-                     exe_mode_moge2,
-                     img_type_moge2,
-                     recon_moge2_btn,
-                     outdir_recon_moge2,
-                     runtime_recon_moge2,
-                     result_recon_moge2,
-                     log_recon_moge2,
-                     outmodel_moge2,
+                     # moge2
+                     moge2_tab, moge2_sub1, moge2_info1, img_moge2, moge2_sub2, moge2_option, exe_mode_moge2, img_type_moge2, recon_moge2_btn, outdir_recon_moge2,
+                     runtime_recon_moge2, result_recon_moge2, log_recon_moge2, outmodel_moge2,
                      # UniK3D
-                     unik3d_tab, 
-                     unik3d_sub1,
-                     unik3d_info1,
-                     img_unik3d,
-                     unik3d_sub2,
-                     unik3d_option,
-                     exe_mode_unik3d,
-                     recon_unik3d_btn,
-                     outdir_recon_unik3d,
-                     runtime_recon_unik3d,
-                     result_recon_unik3d,
-                     log_recon_unik3d,
-                     outmodel_unik3d,
-                     # DA2 tab
-                     da2_tab,
-                     da2_sub1,
-                     da2_input_radio,
-                     da2_iamge_sub1,
-                     da2_iamge_info1,
-                     image_da2,
-                     da2_option,
-                     exe_mode_image_da2,
-                     exe_model_image_da2,
-                     run_image_da2_btn,
-                     outdir_image_da2,
-                     runtime_image_da2,
-                     result_image_da2,
-                     log_image_da2,
-                     outimage_da2,
-                     da2_video_sub1,
-                     da2_video_info1,
-                     video_da2,
-                     da2_option,
-                     exe_mode_video_da2,
-                     exe_model_video_da2,
-                     run_video_da2_btn,
-                     outdir_video_da2,
-                     runtime_video_da2,
-                     result_video_da2,
-                     log_video_da2,
-                     outvideo_da2,
-                     # DA3 tab
-                     da3_tab, 
-                     da3_sub1,
-                     da3_input_radio,
-                     # Metrics Tab
-                     metrics_tab,
-                     method_metrics,
-                     download_csv
+                     unik3d_tab, unik3d_sub1, unik3d_info1, img_unik3d, unik3d_sub2, unik3d_option, exe_mode_unik3d, recon_unik3d_btn, outdir_recon_unik3d,
+                     runtime_recon_unik3d, result_recon_unik3d, log_recon_unik3d, outmodel_unik3d,
+                     # Depth Anything 2
+                     da2_tab, da2_sub1, da2_input_radio, da2_iamge_sub2, da2_iamge_info1, image_da2, da2_image_sub3, da2_image_option, exe_mode_image_da2,
+                     exe_model_image_da2, run_image_da2_btn, outdir_image_da2, runtime_image_da2, result_image_da2, log_image_da2, outimage_da2, da2_video_sub2,
+                     da2_video_info1, video_da2,da2_video_sub3, da2_video_option, exe_mode_video_da2, exe_model_video_da2, run_video_da2_btn, outdir_video_da2,
+                     runtime_video_da2, result_video_da2, log_video_da2, outvideo_da2,
+                     # Depth Anything 3
+                     da3_sub1, da3_option, exe_mode_da3, recon_da3_btn, outdir_da3, runtime_da3, result_da3, log_da3, outmodel_da3, gallery_da3, outvideo_da3, outGSvideo_da3,
+                     # --- Metrics Tab ---
+                     metrics_tab, method_metrics, download_csv
                      ]
         )
 
@@ -1730,9 +1365,6 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         da2_input_radio.change(fn=switch_da2_ui,
                                inputs=[da2_input_radio, lang_state],
                                outputs=[da2_image_col,  da2_video_col])
-        da3_input_radio.change(fn=switch_da2_ui,
-                               inputs=[da3_input_radio, lang_state],
-                               outputs=[da3_image_col,  da3_video_col])
 
         # --- データセット ---
         # 画像データセット作成
@@ -1865,6 +1497,13 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         run_video_da2_btn.click(fn=methods.run_video_da2,
                                 inputs=[exe_mode_video_da2, video_da2, outputsdir_state, exe_model_video_da2],
                                 outputs=[outdir_video_da2, runtime_video_da2, result_video_da2, log_video_da2, outvideo_da2])
+        # DA3
+        recon_da3_btn.click(fn=methods.recon_da3,
+                            inputs=[exe_mode_da3, image_dataset_state, outputsdir_state],
+                            outputs=[outdir_da3, runtime_da3, result_da3, log_da3, outmodel_da3, outimages_da3, outvideo_da3, outGSvideo_da3]).success(
+                                fn=local_backend.get_imagelist,
+                                inputs=outimages_da3,
+                                outputs=gallery_da3)
         
         # --- 点群出力（Nerfstudio）---
         export_vnerf_btn.click(fn=methods.export_vnerf,

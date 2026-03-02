@@ -1,6 +1,5 @@
 import os
-import glob
-import json
+import cv2
 import time
 import shutil
 import subprocess
@@ -742,8 +741,8 @@ DUSt3R
 def recon_dust3r(mode, dataset, outputs_dir, schedule, niter, min_conf_thr, as_pointcloud, mask_sky, 
                clean_depth, transparent_cams, cam_size, scenegraph_type, winsize, refid):
     # 出力ディレクトリの作成
-    dirname = os.path.dirname(dataset)
-    name = os.path.basename(dirname)
+    dataset = os.path.dirname(dataset)
+    name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "dust3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -814,8 +813,8 @@ MASt3R
 # --- 再構築メソッド ---
 def recon_mast3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
-    dirname = os.path.dirname(dataset)
-    name = os.path.basename(dirname)
+    dataset = os.path.dirname(dataset)
+    name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "mast3r", name)
     os.makedirs(outdir, exist_ok=True)
 
@@ -867,8 +866,8 @@ MonST3R
 # --- 再構築メソッド ---
 def recon_monst3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
-    dirname = os.path.dirname(dataset)
-    name = os.path.basename(dirname)
+    dataset = os.path.dirname(dataset)
+    name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "monst3r")
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -917,8 +916,8 @@ Easi3R
 # --- 再構築メソッド ---
 def recon_easi3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
-    dirname = os.path.dirname(dataset)
-    name = os.path.basename(dirname)
+    dataset = os.path.dirname(dataset)
+    name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "easi3r")
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -967,8 +966,8 @@ MUSt3R
 # --- 再構築メソッド ---
 def recon_must3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
-    dirname = os.path.dirname(dataset)
-    name = os.path.basename(dirname)
+    dataset = os.path.dirname(dataset)
+    name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "must3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -1017,8 +1016,8 @@ Fast3R
 # --- 再構築メソッド ---
 def recon_fast3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
-    dirname = os.path.dirname(dataset)
-    name = os.path.basename(dirname)
+    dataset = os.path.dirname(dataset)
+    name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "fast3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -1108,8 +1107,8 @@ CUT3R
 # --- 再構築メソッド ---
 def recon_cut3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
-    dirname = os.path.dirname(dataset)
-    name = os.path.basename(dirname)
+    dataset = os.path.dirname(dataset)
+    name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "cutt3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -1161,8 +1160,8 @@ WinT3R
 # --- 再構築メソッド ---
 def recon_wint3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
-    dirname = os.path.dirname(dataset)
-    name = os.path.basename(dirname)
+    dataset = os.path.dirname(dataset)
+    name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "wint3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -1264,6 +1263,7 @@ VGGSfM
 def recon_vggsfm(mode, dataset):
     dataset = os.path.dirname(dataset)
     outdir = os.path.join(dataset, "sparse")
+
     if mode=="local":
         # 再構築スクリプトパス
         recon_script = "demo.py"
@@ -1671,11 +1671,11 @@ def run_video_da2(mode, dataset, outputs_dir, encoder):
 
     if mode=="local":
         # 再構築スクリプトパス
-        recon_script = "run_video.py"
+        infer_script = "run_video.py"
 
         # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "DA2", "python", recon_script,
+            "conda", "run", "-n", "DA2", "python", infer_script,
             "--video-path", dataset, 
             "--outdir", outdir,
             "--encoder", encoder
@@ -1703,3 +1703,84 @@ def run_video_da2(mode, dataset, outputs_dir, encoder):
     outvideo_path = os.path.join(outdir, f"{name}.mp4")
 
     return outdir, runtime, status, log, outvideo_path
+
+"""
+Depth-Anything-3
+"""
+def recon_da3(mode, dataset, outputs_dir):
+    # 出力ディレクトリの作成
+    dataset = os.path.dirname(dataset)
+    name = os.path.basename(dataset)
+    outdir = os.path.join(outputs_dir, "Depth-Anything-3", name)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
+    # 内部関数（depth画像 → mp4生成）
+    def images_to_video(image_dir, output_path, fps=5):
+        if not os.path.exists(image_dir):
+            return
+        images = sorted([
+            f for f in os.listdir(image_dir)
+            if f.lower().endswith((".png", ".jpg", ".jpeg"))
+        ])
+        if not images:
+            return
+        first = cv2.imread(os.path.join(image_dir, images[0]))
+        if first is None:
+            return
+        h, w = first.shape[:2]
+        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+        out = cv2.VideoWriter(output_path, fourcc, fps, (w, h))
+        for img in images:
+            frame = cv2.imread(os.path.join(image_dir, img))
+            if frame is None:
+                continue
+            if frame.shape[:2] != (h, w):
+                frame = cv2.resize(frame, (w, h))
+            out.write(frame)
+        out.release()
+
+    if mode=="local":
+        # 再構築スクリプトパス
+        infer_script = os.path.join("scripts", "recon_da3.py")
+
+        # 実行コマンド
+        cmd = [
+            "conda", "run", "-n", "DA3", "python", infer_script,
+            "--input_dir", dataset, 
+            "--output_dir", outdir,
+            "--infer_gs"
+        ]
+
+        # 実行ディレクトリ
+        workdir = "./"
+    elif mode=="slurm":
+        # sbatchスクリプト
+        sbatch_script = os.path.join("scripts", "recon_da3.sh")
+
+        # 推論スクリプトパス
+        infer_script = os.path.join("scripts", "recon_da3.py")
+
+        # 実行コマンド
+        cmd = ["sbatch", sbatch_script, infer_script, dataset, outdir]
+
+        # 実行ディレクトリ
+        workdir = "./"
+
+    # 推論実行
+    runtime, status, log = run_subprocess_popen(cmd, workdir)
+
+    # 再構築結果のパス
+    outmodel = os.path.join(outdir, "scene.glb")
+
+    # 出力画像ディレクトリ
+    outimages_path = os.path.join(outdir, "depth_vis")
+
+    # depth画像 → mp4生成
+    outvideo_path = os.path.join(outdir, "scene.mp4")
+    images_to_video(outimages_path, outvideo_path)
+
+    # 出力gs動画ディレクトリ
+    outGSvideo_path = os.path.join(outdir, "gs_video", "gs.mp4")
+
+    return outdir, runtime, status, log, outmodel, outimages_path, outvideo_path, outGSvideo_path

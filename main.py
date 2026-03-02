@@ -1,4 +1,5 @@
 import os
+import methods
 import tempfile
 from demo import main_demo
 
@@ -20,7 +21,6 @@ if __name__ == '__main__':
         outputs = os.path.join(tmpdir, "outputs")
         os.mkdir(outputs)
 
-        import methods
         methods.TMPDIR = tmpdir
         
         # Gradio Demo起動
