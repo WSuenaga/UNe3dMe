@@ -458,7 +458,7 @@ def run_colmap(exe_mode, image_dataset, rebuild):
 
 # --- 評価計算メソッド ---
 def evaluate_all_metrics(method_name, gt_dir, render_dir, output_dir):
-    start_time = time.perf_counter()
+    start_time = time.time()
     log_lines = []
     returncode = 0
     summary_list = None
@@ -559,10 +559,15 @@ def evaluate_all_metrics(method_name, gt_dir, render_dir, output_dir):
         log_lines.append(str(e) + "\n")
         log_lines.append(traceback.format_exc())
         summary_list = None
+    end_time = time.time()
+
+    run_seconds = int(end_time - start_time)
+    h, rem = divmod(run_seconds, 3600)
+    m, s = divmod(rem, 60)
+    run_time = f"{h}:{m}:{s}"
 
     # 最終ログを行ごとに整形
     full_log = "".join(log_lines)
     status = "✅ Success" if returncode == 0 else "❌ Failed"
-    run_time = time.perf_counter() - start_time
 
     return run_time, status, full_log, summary_list

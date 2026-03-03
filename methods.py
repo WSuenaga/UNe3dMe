@@ -80,7 +80,7 @@ def run_subprocess_popen(cmd, workdir, log_dir=None):
     run_seconds = int(end_time - start_time)
     h, rem = divmod(run_seconds, 3600)
     m, s = divmod(rem, 60)
-    run_time = f"{h}時間{m}分{s}秒"
+    run_time = f"{h}:{m}:{s}"
 
     # ステータス
     if returncode == 0:
