@@ -80,7 +80,7 @@ def run_subprocess_popen(cmd, workdir, log_dir=None):
     run_seconds = int(end_time - start_time)
     h, rem = divmod(run_seconds, 3600)
     m, s = divmod(rem, 60)
-    run_time = f"{h}:{m}:{s}"
+    run_time = f"{h:02d}:{m:02d}:{s:02d}"
 
     # ステータス
     if returncode == 0:
@@ -741,8 +741,8 @@ DUSt3R
 def recon_dust3r(mode, dataset, outputs_dir, schedule, niter, min_conf_thr, as_pointcloud, mask_sky, 
                clean_depth, transparent_cams, cam_size, scenegraph_type, winsize, refid):
     # 出力ディレクトリの作成
-    dataset = os.path.dirname(dataset)
-    name = os.path.basename(dataset)
+    dirname = os.path.abspath(dataset)
+    name = os.path.basename(dirname)
     outdir = os.path.join(outputs_dir, "dust3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -813,10 +813,11 @@ MASt3R
 # --- 再構築メソッド ---
 def recon_mast3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
-    dataset = os.path.dirname(dataset)
-    name = os.path.basename(dataset)
+    dirname = os.path.abspath(dataset)
+    name = os.path.basename(dirname)
     outdir = os.path.join(outputs_dir, "mast3r", name)
-    os.makedirs(outdir, exist_ok=True)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
 
     # 使用モデル
     model = "MASt3R_ViTLarge_BaseDecoder_512_catmlpdpt_metric"
@@ -866,9 +867,9 @@ MonST3R
 # --- 再構築メソッド ---
 def recon_monst3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
-    dataset = os.path.dirname(dataset)
-    name = os.path.basename(dataset)
-    outdir = os.path.join(outputs_dir, "monst3r")
+    dirname = os.path.abspath(dataset)
+    name = os.path.basename(dirname)
+    outdir = os.path.join(outputs_dir, "monst3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
@@ -902,9 +903,6 @@ def recon_monst3r(mode, dataset, outputs_dir):
     # 推論実行
     runtime, status, log = run_subprocess_popen(cmd, workdir)
 
-    # 出力ディレクトリ
-    outdir = os.path.join(outputs_dir, "monst3r", name)
-
     # 再構築結果のパス
     model_path = os.path.join(outdir, name, "scene.glb")
 
@@ -916,9 +914,9 @@ Easi3R
 # --- 再構築メソッド ---
 def recon_easi3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
-    dataset = os.path.dirname(dataset)
-    name = os.path.basename(dataset)
-    outdir = os.path.join(outputs_dir, "easi3r")
+    dirname = os.path.abspath(dataset)
+    name = os.path.basename(dirname)
+    outdir = os.path.join(outputs_dir, "easi3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
@@ -952,9 +950,6 @@ def recon_easi3r(mode, dataset, outputs_dir):
     # 推論実行
     runtime, status, log = run_subprocess_popen(cmd, workdir)
 
-    # 出力ディレクトリ
-    outdir = os.path.join(outputs_dir, "easi3r", name)
-
     # 再構築結果のパス
     model_path = os.path.join(outdir, name, "scene.glb")
 
@@ -966,8 +961,8 @@ MUSt3R
 # --- 再構築メソッド ---
 def recon_must3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
-    dataset = os.path.dirname(dataset)
-    name = os.path.basename(dataset)
+    dirname = os.path.abspath(dataset)
+    name = os.path.basename(dirname)
     outdir = os.path.join(outputs_dir, "must3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -1016,8 +1011,8 @@ Fast3R
 # --- 再構築メソッド ---
 def recon_fast3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
-    dataset = os.path.dirname(dataset)
-    name = os.path.basename(dataset)
+    dirname = os.path.abspath(dataset)
+    name = os.path.basename(dirname)
     outdir = os.path.join(outputs_dir, "fast3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -1107,8 +1102,8 @@ CUT3R
 # --- 再構築メソッド ---
 def recon_cut3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
-    dataset = os.path.dirname(dataset)
-    name = os.path.basename(dataset)
+    dirname = os.path.abspath(dataset)
+    name = os.path.basename(dirname)
     outdir = os.path.join(outputs_dir, "cutt3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -1160,8 +1155,8 @@ WinT3R
 # --- 再構築メソッド ---
 def recon_wint3r(mode, dataset, outputs_dir):
     # 出力ディレクトリの作成
-    dataset = os.path.dirname(dataset)
-    name = os.path.basename(dataset)
+    dirname = os.path.abspath(dataset)
+    name = os.path.basename(dirname)
     outdir = os.path.join(outputs_dir, "wint3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -1262,6 +1257,7 @@ VGGSfM
 # --- 再構築メソッド ---
 def recon_vggsfm(mode, dataset):
     dataset = os.path.dirname(dataset)
+    # 出力先のパス
     outdir = os.path.join(dataset, "sparse")
 
     if mode=="local":
@@ -1657,7 +1653,6 @@ def run_image_da2(mode, dataset, outputs_dir, encoder):
 
     # 推論実行
     runtime, status, log = run_subprocess_popen(cmd, workdir)
-
 
     return outdir, runtime, status, log, outdir
 

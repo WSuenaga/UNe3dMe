@@ -61,9 +61,6 @@
 [submodule "models/UniK3D"]
 	path = models/UniK3D
 	url = https://github.com/lpiccinelli-eth/UniK3D.git
-
-
-
 [submodule "models/Depth-Anything-V2"]
 	path = models/Depth-Anything-V2
 	url = https://github.com/DepthAnything/Depth-Anything-V2.git

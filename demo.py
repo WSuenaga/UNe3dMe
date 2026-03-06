@@ -583,6 +583,7 @@ def update_method_metrics(table, values, save_dir):
 
 # GradioUI
 def main_demo(tmpdir, datasetsdir, outputsdir):
+
     # デフォルト言語
     lang = load_translations("jp")
 
@@ -1197,7 +1198,8 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     runtime_image_da2 = gr.Textbox(label=lang["mds_tab"]["da2"]["runtime_recon"])
                     result_image_da2 = gr.Textbox(label=lang["mds_tab"]["da2"]["result_recon"])
                     log_image_da2 = gr.Textbox(label=lang["mds_tab"]["da2"]["log_recon"])
-                    outimage_da2 = gr.Gallery(label=lang["mds_tab"]["da2"]["outimage"], columns=1, height="auto")
+                    outimage_da2 = gr.State()
+                    gallery_da2 = gr.Gallery(label=lang["mds_tab"]["da2"]["outimage"], columns=1, height="auto")
                 with gr.Column(visible=False) as da2_video_col:
                     da2_video_sub2 = gr.Markdown(lang["mds_tab"]["da2"]["video_section"]["subtitle2"])
                     da2_video_info1 = gr.Markdown(lang["mds_tab"]["da2"]["video_section"]["info1"])
@@ -1342,7 +1344,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      runtime_recon_unik3d, result_recon_unik3d, log_recon_unik3d, outmodel_unik3d,
                      # Depth Anything 2
                      da2_tab, da2_sub1, da2_input_radio, da2_iamge_sub2, da2_iamge_info1, image_da2, da2_image_sub3, da2_image_option, exe_mode_image_da2,
-                     exe_model_image_da2, run_image_da2_btn, outdir_image_da2, runtime_image_da2, result_image_da2, log_image_da2, outimage_da2, da2_video_sub2,
+                     exe_model_image_da2, run_image_da2_btn, outdir_image_da2, runtime_image_da2, result_image_da2, log_image_da2, gallery_da2, da2_video_sub2,
                      da2_video_info1, video_da2,da2_video_sub3, da2_video_option, exe_mode_video_da2, exe_model_video_da2, run_video_da2_btn, outdir_video_da2,
                      runtime_video_da2, result_video_da2, log_video_da2, outvideo_da2,
                      # Depth Anything 3
@@ -1493,7 +1495,11 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         # DA2
         run_image_da2_btn.click(fn=methods.run_image_da2,
                                 inputs=[exe_mode_image_da2, image_da2, outputsdir_state, exe_model_image_da2],
-                                outputs=[outdir_image_da2, runtime_image_da2, result_image_da2, log_image_da2, outimage_da2])
+                                outputs=[outdir_image_da2, runtime_image_da2, result_image_da2, log_image_da2, outimage_da2]).success(
+                                    fn=local_backend.get_imagelist,
+                                    inputs=outimage_da2,
+                                    outputs=gallery_da2
+                                )
         run_video_da2_btn.click(fn=methods.run_video_da2,
                                 inputs=[exe_mode_video_da2, video_da2, outputsdir_state, exe_model_video_da2],
                                 outputs=[outdir_video_da2, runtime_video_da2, result_video_da2, log_video_da2, outvideo_da2])

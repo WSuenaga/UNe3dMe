@@ -564,7 +564,7 @@ def evaluate_all_metrics(method_name, gt_dir, render_dir, output_dir):
     run_seconds = int(end_time - start_time)
     h, rem = divmod(run_seconds, 3600)
     m, s = divmod(rem, 60)
-    run_time = f"{h}:{m}:{s}"
+    run_time = f"{h:02d}:{m:02d}:{s:02d}"
 
     # 最終ログを行ごとに整形
     full_log = "".join(log_lines)
