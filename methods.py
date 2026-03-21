@@ -5,8 +5,6 @@ import shutil
 import subprocess
 import platform
 
-import gradio as gr
-
 from local_backend import get_imagelist, evaluate_all_metrics
 
 # subprocessのshellフラグの設定
@@ -72,7 +70,7 @@ def run_subprocess_popen(cmd, workdir, log_dir=None):
 
     except Exception as e:
         error_log = f"実行に失敗しました: {e}"
-        return "0時間0分0秒", "❌ 失敗 (Exception)", error_log
+        return "", "❌ Failed (Exception)", error_log
 
     end_time = time.time()
 
@@ -98,8 +96,10 @@ def train_nerfstudio(dataset, outputs_dir, method_name, train_args=None):
     """
     Nerfstudio モデルを学習する関数
     """
-    dirname = os.path.dirname(dataset)
-    name = os.path.basename(dirname)
+    # 入力ディレクトリ
+    dataset =os.path.abspath(dataset)
+    # 出力ディレクトリの作成
+    name = os.path.basename(os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, method_name, name)
     os.makedirs(outdir, exist_ok=True)
 
@@ -124,7 +124,7 @@ def train_nerfstudio(dataset, outputs_dir, method_name, train_args=None):
 
     runtime, status, log = run_subprocess_popen(cmd, workdir)
 
-    return outdir, runtime, status, log, gr.Column(visible=True), gr.Column(visible=True)
+    return outdir, runtime, status, log
 
 # --- ns-train呼び出しメソッド（slurm） ---
 def train_nerfstudio_slurm(dataset, outputs_dir, method_name, iter, port):
@@ -145,19 +145,15 @@ def train_nerfstudio_slurm(dataset, outputs_dir, method_name, iter, port):
 
     runtime, status, log = run_subprocess_popen(cmd, workdir)
 
-    return outdir, runtime, status, log, gr.Column(visible=True)
+    return outdir, runtime, status, log
 
 # --- ns-export呼び出しメソッド ---
-def export_nerfstudio(dataset, outputs_dir, method_name1, method_name2, filetype, export_args=None):
+def export_nerfstudio(outdir, method_name, filetype, export_args=None):
     """
     Nerfstudio モデルをエクスポートする関数
     (学習済みの config.yml 必須)
     """
-    dataset = os.path.dirname(dataset)
-    name = os.path.basename(dataset)
-    outdir = os.path.join(outputs_dir, method_name1, name)
-
-    config_path = os.path.join(outdir, "results", method_name2, "results", "config.yml")
+    config_path = os.path.join(outdir, "results", method_name, "results", "config.yml")
 
     export_cmd = [
         "conda", "run", "-n", "nerfstudio",
@@ -172,22 +168,17 @@ def export_nerfstudio(dataset, outputs_dir, method_name1, method_name2, filetype
 
     run_time, success, log = run_subprocess_popen(export_cmd, workdir)
 
-    return outdir, run_time, success, log
+    outmodel = os.path.join(outdir, "point_cloud.ply")
+
+    return outdir, run_time, success, log, outmodel
 
 # --- ns-export呼び出しメソッド ---
-def export_nerfstudio_slurm(dataset, outputs_dir, method_name1, method_name2, filetype, export_args=None):
+def export_nerfstudio_slurm(outdir, method_name, filetype, export_args=None):
     """
     Nerfstudio モデルをエクスポートする関数
     (学習済みの config.yml 必須)
     """
-    dataset = os.path.dirname(dataset)
-    name = os.path.basename(dataset)
-    outdir = os.path.join(outputs_dir, method_name1, name)
-
-    # 学習結果の config.yml（そのまま）
-    config_path = os.path.join(
-        outdir, "results", method_name2, "results", "config.yml"
-    )
+    config_path = os.path.join(outdir, "results", method_name, "results", "config.yml")
 
     export_cmd = [
         "conda", "run", "-n", "nerfstudio",
@@ -201,53 +192,124 @@ def export_nerfstudio_slurm(dataset, outputs_dir, method_name1, method_name2, fi
     workdir = "./"
 
     run_time, success, log = run_subprocess_popen(export_cmd, workdir)
-
-    # -----------------------------
-    # 出力整理（<method_name> 配下に集約）
-    # -----------------------------
-    src_results_dir = os.path.join(outdir, "results", method_name2, "results")
-    dst_method_dir = os.path.join(outdir, method_name1)
-
-    if os.path.exists(src_results_dir):
-        os.makedirs(dst_method_dir, exist_ok=True)
-
-        for item in os.listdir(src_results_dir):
-            src = os.path.join(src_results_dir, item)
-            dst = os.path.join(dst_method_dir, item)
-
-            # 既存があれば削除（強制置換）
-            if os.path.exists(dst):
-                if os.path.isdir(dst):
-                    shutil.rmtree(dst)
-                else:
-                    os.remove(dst)
-
-            shutil.move(src, dst)
-
-        # 空ディレクトリ削除（下から順に）
-        cleanup_dirs = [
-            os.path.join(outdir, "results", method_name2, "results"),
-            os.path.join(outdir, "results", method_name2),
-            os.path.join(outdir, "results"),
-        ]
-
-        for d in cleanup_dirs:
-            if os.path.exists(d) and not os.listdir(d):
-                shutil.rmtree(d)
 
     return outdir, run_time, success, log
 
 # --- ns-eval呼び出しメソッド ---
-def render_eval_nerfstudio(dataset, outputs_dir, method_name1, method_name2):
+def render_eval_nerfstudio(outdir, method_name, gt_name, pred_name):
+    """
+    Nerfstudio モデルを評価する関数
+    (学習済みの config.yml 必須)
+
+    想定する ns-render の出力:
+    1. 複数枚の場合:
+       outdir/test/<name>/*.jpg
+    2. 1枚だけの場合:
+       outdir/test/<name>.jpg など
+       -> outdir/test/<name>/<name>.jpg に移動して統一する
+    """
+    config_path = os.path.join(outdir, "results", method_name, "results", "config.yml")
+    workdir = "./"
+
+    # gt をレンダリング
+    cmd = [
+        "conda", "run", "-n", "nerfstudio",
+        "ns-render", "dataset",
+        "--load-config", config_path,
+        "--rendered-output-names", gt_name,
+        "--output-path", outdir,
+    ]
+    run_subprocess_popen(cmd, workdir)
+
+    # pred をレンダリング
+    cmd = [
+        "conda", "run", "-n", "nerfstudio",
+        "ns-render", "dataset",
+        "--load-config", config_path,
+        "--rendered-output-names", pred_name,
+        "--output-path", outdir,
+    ]
+    run_subprocess_popen(cmd, workdir)
+
+    test_dir = os.path.join(outdir, "test")
+    exts = (".png", ".jpg", ".jpeg")
+
+    def normalize_render_output(base_dir, name):
+        """
+        出力を必ず test/<name>/ 配下に統一する。
+        戻り値:
+            files: 画像ファイルパスのリスト
+            dir_path: 評価用ディレクトリ
+        """
+        dir_path = os.path.join(base_dir, name)
+
+        # 1) すでにディレクトリ形式
+        if os.path.isdir(dir_path):
+            files = sorted(
+                os.path.join(dir_path, f)
+                for f in os.listdir(dir_path)
+                if f.lower().endswith(exts)
+            )
+            if files:
+                return files, dir_path
+
+        # 2) 単一ファイル形式 -> test/<name>/ に移動
+        for ext in exts:
+            flat_file = os.path.join(base_dir, f"{name}{ext}")
+            if os.path.isfile(flat_file):
+                os.makedirs(dir_path, exist_ok=True)
+
+                dst_file = os.path.join(dir_path, os.path.basename(flat_file))
+
+                # すでに同名ファイルがあれば上書きのため削除
+                if os.path.exists(dst_file):
+                    os.remove(dst_file)
+
+                shutil.move(flat_file, dst_file)
+                return [dst_file], dir_path
+
+        # 3) 見つからない
+        return [], None
+
+    gt_files, gt_dir = normalize_render_output(test_dir, gt_name)
+    pred_files, pred_dir = normalize_render_output(test_dir, pred_name)
+
+    if not gt_files:
+        return outdir, "", "失敗", f"GT画像が見つかりません: {gt_name}", [], []
+    if not pred_files:
+        return outdir, "", "失敗", f"予測画像が見つかりません: {pred_name}", [], []
+
+    if len(gt_files) != len(pred_files):
+        full_log = (
+            f"GT と予測の画像枚数が一致しません．\n"
+            f"{gt_name}: {len(gt_files)} 枚\n"
+            f"{pred_name}: {len(pred_files)} 枚"
+        )
+        return outdir, "", "失敗", full_log, [], []
+
+    # 評価指標の計算
+    run_time, status, full_log, summary_list = evaluate_all_metrics(
+        method_name,
+        gt_dir,
+        pred_dir,
+        outdir
+    )
+
+    # ギャラリーの作成
+    gallery = []
+    for gt, pred in zip(gt_files, pred_files):
+        gallery.append(gt)
+        gallery.append(pred)
+
+    return outdir, run_time, status, full_log, summary_list, gallery
+
+# --- ns-eval呼び出しメソッド ---
+def render_eval_nerfstudio_slurm(outdir, method_name, gt_name, pred_name):
     """
     Nerfstudio モデルを評価する関数
     (学習済みの config.yml 必須)
     """
-    dataset = os.path.dirname(dataset)
-    name = os.path.basename(dataset)
-    outdir = os.path.join(outputs_dir, method_name1, name)
-
-    config_path = os.path.join(outdir, "results", method_name2, "results", "config.yml")
+    config_path = os.path.join(outdir, "results", method_name, "results", "config.yml")
 
     workdir = "./"  
 
@@ -255,24 +317,25 @@ def render_eval_nerfstudio(dataset, outputs_dir, method_name1, method_name2):
         "conda", "run", "-n", "nerfstudio",
         "ns-render", "dataset",
         "--load-config", config_path,
-        "--rendered-output-names", "rgb",
+        "--rendered-output-names", gt_name,
         "--output-path", outdir
     ]
     run_subprocess_popen(cmd, workdir)
+
     cmd = [
         "conda", "run", "-n", "nerfstudio",
         "ns-render", "dataset",
         "--load-config", config_path,
-        "--rendered-output-names", "gt-rgb",
+        "--rendered-output-names", pred_name,
         "--output-path", outdir
     ]
     run_subprocess_popen(cmd, workdir)
 
-    gt_dir = os.path.join(outdir, "test", "gt-rgb")
-    pred_dir = os.path.join(outdir, "test", "rgb")
+    gt_dir = os.path.join(outdir, "test", gt_name)
+    pred_dir = os.path.join(outdir, "test", pred_name)
 
     # 評価指標の計算
-    run_time, status, full_log, summary_list = evaluate_all_metrics(method_name2, gt_dir, pred_dir, outdir)
+    run_time, status, full_log, summary_list = evaluate_all_metrics(method_name, gt_dir, pred_dir, outdir)
 
     # ファイル名をソートして一致させる
     gt_files = sorted([os.path.join(gt_dir, f) for f in os.listdir(gt_dir) if f.lower().endswith((".png", ".jpg", ".jpeg"))])
@@ -286,69 +349,65 @@ def render_eval_nerfstudio(dataset, outputs_dir, method_name1, method_name2):
 
     return outdir, run_time, status, full_log, summary_list, gallery
 
-# --- ns-eval呼び出しメソッド ---
-def eval_nerfstudio_slurm(dataset, outputs_dir, method_name1, method_name2, eval_args=None):
-    return
-
 """
 Vanilla-NeRF
 """
 # --- 再構築メソッド ---
-def recon_vnerf(mode, dataset, out_dir, iter):
+def recon_vnerf(mode, dataset, outdir, iter):
     port = 7007
     if mode == "local":
         train_args = ["--max-num-iterations", f"{iter}",
                       "--viewer.websocket-port-default", f"{port}"]
-        return train_nerfstudio(dataset, out_dir, "vanilla-nerf", train_args)
+        return train_nerfstudio(dataset, outdir, "vanilla-nerf", train_args)
     elif mode == "slurm":
-        return train_nerfstudio_slurm(dataset, out_dir, "vanilla-nerf", iter, port)
+        return train_nerfstudio_slurm(dataset, outdir, "vanilla-nerf", iter, port)
     
 # --- 点群出力メソッド ---
-def export_vnerf(mode, dataset, out_dir):
+def export_vnerf(mode, outdir):
     if mode == "local":
         export_args = ["--normal-method", "open3d",
                        "--rgb-output-name", "rgb_fine", 
                        "--depth-output-name", "depth_fine"]
-        return export_nerfstudio(dataset, out_dir, "vanilla-nerf", "vanilla-nerf", "pointcloud", export_args)
+        return export_nerfstudio(outdir, "vanilla-nerf", "pointcloud", export_args)
     elif mode == "slurm":
-        return export_nerfstudio_slurm(dataset, out_dir, "vanilla-nerf")
+        return export_nerfstudio_slurm(outdir, "vanilla-nerf", "pointcloud", export_args)
     
 # --- レンダリング&評価指標メソッド ---
-def render_eval_vnerf(mode, dataset, out_dir):
+def render_eval_vnerf(mode, outdir):
     if mode == "local":
-        return render_eval_nerfstudio(dataset, out_dir, "vanilla-nerf", "vanilla-nerf")
+        return render_eval_nerfstudio(outdir, "vanilla-nerf", "rgb_fine", "gt-rgb")
     elif mode == "slurm":
-        return eval_nerfstudio_slurm(dataset, out_dir, "vanilla-nerf")
+        return render_eval_nerfstudio_slurm(outdir, "vanilla-nerf", "rgb_fine", "gt-rgb")
     
 """
 Nerfacto
 """
 # --- 再構築メソッド ---
-def recon_nerfacto(mode, dataset, out_dir, iter):
+def recon_nerfacto(mode, dataset, outdir, iter):
     port = 7008
     if mode == "local":
         train_args = ["--max-num-iterations", f"{iter}",
                       "--viewer.websocket-port-default", f"{port}"]
-        return train_nerfstudio(dataset, out_dir, "nerfacto-huge", train_args) 
+        return train_nerfstudio(dataset, outdir, "nerfacto-huge", train_args) 
     elif mode == "slurm":
-        return train_nerfstudio_slurm(dataset, out_dir, "nerfacto-huge", iter, port)
+        return train_nerfstudio_slurm(dataset, outdir, "nerfacto-huge", iter, port)
     
 # --- 点群出力メソッド ---
-def export_nerfacto(mode, dataset, out_dir):
+def export_nerfacto(mode, outdir):
     if mode == "local":
         export_args = ["--normal-method", "open3d",
                        "--rgb-output-name", "rgb", 
                        "--depth-output-name", "depth"]
-        return export_nerfstudio(dataset, out_dir, "nerfacto-huge", "nerfacto", "pointcloud", export_args)
+        return export_nerfstudio(outdir, "nerfacto", "pointcloud", export_args)
     elif mode == "slurm":
-        return export_nerfstudio_slurm(dataset, out_dir, "nerfacto")
+        return export_nerfstudio_slurm(outdir, "nerfacto", "pointcloud", export_args)
 
 # --- レンダリング&評価指標メソッド ---
-def render_eval_nerfacto(mode, dataset, out_dir):
+def render_eval_nerfacto(mode, outdir):
     if mode == "local":
-        return render_eval_nerfstudio(dataset, out_dir, "nerfacto-huge", "nerfacto")
+        return render_eval_nerfstudio(outdir, "nerfacto", "rgb", "gt-rgb")
     elif mode == "slurm":
-        return eval_nerfstudio_slurm(dataset, out_dir, "nerfacto")
+        return render_eval_nerfstudio_slurm(outdir, "nerfacto", "rgb", "gt-rgb")
 
 """
 mip-NeRF
@@ -364,21 +423,21 @@ def recon_mipnerf(mode, dataset, out_dir, iter):
         return train_nerfstudio_slurm(dataset, out_dir, "mipnerf", iter, port)
     
 # --- 点群出力メソッド ---
-def export_mipnerf(mode, dataset, out_dir):
+def export_mipnerf(mode, outdir):
     if mode == "local":
         export_args = ["--normal-method", "open3d",
                        "--rgb-output-name", "rgb_fine", 
                        "--depth-output-name", "depth_fine"]
-        return export_nerfstudio(dataset, out_dir, "mipnerf", "mipnerf", "pointcloud", export_args)
+        return export_nerfstudio(outdir, "mipnerf", "pointcloud", export_args)
     elif mode == "slurm":
-        return export_nerfstudio_slurm(dataset, out_dir, "mipnerf")
+        return export_nerfstudio_slurm(outdir, "mipnerf", "pointcloud", export_args)
     
 # --- レンダリング&評価指標メソッド ---
-def render_eval_mipnerf(mode, dataset, out_dir):
+def render_eval_mipnerf(mode, outdir):
     if mode == "local":
-        return render_eval_nerfstudio(dataset, out_dir, "mipnerf", "mipnerf")
+        return render_eval_nerfstudio(outdir, "mipnerf", "rgb_fine", "gt-rgb")
     elif mode == "slurm":
-        return eval_nerfstudio_slurm(dataset, out_dir, "mipnerf")
+        return render_eval_nerfstudio_slurm(outdir, "mipnerf", "rgb_fine", "gt-rgb")
 
 """
 SeaThru-NeRF
@@ -394,21 +453,21 @@ def recon_stnerf(mode, dataset, out_dir, iter):
         return train_nerfstudio_slurm(dataset, out_dir, "seathru-nerf", iter, port)
 
 # --- 点群出力メソッド ---
-def export_stnerf(mode, dataset, out_dir):
+def export_stnerf(mode, outdir):
     if mode == "local":
         export_args = ["--normal-method", "open3d",
                        "--rgb-output-name", "rgb", 
                        "--depth-output-name", "depth"]
-        return export_nerfstudio(dataset, out_dir, "seathru-nerf", "seathru-nerf", "pointcloud", export_args)
+        return export_nerfstudio(outdir, "seathru-nerf", "pointcloud", export_args)
     elif mode == "slurm":
-        return export_nerfstudio_slurm(dataset, out_dir, "seathru-nerf")
+        return export_nerfstudio_slurm(outdir, "seathru-nerf", "pointcloud", export_args)
     
 # --- レンダリング&評価指標メソッド ---
-def render_eval_stnerf(mode, dataset, out_dir):
+def render_eval_stnerf(mode, outdir):
     if mode == "local":
-        return render_eval_nerfstudio(dataset, out_dir, "seathru-nerf", "seathru-nerf")
+        return render_eval_nerfstudio(outdir, "seathru-nerf", "rgb", "gt-rgb")
     elif mode == "slurm":
-        return eval_nerfstudio_slurm(dataset, out_dir, "seathru-nerf")
+        return render_eval_nerfstudio_slurm(outdir, "seathru-nerf", "rgb", "gt-rgb")
 
 """
 Vanilla-GS
@@ -420,8 +479,10 @@ def recon_vgs(mode, dataset, outputs_dir, sh_degree, data_device, lambde_dsiim, 
              position_lr_final, position_lr_delay_mult, densify_from_iter,
              densify_until_iter, densify_grad_threshold, densification_interval,
              opacity_rest_interval, percent_dense):
+    # 入力ディレクトリ
+    dataset =os.path.abspath(dataset)
     # 出力ディレクトリの作成
-    name = os.path.basename(dataset)
+    name = os.path.basename(os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "3dgs", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -462,7 +523,7 @@ def recon_vgs(mode, dataset, outputs_dir, sh_degree, data_device, lambde_dsiim, 
     # 再構築結果のパス
     model_path = os.path.join(outdir, "point_cloud", f"iteration_{save_iter}", "point_cloud.ply")
 
-    return outdir, runtime, status, log, model_path, gr.Column(visible=True)
+    return outdir, runtime, status, log, model_path
 
 # --- レンダリング&評価メソッド ---
 def render_eval_3dgs(model_path, skip_train, skip_test, iteration):
@@ -517,8 +578,10 @@ Mip-Splatting
 """
 # --- 再構築メソッド ---
 def recon_mipSplatting(mode, dataset, outputs_dir, save_iter):
+    # 入力ディレクトリ
+    dataset =os.path.abspath(dataset)
     # 出力ディレクトリの作成
-    name = os.path.basename(dataset)
+    name = os.path.basename(os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "mip-splatting", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -559,7 +622,7 @@ def recon_mipSplatting(mode, dataset, outputs_dir, save_iter):
     # 再構築結果のパス
     model_path = os.path.join(outdir, "point_cloud", f"iteration_{save_iter}", "point_cloud.ply")
 
-    return outdir, runtime, status, log, model_path, gr.Column(visible=True)
+    return outdir, runtime, status, log, model_path
 
 # --- レンダリング&評価メソッド ---
 def render_eval_mips(model_path, skip_train, skip_test, iteration):
@@ -623,27 +686,29 @@ def recon_sfacto(mode, dataset, out_dir, iter):
         return train_nerfstudio_slurm(dataset, out_dir, "splatfacto-big", iter, port)
     
 # --- 点群出力メソッド ---
-def export_sfacto(mode, dataset, out_dir):
+def export_sfacto(mode, outdir):
     if mode == "local":
         export_args = []
-        return export_nerfstudio(dataset, out_dir, "splatfacto-big", "splatfacto", "gaussian-splat", export_args)
+        return export_nerfstudio(outdir, "splatfacto", "gaussian-splat", export_args)
     elif mode == "slurm":
-        return export_nerfstudio_slurm(dataset, out_dir, "splatfacto-big")
+        return export_nerfstudio_slurm(outdir, "splatfacto", "gaussian-splat", export_args)
     
 # --- レンダリング&評価指標メソッド ---
-def render_eval_sfacto(mode, dataset, out_dir):
+def render_eval_sfacto(mode, outdir):
     if mode == "local":
-        return render_eval_nerfstudio(dataset, out_dir, "splatfacto-big", "splatfacto")
+        return render_eval_nerfstudio(outdir, "splatfacto", "rgb", "gt-rgb")
     elif mode == "slurm":
-        return eval_nerfstudio_slurm(dataset, out_dir, "splatfacto-big")
+        return render_eval_nerfstudio_slurm(outdir, "splatfacto", "rgb", "gt-rgb")
 
 """
 4D-Gaussians
 """
 # --- 再構築メソッド ---
 def recon_4dGaussians(mode, dataset, outputs_dir, save_iter):
+    # 入力ディレクトリ
+    dataset =os.path.abspath(dataset)
     # 出力ディレクトリの作成
-    name = os.path.basename(dataset)
+    name = os.path.basename(os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "4D-Gaussians", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -684,7 +749,7 @@ def recon_4dGaussians(mode, dataset, outputs_dir, save_iter):
     # 再構築結果のパス
     model_path = os.path.join(outdir, "point_cloud", f"iteration_{save_iter}", "point_cloud.ply")
 
-    return outdir, runtime, status, log, model_path, gr.Column(visible=True)
+    return outdir, runtime, status, log, model_path
 
 # --- レンダリング&評価メソッド ---
 def render_eval_4dgs(model_path, skip_train, skip_test, iteration):
@@ -740,9 +805,10 @@ DUSt3R
 # --- 再構築メソッド ---
 def recon_dust3r(mode, dataset, outputs_dir, schedule, niter, min_conf_thr, as_pointcloud, mask_sky, 
                clean_depth, transparent_cams, cam_size, scenegraph_type, winsize, refid):
+    # 入力ディレクトリ
+    dataset =os.path.abspath(dataset)
     # 出力ディレクトリの作成
-    dirname = os.path.abspath(dataset)
-    name = os.path.basename(dirname)
+    name = os.path.basename( os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "dust3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -812,9 +878,10 @@ MASt3R
 """
 # --- 再構築メソッド ---
 def recon_mast3r(mode, dataset, outputs_dir):
+    # 入力ディレクトリ
+    dataset =os.path.abspath(dataset)
     # 出力ディレクトリの作成
-    dirname = os.path.abspath(dataset)
-    name = os.path.basename(dirname)
+    name = os.path.basename( os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "mast3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -866,9 +933,10 @@ MonST3R
 """
 # --- 再構築メソッド ---
 def recon_monst3r(mode, dataset, outputs_dir):
+    # 入力ディレクトリ
+    dataset =os.path.abspath(dataset)
     # 出力ディレクトリの作成
-    dirname = os.path.abspath(dataset)
-    name = os.path.basename(dirname)
+    name = os.path.basename( os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "monst3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -913,9 +981,10 @@ Easi3R
 """
 # --- 再構築メソッド ---
 def recon_easi3r(mode, dataset, outputs_dir):
+    # 入力ディレクトリ
+    dataset =os.path.abspath(dataset)
     # 出力ディレクトリの作成
-    dirname = os.path.abspath(dataset)
-    name = os.path.basename(dirname)
+    name = os.path.basename( os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "easi3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -960,9 +1029,10 @@ MUSt3R
 """
 # --- 再構築メソッド ---
 def recon_must3r(mode, dataset, outputs_dir):
+    # 入力ディレクトリ
+    dataset =os.path.abspath(dataset)
     # 出力ディレクトリの作成
-    dirname = os.path.abspath(dataset)
-    name = os.path.basename(dirname)
+    name = os.path.basename( os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "must3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -1010,9 +1080,10 @@ Fast3R
 """
 # --- 再構築メソッド ---
 def recon_fast3r(mode, dataset, outputs_dir):
+    # 入力ディレクトリ
+    dataset =os.path.abspath(dataset)
     # 出力ディレクトリの作成
-    dirname = os.path.abspath(dataset)
-    name = os.path.basename(dirname)
+    name = os.path.basename( os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "fast3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -1101,9 +1172,10 @@ CUT3R
 """
 # --- 再構築メソッド ---
 def recon_cut3r(mode, dataset, outputs_dir):
+    # 入力ディレクトリ
+    dataset =os.path.abspath(dataset)
     # 出力ディレクトリの作成
-    dirname = os.path.abspath(dataset)
-    name = os.path.basename(dirname)
+    name = os.path.basename( os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "cutt3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -1154,9 +1226,10 @@ WinT3R
 """
 # --- 再構築メソッド ---
 def recon_wint3r(mode, dataset, outputs_dir):
+    # 入力ディレクトリ
+    dataset =os.path.abspath(dataset)
     # 出力ディレクトリの作成
-    dirname = os.path.abspath(dataset)
-    name = os.path.basename(dirname)
+    name = os.path.basename( os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "wint3r", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -1205,8 +1278,9 @@ VGGT
 """
 # --- 再構築メソッド ---
 def recon_vggt(mode, dataset, outputs_dir):
+    # 入力ディレクトリ
+    dataset = os.path.dirname(os.path.abspath(dataset))
     # 出力ディレクトリの作成
-    dataset = os.path.dirname(dataset)
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "vggt", name)
     if not os.path.exists(outdir):
@@ -1286,13 +1360,13 @@ def recon_vggsfm(mode, dataset):
     # 推論実行
     runtime, status, log = run_subprocess_popen(cmd, workdir)
 
-    return outdir, runtime, status, log, gr.Column(visible=True)   
+    return outdir, runtime, status, log
          
 # --- 点群出力メソッド ---
 def export_vggsfm(dataset, outputs_dir): # 軽量なのでlocalのみ
     # 出力ディレクトリの作成
-    dataset = os.path.dirname(dataset)
-    name = os.path.basename(dataset)
+    dirname = os.path.abspath(dataset)
+    name = os.path.basename(os.path.dirname(dirname))
     outdir = os.path.join(outputs_dir, "vggsfm", name)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -1324,8 +1398,9 @@ VGGT-SLAM
 """
 # --- 再構築メソッド ---
 def recon_vggtslam(mode, dataset, outputs_dir):
+    # 入力ディレクトリ
+    dataset = os.path.dirname(os.path.abspath(dataset))
     # 出力ディレクトリの作成
-    dataset = os.path.dirname(dataset)
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "vggt-slam", name)
     if not os.path.exists(outdir):
@@ -1373,8 +1448,9 @@ StreamVGGT
 """
 # --- 再構築メソッド ---
 def recon_stmvggt(mode, dataset, outputs_dir):
+    # 入力ディレクトリ
+    dataset = os.path.dirname(os.path.abspath(dataset))
     # 出力ディレクトリの作成
-    dataset = os.path.dirname(dataset)
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "stmvggt", name)
     if not os.path.exists(outdir):
@@ -1419,8 +1495,9 @@ FastVGGT
 """
 # --- 再構築メソッド ---
 def recon_fastvggt(mode, dataset, outputs_dir):
+    # 入力ディレクトリ
+    dataset = os.path.dirname(os.path.abspath(dataset))
     # 出力ディレクトリの作成
-    dataset = os.path.dirname(dataset)
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "fastvggt", name)
     if not os.path.exists(outdir):
@@ -1473,8 +1550,9 @@ Pi3
 """
 # --- 再構築メソッド ---
 def recon_pi3(mode, dataset, outputs_dir):
+    # 入力ディレクトリ
+    dataset = os.path.dirname(os.path.abspath(dataset))
     # 出力ディレクトリの作成
-    dataset = os.path.dirname(dataset)
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "pi3", name)
     if not os.path.exists(outdir):

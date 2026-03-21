@@ -2,6 +2,7 @@ import os
 import time
 import json
 import glob
+import socket
 import shutil
 import random
 import string
@@ -28,6 +29,8 @@ from tqdm import tqdm
 
 # subprocessのshellフラグの設定
 SHELL_FLAG = platform.system() == "Windows"
+# 保存先一時ディレクトリ
+TMPDIR = ""
 
 # --- ディレクトリ内の画像パスをリスト化するメソッド ---
 def get_imagelist(dir):
@@ -68,7 +71,7 @@ def copy_images(image_paths, parent_path, name):
     
     imagelist = get_imagelist(output_path)
 
-    return output_path, output_path, imagelist, gr.Column(visible=True)
+    return output_path, output_path, imagelist
 
 def remove_similar_images(input_dir: str, ssim_threshold: float = 0.8):
     """
@@ -156,7 +159,7 @@ def extract_frames_with_filter(video, parent_path, fps, remove_similar, ssim_thr
         for f in os.listdir(output_path) if f.endswith(".png")
     ])
 
-    return output_path, output_path, comp_rate, sel_images_num, rej_images_num, imagelist, gr.Column(visible=True)
+    return output_path, output_path, comp_rate, sel_images_num, rej_images_num, imagelist
 
 # データセットロードメソッド
 def unzip_dataset(zip_file, datasets_parent):
@@ -300,7 +303,7 @@ def make_multiscale_images(
 # --- colmap 実行メソッド ---
 def run_colmap(exe_mode, image_dataset, rebuild):
     if not image_dataset:
-        return "", "画像データセットがセットされていません", gr.Column(visible=False)
+        return "", "画像データセットがセットされていません", gr.Column(visible=True)
 
     global SHELL_FLAG
     all_logs = []
@@ -571,3 +574,193 @@ def evaluate_all_metrics(method_name, gt_dir, render_dir, output_dir):
     status = "✅ Success" if returncode == 0 else "❌ Failed"
 
     return run_time, status, full_log, summary_list
+
+# --- Viewer ---
+def viewer(viewer, outmodel, host="127.0.0.1", port=8080):
+    global TMPDIR
+
+    if outmodel is None:
+        return "ファイルが指定されていません．"
+
+    outmodel = os.path.expanduser(str(outmodel))
+    if not os.path.exists(outmodel):
+        return f"ファイルが見つかりません: {outmodel}"
+    if not os.path.isfile(outmodel):
+        return f"ファイルではありません: {outmodel}"
+
+    workdir = "./"
+    viewer_script = os.path.join("scripts", "viewer", viewer)
+    if not os.path.exists(viewer_script):
+        return f"スクリプトが見つかりません: {viewer_script}"
+
+    cmd = [
+        "python",
+        viewer_script,
+        "--input", outmodel,
+        "--host", str(host),
+        "--port", str(port),
+    ]
+
+    if viewer == "viewer_gaussian.py":
+        cmd.append("--center")
+
+    start_time = time.time()
+    log_dir = os.path.join(TMPDIR, "logs")
+    os.makedirs(log_dir, exist_ok=True)
+
+    timestamp = time.strftime("%Y%m%d_%H%M%S", time.localtime(start_time))
+    log_path = os.path.join(log_dir, f"{timestamp}.log")
+    cmd_str = " ".join(map(str, cmd))
+
+    try:
+        env = os.environ.copy()
+        env["PYTHONUTF8"] = "1"
+        env["PYTHONIOENCODING"] = "utf-8"
+
+        log_file = open(log_path, "w", encoding="utf-8")
+        header = f"[COMMAND]\n{cmd_str}\n{'-'*60}\n"
+        log_file.write(header)
+        log_file.flush()
+
+        process = subprocess.Popen(
+            cmd,
+            env=env,
+            stdout=log_file,
+            stderr=subprocess.STDOUT,
+            cwd=workdir,
+            shell=SHELL_FLAG,
+        )
+    except Exception as e:
+        return f"viewer の起動に失敗しました: {e}"
+
+    check_host = "127.0.0.1" if host == "0.0.0.0" else host
+    display_host = "127.0.0.1" if host == "0.0.0.0" else host
+
+    wait_timeout = 30
+    stable_seconds = 3.0
+    start = time.time()
+    connected_since = None
+
+    while time.time() - start < wait_timeout:
+        if process.poll() is not None:
+            log_file.close()
+            return f"viewer は起動しましたが，すぐ終了しました．ログを確認してください: {log_path}"
+
+        ok = False
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(0.5)
+        try:
+            ok = (s.connect_ex((check_host, int(port))) == 0)
+        finally:
+            s.close()
+
+        if ok:
+            if connected_since is None:
+                connected_since = time.time()
+            elif time.time() - connected_since >= stable_seconds:
+                log_file.flush()
+                return f"http://{display_host}:{port}"
+        else:
+            connected_since = None
+
+        time.sleep(0.2)
+
+    if process.poll() is None:
+        log_file.flush()
+        return f"http://{display_host}:{port} (起動確認は未完了)"
+
+    log_file.close()
+    return f"viewer の起動に失敗しました．ログを確認してください: {log_path}"
+
+# --- 拡張NerfstudioViewer起動メソッド ---
+def viewer_nerfstudio(outdir, method_name, host="127.0.0.1", port=8080):
+    global TMPDIR
+    
+    # configファイルのパス
+    config_path = os.path.join(outdir, "results", method_name, "results", "config.yml")
+    if not config_path:
+        return "ファイルが指定されていません．"
+
+    if not os.path.exists(config_path):
+        return f"config.yml が見つかりません: {config_path}"
+
+    if config_path is None:
+        return "ファイルが指定されていません．"
+
+    workdir = "./"
+    viewer_script = os.path.join("scripts", "viewer", "viewer_nerfstudio.py")
+    if not os.path.exists(viewer_script):
+        return f"スクリプトが見つかりません: {viewer_script}"
+
+    cmd = [
+        "conda", "run", "-n", "nerfstudio", "python", viewer_script,
+        "--load-config", config_path
+    ]
+
+    start_time = time.time()
+    log_dir = os.path.join(TMPDIR, "logs")
+    os.makedirs(log_dir, exist_ok=True)
+
+    timestamp = time.strftime("%Y%m%d_%H%M%S", time.localtime(start_time))
+    log_path = os.path.join(log_dir, f"{timestamp}.log")
+    cmd_str = " ".join(map(str, cmd))
+
+    try:
+        env = os.environ.copy()
+        env["PYTHONUTF8"] = "1"
+        env["PYTHONIOENCODING"] = "utf-8"
+
+        log_file = open(log_path, "w", encoding="utf-8")
+        header = f"[COMMAND]\n{cmd_str}\n{'-'*60}\n"
+        log_file.write(header)
+        log_file.flush()
+
+        process = subprocess.Popen(
+            cmd,
+            env=env,
+            stdout=log_file,
+            stderr=subprocess.STDOUT,
+            cwd=workdir,
+            shell=SHELL_FLAG,
+        )
+    except Exception as e:
+        return f"viewer の起動に失敗しました: {e}"
+
+    check_host = "127.0.0.1" if host == "0.0.0.0" else host
+    display_host = "127.0.0.1" if host == "0.0.0.0" else host
+
+    wait_timeout = 30
+    stable_seconds = 3.0
+    start = time.time()
+    connected_since = None
+
+    while time.time() - start < wait_timeout:
+        if process.poll() is not None:
+            log_file.close()
+            return f"viewer は起動しましたが，すぐ終了しました．ログを確認してください: {log_path}"
+
+        ok = False
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(0.5)
+        try:
+            ok = (s.connect_ex((check_host, int(port))) == 0)
+        finally:
+            s.close()
+
+        if ok:
+            if connected_since is None:
+                connected_since = time.time()
+            elif time.time() - connected_since >= stable_seconds:
+                log_file.flush()
+                return f"http://{display_host}:{port}"
+        else:
+            connected_since = None
+
+        time.sleep(0.2)
+
+    if process.poll() is None:
+        log_file.flush()
+        return f"http://{display_host}:{port} (起動確認は未完了)"
+
+    log_file.close()
+    return f"viewer の起動に失敗しました．ログを確認してください: {log_path}"

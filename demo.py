@@ -89,12 +89,18 @@ def update_ui(choice):
         gr.Textbox(label=lang["nerf_tab"]["vnerf"]["runtime_recon"]), # runtime_recon_vnerf
         gr.Textbox(label=lang["nerf_tab"]["vnerf"]["result_recon"]), # result_recon_vnerf
         gr.Textbox(label=lang["nerf_tab"]["vnerf"]["log_recon"]), # log_recon_vnerf
-        gr.Markdown(lang["nerf_tab"]["vnerf"]["subtitle2"]), # vnerf_sub2
+        gr.Markdown(lang["nerf_tab"]["vnerf"]["subtitle2.1"]), # vnerf_sub2.1
         gr.Button(value=lang["nerf_tab"]["vnerf"]["export_btn"]), # export_vnerf_btn
         gr.Textbox(label=lang["nerf_tab"]["vnerf"]["outdir_export"]), # outdir_export_vnerf
         gr.Textbox(label=lang["nerf_tab"]["vnerf"]["runtime_export"]), # runtime_export_vnerf
         gr.Textbox(label=lang["nerf_tab"]["vnerf"]["result_export"]), # result_export_vnerf
         gr.Textbox(label=lang["nerf_tab"]["vnerf"]["log_export"]), # log_export_vnerf
+        gr.Markdown(lang["nerf_tab"]["vnerf"]["subtitle2.2"]), # vnerf_sub2_2
+        gr.Accordion(label=lang["nerf_tab"]["vnerf"]["option"]["title"]), # viewer_vnerf_option
+        gr.Textbox(label=lang["nerf_tab"]["vnerf"]["option"]["host"]), # host_vnerf
+        gr.Textbox(label=lang["nerf_tab"]["vnerf"]["option"]["port"]), # port_vnerf
+        gr.Button(value=lang["nerf_tab"]["vnerf"]["viewer_btn"]), # viewer_vnerf_btn
+        gr.Textbox(label=lang["nerf_tab"]["vnerf"]["url"]), # viewer_vnerf
         gr.Markdown(lang["nerf_tab"]["vnerf"]["subtitle3"]), # vnerf_sub3
         gr.Button(value=lang["nerf_tab"]["vnerf"]["eval_btn"]), # eval_vnerf_btn
         gr.Textbox(label=lang["nerf_tab"]["vnerf"]["outdir_eval"]), # outdir_eval_vnerf
@@ -115,7 +121,13 @@ def update_ui(choice):
         gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["runtime_recon"]), # runtime_recon_nerfacto
         gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["result_recon"]), # result_recon_nerfacto
         gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["log_recon"]), # log_recon_nerfacto
-        gr.Markdown(lang["nerf_tab"]["nerfacto"]["subtitle2"]), # nerfacto_sub2
+        gr.Markdown(lang["nerf_tab"]["nerfacto"]["subtitle2.1"]), # nerfacto_sub2_1
+        gr.Accordion(label=lang["nerf_tab"]["nerfacto"]["option"]["title"]), # viewer_nerfacto_option
+        gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["option"]["host"]), # host_nerfacto
+        gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["option"]["port"]), # port_nerfacto
+        gr.Button(value=lang["nerf_tab"]["nerfacto"]["viewer_btn"]), # viewer_nerfacto_btn
+        gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["url"]), # viewer_nerfacto
+        gr.Markdown(lang["nerf_tab"]["nerfacto"]["subtitle2.2"]), # nerfacto_sub2_2
         gr.Button(value=lang["nerf_tab"]["nerfacto"]["export_btn"]), # export_nerfacto_btn
         gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["outdir_export"]), # outdir_export_nerfacto
         gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["runtime_export"]), # runtime_export_nerfacto
@@ -141,12 +153,18 @@ def update_ui(choice):
         gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["runtime_recon"]), # runtime_recon_mipnerf
         gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["result_recon"]), # result_recon_mipnerf
         gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["log_recon"]), # log_recon_mipnerf
-        gr.Markdown(lang["nerf_tab"]["mip-nerf"]["subtitle2"]), # mipnerf_sub2
+        gr.Markdown(lang["nerf_tab"]["mip-nerf"]["subtitle2.1"]), # mipnerf_sub2.1
         gr.Button(value=lang["nerf_tab"]["mip-nerf"]["export_btn"]), # export_mipnerf_btn
         gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["outdir_export"]), # outdir_export_mipnerf
         gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["runtime_export"]), # runtime_export_mipnerf
         gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["result_export"]), # result_export_mipnerf
         gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["log_export"]), # log_export_mipnerf
+        gr.Markdown(lang["nerf_tab"]["mip-nerf"]["subtitle2.2"]), # mipnerf_sub2_2
+        gr.Accordion(label=lang["nerf_tab"]["mip-nerf"]["option"]["title"]), # viewer_vnerf_option:
+        gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["option"]["host"]), # host_mipnerf
+        gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["option"]["port"]), # port_mipnerf
+        gr.Button(value=lang["nerf_tab"]["mip-nerf"]["viewer_btn"]), # viewer_mipnerf_btn
+        gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["url"]), # viewer_mipnerf
         gr.Markdown(lang["nerf_tab"]["mip-nerf"]["subtitle3"]), # mipnerf_sub3
         gr.Button(value=lang["nerf_tab"]["mip-nerf"]["eval_btn"]), # eval_mipnerf_btn
         gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["outdir_eval"]), # outdir_eval_mipnerf
@@ -168,11 +186,11 @@ def update_ui(choice):
         gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["result_recon"]), # result_recon_stnerf
         gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["log_recon"]), # log_recon_stnerf
         gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["subtitle2"]), # stnerf_sub2
-        gr.Button(value=lang["nerf_tab"]["seathru-nerf"]["export_btn"]), # export_stnerf_btn
-        gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["outdir_export"]), # outdir_export_stnerf
-        gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["runtime_export"]), # runtime_export_stnerf
-        gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["result_export"]), # result_export_stnerf
-        gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["log_export"]), # log_export_stnerf
+        gr.Accordion(label=lang["nerf_tab"]["seathru-nerf"]["option"]["title"]), # viewer_stnerf_option:
+        gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["option"]["host"]), # host_stnerf
+        gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["option"]["port"]), # port_stnerf
+        gr.Button(value=lang["nerf_tab"]["seathru-nerf"]["viewer_btn"]), # viewer_stnerf_btn
+        gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["url"]), # viewer_stnerf
         gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["subtitle3"]), # stnerf_sub3
         gr.Button(value=lang["nerf_tab"]["seathru-nerf"]["eval_btn"]), # eval_stnerf_btn
         gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["outdir_eval"]), # outdir_eval_stnerf
@@ -193,8 +211,13 @@ def update_ui(choice):
         gr.Textbox(label=lang["gs_tab"]["vgs"]["runtime_recon"]), # runtime_vgs
         gr.Textbox(label=lang["gs_tab"]["vgs"]["result_recon"]), # result_recon_vgs
         gr.Textbox(label=lang["gs_tab"]["vgs"]["log_recon"]), # log_recon_vgs
-        gr.Model3D(label=lang["gs_tab"]["vgs"]["outmodel"]), # outmodel_vgs
         gr.Markdown(lang["gs_tab"]["vgs"]["subtitle2"]), # vgs_sub2
+        gr.Accordion(label=lang["gs_tab"]["vgs"]["option"]["title"]), # viewer_vgs_option:
+        gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["option"]["host"]), # host_vgs
+        gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["option"]["port"]), # port_vgs
+        gr.Button(value=lang["nerf_tab"]["seathru-nerf"]["viewer_btn"]), # viewer_vgs_btn
+        gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["url"]), # viewer_vgs
+        gr.Markdown(lang["gs_tab"]["vgs"]["subtitle3"]), # vgs_sub3
         gr.Checkbox(label=lang["gs_tab"]["vgs"]["skip_train"]), # skip_train
         gr.Checkbox(label=lang["gs_tab"]["vgs"]["skip_test"]), # skip_test
         gr.Button(value=lang["gs_tab"]["vgs"]["eval_btn"]), # eval_vgs_btn
@@ -214,8 +237,13 @@ def update_ui(choice):
         gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["runtime_recon"]), # runtime_recon_mips
         gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["result_recon"]), # result_recon_mips
         gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["log_recon"]), # log_recon_mips
-        gr.Model3D(label=lang["gs_tab"]["mip-splatting"]["outmodel"]), # outmodel_mips
         gr.Markdown(lang["gs_tab"]["mip-splatting"]["subtitle2"]), # mips_sub2
+        gr.Accordion(label=lang["gs_tab"]["mip-splatting"]["option"]["title"],), # viewer_mips_option
+        gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["option"]["host"]), # host_mips
+        gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["option"]["port"]), # port_mips
+        gr.Button(value=lang["gs_tab"]["mip-splatting"]["viewer_btn"]), # viewer_mips_btn
+        gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["url"]), # viewer_mips
+        gr.Markdown(lang["gs_tab"]["mip-splatting"]["subtitle3"]), # mips_sub3
         gr.Button(value=lang["gs_tab"]["mip-splatting"]["eval_btn"]), # eval_mips_btn
         gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["outdir_eval"]), # outdir_eval_mips
         gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["runtime_eval"]), # runtime_eval_mips
@@ -235,7 +263,13 @@ def update_ui(choice):
         gr.Textbox(label=lang["gs_tab"]["splatfacto"]["runtime_recon"]), # runtime_recon_sfacto
         gr.Textbox(label=lang["gs_tab"]["splatfacto"]["result_recon"]), # result_recon_sfacto
         gr.Textbox(label=lang["gs_tab"]["splatfacto"]["log_recon"]), # log_recon_sfacto
-        gr.Markdown(lang["gs_tab"]["splatfacto"]["subtitle2"]), # sfacto_sub2
+        gr.Markdown(lang["gs_tab"]["splatfacto"]["subtitle2.1"]), # sfacto_sub2_1
+        gr.Accordion(label=lang["gs_tab"]["splatfacto"]["option"]["title"]), #viewer_sfacto_option:
+        gr.Textbox(label=lang["gs_tab"]["splatfacto"]["option"]["host"]), # host_sfacto
+        gr.Textbox(label=lang["gs_tab"]["splatfacto"]["option"]["port"]), # port_sfacto
+        gr.Button(value=lang["gs_tab"]["splatfacto"]["viewer_btn"]), # viewer_sfacto_btn
+        gr.Textbox(label=lang["gs_tab"]["splatfacto"]["url"]), # viewer_sfacto
+        gr.Markdown(lang["gs_tab"]["splatfacto"]["subtitle2.2"]), # sfacto_sub2_2
         gr.Button(value=lang["gs_tab"]["splatfacto"]["export_btn"]), # export_sfacto_btn
         gr.Textbox(label=lang["gs_tab"]["splatfacto"]["outdir_export"]), # outdir_export_sfacto
         gr.Textbox(label=lang["gs_tab"]["splatfacto"]["runtime_export"]), # runtime_export_sfacto
@@ -260,8 +294,13 @@ def update_ui(choice):
         gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["runtime_recon"]), # runtime_recon_gs4d
         gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["result_recon"]), # result_recon_gs4d
         gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["log_recon"]), # log_recon_gs4d
-        gr.Model3D(label=lang["gs_tab"]["4d-gaussians"]["outmodel"]), # outmodel_gs4d
         gr.Markdown(lang["gs_tab"]["4d-gaussians"]["subtitle2"]), # gs4d_sub2
+        gr.Accordion(label=lang["gs_tab"]["4d-gaussians"]["option"]["title"]), # viewer_4dgs_option:
+        gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["option"]["host"]), # host_4dgs
+        gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["option"]["port"]), # port_4dgs
+        gr.Button(value=lang["gs_tab"]["4d-gaussians"]["viewer_btn"]), # viewer_4dgs_btn
+        gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["url"]), # viewer_4dgs
+        gr.Markdown(lang["gs_tab"]["4d-gaussians"]["subtitle3"]), # gs4d_sub3
         gr.Button(value=lang["gs_tab"]["4d-gaussians"]["eval_btn"]), # eval_4dgs_btn
         gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["outdir_eval"]), # outdir_eval_4dgs
         gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["runtime_eval"]), # runtime_eval_4dgs
@@ -281,7 +320,6 @@ def update_ui(choice):
         gr.Textbox(label=lang["3sters_tab"]["dust3r"]["runtime_recon"]), # runtime_recon_dust3r
         gr.Textbox(label=lang["3sters_tab"]["dust3r"]["result_recon"]), # result_recon_dust3r
         gr.Textbox(label=lang["3sters_tab"]["dust3r"]["log_recon"]), # log_recon_dust3r
-        gr.Model3D(label=lang["3sters_tab"]["dust3r"]["outmodel"]), # outmodel_dust3r
         gr.Gallery(label=lang["3sters_tab"]["dust3r"]["gallery"]), # gallery_dust3r
         # MASt3R
         gr.Tab(label=lang["3sters_tab"]["mast3r"]["title"]), # mast3r_tab
@@ -293,7 +331,6 @@ def update_ui(choice):
         gr.Textbox(label=lang["3sters_tab"]["mast3r"]["runtime_recon"]), # runtime_recon_mast3r
         gr.Textbox(label=lang["3sters_tab"]["mast3r"]["result_recon"]), # result_recon_mast3r
         gr.Textbox(label=lang["3sters_tab"]["mast3r"]["log_recon"]), # log_recon_mast3r
-        gr.Model3D(label=lang["3sters_tab"]["mast3r"]["outmodel"]), # outmodel_mast3r
         # MonST3R
         gr.Tab(label=lang["3sters_tab"]["monst3r"]["title"]), # monst3r_tab
         gr.Markdown(lang["3sters_tab"]["monst3r"]["subtitle1"]), # monst3r_sub1
@@ -304,7 +341,6 @@ def update_ui(choice):
         gr.Textbox(label=lang["3sters_tab"]["monst3r"]["runtime_recon"]), # runtime_recon_monst3r
         gr.Textbox(label=lang["3sters_tab"]["monst3r"]["result_recon"]), # result_recon_monst3r
         gr.Textbox(label=lang["3sters_tab"]["monst3r"]["log_recon"]), # log_recon_monst3r
-        gr.Model3D(label=lang["3sters_tab"]["monst3r"]["outmodel"]), # outmodel_monst3r
         # Easi3R
         gr.Tab(label=lang["3sters_tab"]["easi3r"]["title"]), # easi3r_tab
         gr.Markdown(lang["3sters_tab"]["easi3r"]["subtitle1"]), # easi3r_sub1
@@ -316,7 +352,6 @@ def update_ui(choice):
         gr.Textbox(label=lang["3sters_tab"]["easi3r"]["runtime_recon"]), # runtime_recon_easi3r
         gr.Textbox(label=lang["3sters_tab"]["easi3r"]["result_recon"]), # result_recon_easi3r
         gr.Textbox(label=lang["3sters_tab"]["easi3r"]["log_recon"]), # log_recon_easi3r
-        gr.Model3D(label=lang["3sters_tab"]["easi3r"]["outmodel"]), # outmodel_easi3r
         # MUSt3R
         gr.Tab(label=lang["3sters_tab"]["must3r"]["title"]), # must3r_tab
         gr.Markdown(lang["3sters_tab"]["must3r"]["subtitle1"]), # must3r_sub1
@@ -327,7 +362,6 @@ def update_ui(choice):
         gr.Textbox(label=lang["3sters_tab"]["must3r"]["runtime_recon"]), # runtime_recon_must3r
         gr.Textbox(label=lang["3sters_tab"]["must3r"]["result_recon"]), # result_recon_must3r
         gr.Textbox(label=lang["3sters_tab"]["must3r"]["log_recon"]), # log_recon_must3r
-        gr.Model3D(label=lang["3sters_tab"]["must3r"]["outmodel"]), # outmodel_must3r
         # Fast3R
         gr.Tab(label=lang["3sters_tab"]["fast3r"]["title"]), # fast3r_tab
         gr.Markdown(lang["3sters_tab"]["fast3r"]["subtitle1"]), # fast3r_sub1
@@ -338,7 +372,6 @@ def update_ui(choice):
         gr.Textbox(label=lang["3sters_tab"]["fast3r"]["runtime_recon"]), # runtime_recon_fast3r
         gr.Textbox(label=lang["3sters_tab"]["fast3r"]["result_recon"]), # result_recon_fast3r
         gr.Textbox(label=lang["3sters_tab"]["fast3r"]["log_recon"]), # log_recon_fast3r
-        gr.Model3D(label=lang["3sters_tab"]["fast3r"]["outmodel"]), # outmodel_fast3r
         # Splatt3R
         gr.Tab(label=lang["3sters_tab"]["splatt3r"]["title"]), # splatt3r_tab
         gr.Markdown(lang["3sters_tab"]["splatt3r"]["subtitle1"]), # splatt3r_sub1
@@ -352,7 +385,6 @@ def update_ui(choice):
         gr.Textbox(label=lang["3sters_tab"]["splatt3r"]["runtime_recon"]), # runtime_recon_splatt3r
         gr.Textbox(label=lang["3sters_tab"]["splatt3r"]["result_recon"]), # result_recon_splatt3r
         gr.Textbox(label=lang["3sters_tab"]["splatt3r"]["log_recon"]), # log_recon_splatt3r
-        gr.Model3D(label=lang["3sters_tab"]["splatt3r"]["outmodel"]), # outmodel_splatt3r
         # CUT3R
         gr.Tab(label=lang["3sters_tab"]["cut3r"]["title"]), # cut3r_tab
         gr.Markdown(lang["3sters_tab"]["cut3r"]["subtitle1"]), # cut3r_sub1
@@ -363,7 +395,6 @@ def update_ui(choice):
         gr.Textbox(label=lang["3sters_tab"]["cut3r"]["runtime_recon"]), # runtime_recon_cut3r
         gr.Textbox(label=lang["3sters_tab"]["cut3r"]["result_recon"]), # result_recon_cut3r
         gr.Textbox(label=lang["3sters_tab"]["cut3r"]["log_recon"]), # log_recon_cut3r
-        gr.Model3D(label=lang["3sters_tab"]["cut3r"]["outmodel"]), # outmodel_cut3r
         # WinT3R
         gr.Tab(label=lang["3sters_tab"]["wint3r"]["title"]), # wint3r_tab
         gr.Markdown(lang["3sters_tab"]["wint3r"]["subtitle1"]), # wint3r_sub1
@@ -374,7 +405,6 @@ def update_ui(choice):
         gr.Textbox(label=lang["3sters_tab"]["wint3r"]["runtime_recon"]), # runtime_recon_wint3r
         gr.Textbox(label=lang["3sters_tab"]["wint3r"]["result_recon"]), # result_recon_wint3r
         gr.Textbox(label=lang["3sters_tab"]["wint3r"]["log_recon"]), # log_recon_wint3r
-        gr.Model3D(label=lang["3sters_tab"]["wint3r"]["outmodel"]), # outmodel_wint3r
         # vggtTab
         gr.Tab(label=lang["vggt_tab"]["title"]), # vggt_tab
         # VGGT
@@ -388,7 +418,6 @@ def update_ui(choice):
         gr.Textbox(label=lang["vggt_tab"]["vggt"]["runtime_recon"]), # runtime_recon_vggt
         gr.Textbox(label=lang["vggt_tab"]["vggt"]["result_recon"]), # result_recon_vggt
         gr.Textbox(label=lang["vggt_tab"]["vggt"]["log_recon"]), # log_recon_vggt
-        gr.Textbox(label=lang["vggt_tab"]["vggt"]["outmodel"]), # outmodel_vggt
         # VGGSfM
         gr.Tab(label=lang["vggt_tab"]["vggsfm"]["title"]), # vggsfm_tab
         gr.Markdown(lang["vggt_tab"]["vggsfm"]["subtitle1"]), # vggsfm_sub1
@@ -405,7 +434,6 @@ def update_ui(choice):
         gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["runtime_export"]), # runtime_export_vggsfm
         gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["result_export"]), # result_export_vggsfm
         gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["log_export"]), # log_export_vggsfm
-        gr.Model3D(label=lang["vggt_tab"]["vggsfm"]["outmodel"]), # outmodel_vggsfm
         # VGGT-SLAM
         gr.Tab(label=lang["vggt_tab"]["vggt-slam"]["title"]), # vggtslam_tab
         gr.Markdown(lang["vggt_tab"]["vggt-slam"]["subtitle1"]), # vggtslam_sub1
@@ -417,7 +445,6 @@ def update_ui(choice):
         gr.Textbox(label=lang["vggt_tab"]["vggt-slam"]["runtime_recon"]), # runtime_recon_vggtslam
         gr.Textbox(label=lang["vggt_tab"]["vggt-slam"]["result_recon"]), # result_recon_vggtslam
         gr.Textbox(label=lang["vggt_tab"]["vggt-slam"]["log_recon"]), # log_recon_vggtslam
-        gr.Model3D(label=lang["vggt_tab"]["vggt-slam"]["outmodel"]), # outmodel_vggtslam
         # StreamVGGT
         gr.Tab(label=lang["vggt_tab"]["streamvggt"]["title"]), # stmvggt_tab
         gr.Markdown(lang["vggt_tab"]["streamvggt"]["subtitle1"]), # stmvggt_sub1
@@ -428,7 +455,6 @@ def update_ui(choice):
         gr.Textbox(label=lang["vggt_tab"]["streamvggt"]["runtime_recon"]), # runtime_recon_stmvggt
         gr.Textbox(label=lang["vggt_tab"]["streamvggt"]["result_recon"]), # result_recon_stmvggt
         gr.Textbox(label=lang["vggt_tab"]["streamvggt"]["log_recon"]), # log_recon_stmvggt
-        gr.Model3D(label=lang["vggt_tab"]["streamvggt"]["outmodel"]), # outmodel_stmvggt
         # FastVGGT
         gr.Tab(label=lang["vggt_tab"]["fastvggt"]["title"]), # fastvggt_tab
         gr.Markdown(lang["vggt_tab"]["fastvggt"]["subtitle1"]), # fastvggt_sub1
@@ -439,7 +465,6 @@ def update_ui(choice):
         gr.Textbox(label=lang["vggt_tab"]["fastvggt"]["runtime_recon"]), # runtime_recon_fastvggt
         gr.Textbox(label=lang["vggt_tab"]["fastvggt"]["result_recon"]), # result_recon_fastvggt
         gr.Textbox(label=lang["vggt_tab"]["fastvggt"]["log_recon"]), # log_recon_fastvggt
-        gr.Model3D(label=lang["vggt_tab"]["fastvggt"]["outmodel"]), # outmodel_fastvggt
         # Pi3
         gr.Tab(label=lang["vggt_tab"]["pi3"]["title"]), # pi3_tab
         gr.Markdown(lang["vggt_tab"]["pi3"]["subtitle1"]), # pi3_sub1
@@ -450,7 +475,6 @@ def update_ui(choice):
         gr.Textbox(label=lang["vggt_tab"]["pi3"]["runtime_recon"]), # runtime_recon_pi3
         gr.Textbox(label=lang["vggt_tab"]["pi3"]["result_recon"]), # result_recon_pi3
         gr.Textbox(label=lang["vggt_tab"]["pi3"]["log_recon"]), # log_recon_pi3
-        gr.Model3D(label=lang["vggt_tab"]["pi3"]["outmodel"]), # outmodel_pi3
         # mdsTab
         gr.Tab(label=lang["mds_tab"]["title"]), # mds_tab
         # moge2
@@ -558,9 +582,14 @@ def switch_da2_ui(choice, lang_code):
     elif choice == lang["mds_tab"]["da2"]["radio_video"] : 
         return gr.Column(visible=False), gr.Column(visible=True)
 
-
-def col_change():
+def col_visivle():
     return gr.Column(visible=True)
+
+def col_visivle2():
+    return gr.Column(visible=True), gr.Column(visible=True)
+
+def col_visivle3():
+    return gr.Column(visible=True), gr.Column(visible=True), gr.Column(visible=True)
 
 # State_value代入メソッド
 def get_state_value(state):
@@ -591,9 +620,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         tmpdir_state = gr.State(tmpdir)
         datasetsdir_state = gr.State(datasetsdir)
         outputsdir_state = gr.State(outputsdir)
+        # 言語ステータス保存用
         lang_state = gr.State("jp")
+        # データセット保存用
         image_dataset_state = gr.State("")
         colmap_dataset_state = gr.State("")
+        # viewerメソッドへの入力用
+        viewer_state = gr.State("viewer.py")
+        viewer_gaussian_state = gr.State("viewer_gaussian.py")
 
         # 言語切り替えボタン
         language_radio = gr.Radio(choices=["日本語", "ENGLISH"], value="日本語", label="🌐言語 / Language")
@@ -689,12 +723,20 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 result_recon_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["result_recon"])
                 log_recon_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["log_recon"])
                 with gr.Column(visible=False) as export_vnerf_col:
-                    vnerf_sub2 = gr.Markdown(lang["nerf_tab"]["vnerf"]["subtitle2"])
+                    vnerf_sub2_1 = gr.Markdown(lang["nerf_tab"]["vnerf"]["subtitle2.1"])
                     export_vnerf_btn = gr.Button(value=lang["nerf_tab"]["vnerf"]["export_btn"])
                     outdir_export_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["outdir_export"])
                     runtime_export_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["runtime_export"])
                     result_export_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["result_export"])
                     log_export_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["log_export"])
+                    outmodel_vnerf = gr.State()
+                with gr.Column(visible=False) as viewer_vnerf_col:
+                    vnerf_sub2_2 = gr.Markdown(lang["nerf_tab"]["vnerf"]["subtitle2.2"])
+                    with gr.Accordion(label=lang["nerf_tab"]["vnerf"]["option"]["title"], open=False) as viewer_vnerf_option:
+                        host_vnerf = gr.Textbox(value="127.0.0.1", label=lang["nerf_tab"]["vnerf"]["option"]["host"])
+                        port_vnerf = gr.Textbox(value="8080", label=lang["nerf_tab"]["vnerf"]["option"]["port"])
+                    viewer_vnerf_btn = gr.Button(value=lang["nerf_tab"]["vnerf"]["viewer_btn"])
+                    viewer_vnerf = gr.Textbox(label=lang["nerf_tab"]["vnerf"]["url"])
                 with gr.Column(visible=False) as eval_vnerf_col:
                     vnerf_sub3 = gr.Markdown(lang["nerf_tab"]["vnerf"]["subtitle3"])
                     eval_vnerf_btn = gr.Button(value=lang["nerf_tab"]["vnerf"]["eval_btn"])
@@ -717,13 +759,21 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_nerfacto = gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["runtime_recon"])
                 result_recon_nerfacto = gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["result_recon"])
                 log_recon_nerfacto = gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["log_recon"])
+                with gr.Column(visible=False) as viewer_nerfacto_col:
+                    nerfacto_sub2_1 = gr.Markdown(lang["nerf_tab"]["nerfacto"]["subtitle2.1"])
+                    with gr.Accordion(label=lang["nerf_tab"]["nerfacto"]["option"]["title"], open=False) as viewer_nerfacto_option:
+                        host_nerfacto = gr.Textbox(value="127.0.0.1", label=lang["nerf_tab"]["nerfacto"]["option"]["host"])
+                        port_nerfacto = gr.Textbox(value="8080", label=lang["nerf_tab"]["nerfacto"]["option"]["port"])
+                    viewer_nerfacto_btn = gr.Button(value=lang["nerf_tab"]["nerfacto"]["viewer_btn"])
+                    viewer_nerfacto = gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["url"])
                 with gr.Column(visible=False) as export_nerfacto_col:
-                    nerfacto_sub2 = gr.Markdown(lang["nerf_tab"]["nerfacto"]["subtitle2"])
+                    nerfacto_sub2_2 = gr.Markdown(lang["nerf_tab"]["nerfacto"]["subtitle2.2"])
                     export_nerfacto_btn = gr.Button(value=lang["nerf_tab"]["nerfacto"]["export_btn"])
                     outdir_export_nerfacto = gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["outdir_export"])
                     runtime_export_nerfacto = gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["runtime_export"])
                     result_export_nerfacto = gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["result_export"])
                     log_export_nerfacto = gr.Textbox(label=lang["nerf_tab"]["nerfacto"]["log_export"])
+                    outmodel_nerfacto = gr.State()
                 with gr.Column(visible=False) as eval_nerfacto_col:
                     nerfacto_sub3 = gr.Markdown(lang["nerf_tab"]["nerfacto"]["subtitle3"])
                     eval_nerfacto_btn = gr.Button(value=lang["nerf_tab"]["nerfacto"]["eval_btn"])
@@ -747,12 +797,20 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 result_recon_mipnerf = gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["result_recon"])
                 log_recon_mipnerf = gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["log_recon"])
                 with gr.Column(visible=False) as export_mipnerf_col:
-                    mipnerf_sub2 = gr.Markdown(lang["nerf_tab"]["mip-nerf"]["subtitle2"])
+                    mipnerf_sub2_1 = gr.Markdown(lang["nerf_tab"]["mip-nerf"]["subtitle2.1"])
                     export_mipnerf_btn = gr.Button(value=lang["nerf_tab"]["mip-nerf"]["export_btn"])
                     outdir_export_mipnerf = gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["outdir_export"])
                     runtime_export_mipnerf = gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["runtime_export"])
                     result_export_mipnerf = gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["result_export"])
                     log_export_mipnerf = gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["log_export"])
+                    outmodel_mipnerf = gr.State()
+                with gr.Column(visible=False) as viewer_mipnerf_col:
+                    mipnerf_sub2_2 = gr.Markdown(lang["nerf_tab"]["mip-nerf"]["subtitle2.2"])
+                    with gr.Accordion(label=lang["nerf_tab"]["mip-nerf"]["option"]["title"], open=False) as viewer_mipnerf_option:
+                        host_mipnerf = gr.Textbox(value="127.0.0.1", label=lang["nerf_tab"]["mip-nerf"]["option"]["host"])
+                        port_mipnerf = gr.Textbox(value="8080", label=lang["nerf_tab"]["mip-nerf"]["option"]["port"])
+                    viewer_mipnerf_btn = gr.Button(value=lang["nerf_tab"]["mip-nerf"]["viewer_btn"])
+                    viewer_mipnerf = gr.Textbox(label=lang["nerf_tab"]["mip-nerf"]["url"])
                 with gr.Column(visible=False) as eval_mipnerf_col:
                     mipnerf_sub3 = gr.Markdown(lang["nerf_tab"]["mip-nerf"]["subtitle3"])
                     eval_mipnerf_btn = gr.Button(value=lang["nerf_tab"]["mip-nerf"]["eval_btn"])
@@ -775,15 +833,13 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_stnerf = gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["runtime_recon"])
                 result_recon_stnerf = gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["result_recon"])
                 log_recon_stnerf = gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["log_recon"])
-                with gr.Column(visible=False) as export_stnerf_col:
+                with gr.Column(visible=False) as viewer_stnerf_col:
                     stnerf_sub2 = gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["subtitle2"])
-                    gr.Markdown("※Nerfstudioでサポートされていません")
-                    export_stnerf_btn = gr.Button(value=lang["nerf_tab"]["seathru-nerf"]["export_btn"])
-                    outdir_export_stnerf = gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["outdir_export"])
-                    runtime_export_stnerf = gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["runtime_export"])
-                    result_export_stnerf = gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["result_export"])
-                    log_export_stnerf = gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["log_export"])
-                    gallery_stnerf = gr.Gallery(label=lang["nerf_tab"]["seathru-nerf"]["gallery"], columns=2, height="auto")
+                    with gr.Accordion(label=lang["nerf_tab"]["seathru-nerf"]["option"]["title"], open=False) as viewer_stnerf_option:
+                        host_stnerf = gr.Textbox(value="127.0.0.1", label=lang["nerf_tab"]["seathru-nerf"]["option"]["host"])
+                        port_stnerf = gr.Textbox(value="8080", label=lang["nerf_tab"]["seathru-nerf"]["option"]["port"])
+                    viewer_stnerf_btn = gr.Button(value=lang["nerf_tab"]["seathru-nerf"]["viewer_btn"])
+                    viewer_stnerf = gr.Textbox(label=lang["nerf_tab"]["seathru-nerf"]["url"])
                 with gr.Column(visible=False) as eval_stnerf_col:
                     stnerf_sub3 = gr.Markdown(lang["nerf_tab"]["seathru-nerf"]["subtitle3"])
                     eval_stnerf_btn = gr.Button(value=lang["nerf_tab"]["seathru-nerf"]["eval_btn"])
@@ -839,9 +895,16 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["runtime_recon"])
                 result_recon_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["result_recon"])
                 log_recon_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["log_recon"])
-                outmodel_vgs = gr.Model3D(label=lang["gs_tab"]["vgs"]["outmodel"])
-                with gr.Column(visible=False) as eval_vgs_col:            
+                outmodel_vgs = gr.State()
+                with gr.Column(visible=False) as viewer_vgs_col:
                     vgs_sub2 = gr.Markdown(lang["gs_tab"]["vgs"]["subtitle2"])
+                    with gr.Accordion(label=lang["gs_tab"]["vgs"]["option"]["title"], open=False) as viewer_vgs_option:
+                        host_vgs = gr.Textbox(value="127.0.0.1", label=lang["gs_tab"]["vgs"]["option"]["host"])
+                        port_vgs = gr.Textbox(value="8080", label=lang["gs_tab"]["vgs"]["option"]["port"])
+                    viewer_vgs_btn = gr.Button(value=lang["gs_tab"]["vgs"]["viewer_btn"])
+                    viewer_vgs = gr.Textbox(label=lang["gs_tab"]["vgs"]["url"])
+                with gr.Column(visible=False) as eval_vgs_col:            
+                    vgs_sub3 = gr.Markdown(lang["gs_tab"]["vgs"]["subtitle3"])
                     with gr.Row():
                         skip_train = gr.Checkbox(value=True, label=lang["gs_tab"]["vgs"]["skip_train"])
                         skip_test = gr.Checkbox(value=False, label=lang["gs_tab"]["vgs"]["skip_test"])
@@ -864,9 +927,16 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_mips = gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["runtime_recon"])
                 result_recon_mips = gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["result_recon"])
                 log_recon_mips = gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["log_recon"])
-                outmodel_mips = gr.Model3D(label=lang["gs_tab"]["mip-splatting"]["outmodel"])
-                with gr.Column(visible=False) as eval_mips_col:
+                outmodel_mips = gr.State()
+                with gr.Column(visible=False) as viewer_mips_col:
                     mips_sub2 = gr.Markdown(lang["gs_tab"]["mip-splatting"]["subtitle2"])
+                    with gr.Accordion(label=lang["gs_tab"]["mip-splatting"]["option"]["title"], open=False) as viewer_mips_option:
+                        host_mips = gr.Textbox(value="127.0.0.1", label=lang["gs_tab"]["mip-splatting"]["option"]["host"])
+                        port_mips = gr.Textbox(value="8080", label=lang["gs_tab"]["mip-splatting"]["option"]["port"])
+                    viewer_mips_btn = gr.Button(value=lang["gs_tab"]["mip-splatting"]["viewer_btn"])
+                    viewer_mips = gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["url"])
+                with gr.Column(visible=False) as eval_mips_col:
+                    mips_sub3 = gr.Markdown(lang["gs_tab"]["mip-splatting"]["subtitle3"])
                     eval_mips_btn = gr.Button(value=lang["gs_tab"]["mip-splatting"]["eval_btn"])
                     outdir_eval_mips = gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["outdir_eval"])
                     runtime_eval_mips = gr.Textbox(label=lang["gs_tab"]["mip-splatting"]["runtime_eval"])
@@ -887,13 +957,21 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_sfacto = gr.Textbox(label=lang["gs_tab"]["splatfacto"]["runtime_recon"])
                 result_recon_sfacto = gr.Textbox(label=lang["gs_tab"]["splatfacto"]["result_recon"])
                 log_recon_sfacto = gr.Textbox(label=lang["gs_tab"]["splatfacto"]["log_recon"])
+                with gr.Column(visible=False) as viewer_sfacto_col:
+                    sfacto_sub2_1 = gr.Markdown(lang["gs_tab"]["splatfacto"]["subtitle2.1"])
+                    with gr.Accordion(label=lang["gs_tab"]["splatfacto"]["option"]["title"], open=False) as viewer_sfacto_option:
+                        host_sfacto = gr.Textbox(value="127.0.0.1", label=lang["gs_tab"]["splatfacto"]["option"]["host"])
+                        port_sfacto = gr.Textbox(value="8080", label=lang["gs_tab"]["splatfacto"]["option"]["port"])
+                    viewer_sfacto_btn = gr.Button(value=lang["gs_tab"]["splatfacto"]["viewer_btn"])
+                    viewer_sfacto = gr.Textbox(label=lang["gs_tab"]["splatfacto"]["url"])
                 with gr.Column(visible=False) as export_sfacto_col:
-                    sfacto_sub2 = gr.Markdown(lang["gs_tab"]["splatfacto"]["subtitle2"])
+                    sfacto_sub2_2 = gr.Markdown(lang["gs_tab"]["splatfacto"]["subtitle2.2"])
                     export_sfacto_btn = gr.Button(value=lang["gs_tab"]["splatfacto"]["export_btn"])
                     outdir_export_sfacto = gr.Textbox(label=lang["gs_tab"]["splatfacto"]["outdir_export"])
                     runtime_export_sfacto = gr.Textbox(label=lang["gs_tab"]["splatfacto"]["runtime_export"])
                     result_export_sfacto = gr.Textbox(label=lang["gs_tab"]["splatfacto"]["result_export"])
                     log_export_sfacto = gr.Textbox(label=lang["gs_tab"]["splatfacto"]["log_export"])
+                    outmodel_sfacto = gr.State()
                 with gr.Column(visible=False) as eval_sfacto_col:
                     sfacto_sub3 = gr.Markdown(lang["gs_tab"]["splatfacto"]["subtitle3"])
                     eval_sfacto_btn = gr.Button(value=lang["gs_tab"]["splatfacto"]["eval_btn"])
@@ -907,7 +985,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
             # 4D-Gaussians
             with gr.Tab(label=lang["gs_tab"]["4d-gaussians"]["title"]) as gs4d_tab:
                 gs4d_sub1 = gr.Markdown(lang["gs_tab"]["4d-gaussians"]["subtitle1"])
-                with gr.Accordion(lang["gs_tab"]["4d-gaussians"]["option"]["title"], open=False) as gs4d_option:
+                with gr.Accordion(label=lang["gs_tab"]["4d-gaussians"]["option"]["title"], open=False) as gs4d_option:
                     exe_mode_4dgs = gr.Radio(choices=["local", "slurm"], value="local", label= lang["gs_tab"]["4d-gaussians"]["option"]["exe_mode"])
                     save_iter_4dgs = gr.Slider(value=30000, minimum=0, maximum=50000, step=100, label=lang["gs_tab"]["4d-gaussians"]["option"]["save_iter"])     
                 recon_4dgs_btn = gr.Button(value=lang["gs_tab"]["4d-gaussians"]["recon_btn"])
@@ -915,9 +993,16 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_4dgs = gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["runtime_recon"])
                 result_recon_4dgs = gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["result_recon"])
                 log_recon_4dgs = gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["log_recon"])
-                outmodel_4dgs = gr.Model3D(label=lang["gs_tab"]["4d-gaussians"]["outmodel"])
-                with gr.Column(visible=False) as eval_4dgs_col:
+                outmodel_4dgs = gr.State()
+                with gr.Column(visible=False) as viewer_4dgs_col:
                     gs4d_sub2 = gr.Markdown(lang["gs_tab"]["4d-gaussians"]["subtitle2"])
+                    with gr.Accordion(label=lang["gs_tab"]["4d-gaussians"]["option"]["title"], open=False) as viewer_4dgs_option:
+                        host_4dgs = gr.Textbox(value="127.0.0.1", label=lang["gs_tab"]["4d-gaussians"]["option"]["host"])
+                        port_4dgs = gr.Textbox(value="8080", label=lang["gs_tab"]["4d-gaussians"]["option"]["port"])
+                    viewer_4dgs_btn = gr.Button(value=lang["gs_tab"]["4d-gaussians"]["viewer_btn"])
+                    viewer_4dgs = gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["url"])
+                with gr.Column(visible=False) as eval_4dgs_col:
+                    gs4d_sub3 = gr.Markdown(lang["gs_tab"]["4d-gaussians"]["subtitle3"])
                     eval_4dgs_btn = gr.Button(value=lang["gs_tab"]["4d-gaussians"]["eval_btn"])
                     outdir_eval_4dgs = gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["outdir_eval"])
                     runtime_eval_4dgs = gr.Textbox(label=lang["gs_tab"]["4d-gaussians"]["runtime_eval"])
@@ -954,9 +1039,16 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_dust3r = gr.Textbox(label=lang["3sters_tab"]["dust3r"]["runtime_recon"])
                 result_recon_dust3r = gr.Textbox(label=lang["3sters_tab"]["dust3r"]["result_recon"])
                 log_recon_dust3r = gr.Textbox(label=lang["3sters_tab"]["dust3r"]["log_recon"])
-                outmodel_dust3r = gr.Model3D(label=lang["3sters_tab"]["dust3r"]["outmodel"])
+                outmodel_dust3r = gr.State()
                 outimages_dust3r = gr.State()
                 gallery_dust3r = gr.Gallery(label=lang["3sters_tab"]["dust3r"]["gallery"], columns=3, height="auto")
+                with gr.Column(visible=False) as viewer_dust3r_col:
+                    dust3r_sub2 = gr.Markdown("# 2. ビューアの起動")
+                    with gr.Accordion(label="オプション", open=False) as viewer_dust3r_option:
+                        host_dust3r = gr.Textbox(value="127.0.0.1")
+                        port_dust3r = gr.Textbox("8080")
+                    viewer_dust3r_btn = gr.Button(value="起動")
+                    viewer_dust3r = gr.Textbox(label="ビューアのURL")
 
             # MASt3R
             with gr.Tab(label=lang["3sters_tab"]["mast3r"]["title"]) as mast3r_tab:
@@ -968,7 +1060,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_mast3r = gr.Textbox(label=lang["3sters_tab"]["mast3r"]["runtime_recon"])
                 result_recon_mast3r = gr.Textbox(label=lang["3sters_tab"]["mast3r"]["result_recon"])
                 log_recon_mast3r = gr.Textbox(label=lang["3sters_tab"]["mast3r"]["log_recon"])
-                outmodel_mast3r = gr.Model3D(label=lang["3sters_tab"]["mast3r"]["outmodel"])
+                outmodel_mast3r = gr.State()
+                with gr.Column(visible=False) as viewer_mast3r_col:
+                    mast3r_sub2 = gr.Markdown("# 2. ビューアの起動")
+                    with gr.Accordion(label="オプション", open=False) as viewer_mast3r_option:
+                        host_mast3r = gr.Textbox(value="127.0.0.1")
+                        port_mast3r = gr.Textbox("8080")
+                    viewer_mast3r_btn = gr.Button(value="起動")
+                    viewer_mast3r = gr.Textbox(label="ビューアのURL")
 
             # MonST3R
             with gr.Tab(label=lang["3sters_tab"]["monst3r"]["title"]) as monst3r_tab:
@@ -980,7 +1079,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_monst3r = gr.Textbox(label=lang["3sters_tab"]["monst3r"]["runtime_recon"])
                 result_recon_monst3r = gr.Textbox(label=lang["3sters_tab"]["monst3r"]["result_recon"])
                 log_recon_monst3r = gr.Textbox(label=lang["3sters_tab"]["monst3r"]["log_recon"])
-                outmodel_monst3r = gr.Model3D(label=lang["3sters_tab"]["monst3r"]["outmodel"])
+                outmodel_monst3r = gr.State()
+                with gr.Column(visible=False) as viewer_monst3r_col:
+                    monst3r_sub2 = gr.Markdown("# 2. ビューアの起動")
+                    with gr.Accordion(label="オプション", open=False) as viewer_monst3r_option:
+                        host_monst3r = gr.Textbox(value="127.0.0.1")
+                        port_monst3r = gr.Textbox("8080")
+                    viewer_monst3r_btn = gr.Button(value="起動")
+                    viewer_monst3r = gr.Textbox(label="ビューアのURL")
             
             # Easi3R
             with gr.Tab(label=lang["3sters_tab"]["easi3r"]["title"]) as easi3r_tab:
@@ -993,7 +1099,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_easi3r = gr.Textbox(label=lang["3sters_tab"]["easi3r"]["runtime_recon"])
                 result_recon_easi3r = gr.Textbox(label=lang["3sters_tab"]["easi3r"]["result_recon"])
                 log_recon_easi3r = gr.Textbox(label=lang["3sters_tab"]["easi3r"]["log_recon"])
-                outmodel_easi3r = gr.Model3D(label=lang["3sters_tab"]["easi3r"]["outmodel"])
+                outmodel_easi3r = gr.State()
+                with gr.Column(visible=False) as viewer_easi3r_col:
+                    easi3r_sub2 = gr.Markdown("# 2. ビューアの起動")
+                    with gr.Accordion(label="オプション", open=False) as viewer_easi3r_option:
+                        host_easi3r = gr.Textbox(value="127.0.0.1")
+                        port_easi3r = gr.Textbox("8080")
+                    viewer_easi3r_btn = gr.Button(value="起動")
+                    viewer_easi3r = gr.Textbox(label="ビューアのURL")
 
             # MUSt3R
             with gr.Tab(label=lang["3sters_tab"]["must3r"]["title"]) as must3r_tab:
@@ -1005,7 +1118,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_must3r = gr.Textbox(label=lang["3sters_tab"]["must3r"]["runtime_recon"])
                 result_recon_must3r = gr.Textbox(label=lang["3sters_tab"]["must3r"]["result_recon"])
                 log_recon_must3r = gr.Textbox(label=lang["3sters_tab"]["must3r"]["log_recon"])
-                outmodel_must3r = gr.Model3D(label=lang["3sters_tab"]["must3r"]["outmodel"])
+                outmodel_must3r = gr.State()
+                with gr.Column(visible=False) as viewer_must3r_col:
+                    must3r_sub2 = gr.Markdown("# 2. ビューアの起動")
+                    with gr.Accordion(label="オプション", open=False) as viewer_must3r_option:
+                        host_must3r = gr.Textbox(value="127.0.0.1")
+                        port_must3r = gr.Textbox("8080")
+                    viewer_must3r_btn = gr.Button(value="起動")
+                    viewer_must3r = gr.Textbox(label="ビューアのURL")
 
             # Fast3R
             with gr.Tab(label=lang["3sters_tab"]["fast3r"]["title"]) as fast3r_tab:
@@ -1017,7 +1137,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_fast3r = gr.Textbox(label=lang["3sters_tab"]["fast3r"]["runtime_recon"])
                 result_recon_fast3r = gr.Textbox(label=lang["3sters_tab"]["fast3r"]["result_recon"])
                 log_recon_fast3r = gr.Textbox(label=lang["3sters_tab"]["fast3r"]["log_recon"])
-                outmodel_fast3r = gr.Model3D(label=lang["3sters_tab"]["fast3r"]["outmodel"])
+                outmodel_fast3r = gr.State()
+                with gr.Column(visible=False) as viewer_fast3r_col:
+                    fast3r_sub2 = gr.Markdown("# 2. ビューアの起動")
+                    with gr.Accordion(label="オプション", open=False) as viewer_fast3r_option:
+                        host_fast3r = gr.Textbox(value="127.0.0.1")
+                        port_fast3r = gr.Textbox("8080")
+                    viewer_fast3r_btn = gr.Button(value="起動")
+                    viewer_fast3r = gr.Textbox(label="ビューアのURL")
 
             # Splatt3R
             with gr.Tab(label=lang["3sters_tab"]["splatt3r"]["title"]) as splatt3r_tab:
@@ -1034,7 +1161,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     runtime_recon_splatt3r = gr.Textbox(label=lang["3sters_tab"]["splatt3r"]["runtime_recon"])
                     result_recon_splatt3r = gr.Textbox(label=lang["3sters_tab"]["splatt3r"]["result_recon"])
                     log_recon_splatt3r = gr.Textbox(label=lang["3sters_tab"]["splatt3r"]["log_recon"])
-                    outmodel_splatt3r = gr.Model3D(label=lang["3sters_tab"]["splatt3r"]["outmodel"], clear_color=[1.0, 1.0, 1.0, 0.0])
+                    outmodel_splatt3r = gr.State()
+                with gr.Column(visible=False) as viewer_splatt3r_col:
+                    splatt3r_sub2 = gr.Markdown("# 2. ビューアの起動")
+                    with gr.Accordion(label="オプション", open=False) as viewer_splatt3r_option:
+                        host_splatt3r = gr.Textbox(value="127.0.0.1")
+                        port_splatt3r = gr.Textbox("8080")
+                    viewer_splatt3r_btn = gr.Button(value="起動")
+                    viewer_splatt3r = gr.Textbox(label="ビューアのURL")
 
             # CUT3R
             with gr.Tab(label=lang["3sters_tab"]["cut3r"]["title"]) as cut3r_tab:
@@ -1046,7 +1180,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_cut3r = gr.Textbox(label=lang["3sters_tab"]["cut3r"]["runtime_recon"])
                 result_recon_cut3r = gr.Textbox(label=lang["3sters_tab"]["cut3r"]["result_recon"])
                 log_recon_cut3r = gr.Textbox(label=lang["3sters_tab"]["cut3r"]["log_recon"])
-                outmodel_cut3r = gr.Model3D(label=lang["3sters_tab"]["cut3r"]["outmodel"])
+                outmodel_cut3r = gr.State()
+                with gr.Column(visible=False) as viewer_cut3r_col:
+                    cut3r_sub2 = gr.Markdown("# 2. ビューアの起動")
+                    with gr.Accordion(label="オプション", open=False) as viewer_cut3r_option:
+                        host_cut3r = gr.Textbox(value="127.0.0.1")
+                        port_cut3r = gr.Textbox("8080")
+                    viewer_cut3r_btn = gr.Button(value="起動")
+                    viewer_cut3r = gr.Textbox(label="ビューアのURL")
 
             # WinT3R
             with gr.Tab(label=lang["3sters_tab"]["wint3r"]["title"]) as wint3r_tab:
@@ -1058,7 +1199,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_wint3r = gr.Textbox(label=lang["3sters_tab"]["wint3r"]["runtime_recon"])
                 result_recon_wint3r = gr.Textbox(label=lang["3sters_tab"]["wint3r"]["result_recon"])
                 log_recon_wint3r = gr.Textbox(label=lang["3sters_tab"]["wint3r"]["log_recon"])
-                outmodel_wint3r = gr.Model3D(label=lang["3sters_tab"]["wint3r"]["outmodel"])
+                outmodel_wint3r = gr.State()
+                with gr.Column(visible=False) as viewer_wint3r_col:
+                    wint3r_sub2 = gr.Markdown("# 2. ビューアの起動")
+                    with gr.Accordion(label="オプション", open=False) as viewer_wint3r_option:
+                        host_wint3r = gr.Textbox(value="127.0.0.1")
+                        port_wint3r = gr.Textbox("8080")
+                    viewer_wint3r_btn = gr.Button(value="起動")
+                    viewer_wint3r = gr.Textbox(label="ビューアのURL")
         
         # vggtTab
         with gr.Tab(label=lang["vggt_tab"]["title"]) as vggt_tab:
@@ -1073,7 +1221,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_vggt = gr.Textbox(label=lang["vggt_tab"]["vggt"]["runtime_recon"])
                 result_recon_vggt = gr.Textbox(label=lang["vggt_tab"]["vggt"]["result_recon"])
                 log_recon_vggt = gr.Textbox(label=lang["vggt_tab"]["vggt"]["log_recon"])
-                outmodel_vggt = gr.Model3D(label=lang["vggt_tab"]["vggt"]["outmodel"])
+                outmodel_vggt = gr.State()
+                with gr.Column(visible=False) as viewer_vggt_col:
+                    vggt_sub2 = gr.Markdown("# 2. ビューアの起動")
+                    with gr.Accordion(label="オプション", open=False) as viewer_vggt_option:
+                        host_vggt = gr.Textbox(value="127.0.0.1")
+                        port_vggt = gr.Textbox("8080")
+                    viewer_vggt_btn = gr.Button(value="起動")
+                    viewer_vggt = gr.Textbox(label="ビューアのURL")
             
             # VGGSfM
             with gr.Tab(label=lang["vggt_tab"]["vggsfm"]["title"]) as vggsfm_tab:
@@ -1092,7 +1247,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                     runtime_export_vggsfm = gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["runtime_export"])
                     result_export_vggsfm = gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["result_export"])
                     log_export_vggsfm = gr.Textbox(label=lang["vggt_tab"]["vggsfm"]["log_export"])
-                    outmodel_vggsfm = gr.Model3D(label=lang["vggt_tab"]["vggsfm"]["outmodel"])
+                    outmodel_vggsfm = gr.State()
+                with gr.Column(visible=False) as viewer_vggsfm_col:
+                    vggsfm_sub3 = gr.Markdown("# 3. ビューアの起動")
+                    with gr.Accordion(label="オプション", open=False) as viewer_vggsfm_option:
+                        host_vggsfm = gr.Textbox(value="127.0.0.1")
+                        port_vggsfm = gr.Textbox("8080")
+                    viewer_vggsfm_btn = gr.Button(value="起動")
+                    viewer_vggsfm = gr.Textbox(label="ビューアのURL")
 
             # VGGT-SLAM
             with gr.Tab(label=lang["vggt_tab"]["vggt-slam"]["title"]) as vggtslam_tab:
@@ -1105,7 +1267,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_vggtslam = gr.Textbox(label=lang["vggt_tab"]["vggt-slam"]["runtime_recon"])
                 result_recon_vggtslam = gr.Textbox(label=lang["vggt_tab"]["vggt-slam"]["result_recon"])
                 log_recon_vggtslam = gr.Textbox(label=lang["vggt_tab"]["vggt-slam"]["log_recon"])
-                outmodel_vggtslam = gr.Model3D(label=lang["vggt_tab"]["vggt-slam"]["outmodel"])
+                outmodel_vggtslam = gr.State()
+                with gr.Column(visible=False) as viewer_vggtslam_col:
+                    vggtslam_sub2 = gr.Markdown("# 2. ビューアの起動")
+                    with gr.Accordion(label="オプション", open=False) as viewer_vggtslam_option:
+                        host_vggtslam = gr.Textbox(value="127.0.0.1")
+                        port_vggtslam = gr.Textbox("8080")
+                    viewer_vggtslam_btn = gr.Button(value="起動")
+                    viewer_vggtslam = gr.Textbox(label="ビューアのURL")
 
             # StreamVGGT
             with gr.Tab(label=lang["vggt_tab"]["streamvggt"]["title"]) as stmvggt_tab:
@@ -1117,7 +1286,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_stmvggt = gr.Textbox(label=lang["vggt_tab"]["streamvggt"]["runtime_recon"])
                 result_recon_stmvggt = gr.Textbox(label=lang["vggt_tab"]["streamvggt"]["result_recon"])
                 log_recon_stmvggt = gr.Textbox(label=lang["vggt_tab"]["streamvggt"]["log_recon"])
-                outmodel_stmvggt = gr.Model3D(label=lang["vggt_tab"]["streamvggt"]["outmodel"])
+                outmodel_stmvggt = gr.State()
+                with gr.Column(visible=False) as viewer_stmvggt_col:
+                    stmvggt_sub2 = gr.Markdown("# 2. ビューアの起動")
+                    with gr.Accordion(label="オプション", open=False) as viewer_stmvggt_option:
+                        host_stmvggt = gr.Textbox(value="127.0.0.1")
+                        port_stmvggt = gr.Textbox("8080")
+                    viewer_stmvggt_btn = gr.Button(value="起動")
+                    viewer_stmvggt = gr.Textbox(label="ビューアのURL")
 
             # FastVGGT
             with gr.Tab(label=lang["vggt_tab"]["fastvggt"]["title"]) as fastvggt_tab:
@@ -1129,7 +1305,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_fastvggt = gr.Textbox(label=lang["vggt_tab"]["fastvggt"]["runtime_recon"])
                 result_recon_fastvggt = gr.Textbox(label=lang["vggt_tab"]["fastvggt"]["result_recon"])
                 log_recon_fastvggt = gr.Textbox(label=lang["vggt_tab"]["fastvggt"]["log_recon"])
-                outmodel_fastvggt = gr.Model3D(label=lang["vggt_tab"]["fastvggt"]["outmodel"])
+                outmodel_fastvggt = gr.State()
+                with gr.Column(visible=False) as viewer_fastvggt_col:
+                    fastvggt_sub2 = gr.Markdown("# 2. ビューアの起動")
+                    with gr.Accordion(label="オプション", open=False) as viewer_fastvggt_option:
+                        host_fastvggt = gr.Textbox(value="127.0.0.1")
+                        port_fastvggt = gr.Textbox("8080")
+                    viewer_fastvggt_btn = gr.Button(value="起動")
+                    viewer_fastvggt = gr.Textbox(label="ビューアのURL")
 
             # Pi3
             with gr.Tab(label=lang["vggt_tab"]["pi3"]["title"]) as pi3_tab:
@@ -1141,7 +1324,14 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                 runtime_recon_pi3 = gr.Textbox(label=lang["vggt_tab"]["pi3"]["runtime_recon"])
                 result_recon_pi3 = gr.Textbox(label=lang["vggt_tab"]["pi3"]["result_recon"])
                 log_recon_pi3 = gr.Textbox(label=lang["vggt_tab"]["pi3"]["log_recon"])
-                outmodel_pi3 = gr.Model3D(label=lang["vggt_tab"]["pi3"]["outmodel"])
+                outmodel_pi3 = gr.State()
+                with gr.Column(visible=False) as viewer_pi3_col:
+                    pi3_sub2 = gr.Markdown("# 2. ビューアの起動")
+                    with gr.Accordion(label="オプション", open=False) as viewer_pi3_option:
+                        host_pi3 = gr.Textbox(value="127.0.0.1")
+                        port_pi3 = gr.Textbox("8080")
+                    viewer_pi3_btn = gr.Button(value="起動")
+                    viewer_pi3 = gr.Textbox(label="ビューアのURL")
 
         # mdsTab
         with gr.Tab(label=lang["mds_tab"]["title"]) as mds_tab:
@@ -1256,84 +1446,89 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                      nerf_tab,
                      # Vanilla NeRF
                      vnerf_tab, vnerf_sub1, vnerf_option, exe_mode_vnerf, iter_vnerf, recon_vnerf_btn, vnerf_viewer, outdir_recon_vnerf, runtime_recon_vnerf,
-                     result_recon_vnerf, log_recon_vnerf, vnerf_sub2, export_vnerf_btn, outdir_export_vnerf, runtime_export_vnerf, result_export_vnerf, log_export_vnerf,
-                     vnerf_sub3, eval_vnerf_btn, outdir_eval_vnerf, runtime_eval_vnerf, result_eval_vnerf, log_eval_vnerf, metrics_vnerf, gallery_vnerf,
+                     result_recon_vnerf, log_recon_vnerf, vnerf_sub2_1, export_vnerf_btn, outdir_export_vnerf, runtime_export_vnerf, result_export_vnerf, log_export_vnerf,
+                     vnerf_sub2_2, viewer_vnerf_option, host_vnerf, port_vnerf, viewer_vnerf_btn, viewer_vnerf, vnerf_sub3, eval_vnerf_btn, outdir_eval_vnerf, runtime_eval_vnerf, 
+                     result_eval_vnerf, log_eval_vnerf, metrics_vnerf, gallery_vnerf,
                      # Nerfacto
                      nerfacto_tab, nerfacto_sub1, nerfacto_option, exe_mode_nerfacto, iter_nerfacto, recon_nerfacto_btn, nerfacto_viewer, outdir_recon_nerfacto,
-                     runtime_recon_nerfacto, result_recon_nerfacto, log_recon_nerfacto, nerfacto_sub2, export_nerfacto_btn, outdir_export_nerfacto, runtime_export_nerfacto, 
-                     result_export_nerfacto, log_export_nerfacto, nerfacto_sub3, eval_nerfacto_btn, outdir_eval_nerfacto, runtime_eval_nerfacto, result_eval_nerfacto,
-                     log_eval_nerfacto, metrics_nerfacto, gallery_nerfacto,
+                     runtime_recon_nerfacto, result_recon_nerfacto, log_recon_nerfacto, nerfacto_sub2_1, viewer_nerfacto_option, host_nerfacto, port_nerfacto, viewer_nerfacto_btn,
+                     viewer_nerfacto,nerfacto_sub2_2, export_nerfacto_btn, outdir_export_nerfacto, runtime_export_nerfacto, result_export_nerfacto, log_export_nerfacto, 
+                     nerfacto_sub3, eval_nerfacto_btn, outdir_eval_nerfacto, runtime_eval_nerfacto, result_eval_nerfacto, log_eval_nerfacto, metrics_nerfacto, gallery_nerfacto,
                      # mip-NeRF
                      mipnerf_tab, mipnerf_sub1, mipnerf_option, exe_mode_mipnerf, iter_mipnerf, recon_mipnerf_btn, mipnerf_viewer, outdir_recon_mipnerf, runtime_recon_mipnerf,
-                     result_recon_mipnerf, log_recon_mipnerf, mipnerf_sub2, export_mipnerf_btn, outdir_export_mipnerf, runtime_export_mipnerf, result_export_mipnerf,
-                     log_export_mipnerf, mipnerf_sub3, eval_mipnerf_btn, outdir_eval_mipnerf, runtime_eval_mipnerf, result_eval_mipnerf, log_eval_mipnerf, metrics_mipnerf, gallery_mipnerf,
+                     result_recon_mipnerf, log_recon_mipnerf, mipnerf_sub2_1, export_mipnerf_btn, outdir_export_mipnerf, runtime_export_mipnerf, result_export_mipnerf,
+                     log_export_mipnerf, mipnerf_sub2_2, viewer_vnerf_option, host_mipnerf, port_mipnerf, viewer_mipnerf_btn, viewer_mipnerf,mipnerf_sub3, eval_mipnerf_btn, 
+                     outdir_eval_mipnerf, runtime_eval_mipnerf, result_eval_mipnerf, log_eval_mipnerf, metrics_mipnerf, gallery_mipnerf,
                      # SeaThru-NeRF
                      stnerf_tab, stnerf_sub1, stnerf_option, exe_mode_stnerf, iter_stnerf, recon_stnerf_btn, stnerf_viewer, outdir_recon_stnerf, runtime_recon_stnerf,
-                     result_recon_stnerf, log_recon_stnerf, stnerf_sub2, export_stnerf_btn, outdir_export_stnerf, runtime_export_stnerf, result_export_stnerf,log_export_stnerf, stnerf_sub3,
+                     result_recon_stnerf, log_recon_stnerf, stnerf_sub2, viewer_stnerf_option, host_stnerf, port_stnerf, viewer_stnerf_btn, viewer_stnerf, stnerf_sub3,
                      eval_stnerf_btn, outdir_eval_stnerf, runtime_eval_stnerf, result_eval_stnerf, log_eval_stnerf, metrics_stnerf, gallery_stnerf,
                      # --- GSTab ---
                      gs_tab,
                      # Vanilla GS
-                     vgs_tab, vgs_sub1, vgs_option, exe_mode_vgs, recon_vgs_btn, outdir_recon_vgs, runtime_recon_vgs, result_recon_vgs, log_recon_vgs, outmodel_vgs, vgs_sub2,
-                     skip_train, skip_test, eval_vgs_btn, runtime_eval_vgs, result_eval_vgs, log_eval_vgs, metrics_vgs, gallery_vgs,
+                     vgs_tab, vgs_sub1, vgs_option, exe_mode_vgs, recon_vgs_btn, outdir_recon_vgs, runtime_recon_vgs, result_recon_vgs, log_recon_vgs,vgs_sub2, viewer_vgs_option, 
+                     host_vgs, port_vgs, viewer_vgs_btn, viewer_vgs,vgs_sub3, skip_train, skip_test, eval_vgs_btn, runtime_eval_vgs, result_eval_vgs, log_eval_vgs, metrics_vgs, gallery_vgs,
                      # Mip-Splatting
                      mips_tab, mips_sub1, mips_option, exe_mode_mips, save_iter_mips, recon_mips_btn, outdir_recon_mips, runtime_recon_mips, result_recon_mips, log_recon_mips,
-                     outmodel_mips, mips_sub2, eval_mips_btn, outdir_eval_mips, runtime_eval_mips, result_eval_mips, log_eval_mips, metrics_mips, gallery_mips,
+                     mips_sub2, viewer_mips_option, host_mips, port_mips, viewer_mips_btn, viewer_mips, mips_sub3, eval_mips_btn, outdir_eval_mips, runtime_eval_mips, result_eval_mips, 
+                     log_eval_mips, metrics_mips, gallery_mips,
                      # Splatfacto
                      sfacto_tab, sfacto_sub1, sfacto_option, exe_mode_sfacto, iter_sfacto, recon_sfacto_btn, sfacto_viewer, outdir_recon_sfacto, runtime_recon_sfacto,
-                     result_recon_sfacto, log_recon_sfacto, sfacto_sub2, export_sfacto_btn, outdir_export_sfacto, runtime_export_sfacto, result_export_sfacto,
-                     log_export_sfacto, sfacto_sub3, eval_sfacto_btn, outdir_eval_sfacto, runtime_eval_sfacto, result_eval_sfacto, log_eval_sfacto, metrics_sfacto, gallery_sfacto,
+                     result_recon_sfacto, log_recon_sfacto, sfacto_sub2_1, viewer_sfacto_option, host_sfacto, port_sfacto, viewer_sfacto_btn, viewer_sfacto, sfacto_sub2_2,
+                     export_sfacto_btn, outdir_export_sfacto, runtime_export_sfacto, result_export_sfacto, log_export_sfacto, sfacto_sub3, eval_sfacto_btn, outdir_eval_sfacto, 
+                     runtime_eval_sfacto, result_eval_sfacto, log_eval_sfacto, metrics_sfacto, gallery_sfacto,
                      # 4D-Gaussians
                      gs4d_tab, gs4d_sub1, gs4d_option, exe_mode_4dgs, save_iter_4dgs, recon_4dgs_btn, outdir_recon_4dgs, runtime_recon_4dgs, result_recon_4dgs,
-                     log_recon_4dgs, outmodel_4dgs, gs4d_sub2, eval_4dgs_btn, outdir_eval_4dgs, runtime_eval_4dgs, result_eval_4dgs, log_eval_4dgs, metrics_4dgs, gallery_4dgs,
+                     log_recon_4dgs, gs4d_sub2, viewer_4dgs_option, host_4dgs, port_4dgs, viewer_4dgs_btn, viewer_4dgs,gs4d_sub3, eval_4dgs_btn, outdir_eval_4dgs, runtime_eval_4dgs, 
+                     result_eval_4dgs, log_eval_4dgs, metrics_4dgs, gallery_4dgs,
                      # --- 3stersTab ---
                      esters_tab,
                      # DUSt3R
                      dust3r_tab, dust3r_sub1, dust3r_option, exe_mode_dust3r, recon_dust3r_btn, outdir_recon_dust3r, runtime_recon_dust3r, result_recon_dust3r,
-                     log_recon_dust3r, outmodel_dust3r, gallery_dust3r,
+                     log_recon_dust3r, gallery_dust3r,
                      # MASt3R
                      mast3r_tab, mast3r_sub1, mast3r_option, exe_mode_mast3r, recon_mast3r_btn, outdir_recon_mast3r, runtime_recon_mast3r, result_recon_mast3r,
-                     log_recon_mast3r, outmodel_mast3r,
+                     log_recon_mast3r, 
                      # MonST3R
                      monst3r_tab, monst3r_sub1, monst3r_option, exe_mode_monst3r, recon_monst3r_btn, outdir_recon_monst3r, runtime_recon_monst3r, result_recon_monst3r,
-                     log_recon_monst3r, outmodel_monst3r,
+                     log_recon_monst3r, 
                      # Easi3R
                      easi3r_tab, easi3r_sub1, easi3r_info1, easi3r_option, exe_mode_easi3r, recon_easi3r_btn, outdir_recon_easi3r,runtime_recon_easi3r,
-                     result_recon_easi3r, log_recon_easi3r, outmodel_easi3r,
+                     result_recon_easi3r, log_recon_easi3r, 
                      # MUSt3R
                      must3r_tab, must3r_sub1, must3r_option, exe_mode_must3r, recon_must3r_btn, outdir_recon_must3r, runtime_recon_must3r, result_recon_must3r,
-                     log_recon_must3r, outmodel_must3r,
+                     log_recon_must3r, 
                      # Fast3R
                      fast3r_tab, fast3r_sub1, fast3r_option, exe_mode_fast3r, recon_fast3r_btn, outdir_recon_fast3r, runtime_recon_fast3r, result_recon_fast3r,
-                     log_recon_fast3r, outmodel_fast3r,
+                     log_recon_fast3r, 
                      # Splatt3R
                      splatt3r_tab, splatt3r_sub1, splatt3r_info1, img_splatt3r, splatt3r_sub2, splatt3r_option, exe_mode_splatt3r, recon_splatt3r_btn, outdir_recon_splatt3r,
-                     runtime_recon_splatt3r, result_recon_splatt3r, log_recon_splatt3r, outmodel_splatt3r,
+                     runtime_recon_splatt3r, result_recon_splatt3r, log_recon_splatt3r, 
                      # CUT3R
                      cut3r_tab, cut3r_sub1, cut3r_option, exe_mode_cut3r, recon_cut3r_btn, outdir_recon_cut3r, runtime_recon_cut3r, result_recon_cut3r,
-                     log_recon_cut3r, outmodel_cut3r,
+                     log_recon_cut3r, 
                      # WinT3R
                      wint3r_tab, wint3r_sub1, wint3r_option, exe_mode_wint3r, recon_wint3r_btn, outdir_recon_wint3r, runtime_recon_wint3r, result_recon_wint3r,
-                     log_recon_wint3r, outmodel_wint3r,
+                     log_recon_wint3r, 
                      # ---vggTab ---
                      vggt_tab,
                      # VGGT
                      vggt_tab, vggt_sub1, vggt_option, exe_mode_vggt, mode_vggt, recon_vggt_btn, outdir_recon_vggt, runtime_recon_vggt, result_recon_vggt,
-                     log_recon_vggt, outmodel_vggt,
+                     log_recon_vggt, 
                      # VGGSfM
                      vggsfm_tab, vggsfm_sub1, vggsfm_option, exe_mode_vggsfm, recon_vggsfm_btn, outdir_recon_vggsfm, runtime_recon_vggsfm, result_recon_vggsfm,
-                     log_recon_vggsfm, vggsfm_sub2, export_vggsfm_btn, outdir_export_vggsfm, runtime_export_vggsfm, result_export_vggsfm, log_export_vggsfm, outmodel_vggsfm,
+                     log_recon_vggsfm, vggsfm_sub2, export_vggsfm_btn, outdir_export_vggsfm, runtime_export_vggsfm, result_export_vggsfm, log_export_vggsfm, 
                      # VGGT-SLAM
                      vggtslam_tab, vggtslam_sub1, vggtslam_option, exe_mode_vggtslam, recon_vggtslam_btn, vggtslam_viewer, outdir_recon_vggtslam, runtime_recon_vggtslam,
-                     result_recon_vggtslam, log_recon_vggtslam, outmodel_vggtslam,
+                     result_recon_vggtslam, log_recon_vggtslam, 
                      # StreamVGGT
                      stmvggt_tab, stmvggt_sub1, stmvggt_option, exe_mode_stmvggt, recon_stmvggt_btn, outdir_recon_stmvggt, runtime_recon_stmvggt, result_recon_stmvggt,
-                     log_recon_stmvggt, outmodel_stmvggt,
+                     log_recon_stmvggt, 
                      # FastVGGT
                      fastvggt_tab, fastvggt_sub1, fastvggt_option, exe_mode_fastvggt, recon_fastvggt_btn, outdir_recon_fastvggt, runtime_recon_fastvggt, result_recon_fastvggt,
-                     log_recon_fastvggt, outmodel_fastvggt,
+                     log_recon_fastvggt, 
                      # Pi3
-                     pi3_tab, pi3_sub1, pi3_option, exe_mode_pi3, recon_pi3_btn, outdir_recon_pi3, runtime_recon_pi3, result_recon_pi3, log_recon_pi3, outmodel_pi3,
+                     pi3_tab, pi3_sub1, pi3_option, exe_mode_pi3, recon_pi3_btn, outdir_recon_pi3, runtime_recon_pi3, result_recon_pi3, log_recon_pi3, 
                      # --- mdsTab ---
                      mds_tab,
                      # moge2
@@ -1361,9 +1556,9 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         media_radio.change(fn=switch_media_ui, 
                            inputs=[media_radio, lang_state],
                            outputs=[image_col, video_col])
-        img_splatt3r.change(fn=col_change, outputs=infer_splatt3r_col)
-        img_moge2.change(fn=col_change, outputs=infer_moge2_col)
-        img_unik3d.change(fn=col_change, outputs=infer_unik3d_col)
+        img_splatt3r.change(fn=col_visivle, outputs=infer_splatt3r_col)
+        img_moge2.change(fn=col_visivle, outputs=infer_moge2_col)
+        img_unik3d.change(fn=col_visivle, outputs=infer_unik3d_col)
         da2_input_radio.change(fn=switch_da2_ui,
                                inputs=[da2_input_radio, lang_state],
                                outputs=[da2_image_col,  da2_video_col])
@@ -1372,22 +1567,26 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         # 画像データセット作成
         run_copy_btn.click(fn=local_backend.copy_images,
                        inputs=[images, datasetsdir_state, dataset_name],
-                       outputs=[image_dataset_state, output_image, gallery_image, iresult_col]).success(
-                             fn=local_backend.zip_dataset,
-                             inputs=image_dataset_state,
-                             outputs=zipfile_images).success(
-                                 fn=get_state_value, 
-                                 inputs=image_dataset_state, 
-                                 outputs=current_dataset_images)
+                       outputs=[image_dataset_state, output_image, gallery_image]).success(
+                           fn=col_visivle,
+                           outputs=iresult_col).success(
+                               fn=local_backend.zip_dataset,
+                               inputs=image_dataset_state,
+                               outputs=zipfile_images).success(
+                                   fn=get_state_value, 
+                                   inputs=image_dataset_state, 
+                                   outputs=current_dataset_images)
         run_ffmpeg_btn.click(fn=local_backend.extract_frames_with_filter, 
                          inputs=[video, datasetsdir_state, fps, rsi, ssim], 
-                         outputs=[image_dataset_state, output_video, comp_rate, sel_images_num, rej_images_num, gallery_video, dl_images_col]).success(
-                             fn=local_backend.zip_dataset,
-                             inputs=image_dataset_state,
-                             outputs=zipfile_images).success(
-                                 fn=get_state_value, 
-                                 inputs=image_dataset_state, 
-                                 outputs=current_dataset_images)
+                         outputs=[image_dataset_state, output_video, comp_rate, sel_images_num, rej_images_num, gallery_video]).success(
+                             fn=col_visivle,
+                             outputs=dl_images_col).success(
+                                 fn=local_backend.zip_dataset,
+                                 inputs=image_dataset_state,
+                                 outputs=zipfile_images).success(
+                                     fn=get_state_value, 
+                                     inputs=image_dataset_state, 
+                                     outputs=current_dataset_images)
         # colmapデータセット作成
         run_colmap_btn.click(fn=local_backend.run_colmap,
                         inputs=[exe_mode_colmap, image_dataset_state, rebuild],
@@ -1410,82 +1609,136 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                        outputs=current_dataset_colmap)
         
         # --- 三次元再構築 ---
+        # NeRF Tab
         recon_vnerf_btn.click(fn=methods.recon_vnerf,
                              inputs=[exe_mode_vnerf, colmap_dataset_state, outputsdir_state, iter_vnerf],
-                             outputs=[outdir_recon_vnerf, runtime_recon_vnerf, result_recon_vnerf, log_recon_vnerf, export_vnerf_col, eval_vnerf_col])
+                             outputs=[outdir_recon_vnerf, runtime_recon_vnerf, result_recon_vnerf, log_recon_vnerf]).success(
+                                 fn=col_visivle3,
+                                 outputs=[export_vnerf_col, viewer_vnerf_col, eval_vnerf_col])
         recon_nerfacto_btn.click(fn=methods.recon_nerfacto,
                                  inputs=[exe_mode_nerfacto, colmap_dataset_state, outputsdir_state, iter_nerfacto],
-                                 outputs=[outdir_recon_nerfacto, runtime_recon_nerfacto, result_recon_nerfacto, log_recon_nerfacto, export_nerfacto_col, eval_nerfacto_col])
+                                 outputs=[outdir_recon_nerfacto, runtime_recon_nerfacto, result_recon_nerfacto, log_recon_nerfacto]).success(
+                                     fn=col_visivle3,
+                                     outputs=[export_nerfacto_col, viewer_nerfacto_col, eval_nerfacto_col])
         recon_mipnerf_btn.click(fn=methods.recon_mipnerf,
                              inputs=[exe_mode_mipnerf, colmap_dataset_state, outputsdir_state, iter_mipnerf],
-                             outputs=[outdir_recon_mipnerf, runtime_recon_mipnerf, result_recon_mipnerf, log_recon_mipnerf, export_mipnerf_col, eval_mipnerf_col])
+                             outputs=[outdir_recon_mipnerf, runtime_recon_mipnerf, result_recon_mipnerf, log_recon_mipnerf]).success(
+                                 fn=col_visivle3,
+                                 outputs=[export_mipnerf_col, viewer_mipnerf_col, eval_mipnerf_col])
         recon_stnerf_btn.click(fn=methods.recon_stnerf,
                              inputs=[exe_mode_stnerf, colmap_dataset_state, outputsdir_state, iter_stnerf],
-                             outputs=[outdir_recon_stnerf, runtime_recon_stnerf, result_recon_stnerf, log_recon_stnerf, export_stnerf_col, eval_stnerf_col])
+                             outputs=[outdir_recon_stnerf, runtime_recon_stnerf, result_recon_stnerf, log_recon_stnerf]).success(
+                                 fn=col_visivle2,
+                                 outputs=[viewer_stnerf_col, eval_stnerf_col])
+        # GS Tab
         recon_vgs_btn.click(fn=methods.recon_vgs, 
                              inputs=[exe_mode_vgs, colmap_dataset_state, outputsdir_state, sh_degree, data_device, lambda_dssim, iter_3dgs,
                                      test_iter_3dgs, save_iter_3dgs, feature_lr,
                                      opacity_lr, scaling_lr, rotation_lr, position_lr_init, position_lr_final,
                                      position_lr_delay_mult, densify_from_iter, densify_until_iter, densify_grad_threshold,
                                      densification_interval, opacity_rest_interval, percent_dense], 
-                                     outputs=[outdir_recon_vgs, runtime_recon_vgs, result_recon_vgs, log_recon_vgs, outmodel_vgs, eval_vgs_col ])
+                                     outputs=[outdir_recon_vgs, runtime_recon_vgs, result_recon_vgs, log_recon_vgs, outmodel_vgs]).success(
+                                         fn=col_visivle2,
+                                         outputs=[viewer_vgs_col, eval_vgs_col])
         recon_mips_btn.click(fn=methods.recon_mipSplatting, 
                              inputs=[exe_mode_mips, colmap_dataset_state, outputsdir_state, save_iter_mips], 
-                             outputs=[outdir_recon_mips, runtime_recon_mips, result_recon_mips, log_recon_mips, outmodel_mips, eval_mips_col])
+                             outputs=[outdir_recon_mips, runtime_recon_mips, result_recon_mips, log_recon_mips, outmodel_mips]).success(
+                                 fn=col_visivle2,
+                                 outputs=[viewer_mips_col, eval_mips_col])
         recon_sfacto_btn.click(fn=methods.recon_sfacto,
                              inputs=[exe_mode_sfacto, colmap_dataset_state, outputsdir_state, iter_sfacto],
-                             outputs=[outdir_recon_sfacto, runtime_recon_sfacto, result_recon_sfacto, log_recon_sfacto, export_sfacto_col, eval_sfacto_col])
+                             outputs=[outdir_recon_sfacto, runtime_recon_sfacto, result_recon_sfacto, log_recon_sfacto]).success(
+                                 fn=col_visivle3,
+                                 outputs=[viewer_sfacto_col, export_sfacto_col, eval_sfacto_col])
         recon_4dgs_btn.click(fn=methods.recon_4dGaussians, 
                              inputs=[exe_mode_4dgs, colmap_dataset_state, outputsdir_state, save_iter_4dgs], 
-                             outputs=[outdir_recon_4dgs, runtime_recon_4dgs, result_recon_4dgs, log_recon_4dgs, outmodel_4dgs, eval_4dgs_col])
+                             outputs=[outdir_recon_4dgs, runtime_recon_4dgs, result_recon_4dgs, log_recon_4dgs, outmodel_4dgs]).success(
+                                 fn=col_visivle2,
+                                 outputs=[viewer_4dgs_col, eval_4dgs_col])
+        
+        # 3sters Tab
         recon_dust3r_btn.click(fn=methods.recon_dust3r,
                                inputs=[exe_mode_dust3r, image_dataset_state, outputsdir_state, schedule, niter, min_conf_thr, as_pointcloud,mask_sky, clean_depth, transparent_cams, cam_size,scenegraph_type, winsize, refid], 
                                outputs=[outdir_recon_dust3r, runtime_recon_dust3r, result_recon_dust3r, log_recon_dust3r, outmodel_dust3r, outimages_dust3r]).success(
                                            fn=local_backend.get_imagelist,
                                            inputs=outimages_dust3r,
-                                           outputs=gallery_dust3r)
+                                           outputs=gallery_dust3r).success(
+                                               fn=col_visivle,
+                                               outputs=viewer_dust3r_col)
         recon_mast3r_btn.click(fn=methods.recon_mast3r,
                         inputs=[exe_mode_mast3r, image_dataset_state, outputsdir_state], 
-                        outputs=[outdir_recon_mast3r, runtime_recon_mast3r, result_recon_mast3r, log_recon_mast3r, outmodel_mast3r])
+                        outputs=[outdir_recon_mast3r, runtime_recon_mast3r, result_recon_mast3r, log_recon_mast3r, outmodel_mast3r]).success(
+                            fn=col_visivle,
+                            outputs=viewer_mast3r_col)
         recon_monst3r_btn.click(fn=methods.recon_monst3r,
                         inputs=[exe_mode_monst3r, image_dataset_state, outputsdir_state], 
-                        outputs=[outdir_recon_monst3r, runtime_recon_monst3r, result_recon_monst3r, log_recon_monst3r, outmodel_monst3r])
+                        outputs=[outdir_recon_monst3r, runtime_recon_monst3r, result_recon_monst3r, log_recon_monst3r, outmodel_monst3r]).success(
+                            fn=col_visivle,
+                            outputs=viewer_monst3r_col)
         recon_easi3r_btn.click(fn=methods.recon_easi3r,
                         inputs=[exe_mode_easi3r, image_dataset_state, outputsdir_state], 
-                        outputs=[outdir_recon_easi3r, runtime_recon_easi3r, result_recon_easi3r, log_recon_easi3r, outmodel_easi3r])
+                        outputs=[outdir_recon_easi3r, runtime_recon_easi3r, result_recon_easi3r, log_recon_easi3r, outmodel_easi3r]).success(
+                            fn=col_visivle,
+                            outputs=viewer_easi3r_col)
         recon_must3r_btn.click(fn=methods.recon_must3r,
                         inputs=[exe_mode_must3r, image_dataset_state, outputsdir_state], 
-                        outputs=[outdir_recon_must3r, runtime_recon_must3r, result_recon_must3r, log_recon_must3r, outmodel_must3r])
+                        outputs=[outdir_recon_must3r, runtime_recon_must3r, result_recon_must3r, log_recon_must3r, outmodel_must3r]).success(
+                            fn=col_visivle,
+                            outputs=viewer_must3r_col)
         recon_fast3r_btn.click(fn=methods.recon_fast3r,
                         inputs=[exe_mode_fast3r, image_dataset_state, outputsdir_state], 
-                        outputs=[outdir_recon_fast3r, runtime_recon_fast3r, result_recon_fast3r, log_recon_fast3r, outmodel_fast3r])
-        recon_cut3r_btn.click(fn=methods.recon_cut3r,
-                        inputs=[exe_mode_cut3r, image_dataset_state, outputsdir_state], 
-                        outputs=[outdir_recon_cut3r, runtime_recon_cut3r, result_recon_cut3r, log_recon_cut3r, outmodel_cut3r])
-        recon_wint3r_btn.click(fn=methods.recon_wint3r,
-                        inputs=[exe_mode_wint3r, image_dataset_state, outputsdir_state], 
-                        outputs=[outdir_recon_wint3r, runtime_recon_wint3r, result_recon_wint3r, log_recon_wint3r, outmodel_wint3r])
+                        outputs=[outdir_recon_fast3r, runtime_recon_fast3r, result_recon_fast3r, log_recon_fast3r, outmodel_fast3r]).success(
+                            fn=col_visivle,
+                            outputs=viewer_fast3r_col)
         recon_splatt3r_btn.click(fn=methods.recon_splatt3r,
                         inputs=[exe_mode_splatt3r, img_splatt3r, outputsdir_state], 
-                        outputs=[outdir_recon_splatt3r, runtime_recon_splatt3r, result_recon_splatt3r, log_recon_splatt3r, outmodel_splatt3r])
+                        outputs=[outdir_recon_splatt3r, runtime_recon_splatt3r, result_recon_splatt3r, log_recon_splatt3r, outmodel_splatt3r]).success(
+                            fn=col_visivle,
+                            outputs=viewer_splatt3r_col)
+        recon_cut3r_btn.click(fn=methods.recon_cut3r,
+                        inputs=[exe_mode_cut3r, image_dataset_state, outputsdir_state], 
+                        outputs=[outdir_recon_cut3r, runtime_recon_cut3r, result_recon_cut3r, log_recon_cut3r, outmodel_cut3r]).success(
+                            fn=col_visivle,
+                            outputs=viewer_cut3r_col)
+        recon_wint3r_btn.click(fn=methods.recon_wint3r,
+                        inputs=[exe_mode_wint3r, image_dataset_state, outputsdir_state], 
+                        outputs=[outdir_recon_wint3r, runtime_recon_wint3r, result_recon_wint3r, log_recon_wint3r, outmodel_wint3r]).success(
+                            fn=col_visivle,
+                            outputs=viewer_wint3r_col)
+
+        # VGGT Tab
         recon_vggt_btn.click(fn=methods.recon_vggt,
                         inputs=[exe_mode_vggt, image_dataset_state, outputsdir_state], 
-                        outputs=[outdir_recon_vggt, runtime_recon_vggt, result_recon_vggt, log_recon_vggt, outmodel_vggt])
+                        outputs=[outdir_recon_vggt, runtime_recon_vggt, result_recon_vggt, log_recon_vggt, outmodel_vggt]).success(
+                            fn=col_visivle,
+                            outputs=viewer_vggt_col)
         recon_vggsfm_btn.click(fn=methods.recon_vggsfm,
                                 inputs=[exe_mode_vggsfm, image_dataset_state],
-                                outputs=[outdir_recon_vggsfm, runtime_recon_vggsfm, result_recon_vggsfm, log_recon_vggsfm, export_vggsfm_col])
+                                outputs=[outdir_recon_vggsfm, runtime_recon_vggsfm, result_recon_vggsfm, log_recon_vggsfm]).success(
+                                    fn=col_visivle,
+                                    outputs=export_vggsfm_col)
         recon_vggtslam_btn.click(fn=methods.recon_vggtslam,
                                  inputs=[exe_mode_vggtslam, image_dataset_state, outputsdir_state],
-                                 outputs=[outdir_recon_vggtslam, runtime_recon_vggtslam, result_recon_vggtslam, log_recon_vggtslam, outmodel_vggtslam])
+                                 outputs=[outdir_recon_vggtslam, runtime_recon_vggtslam, result_recon_vggtslam, log_recon_vggtslam, outmodel_vggtslam]).success(
+                                     fn=col_visivle,
+                                     outputs=viewer_vggtslam_col)
         recon_stmvggt_btn.click(fn=methods.recon_stmvggt,
                         inputs=[exe_mode_stmvggt, image_dataset_state, outputsdir_state], 
-                        outputs=[outdir_recon_stmvggt, runtime_recon_stmvggt, result_recon_stmvggt, log_recon_stmvggt, outmodel_stmvggt])
+                        outputs=[outdir_recon_stmvggt, runtime_recon_stmvggt, result_recon_stmvggt, log_recon_stmvggt, outmodel_stmvggt]).success(
+                            fn=col_visivle,
+                            outputs=viewer_stmvggt_col)
         recon_fastvggt_btn.click(fn=methods.recon_fastvggt,
                         inputs=[exe_mode_fastvggt, image_dataset_state, outputsdir_state], 
-                        outputs=[outdir_recon_fastvggt, runtime_recon_fastvggt, result_recon_fastvggt, log_recon_fastvggt, outmodel_fastvggt])
+                        outputs=[outdir_recon_fastvggt, runtime_recon_fastvggt, result_recon_fastvggt, log_recon_fastvggt, outmodel_fastvggt]).success(
+                            fn=col_visivle,
+                            outputs=viewer_fastvggt_col)
         recon_pi3_btn.click(fn=methods.recon_pi3,
                             inputs=[exe_mode_pi3, image_dataset_state, outputsdir_state],
-                            outputs=[outdir_recon_pi3, runtime_recon_pi3, result_recon_pi3, log_recon_pi3, outmodel_pi3])
+                            outputs=[outdir_recon_pi3, runtime_recon_pi3, result_recon_pi3, log_recon_pi3, outmodel_pi3]).success(
+                                fn=col_visivle,
+                                outputs=viewer_pi3
+                            )
+        # mds Tab
         recon_moge2_btn.click(fn=methods.recon_moge2,
                         inputs=[exe_mode_moge2, img_moge2, outputsdir_state, img_type_moge2], 
                         outputs=[outdir_recon_moge2, runtime_recon_moge2, result_recon_moge2, log_recon_moge2, outmodel_moge2])
@@ -1513,46 +1766,166 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
         
         # --- 点群出力（Nerfstudio）---
         export_vnerf_btn.click(fn=methods.export_vnerf,
-                              inputs=[exe_mode_vnerf, colmap_dataset_state, outputsdir_state],
-                              outputs=[outdir_export_vnerf, runtime_export_vnerf, result_export_vnerf, log_export_vnerf])
+                              inputs=[exe_mode_vnerf, outdir_recon_vnerf],
+                              outputs=[outdir_export_vnerf, runtime_export_vnerf, result_export_vnerf, log_export_vnerf, outmodel_vnerf])
         export_nerfacto_btn.click(fn=methods.export_nerfacto,
-                                  inputs=[exe_mode_nerfacto, colmap_dataset_state, outputsdir_state],
-                                  outputs=[outdir_export_nerfacto, runtime_export_nerfacto, result_export_nerfacto, log_export_nerfacto])
+                                  inputs=[exe_mode_nerfacto, outdir_recon_nerfacto],
+                                  outputs=[outdir_export_nerfacto, runtime_export_nerfacto, result_export_nerfacto, log_export_nerfacto, outmodel_nerfacto])
         export_mipnerf_btn.click(fn=methods.export_mipnerf,
-                                 inputs=[exe_mode_mipnerf, colmap_dataset_state, outputsdir_state],
-                                 outputs=[outdir_export_mipnerf, runtime_export_mipnerf, result_export_mipnerf, log_export_mipnerf])
-        export_stnerf_btn.click(fn=methods.export_stnerf,
-                                inputs=[exe_mode_stnerf, colmap_dataset_state, outputsdir_state],
-                                outputs=[outdir_export_stnerf, runtime_export_stnerf, result_export_stnerf, log_export_stnerf])
+                                 inputs=[exe_mode_mipnerf, outdir_recon_mipnerf],
+                                 outputs=[outdir_export_mipnerf, runtime_export_mipnerf, result_export_mipnerf, log_export_mipnerf, outmodel_mipnerf])
         export_sfacto_btn.click(fn=methods.export_sfacto,
-                                inputs=[exe_mode_sfacto, colmap_dataset_state, outputsdir_state],
-                                outputs=[outdir_export_sfacto, runtime_export_sfacto, result_export_sfacto, log_export_sfacto])
+                                inputs=[exe_mode_sfacto, outdir_recon_stnerf],
+                                outputs=[outdir_export_sfacto, runtime_export_sfacto, result_export_sfacto, log_export_sfacto, outmodel_sfacto])
         export_vggsfm_btn.click(fn=methods.export_vggsfm,
                                 inputs=[image_dataset_state, outputsdir_state],
-                                outputs=[outdir_export_vggsfm, runtime_export_vggsfm, result_export_vggsfm, log_export_vggsfm, outmodel_vggsfm])
+                                outputs=[outdir_export_vggsfm, runtime_export_vggsfm, result_export_vggsfm, log_export_vggsfm, outmodel_vggsfm]).success(
+                                    fn=col_visivle,
+                                    outputs=viewer_vggsfm_col)
+
+        # --- ビューア ---
+        # NeRF Tab
+        viewer_vnerf_btn.click(fn=local_backend.viewer,
+                               inputs=[viewer_state, outmodel_vnerf, host_vnerf, port_vnerf],
+                               outputs=viewer_vnerf)
+        viewer_vnerf.change(fn=None, inputs=viewer_vnerf, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        viewer_nerfacto_btn.click(fn=local_backend.viewer_nerfstudio,
+                                  inputs=[outdir_recon_nerfacto, gr.State("nerfacto"), host_nerfacto, port_nerfacto],
+                                  outputs=viewer_nerfacto)
+        viewer_nerfacto.change(fn=None, inputs=viewer_nerfacto, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        viewer_mipnerf_btn.click(fn=local_backend.viewer,
+                                 inputs=[viewer_state, outmodel_mipnerf, host_mipnerf, port_mipnerf],
+                                 outputs=viewer_mipnerf)
+        viewer_mipnerf.change(fn=None, inputs=viewer_mipnerf, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        viewer_stnerf_btn.click(fn=local_backend.viewer_nerfstudio,
+                                inputs=[outdir_recon_stnerf, gr.State("seathru-nerf"), host_stnerf, port_stnerf],
+                                outputs=viewer_stnerf)
+        viewer_stnerf.change(fn=None, inputs=viewer_stnerf, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        # GS Tab
+        viewer_vgs_btn.click(fn=local_backend.viewer,
+                         inputs=[viewer_gaussian_state, outmodel_vgs, host_vgs, port_vgs],
+                         outputs=viewer_vgs)
+        viewer_vgs.change(fn=None, inputs=viewer_vgs, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        viewer_mips_btn.click(fn=local_backend.viewer,
+                         inputs=[viewer_gaussian_state, outmodel_mips, host_mips, port_mips],
+                         outputs=viewer_mips)
+        viewer_mips.change(fn=None, inputs=viewer_mips, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        viewer_sfacto_btn.click(fn=local_backend.viewer_nerfstudio,
+                                inputs=[outdir_recon_sfacto, gr.State("splatfacto"), host_sfacto, port_sfacto],
+                                outputs=viewer_sfacto)
+        viewer_sfacto.change(fn=None, inputs=viewer_sfacto, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        viewer_4dgs_btn.click(fn=local_backend.viewer,
+                         inputs=[viewer_gaussian_state, outmodel_4dgs, host_4dgs, port_4dgs],
+                         outputs=viewer_4dgs)
+        viewer_4dgs.change(fn=None, inputs=viewer_4dgs, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        # 3sters Tab
+        viewer_dust3r_btn.click(fn=local_backend.viewer,
+                         inputs=[viewer_state, outmodel_dust3r, host_dust3r, port_dust3r],
+                         outputs=viewer_dust3r)
+        viewer_dust3r.change(fn=None, inputs=viewer_dust3r, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        viewer_mast3r_btn.click(fn=local_backend.viewer,
+                         inputs=[viewer_state, outmodel_mast3r, host_mast3r, port_mast3r],
+                         outputs=viewer_mast3r)
+        viewer_mast3r.change(fn=None, inputs=viewer_mast3r, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        viewer_monst3r_btn.click(fn=local_backend.viewer,
+                         inputs=[viewer_state, outmodel_monst3r, host_monst3r, port_monst3r],
+                         outputs=viewer_monst3r)
+        viewer_monst3r.change(fn=None, inputs=viewer_monst3r, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        viewer_easi3r_btn.click(fn=local_backend.viewer,
+                         inputs=[viewer_state, outmodel_easi3r, host_easi3r, port_easi3r],
+                         outputs=viewer_easi3r)
+        viewer_easi3r.change(fn=None, inputs=viewer_easi3r, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        viewer_must3r_btn.click(fn=local_backend.viewer,
+                         inputs=[viewer_state, outmodel_must3r, host_must3r, port_must3r],
+                         outputs=viewer_must3r)
+        viewer_must3r.change(fn=None, inputs=viewer_must3r, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        viewer_fast3r_btn.click(fn=local_backend.viewer,
+                         inputs=[viewer_state, outmodel_fast3r, host_fast3r, port_fast3r],
+                         outputs=viewer_fast3r)
+        viewer_fast3r.change(fn=None, inputs=viewer_fast3r, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        viewer_splatt3r_btn.click(fn=local_backend.viewer,
+                         inputs=[viewer_gaussian_state, outmodel_splatt3r, host_splatt3r, port_splatt3r],
+                         outputs=viewer_splatt3r)
+        viewer_splatt3r.change(fn=None, inputs=viewer_splatt3r, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        viewer_cut3r_btn.click(fn=local_backend.viewer,
+                         inputs=[viewer_state, outmodel_cut3r, host_cut3r, port_cut3r],
+                         outputs=viewer_cut3r)
+        viewer_cut3r.change(fn=None, inputs=viewer_cut3r, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        viewer_wint3r_btn.click(fn=local_backend.viewer,
+                         inputs=[viewer_state, outmodel_wint3r, host_wint3r, port_wint3r],
+                         outputs=viewer_wint3r)
+        viewer_wint3r.change(fn=None, inputs=viewer_wint3r, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        # VGG Tab
+        viewer_vggt_btn.click(fn=local_backend.viewer,
+                         inputs=[viewer_state, outmodel_vggt, host_vggt, port_vggt],
+                         outputs=viewer_vggt)
+        viewer_vggt.change(fn=None, inputs=viewer_vggt, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        viewer_vggsfm_btn.click(fn=local_backend.viewer,
+                         inputs=[viewer_state, outmodel_vggsfm, host_vggsfm, port_vggsfm],
+                         outputs=viewer_vggsfm)
+        viewer_vggsfm.change(fn=None, inputs=viewer_vggsfm, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        viewer_vggtslam_btn.click(fn=local_backend.viewer,
+                         inputs=[viewer_state, outmodel_vggtslam, host_vggtslam, port_vggtslam],
+                         outputs=viewer_vggtslam)
+        viewer_vggtslam.change(fn=None, inputs=viewer_vggtslam, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        viewer_stmvggt_btn.click(fn=local_backend.viewer,
+                         inputs=[viewer_state, outmodel_stmvggt, host_stmvggt, port_stmvggt],
+                         outputs=viewer_stmvggt)
+        viewer_stmvggt.change(fn=None, inputs=viewer_stmvggt, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        viewer_fastvggt_btn.click(fn=local_backend.viewer,
+                         inputs=[viewer_state, outmodel_fastvggt, host_fastvggt, port_fastvggt],
+                         outputs=viewer_fastvggt)
+        viewer_fastvggt.change(fn=None, inputs=viewer_fastvggt, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
+        viewer_pi3_btn.click(fn=local_backend.viewer,
+                         inputs=[viewer_state, outmodel_pi3, host_pi3, port_pi3],
+                         outputs=viewer_pi3)
+        viewer_pi3.change(fn=None, inputs=viewer_pi3, outputs=None,
+                           js="""(url) => {if (url && url.startsWith("http://")) {window.open(url, "_blank");}""")
 
         # --- レンダリング・評価 ---
         # Nerf Tab
         eval_vnerf_btn.click(fn=methods.render_eval_vnerf,
-                             inputs=[exe_mode_vnerf, colmap_dataset_state, outputsdir_state],
+                             inputs=[exe_mode_vnerf, outdir_recon_vnerf],
                              outputs=[outdir_eval_vnerf, runtime_eval_vnerf, result_eval_vnerf, log_eval_vnerf, metrics_vnerf, gallery_vnerf]).success(
                                  fn=update_method_metrics,
                                  inputs=[method_metrics, metrics_vnerf, tmpdir_state],
                                  outputs=[method_metrics, download_csv])
         eval_nerfacto_btn.click(fn=methods.render_eval_nerfacto,
-                             inputs=[exe_mode_nerfacto, colmap_dataset_state, outputsdir_state],
+                             inputs=[exe_mode_nerfacto, outdir_recon_nerfacto],
                              outputs=[outdir_eval_nerfacto, runtime_eval_nerfacto, result_eval_nerfacto, log_eval_nerfacto, metrics_nerfacto, gallery_nerfacto]).success(
                                  fn=update_method_metrics,
                                  inputs=[method_metrics, metrics_nerfacto, tmpdir_state],
                                  outputs=[method_metrics, download_csv])
         eval_mipnerf_btn.click(fn=methods.render_eval_mipnerf,
-                             inputs=[exe_mode_mipnerf, colmap_dataset_state, outputsdir_state],
+                             inputs=[exe_mode_mipnerf, outdir_recon_mipnerf],
                              outputs=[outdir_eval_mipnerf, runtime_eval_mipnerf, result_eval_mipnerf, log_eval_mipnerf, metrics_mipnerf, gallery_mipnerf]).success(
                                  fn=update_method_metrics,
                                  inputs=[method_metrics, metrics_mipnerf, tmpdir_state],
                                  outputs=[method_metrics, download_csv])
         eval_stnerf_btn.click(fn=methods.render_eval_stnerf,
-                             inputs=[exe_mode_stnerf, colmap_dataset_state, outputsdir_state],
+                             inputs=[exe_mode_stnerf, outdir_recon_stnerf],
                              outputs=[outdir_eval_stnerf, runtime_eval_stnerf, result_eval_stnerf, log_eval_stnerf, metrics_stnerf, gallery_stnerf]).success(
                                  fn=update_method_metrics,
                                  inputs=[method_metrics, metrics_stnerf, tmpdir_state],
@@ -1571,7 +1944,7 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                  inputs=[method_metrics, metrics_mips, tmpdir_state],
                                  outputs=[method_metrics, download_csv])
         eval_sfacto_btn.click(fn=methods.render_eval_sfacto,
-                             inputs=[exe_mode_sfacto, colmap_dataset_state, outputsdir_state],
+                             inputs=[exe_mode_sfacto, outdir_recon_sfacto],
                              outputs=[outdir_eval_sfacto, runtime_eval_sfacto, result_eval_sfacto, log_eval_sfacto, metrics_sfacto, gallery_sfacto]).success(
                                  fn=update_method_metrics,
                                  inputs=[method_metrics, metrics_sfacto, tmpdir_state],
@@ -1582,5 +1955,6 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                  fn=update_method_metrics,
                                  inputs=[method_metrics, metrics_4dgs, tmpdir_state],
                                  outputs=[method_metrics, download_csv])
+        
             
     demo.launch()
