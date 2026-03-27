@@ -473,12 +473,7 @@ def render_eval_stnerf(mode, outdir):
 Vanilla-GS
 """
 # --- 再構築メソッド--- 
-def recon_vgs(mode, dataset, outputs_dir, sh_degree, data_device, lambde_dsiim, iterations,
-             test_iteraion, save_iter, 
-             feature_lr, opacity_lr, scaling_lr, rotation_lr, position_lr_init,
-             position_lr_final, position_lr_delay_mult, densify_from_iter,
-             densify_until_iter, densify_grad_threshold, densification_interval,
-             opacity_rest_interval, percent_dense):
+def recon_vgs(mode, dataset, outputs_dir, save_iter):
     # 入力ディレクトリ
     dataset =os.path.abspath(dataset)
     # 出力ディレクトリの作成
@@ -821,7 +816,7 @@ def recon_dust3r(mode, dataset, outputs_dir, schedule, niter, min_conf_thr, as_p
 
     if mode=="local":
         # 再構築スクリプト
-        recon_script = os.path.join("scripts", "recon_dust3r.py")
+        recon_script = os.path.join("scripts", "recon", "recon_dust3r.py")
 
         # 実行コマンド
         cmd = [
@@ -894,7 +889,7 @@ def recon_mast3r(mode, dataset, outputs_dir):
 
     if mode=="local":
         # 再構築スクリプトパス
-        recon_script = os.path.join("scripts", "recon_mast3r.py")
+        recon_script = os.path.join("scripts", "recon", "recon_mast3r.py")
 
         # 実行コマンド
         cmd = [
@@ -1090,7 +1085,7 @@ def recon_fast3r(mode, dataset, outputs_dir):
 
     if mode=="local":
         # 再構築スクリプトパス
-        recon_script = os.path.join("scripts", "recon_fast3r.py")
+        recon_script = os.path.join("scripts", "recon", "recon_fast3r.py")
 
         # 実行コマンド
         cmd = [
@@ -1135,7 +1130,7 @@ def recon_splatt3r(mode, dataset, outputs_dir):
 
     if mode=="local":
         # 再構築スクリプトパス
-        recon_script = os.path.join("scripts", "recon_splatt3r.py")
+        recon_script = os.path.join("scripts", "recon", "recon_splatt3r.py")
 
         # 実行コマンド
         cmd = [
@@ -1185,7 +1180,7 @@ def recon_cut3r(mode, dataset, outputs_dir):
 
     if mode=="local":
         # 再構築スクリプトパス
-        recon_script = os.path.join("scripts", "recon_cut3r.py")
+        recon_script = os.path.join("scripts", "recon", "recon_cut3r.py")
 
         # 実行コマンド
         cmd = [
@@ -1288,7 +1283,7 @@ def recon_vggt(mode, dataset, outputs_dir):
 
     if mode=="local":
         # 再構築スクリプトパス
-        recon_script = os.path.join("scripts", "recon_vggt.py")
+        recon_script = os.path.join("scripts", "recon", "recon_vggt.py")
 
         # 実行コマンド
         cmd = [
@@ -1458,7 +1453,7 @@ def recon_stmvggt(mode, dataset, outputs_dir):
 
     if mode=="local":
         # 再構築スクリプトパス
-        recon_script = os.path.join("scripts", "recon_streamvggt.py")
+        recon_script = os.path.join("scripts", "recon", "recon_streamvggt.py")
 
         # 実行コマンド
         cmd = [
@@ -1815,7 +1810,7 @@ def recon_da3(mode, dataset, outputs_dir):
 
     if mode=="local":
         # 再構築スクリプトパス
-        infer_script = os.path.join("scripts", "recon_da3.py")
+        infer_script = os.path.join("scripts", "recon", "recon_da3.py")
 
         # 実行コマンド
         cmd = [

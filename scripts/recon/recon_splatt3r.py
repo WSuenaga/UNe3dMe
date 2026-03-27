@@ -5,8 +5,9 @@ import torch
 from huggingface_hub import hf_hub_download
 
 # --- パス設定 ---
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))  # src
-PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)              # gradio
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
+
 SPLATT3R_DIR = os.path.join(PROJECT_ROOT, "models", "splatt3r")
 sys.path.append(PROJECT_ROOT)
 sys.path.append(os.path.join(PROJECT_ROOT, "models"))

@@ -10,10 +10,10 @@ import torch
 # ==========================================================
 # Add DA3 src to path
 # ==========================================================
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-DEMO_ROOT = os.path.dirname(CURRENT_DIR)
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
 
-DA3_SRC_PATH = os.path.abspath(os.path.join(DEMO_ROOT, "models", "Depth-Anything-3", "src"))
+DA3_SRC_PATH = os.path.abspath(os.path.join(PROJECT_ROOT, "models", "Depth-Anything-3", "src"))
 sys.path.append(DA3_SRC_PATH)
 
 # ==========================================================

@@ -20,8 +20,8 @@
         "dataset_name_info": "If left blank, a random name will be assigned.",
         "run_copy_btn": "🚀 Create Dataset",
         "subtitle4": "# 4. Dataset Created",
-        "output_image": "📁 Dataset Save Location",
-        "gallery_image": "📷 Input Images"
+        "log": "📝 Execution Log",
+        "gallery": "📷 Input Images"
       },
       "video_section": {
         "subtitle3": "# 3. Create Dataset",
@@ -36,11 +36,11 @@
           "ssim": "SSIM Threshold"
         },
         "run_ffmpeg_btn": "🚀Create Dataset",
-        "output_video": "📁Dataset Save Location",
+        "log": "📝 Execution Log",
         "comp_rate": "📉Compression Rate",
         "sel_images_num": "👍Number of Selected Images",
         "rej_images_num": "🗑️Number of Deleted Images",
-        "gallery_video": "Extracted Images",
+        "gallery": "Extracted Images",
         "subtitle4": "# 4. Download Dataset",
         "info1": "- You can download the created dataset as a ZIP file.",
         "download_zipfile_btn": "💾Download Dataset"
@@ -76,7 +76,7 @@
         "title": "⚙️ Options",
         "exe_mode": "Execution Environment",
         "iter": "Total Iterations",
-        "host": "Host Name",
+        "ip": "IP Address",
         "port": "Port Number"
       },
       "title": "Vanilla NeRF",
@@ -110,7 +110,7 @@
         "title": "⚙️ Options",
         "exe_mode": "Execution Environment",
         "iter": "Total Iterations",
-        "host": "Host Name",
+        "ip": "IP Address",
         "port": "Port Number"
       },
       "title": "Nerfacto",
@@ -144,7 +144,7 @@
         "title": "⚙️ Options",
         "exe_mode": "Execution Environment",
         "iter": "Total Iterations",
-        "host": "Host Name",
+        "ip": "IP Address",
         "port": "Port Number"
       },
       "title": "mip-NeRF",
@@ -178,7 +178,7 @@
         "title": "⚙️ Options",
         "exe_mode": "Execution Environment",
         "iter": "Total Iterations",
-        "host": "Host Name",
+        "ip": "IP Address",
         "port": "Port Number"
       },
       "title": "SeaThru-NeRF",
@@ -208,7 +208,7 @@
     "option": {
       "title": "⚙️ Options",
       "exe_mode": "Execution Environment",
-      "host": "Host Name",
+      "ip": "IP Address",
       "port": "Port Number"
     },
     "title": "Vanilla GS",
@@ -218,7 +218,6 @@
     "runtime_recon": "⏳ Runtime",
     "result_recon": "💡 Training Result",
     "log_recon": "📝 Execution Log",
-    "outmodel": "🌐 3D Reconstruction Result",
     "subtitle2": "# 2. Launch Viewer",
     "viewer_btn": "🚀 Launch Viewer",
     "url": "Viewer URL",
@@ -238,7 +237,7 @@
       "title": "⚙️ Options",
       "exe_mode": "Execution Environment",
       "save_iter": "Iteration number to save the model",
-      "host": "Host Name",
+      "ip": "IP Address",
       "port": "Port Number"
     },
     "title": "Mip-Splatting",
@@ -248,7 +247,6 @@
     "runtime_recon": "⏳ Runtime",
     "result_recon": "💡 Training Result",
     "log_recon": "📝 Execution Log",
-    "outmodel": "🌐 3D Reconstruction Result",
     "subtitle2": "# 2. Launch Viewer",
     "viewer_btn": "🚀 Launch Viewer",
     "url": "Viewer URL",
@@ -266,7 +264,7 @@
         "title": "⚙️ Options",
         "exe_mode": "Execution Environment",
         "iter": "Total Iterations",
-        "host": "Host Name",
+        "ip": "IP Address",
         "port": "Port Number"
       },
     "title": "Splatfacto",
@@ -300,7 +298,7 @@
       "title": "⚙️ Options",
       "exe_mode": "Execution Environment",
       "save_iter": "Iteration number to save the model",
-      "host": "Host Name",
+      "ip": "IP Address",
       "port": "Port Number"
     },
     "title": "4D-Gaussians",
@@ -310,7 +308,6 @@
     "runtime_recon": "⏳ Runtime",
     "result_recon": "💡 Training Result",
     "log_recon": "📝 Execution Log",
-    "outmodel": "🌐 3D Reconstruction Result",
     "subtitle2": "# 2. Launch Viewer",
     "viewer_btn": "🚀 Launch Viewer",
     "url": "Viewer URL",
@@ -327,238 +324,295 @@
   "3sters_tab": {
     "title": "🌐 3sters",
     "dust3r": {
+      "option": {
+        "title": "⚙️ Options",
+        "exe_mode": "Execution Environment",
+        "ip": "IP Address",
+        "port": "Port Number"
+      },
       "title": "DUSt3R",
       "subtitle1": "# 1. Inference",
-      "option": {
-        "title": "⚙️ Options",
-        "exe_mode": "Execution Environment"
-      },
       "recon_btn": "🚀 Run Inference",
       "outdir_recon": "📁 Output Directory",
       "runtime_recon": "⏳ Runtime",
       "result_recon": "💡 Inference Result",
       "log_recon": "📝 Execution Log",
-      "outmodel": "🌐 3D Reconstruction Result",
-      "gallery": "🖼️Input Images / Depth Maps / Confidence Maps"
+      "gallery": "🖼️ Input Images / Depth Maps / Confidence Maps",
+      "subtitle2": "# 2. Launch Viewer",
+      "viewer_btn": "🚀 Launch Viewer",
+      "url": "Viewer URL"
     },
-
     "mast3r": {
+      "option": {
+        "title": "⚙️ Options",
+        "exe_mode": "Execution Environment",
+        "ip": "IP Address",
+        "port": "Port Number"
+      },
       "title": "MASt3R",
       "subtitle1": "# 1. Inference",
-      "option": {
-        "title": "⚙️ Options",
-        "exe_mode": "Execution Environment"
-      },
       "recon_btn": "🚀 Run Inference",
       "outdir_recon": "📁 Output Directory",
       "runtime_recon": "⏳ Runtime",
       "result_recon": "💡 Inference Result",
       "log_recon": "📝 Execution Log",
-      "outmodel": "🌐 3D Reconstruction Result"
+      "subtitle2": "# 2. Launch Viewer",
+      "viewer_btn": "🚀 Launch Viewer",
+      "url": "Viewer URL"
     },
-
     "monst3r": {
+      "option": {
+        "title": "⚙️ Options",
+        "exe_mode": "Execution Environment",
+        "ip": "IP Address",
+        "port": "Port Number"
+      },
       "title": "MonST3R",
       "subtitle1": "# 1. Inference",
-      "option": {
-        "title": "⚙️ Options",
-        "exe_mode": "Execution Environment"
-      },
       "recon_btn": "🚀 Run Inference",
       "outdir_recon": "📁 Output Directory",
       "runtime_recon": "⏳ Runtime",
       "result_recon": "💡 Inference Result",
       "log_recon": "📝 Execution Log",
-      "outmodel": "🌐 3D Reconstruction Result"
+      "subtitle2": "# 2. Launch Viewer",
+      "viewer_btn": "🚀 Launch Viewer",
+      "url": "Viewer URL"
     },
-
     "easi3r": {
+      "option": {
+        "title": "⚙️ Options",
+        "exe_mode": "Execution Environment",
+        "ip": "IP Address",
+        "port": "Port Number"
+      },
       "title": "Easi3R",
       "subtitle1": "# 1. Inference",
       "info1": "- Inference may fail if the number of input images is small.",
-      "option": {
-        "title": "⚙️ Options",
-        "exe_mode": "Execution Environment"
-      },
       "recon_btn": "🚀 Run Inference",
       "outdir_recon": "📁 Output Directory",
       "runtime_recon": "⏳ Runtime",
       "result_recon": "💡 Inference Result",
       "log_recon": "📝 Execution Log",
-      "outmodel": "🌐 3D Reconstruction Result"
+      "subtitle2": "# 2. Launch Viewer",
+      "viewer_btn": "🚀 Launch Viewer",
+      "url": "Viewer URL"
     },
-
     "must3r": {
+      "option": {
+        "title": "⚙️ Options",
+        "exe_mode": "Execution Environment",
+        "ip": "IP Address",
+        "port": "Port Number"
+      },
       "title": "MUSt3R",
       "subtitle1": "# 1. Inference",
-      "option": {
-        "title": "⚙️ Options",
-        "exe_mode": "Execution Environment"
-      },
       "recon_btn": "🚀 Run Inference",
       "outdir_recon": "📁 Output Directory",
       "runtime_recon": "⏳ Runtime",
       "result_recon": "💡 Inference Result",
       "log_recon": "📝 Execution Log",
-      "outmodel": "🌐 3D Reconstruction Result"
+      "subtitle2": "# 2. Launch Viewer",
+      "viewer_btn": "🚀 Launch Viewer",
+      "url": "Viewer URL"
     },
-
     "fast3r": {
+      "option": {
+        "title": "⚙️ Options",
+        "exe_mode": "Execution Environment",
+        "ip": "IP Address",
+        "port": "Port Number"
+      },
       "title": "Fast3R",
       "subtitle1": "# 1. Inference",
-      "option": {
-        "title": "⚙️ Options",
-        "exe_mode": "Execution Environment"
-      },
       "recon_btn": "🚀 Run Inference",
       "outdir_recon": "📁 Output Directory",
       "runtime_recon": "⏳ Runtime",
       "result_recon": "💡 Inference Result",
       "log_recon": "📝 Execution Log",
-      "outmodel": "🌐 3D Reconstruction Result"
+      "subtitle2": "# 2. Launch Viewer",
+      "viewer_btn": "🚀 Launch Viewer",
+      "url": "Viewer URL"
     },
-
     "splatt3r": {
-      "title": "Splatt3R",
-      "subtitle1": "# 1. Select Image",
-      "info1": "- Please select an image to use for inference.",
-      "image": "📷 Select a Single Image",
-      "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️ Options",
-        "exe_mode": "Execution Environment"
+        "exe_mode": "Execution Environment",
+        "ip": "IP Address",
+        "port": "Port Number"
       },
+      "title": "Splatt3R",
+      "subtitle1": "# 1. Select Images",
+      "info1": "- Please select the images to use for inference.",
+      "image": "📷 Please select one image",
+      "subtitle2": "# 2. Inference",
       "recon_btn": "🚀 Run Inference",
       "outdir_recon": "📁 Output Directory",
       "runtime_recon": "⏳ Runtime",
       "result_recon": "💡 Inference Result",
       "log_recon": "📝 Execution Log",
-      "outmodel": "🌐 3D Reconstruction Result"
+      "subtitle3": "# 3. Launch Viewer",
+      "viewer_btn": "🚀 Launch Viewer",
+      "url": "Viewer URL"
     },
-
     "cut3r": {
+      "option": {
+        "title": "⚙️ Options",
+        "exe_mode": "Execution Environment",
+        "ip": "IP Address",
+        "port": "Port Number"
+      },
       "title": "CUT3R",
       "subtitle1": "# 1. Inference",
-      "option": {
-        "title": "⚙️ Options",
-        "exe_mode": "Execution Environment"
-      },
       "recon_btn": "🚀 Run Inference",
       "outdir_recon": "📁 Output Directory",
       "runtime_recon": "⏳ Runtime",
       "result_recon": "💡 Inference Result",
       "log_recon": "📝 Execution Log",
-      "outmodel": "🌐 3D Reconstruction Result"
+      "subtitle2": "# 2. Launch Viewer",
+      "viewer_btn": "🚀 Launch Viewer",
+      "url": "Viewer URL"
     },
-
     "wint3r": {
+      "option": {
+        "title": "⚙️ Options",
+        "exe_mode": "Execution Environment",
+        "ip": "IP Address",
+        "port": "Port Number"
+      },
       "title": "WinT3R",
       "subtitle1": "# 1. Inference",
-      "option": {
-        "title": "⚙️ Options",
-        "exe_mode": "Execution Environment"
-      },
       "recon_btn": "🚀 Run Inference",
       "outdir_recon": "📁 Output Directory",
       "runtime_recon": "⏳ Runtime",
       "result_recon": "💡 Inference Result",
       "log_recon": "📝 Execution Log",
-      "outmodel": "🌐 3D Reconstruction Result"
+      "subtitle2": "# 2. Launch Viewer",
+      "viewer_btn": "🚀 Launch Viewer",
+      "url": "Viewer URL"
     }
   },
   "vggt_tab": {
     "title": "🌐 VGGT",
     "vggt": {
-      "title": "VGGT",
-      "subtitle1": "# 1. Inference",
       "option": {
         "title": "⚙️ Options",
         "exe_mode": "Execution Environment",
-        "mode_vggt": "Select Mode"
+        "mode_vggt": "Select Mode",
+        "ip": "IP Address",
+        "port": "Port Number"
       },
+      "title": "VGGT",
+      "subtitle1": "# 1. Inference",
       "recon_btn": "🚀 Run Inference",
       "outdir_recon": "📁 Output Directory",
       "runtime_recon": "⏳ Runtime",
       "result_recon": "💡 Result",
       "log_recon": "📝 Execution Log",
-      "outmodel": "🌐 3D Reconstruction Result"
+      "subtitle2": "# 2. Launch Viewer",
+      "viewer_btn": "🚀 Launch Viewer",
+      "url": "Viewer URL"
     },
     "vggsfm": {
-      "title": "VGGSfM",
-      "subtitle1": "# 1. Inference",
       "option": {
         "title": "⚙️ Options",
-        "exe_mode": "Execution Environment"
+        "exe_mode": "Execution Environment",
+        "mode_vggt": "Select Mode",
+        "ip": "IP Address",
+        "port": "Port Number"
       },
+      "title": "VGGSfM",
+      "subtitle1": "# 1. Inference",
       "recon_btn": "🚀 Run Inference",
       "outdir_recon": "📁 Output Directory",
       "runtime_recon": "⏳ Runtime",
       "result_recon": "💡 Result",
       "log_recon": "📝 Execution Log",
       "subtitle2": "# 2. Export Point Cloud",
-      "export_btn": "🚀 Export Point Cloud",
+      "export_btn": "🚀 Run Point Cloud Export",
       "outdir_export": "📁 Output Directory",
       "runtime_export": "⏳ Runtime",
       "result_export": "💡 Result",
       "log_export": "📝 Execution Log",
-      "outmodel": "🌐 3D Reconstruction Result"
+      "subtitle3": "# 3. Launch Viewer",
+      "viewer_btn": "🚀 Launch Viewer",
+      "url": "Viewer URL"
     },
     "vggt-slam": {
+      "option": {
+        "title": "⚙️ Options",
+        "exe_mode": "Execution Environment",
+        "mode_vggt": "Select Mode",
+        "ip": "IP Address",
+        "port": "Port Number"
+      },
       "title": "VGGT-SLAM",
       "subtitle1": "# 1. Inference",
-      "option": {
-        "title": "⚙️ Options",
-        "exe_mode": "Execution Environment"
-      },
       "recon_btn": "🚀 Run Inference",
-      "viewer": "🌐 [View inference progress in the viewer.](http://localhost:8080)",
+      "viewer": "🌐 [View inference progress in the viewer.](http://localip/:8080)",
       "outdir_recon": "📁 Output Directory",
       "runtime_recon": "⏳ Runtime",
       "result_recon": "💡 Result",
       "log_recon": "📝 Execution Log",
-      "outmodel": "🌐 3D Reconstruction Result"
+      "subtitle2": "# 2. Launch Viewer",
+      "viewer_btn": "🚀 Launch Viewer",
+      "url": "Viewer URL"
     },
     "streamvggt": {
+      "option": {
+        "title": "⚙️ Options",
+        "exe_mode": "Execution Environment",
+        "mode_vggt": "Select Mode",
+        "ip": "IP Address",
+        "port": "Port Number"
+      },
       "title": "StreamVGGT",
       "subtitle1": "# 1. Inference",
-      "option": {
-        "title": "⚙️ Options",
-        "exe_mode": "Execution Environment"
-      },
       "recon_btn": "🚀 Run Inference",
       "outdir_recon": "📁 Output Directory",
       "runtime_recon": "⏳ Runtime",
       "result_recon": "💡 Result",
       "log_recon": "📝 Execution Log",
-      "outmodel": "🌐 3D Reconstruction Result"
+      "subtitle2": "# 2. Launch Viewer",
+      "viewer_btn": "🚀 Launch Viewer",
+      "url": "Viewer URL"
     },
     "fastvggt": {
+      "option": {
+        "title": "⚙️ Options",
+        "exe_mode": "Execution Environment",
+        "mode_vggt": "Select Mode",
+        "ip": "IP Address",
+        "port": "Port Number"
+      },
       "title": "FastVGGT",
       "subtitle1": "# 1. Inference",
-      "option": {
-        "title": "⚙️ Options",
-        "exe_mode": "Execution Environment"
-      },
       "recon_btn": "🚀 Run Inference",
       "outdir_recon": "📁 Output Directory",
       "runtime_recon": "⏳ Runtime",
       "result_recon": "💡 Result",
       "log_recon": "📝 Execution Log",
-      "outmodel": "🌐 3D Reconstruction Result"
+      "subtitle2": "# 2. Launch Viewer",
+      "viewer_btn": "🚀 Launch Viewer",
+      "url": "Viewer URL"
     },
     "pi3": {
-      "title": "Pi3",
-      "subtitle1": "# 1. Inference",
       "option": {
         "title": "⚙️ Options",
-        "exe_mode": "Execution Environment"
+        "exe_mode": "Execution Environment",
+        "mode_vggt": "Select Mode",
+        "ip": "IP Address",
+        "port": "Port Number"
       },
+      "title": "Pi3",
+      "subtitle1": "# 1. Inference",
       "recon_btn": "🚀 Run Inference",
       "outdir_recon": "📁 Output Directory",
       "runtime_recon": "⏳ Runtime",
       "result_recon": "💡 Result",
       "log_recon": "📝 Execution Log",
-      "outmodel": "🌐 3D Reconstruction Result"
+      "subtitle2": "# 2. Launch Viewer",
+      "viewer_btn": "🚀 Launch Viewer",
+      "url": "Viewer URL"
     }
   },
   "mds_tab": {

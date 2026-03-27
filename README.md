@@ -44,7 +44,7 @@
 - [Depth-Anything-3](https://github.com/ByteDance-Seed/depth-anything-3)
 
 # 2. インストール
-このシステムは Ubuntu を対象としています．Window では一部利用できない手法があります．
+このシステムは Ubuntu を対象としています．Windows では一部利用できない手法があります．
 
 `torch`，`torchvision`は起動環境のcudaに合わせたものをインストールしてください．下記の例の実行環境には CUDA 12.1が入っています．
 ```

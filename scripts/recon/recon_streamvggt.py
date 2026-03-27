@@ -6,8 +6,9 @@ import argparse
 
 import os
 import sys
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))  # src
-PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)              # gradio
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
+
 STREAMVGGT_DIR = os.path.join(PROJECT_ROOT, "models", "StreamVGGT")
 sys.path.append(PROJECT_ROOT)
 sys.path.append(os.path.join(PROJECT_ROOT, "models"))

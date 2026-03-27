@@ -8,8 +8,10 @@ import trimesh
 import matplotlib
 
 import sys
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))  # src
-PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)              # gradio
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
+
 sys.path.insert(0, PROJECT_ROOT)
 sys.path.insert(0, os.path.join(PROJECT_ROOT, "models", "fast3r"))
 
