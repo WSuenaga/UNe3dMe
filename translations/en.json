@@ -618,41 +618,49 @@
   "mds_tab": {
     "title": "🌐 mds",
     "moge2": {
-      "title": "MoGe-2",
-      "subtitle1": "# 1. Select Image",
-      "info1": "- Please select an image to use for inference.",
-      "image": "📷 Select one image",
-      "subtitle2": "# 2. Inference",
       "option": {
         "title": "⚙️ Options",
         "exe_mode": "Execution Environment",
         "radio_standard": "Standard Image",
         "radio_panorama": "Panorama Image",
-        "radio_default": "Standard Image"
+        "radio_default": "Standard Image",
+        "ip": "IP Address",
+        "port": "Port Number"
       },
+      "title": "MoGe-2",
+      "subtitle1": "# 1. Select Image",
+      "info1": "- Please select an image to use for inference.",
+      "image": "📷 Select one image",
+      "subtitle2": "# 2. Inference",
       "recon_btn": "🚀 Run Inference",
       "outdir_recon": "📁 Output Directory",
       "runtime_recon": "⏳ Runtime",
       "result_recon": "💡 Result",
       "log_recon": "📝 Execution Log",
-      "outmodel": "🌐 3D Reconstruction Result"
+      "subtitle3": "# 3. Launch Viewer",
+      "viewer_btn": "🚀 Launch Viewer",
+      "url": "Viewer URL"
     },
     "unik3d": {
+      "option": {
+        "title": "⚙️ Options",
+        "exe_mode": "Execution Environment",
+        "ip": "IP Address",
+        "port": "Port Number"
+      },
       "title": "UniK3D",
       "subtitle1": "# 1. Select Image",
       "info1": "- Please select an image to use for inference.",
       "image": "📷 Select one image",
       "subtitle2": "# 2. Inference",
-      "option": {
-        "title": "⚙️ Options",
-        "exe_mode": "Execution Environment"
-      },
       "recon_btn": "🚀 Run Inference",
       "outdir_recon": "📁 Output Directory",
       "runtime_recon": "⏳ Runtime",
       "result_recon": "💡 Result",
       "log_recon": "📝 Execution Log",
-      "outmodel": "🌐 3D Reconstruction Result"
+      "subtitle3": "# 3. Launch Viewer",
+      "viewer_btn": "🚀 Launch Viewer",
+      "url": "Viewer URL"
     },
     "da2": {
       "title": "Depth Anything V2",

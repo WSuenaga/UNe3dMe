@@ -9,31 +9,79 @@ from local_backend import get_imagelist, evaluate_all_metrics
 
 # subprocessのshellフラグの設定
 SHELL_FLAG = platform.system() == "Windows"
+
 # 保存先一時ディレクトリ
 TMPDIR = ""
 
-# --- subprocess.Popen実行メソッド ---
-def run_subprocess_popen(cmd, workdir, log_dir=None):
+
+# =========================
+# 共通関数
+# =========================
+
+def msg(lang, jp_msg, en_msg):
+    """
+    言語コードに応じて日本語または英語のメッセージを返す．
+
+    Args:
+        lang (str): 言語コード．`"jp"` のとき日本語，それ以外は英語を返す．
+        jp_msg (str): 日本語メッセージ．
+        en_msg (str): 英語メッセージ．
+
+    Returns:
+        str: 選択された言語のメッセージ．
+    """
+    return jp_msg if lang == "jp" else en_msg
+
+
+def run_subprocess_popen(lang, cmd, workdir, log_dir=None):
+    """
+    サブプロセスを起動し，標準出力と標準エラー出力を逐次取得しながら，
+    ログファイルへ保存する．
+
+    Args:
+        lang (str）: ログやステータス表示に使う言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+            デフォルトは `"jp"` ．
+        cmd (list[str] | tuple[str, ...]): 実行するコマンド．
+        workdir (str): コマンドを実行する作業ディレクトリ．
+        log_dir (str | None, optional): ログ保存先ディレクトリ．
+            `None` の場合は `TMPDIR/logs` を使用する．
+            デフォルトは `None` ．
+
+    Returns:
+        tuple[str, str, str]: 以下を返す．
+            - 実行時間．`HH:MM:SS` 形式．
+            - 実行ステータス文字列．
+            - ログ全文．
+    """
     global SHELL_FLAG
     global TMPDIR
 
-    print("Running:", " ".join(map(str, cmd)))
     start_time = time.time()
+    
+    cmd_str = " ".join(map(str, cmd))
+    print(msg(lang, "実行中", "Running") + f": {cmd_str}")
 
-    # ログ保存ディレクトリ
-    log_dir = os.path.join(TMPDIR, "logs")
+    # ログ保存ディレクトリを決定する
+    if log_dir is None:
+        log_dir = os.path.join(TMPDIR, "logs")
     os.makedirs(log_dir, exist_ok=True)
 
-    # 実行開始時刻（ファイル名用）
+    # 実行開始時刻をもとにログファイル名を決定する
     timestamp = time.strftime("%Y%m%d_%H%M%S", time.localtime(start_time))
     log_path = os.path.join(log_dir, f"{timestamp}.log")
 
-    # 実行コマンド文字列
-    cmd_str = " ".join(map(str, cmd))
-
-    # ログ内容を保持（戻り値用）
+    # ログ内容を保持する
     log_lines = []
 
+    # ログヘッダを作成する
+    header = (
+        f"[{msg(lang, 'コマンド', 'COMMAND')}]\n"
+        f"{cmd_str}\n"
+        f"{'-' * 60}\n"
+    )
+
+    # コマンドの実行
     try:
         env = os.environ.copy()
         env["PYTHONUTF8"] = "1"
@@ -49,55 +97,91 @@ def run_subprocess_popen(cmd, workdir, log_dir=None):
             errors="replace",
             cwd=workdir,
             shell=SHELL_FLAG,
-            bufsize=1
+            bufsize=1,
         )
 
         with open(log_path, "w", encoding="utf-8") as log_file:
-            # --- ログ先頭：実行コマンド ---
-            header = f"[COMMAND]\n{cmd_str}\n{'-'*60}\n"
+            # ログ先頭に実行コマンドを書き込む
             log_file.write(header)
             log_file.flush()
             log_lines.append(header)
 
-            # --- stdout を逐次取得 ---
-            for line in process.stdout:
-                print(line, end="")
-                log_file.write(line)
-                log_file.flush()
-                log_lines.append(line)
+            # 標準出力を逐次取得し，コンソール表示とログ保存を行う
+            if process.stdout is not None:
+                for line in process.stdout:
+                    print(line, end="")
+                    log_file.write(line)
+                    log_file.flush()
+                    log_lines.append(line)
 
         returncode = process.wait()
-
     except Exception as e:
-        error_log = f"実行に失敗しました: {e}"
-        return "", "❌ Failed (Exception)", error_log
+        error_log = msg(
+            lang,
+            f"実行に失敗しました: {e}",
+            f"Execution failed: {e}"
+        )
+        status = msg(lang, "❌ 失敗（例外）", "❌ Failed (Exception)")
+        return "", status, error_log
 
     end_time = time.time()
 
-    # 実行時間計算
+    # 実行時間を計算
     run_seconds = int(end_time - start_time)
     h, rem = divmod(run_seconds, 3600)
     m, s = divmod(rem, 60)
     run_time = f"{h:02d}:{m:02d}:{s:02d}"
 
-    # ステータス
+    # 終了ステータスを決定
     if returncode == 0:
-        status = "✅ Success"
+        status = msg(lang, "✅ 成功", "✅ Success")
     else:
-        status = "❌ Failed"
+        status = msg(lang, "❌ 失敗", "❌ Failed")
 
-    # ログ全文を1つの文字列に
+    # ログ末尾に結果を追記
+    footer = (
+        f"\n{'-' * 60}\n"
+        f"[{msg(lang, 'ステータス', 'STATUS')}] {status}\n"
+        f"[{msg(lang, '実行時間', 'ELAPSED TIME')}] {run_time}\n"
+    )
+
+    with open(log_path, "a", encoding="utf-8") as log_file:
+        log_file.write(footer)
+
+    log_lines.append(footer)
     full_log = "".join(log_lines)
 
     return run_time, status, full_log
-    
-# --- ns-train呼び出しメソッド ---
-def train_nerfstudio(dataset, outputs_dir, method_name, train_args=None):
+
+
+# =========================
+# Nerfstudio 共通関数
+# =========================    
+
+def train_nerfstudio(lang, dataset, outputs_dir, method_name, train_args=None):
     """
-    Nerfstudio モデルを学習する関数
+    Nerfstudio を用いてモデルを学習する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+            デフォルトは `"jp"` ．
+        dataset (str): 学習に使用するデータセットディレクトリのパス．
+        outputs_dir (str): 学習結果の出力先ルートディレクトリ．
+        method_name (str): 使用する Nerfstudio の手法名．
+        train_args (list[str] | None, optional): `ns-train` に追加で渡す引数．
+            デフォルトは `None` ．
+
+    Returns:
+        tuple[str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
     """
-    # 入力ディレクトリ
-    dataset =os.path.abspath(dataset)
+    # データセットのパス
+    dataset = os.path.abspath(dataset)
+
     # 出力ディレクトリの作成
     name = os.path.basename(os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, method_name, name)
@@ -105,432 +189,850 @@ def train_nerfstudio(dataset, outputs_dir, method_name, train_args=None):
 
     # 実行コマンド
     cmd = [
-        "conda", "run", "-n", "nerfstudio",
+        "conda", "run", "--no-capture-output",
+        "-n", "nerfstudio",
         "ns-train", method_name,
         "--output-dir", outdir,
         "--experiment-name", "results",
         "--timestamp", "results",
         "--vis", "viewer",
-        "--viewer.quit-on-train-completion", "True"]
+        "--viewer.quit-on-train-completion", "True",
+    ]
+    # 追加引数
     if train_args:
         cmd.extend(train_args)
+
     cmd.extend([
         "nerfstudio-data",
         "--data", dataset,
-        "--downscale-factor", "1"
+        "--downscale-factor", "1",
     ])
 
-    workdir = "./"
-
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
+    # 学習の実行
+    runtime, status, log = run_subprocess_popen(lang=lang, cmd=cmd, workdir=".", )
 
     return outdir, runtime, status, log
 
-# --- ns-train呼び出しメソッド（slurm） ---
-def train_nerfstudio_slurm(dataset, outputs_dir, method_name, iter, port):
+
+def train_nerfstudio_slurm(lang, dataset, outputs_dir, method_name, num_iters, port):
     """
-    Nerfstudio モデルを学習する関数
+    Slurm 経由で Nerfstudio の学習ジョブを投入する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+            デフォルトは `"jp"` ．
+        dataset (str): 学習に使用するデータセットディレクトリのパス．
+        outputs_dir (str): 学習結果の出力先ルートディレクトリ．
+        method_name (str): 使用する Nerfstudio の手法名．
+        num_iters (int): 学習反復回数．
+        port (int): Viewer などで使用するポート番号．
+
+    Returns:
+        tuple[str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
     """
-    dirname = os.path.dirname(dataset)
-    name = os.path.basename(dirname)
+    dataset = os.path.abspath(dataset)
+
+    name = os.path.basename(os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, method_name, name)
     os.makedirs(outdir, exist_ok=True)
 
-    # スクリプトパス
     sbatch_script = os.path.join("scripts", "recon_nerfstudio.sh")
 
-    cmd = ["sbatch", f"--job-name={method_name}", sbatch_script, method_name, outdir, str(iter), str(port), dataset]
+    cmd = [
+        "sbatch",
+        f"--job-name={method_name}",
+        sbatch_script,
+        method_name,
+        outdir,
+        str(num_iters),
+        str(port),
+        dataset,
+    ]
 
-    workdir = "./"
-
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
+    runtime, status, log = run_subprocess_popen(
+        lang=lang,
+        cmd=cmd,
+        workdir=".",
+    )
 
     return outdir, runtime, status, log
 
-# --- ns-export呼び出しメソッド ---
-def export_nerfstudio(outdir, method_name, filetype, export_args=None):
-    """
-    Nerfstudio モデルをエクスポートする関数
-    (学習済みの config.yml 必須)
-    """
-    config_path = os.path.join(outdir, "results", method_name, "results", "config.yml")
 
-    export_cmd = [
-        "conda", "run", "-n", "nerfstudio",
+def export_nerfstudio(lang, outdir, method_name, filetype, export_args=None):
+    """
+    学習済みの Nerfstudio モデルをエクスポートする．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        outdir (str): 学習結果が保存されている出力ディレクトリ．
+        method_name (str): 使用した Nerfstudio の手法名．
+        filetype (str): `ns-export` に指定するエクスポート形式．
+        export_args (list[str] | None, optional): `ns-export` に追加で渡す引数．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - エクスポートされたモデルファイルの想定パス．
+    """
+    config_path = os.path.join(
+        outdir, "results", method_name, "results", "config.yml"
+    )
+
+    cmd = [
+        "conda", "run", "--no-capture-output",
+        "-n", "nerfstudio",
         "ns-export", filetype,
         "--load-config", config_path,
         "--output-dir", outdir,
     ]
+
     if export_args:
-        export_cmd.extend(export_args)
+        cmd.extend(export_args)
 
-    workdir = "./"
-
-    run_time, success, log = run_subprocess_popen(export_cmd, workdir)
+    run_time, status, log = run_subprocess_popen(
+        lang,
+        cmd,
+        ".",
+    )
 
     outmodel = os.path.join(outdir, "point_cloud.ply")
 
-    return outdir, run_time, success, log, outmodel
+    return outdir, run_time, status, log, outmodel
 
-# --- ns-export呼び出しメソッド ---
-def export_nerfstudio_slurm(outdir, method_name, filetype, export_args=None):
-    """
-    Nerfstudio モデルをエクスポートする関数
-    (学習済みの config.yml 必須)
-    """
-    config_path = os.path.join(outdir, "results", method_name, "results", "config.yml")
 
-    export_cmd = [
+def export_nerfstudio_slurm(lang, outdir, method_name, filetype, export_args=None):
+    """
+    学習済みの Nerfstudio モデルを Slurm 環境でエクスポートする．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        outdir (str): 学習結果が保存されている出力ディレクトリ．
+        method_name (str): 使用した Nerfstudio の手法名．
+        filetype (str): `ns-export` に指定するエクスポート形式．
+        export_args (list[str] | None, optional): `ns-export` に追加で渡す引数．
+
+    Returns:
+        tuple[str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+    """
+    config_path = os.path.join(
+        outdir, "results", method_name, "results", "config.yml"
+    )
+
+    cmd = [
         "conda", "run", "-n", "nerfstudio",
         "ns-export", filetype,
         "--load-config", config_path,
         "--output-dir", outdir,
     ]
+
     if export_args:
-        export_cmd.extend(export_args)
+        cmd.extend(export_args)
 
-    workdir = "./"
+    run_time, status, log = run_subprocess_popen(
+        lang,
+        cmd,
+        ".",
+    )
 
-    run_time, success, log = run_subprocess_popen(export_cmd, workdir)
+    return outdir, run_time, status, log
 
-    return outdir, run_time, success, log
 
-# --- ns-eval呼び出しメソッド ---
-def render_eval_nerfstudio(outdir, method_name, gt_name, pred_name):
+def normalize_render_output(base_dir, name, exts=(".png", ".jpg", ".jpeg")):
     """
-    Nerfstudio モデルを評価する関数
-    (学習済みの config.yml 必須)
+    レンダリング出力を必ず `test/<name>/` 配下に統一する．
 
-    想定する ns-render の出力:
-    1. 複数枚の場合:
-       outdir/test/<name>/*.jpg
-    2. 1枚だけの場合:
-       outdir/test/<name>.jpg など
-       -> outdir/test/<name>/<name>.jpg に移動して統一する
+    想定する出力形式は以下の 2 通りである．
+    1. 複数枚出力:
+       `test/<name>/*.jpg`
+    2. 単一ファイル出力:
+       `test/<name>.jpg` など
+
+    単一ファイルの場合は，`test/<name>/<name>.jpg` となるように
+    ディレクトリ配下へ移動して形式をそろえる．
+
+    Args:
+        base_dir (str): `test` ディレクトリのパス．
+        name (str): レンダリング出力名．
+        exts (tuple[str, ...], optional): 対象とする画像拡張子．
+
+    Returns:
+        tuple[list[str], str | None]: 以下を返す．
+            - 画像ファイルパスのリスト．
+            - 正規化後のディレクトリパス．見つからない場合は `None` ．
     """
-    config_path = os.path.join(outdir, "results", method_name, "results", "config.yml")
-    workdir = "./"
+    dir_path = os.path.join(base_dir, name)
 
-    # gt をレンダリング
-    cmd = [
-        "conda", "run", "-n", "nerfstudio",
+    # すでにディレクトリ形式で出力されている場合．
+    if os.path.isdir(dir_path):
+        files = sorted(
+            os.path.join(dir_path, f)
+            for f in os.listdir(dir_path)
+            if f.lower().endswith(exts)
+        )
+        if files:
+            return files, dir_path
+
+    # 単一ファイル形式で出力されている場合．
+    for ext in exts:
+        flat_file = os.path.join(base_dir, f"{name}{ext}")
+        if os.path.isfile(flat_file):
+            os.makedirs(dir_path, exist_ok=True)
+
+            dst_file = os.path.join(dir_path, os.path.basename(flat_file))
+            if os.path.exists(dst_file):
+                os.remove(dst_file)
+
+            shutil.move(flat_file, dst_file)
+            return [dst_file], dir_path
+
+    # 出力が見つからない場合．
+    return [], None
+
+
+def render_eval_nerfstudio(lang, outdir, method_name, gt_name, pred_name):
+    """
+    Nerfstudio のレンダリング結果を用いて評価を行う．
+
+    学習済みの `config.yml` を用いて GT と予測画像をレンダリングし，
+    評価指標を計算したうえで，表示用ギャラリーを作成する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        outdir (str): 学習結果が保存されている出力ディレクトリ．
+        method_name (str): 使用した Nerfstudio の手法名．
+        gt_name (str): GT 側のレンダリング出力名．
+        pred_name (str): 予測側のレンダリング出力名．
+
+    Returns:
+        tuple[str, str, str, str, list, list]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 評価指標の要約リスト．
+            - ギャラリー表示用の画像パスリスト．
+    """
+    config_path = os.path.join(
+        outdir, "results", method_name, "results", "config.yml"
+    )
+    test_dir = os.path.join(outdir, "test")
+
+    gt_cmd = [
+        "conda", "run", "--no-capture-output",
+        "-n", "nerfstudio",
         "ns-render", "dataset",
         "--load-config", config_path,
         "--rendered-output-names", gt_name,
         "--output-path", outdir,
     ]
-    run_subprocess_popen(cmd, workdir)
-
-    # pred をレンダリング
-    cmd = [
-        "conda", "run", "-n", "nerfstudio",
+    pred_cmd = [
+        "conda", "run", "--no-capture-output",
+        "-n", "nerfstudio",
         "ns-render", "dataset",
         "--load-config", config_path,
         "--rendered-output-names", pred_name,
         "--output-path", outdir,
     ]
-    run_subprocess_popen(cmd, workdir)
 
-    test_dir = os.path.join(outdir, "test")
-    exts = (".png", ".jpg", ".jpeg")
+    gt_run_time, gt_status, gt_log = run_subprocess_popen(lang, gt_cmd, ".")
+    pred_run_time, pred_status, pred_log = run_subprocess_popen(lang, pred_cmd, ".")
 
-    def normalize_render_output(base_dir, name):
-        """
-        出力を必ず test/<name>/ 配下に統一する。
-        戻り値:
-            files: 画像ファイルパスのリスト
-            dir_path: 評価用ディレクトリ
-        """
-        dir_path = os.path.join(base_dir, name)
+    render_log = (
+        f"[GT Render]\n{gt_log}\n\n"
+        f"[Pred Render]\n{pred_log}"
+    )
 
-        # 1) すでにディレクトリ形式
-        if os.path.isdir(dir_path):
-            files = sorted(
-                os.path.join(dir_path, f)
-                for f in os.listdir(dir_path)
-                if f.lower().endswith(exts)
-            )
-            if files:
-                return files, dir_path
-
-        # 2) 単一ファイル形式 -> test/<name>/ に移動
-        for ext in exts:
-            flat_file = os.path.join(base_dir, f"{name}{ext}")
-            if os.path.isfile(flat_file):
-                os.makedirs(dir_path, exist_ok=True)
-
-                dst_file = os.path.join(dir_path, os.path.basename(flat_file))
-
-                # すでに同名ファイルがあれば上書きのため削除
-                if os.path.exists(dst_file):
-                    os.remove(dst_file)
-
-                shutil.move(flat_file, dst_file)
-                return [dst_file], dir_path
-
-        # 3) 見つからない
-        return [], None
+    if "❌" in gt_status:
+        return outdir, gt_run_time, gt_status, render_log, [], []
+    if "❌" in pred_status:
+        return outdir, pred_run_time, pred_status, render_log, [], []
 
     gt_files, gt_dir = normalize_render_output(test_dir, gt_name)
     pred_files, pred_dir = normalize_render_output(test_dir, pred_name)
 
     if not gt_files:
-        return outdir, "", "失敗", f"GT画像が見つかりません: {gt_name}", [], []
+        full_log = render_log + "\n\n" + msg(
+            lang,
+            f"GT 画像が見つかりません: {gt_name}",
+            f"GT images were not found: {gt_name}",
+        )
+        return outdir, "", msg(lang, "❌ 失敗", "❌ Failed"), full_log, [], []
+
     if not pred_files:
-        return outdir, "", "失敗", f"予測画像が見つかりません: {pred_name}", [], []
+        full_log = render_log + "\n\n" + msg(
+            lang,
+            f"予測画像が見つかりません: {pred_name}",
+            f"Predicted images were not found: {pred_name}",
+        )
+        return outdir, "", msg(lang, "❌ 失敗", "❌ Failed"), full_log, [], []
 
     if len(gt_files) != len(pred_files):
-        full_log = (
-            f"GT と予測の画像枚数が一致しません．\n"
+        count_log = msg(
+            lang,
+            "GT と予測の画像枚数が一致しません．\n"
             f"{gt_name}: {len(gt_files)} 枚\n"
-            f"{pred_name}: {len(pred_files)} 枚"
+            f"{pred_name}: {len(pred_files)} 枚",
+            "The number of GT and predicted images does not match.\n"
+            f"{gt_name}: {len(gt_files)} images\n"
+            f"{pred_name}: {len(pred_files)} images",
         )
-        return outdir, "", "失敗", full_log, [], []
+        full_log = render_log + "\n\n" + count_log
+        return outdir, "", msg(lang, "❌ 失敗", "❌ Failed"), full_log, [], []
 
-    # 評価指標の計算
     run_time, status, full_log, summary_list = evaluate_all_metrics(
+        lang,
         method_name,
         gt_dir,
         pred_dir,
-        outdir
+        outdir,
     )
 
-    # ギャラリーの作成
+    full_log = render_log + "\n\n" + full_log
+
     gallery = []
-    for gt, pred in zip(gt_files, pred_files):
-        gallery.append(gt)
-        gallery.append(pred)
+    for gt_file, pred_file in zip(gt_files, pred_files):
+        gallery.append(gt_file)
+        gallery.append(pred_file)
 
     return outdir, run_time, status, full_log, summary_list, gallery
 
-# --- ns-eval呼び出しメソッド ---
-def render_eval_nerfstudio_slurm(outdir, method_name, gt_name, pred_name):
-    """
-    Nerfstudio モデルを評価する関数
-    (学習済みの config.yml 必須)
-    """
-    config_path = os.path.join(outdir, "results", method_name, "results", "config.yml")
 
-    workdir = "./"  
+def render_eval_nerfstudio_slurm(lang, outdir, method_name, gt_name, pred_name):
+    """
+    Nerfstudio のレンダリング結果を用いて評価を行う．
 
-    cmd = [
+    この関数は Slurm 用の呼び出し口として用いるが，処理内容は通常版と同様に，
+    GT と予測画像のレンダリング，評価指標の計算，ギャラリー作成を行う．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        outdir (str): 学習結果が保存されている出力ディレクトリ．
+        method_name (str): 使用した Nerfstudio の手法名．
+        gt_name (str): GT 側のレンダリング出力名．
+        pred_name (str): 予測側のレンダリング出力名．
+
+    Returns:
+        tuple[str, str, str, str, list, list]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 評価指標の要約リスト．
+            - ギャラリー表示用の画像パスリスト．
+    """
+    config_path = os.path.join(
+        outdir, "results", method_name, "results", "config.yml"
+    )
+    test_dir = os.path.join(outdir, "test")
+
+    gt_cmd = [
         "conda", "run", "-n", "nerfstudio",
         "ns-render", "dataset",
         "--load-config", config_path,
         "--rendered-output-names", gt_name,
-        "--output-path", outdir
+        "--output-path", outdir,
     ]
-    run_subprocess_popen(cmd, workdir)
-
-    cmd = [
+    pred_cmd = [
         "conda", "run", "-n", "nerfstudio",
         "ns-render", "dataset",
         "--load-config", config_path,
         "--rendered-output-names", pred_name,
-        "--output-path", outdir
+        "--output-path", outdir,
     ]
-    run_subprocess_popen(cmd, workdir)
 
-    gt_dir = os.path.join(outdir, "test", gt_name)
-    pred_dir = os.path.join(outdir, "test", pred_name)
+    gt_run_time, gt_status, gt_log = run_subprocess_popen(lang, gt_cmd, ".")
+    pred_run_time, pred_status, pred_log = run_subprocess_popen(lang, pred_cmd, ".")
 
-    # 評価指標の計算
-    run_time, status, full_log, summary_list = evaluate_all_metrics(method_name, gt_dir, pred_dir, outdir)
+    render_log = (
+        f"[GT Render]\n{gt_log}\n\n"
+        f"[Pred Render]\n{pred_log}"
+    )
 
-    # ファイル名をソートして一致させる
-    gt_files = sorted([os.path.join(gt_dir, f) for f in os.listdir(gt_dir) if f.lower().endswith((".png", ".jpg", ".jpeg"))])
-    pred_files = sorted([os.path.join(pred_dir, f) for f in os.listdir(pred_dir) if f.lower().endswith((".png", ".jpg", ".jpeg"))])
+    if "❌" in gt_status:
+        return outdir, gt_run_time, gt_status, render_log, [], []
+    if "❌" in pred_status:
+        return outdir, pred_run_time, pred_status, render_log, [], []
 
-    # ギャラリーの作成
+    gt_files, gt_dir = normalize_render_output(test_dir, gt_name)
+    pred_files, pred_dir = normalize_render_output(test_dir, pred_name)
+
+    if not gt_files:
+        full_log = render_log + "\n\n" + msg(
+            lang,
+            f"GT 画像が見つかりません: {gt_name}",
+            f"GT images were not found: {gt_name}",
+        )
+        return outdir, "", msg(lang, "❌ 失敗", "❌ Failed"), full_log, [], []
+
+    if not pred_files:
+        full_log = render_log + "\n\n" + msg(
+            lang,
+            f"予測画像が見つかりません: {pred_name}",
+            f"Predicted images were not found: {pred_name}",
+        )
+        return outdir, "", msg(lang, "❌ 失敗", "❌ Failed"), full_log, [], []
+
+    if len(gt_files) != len(pred_files):
+        count_log = msg(
+            lang,
+            "GT と予測の画像枚数が一致しません．\n"
+            f"{gt_name}: {len(gt_files)} 枚\n"
+            f"{pred_name}: {len(pred_files)} 枚",
+            "The number of GT and predicted images does not match.\n"
+            f"{gt_name}: {len(gt_files)} images\n"
+            f"{pred_name}: {len(pred_files)} images",
+        )
+        full_log = render_log + "\n\n" + count_log
+        return outdir, "", msg(lang, "❌ 失敗", "❌ Failed"), full_log, [], []
+
+    run_time, status, full_log, summary_list = evaluate_all_metrics(
+        method_name,
+        gt_dir,
+        pred_dir,
+        outdir,
+    )
+
+    full_log = render_log + "\n\n" + full_log
+
     gallery = []
-    for gt, pred in zip(gt_files, pred_files):
-        gallery.append(gt)
-        gallery.append(pred)
+    for gt_file, pred_file in zip(gt_files, pred_files):
+        gallery.append(gt_file)
+        gallery.append(pred_file)
 
     return outdir, run_time, status, full_log, summary_list, gallery
 
-"""
-Vanilla-NeRF
-"""
-# --- 再構築メソッド ---
-def recon_vnerf(mode, dataset, outdir, iter):
+
+# =========================
+# Vanilla-NeRF
+# =========================    
+
+def recon_vnerf(lang, mode, dataset, outdir, num_iters):
+    """
+    Vanilla NeRF による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットのパス．
+        outdir (str): 出力先ディレクトリのパス．
+        num_iters (int): 学習反復回数．
+
+    Returns:
+        tuple: 学習関数の戻り値．
+    """
     port = 7007
+
     if mode == "local":
-        train_args = ["--max-num-iterations", f"{iter}",
-                      "--viewer.websocket-port-default", f"{port}"]
-        return train_nerfstudio(dataset, outdir, "vanilla-nerf", train_args)
+        train_args = [
+            "--max-num-iterations", str(num_iters),
+            "--viewer.websocket-port-default", str(port),
+        ]
+        return train_nerfstudio(lang, dataset, outdir, "vanilla-nerf", train_args, )
     elif mode == "slurm":
-        return train_nerfstudio_slurm(dataset, outdir, "vanilla-nerf", iter, port)
-    
-# --- 点群出力メソッド ---
-def export_vnerf(mode, outdir):
+        return train_nerfstudio_slurm(lang, dataset, outdir, "vanilla-nerf", num_iters, port, )
+
+
+def export_vnerf(lang, mode, outdir):
+    """
+    Vanilla NeRF の学習結果を点群としてエクスポートする．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        outdir (str): 学習結果が保存された出力ディレクトリのパス．
+
+    Returns:
+        tuple: エクスポート関数の戻り値．
+    """
+    export_args = [
+        "--normal-method", "open3d",
+        "--rgb-output-name", "rgb_fine",
+        "--depth-output-name", "depth_fine",
+    ]
+
     if mode == "local":
-        export_args = ["--normal-method", "open3d",
-                       "--rgb-output-name", "rgb_fine", 
-                       "--depth-output-name", "depth_fine"]
-        return export_nerfstudio(outdir, "vanilla-nerf", "pointcloud", export_args)
+        return export_nerfstudio(lang, outdir, "vanilla-nerf", "pointcloud", export_args, )
     elif mode == "slurm":
-        return export_nerfstudio_slurm(outdir, "vanilla-nerf", "pointcloud", export_args)
-    
-# --- レンダリング&評価指標メソッド ---
-def render_eval_vnerf(mode, outdir):
+        return export_nerfstudio_slurm(lang, outdir, "vanilla-nerf", "pointcloud", export_args, )
+
+
+def render_eval_vnerf(lang, mode, outdir):
+    """
+    Vanilla NeRF のレンダリング結果を用いて評価を行う．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        outdir (str): 学習結果が保存された出力ディレクトリのパス．
+
+    Returns:
+        tuple: 評価関数の戻り値．
+    """
+    gt_name = "gt-rgb"
+    pred_name = "rgb_fine"
+
     if mode == "local":
-        return render_eval_nerfstudio(outdir, "vanilla-nerf", "rgb_fine", "gt-rgb")
-    elif mode == "slurm":
-        return render_eval_nerfstudio_slurm(outdir, "vanilla-nerf", "rgb_fine", "gt-rgb")
-    
-"""
-Nerfacto
-"""
-# --- 再構築メソッド ---
-def recon_nerfacto(mode, dataset, outdir, iter):
+        return render_eval_nerfstudio(
+            lang,
+            outdir,
+            "vanilla-nerf",
+            gt_name,
+            pred_name,
+        )
+
+    if mode == "slurm":
+        return render_eval_nerfstudio_slurm(
+            lang,
+            outdir,
+            "vanilla-nerf",
+            gt_name,
+            pred_name,
+        )
+
+    raise ValueError(
+        msg(
+            lang,
+            f"無効な mode です: {mode}",
+            f"Invalid mode: {mode}",
+        )
+    )
+
+
+# =========================
+# Nerfacto
+# =========================    
+
+def recon_nerfacto(lang, mode, dataset, outdir, num_iters):
+    """
+    Nerfacto による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットのパス．
+        outdir (str): 出力先ディレクトリのパス．
+        num_iters (int): 学習反復回数．
+
+    Returns:
+        tuple: 学習関数の戻り値．
+    """
     port = 7008
-    if mode == "local":
-        train_args = ["--max-num-iterations", f"{iter}",
-                      "--viewer.websocket-port-default", f"{port}"]
-        return train_nerfstudio(dataset, outdir, "nerfacto-huge", train_args) 
-    elif mode == "slurm":
-        return train_nerfstudio_slurm(dataset, outdir, "nerfacto-huge", iter, port)
-    
-# --- 点群出力メソッド ---
-def export_nerfacto(mode, outdir):
-    if mode == "local":
-        export_args = ["--normal-method", "open3d",
-                       "--rgb-output-name", "rgb", 
-                       "--depth-output-name", "depth"]
-        return export_nerfstudio(outdir, "nerfacto", "pointcloud", export_args)
-    elif mode == "slurm":
-        return export_nerfstudio_slurm(outdir, "nerfacto", "pointcloud", export_args)
 
-# --- レンダリング&評価指標メソッド ---
-def render_eval_nerfacto(mode, outdir):
     if mode == "local":
-        return render_eval_nerfstudio(outdir, "nerfacto", "rgb", "gt-rgb")
+        train_args = [
+            "--max-num-iterations", str(num_iters),
+            "--viewer.websocket-port-default", str(port),
+        ]
+        return train_nerfstudio(lang, dataset, outdir, "nerfacto-huge", train_args)
     elif mode == "slurm":
-        return render_eval_nerfstudio_slurm(outdir, "nerfacto", "rgb", "gt-rgb")
+        return train_nerfstudio_slurm(lang, dataset, outdir, "nerfacto-huge", num_iters, port)
 
-"""
-mip-NeRF
-"""
-# --- 再構築メソッド ---
-def recon_mipnerf(mode, dataset, out_dir, iter):
+
+def export_nerfacto(lang, mode, outdir):
+    """
+    Nerfacto の学習結果を点群としてエクスポートする．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        outdir (str): 学習結果が保存された出力ディレクトリのパス．
+
+    Returns:
+        tuple: エクスポート関数の戻り値．
+    """
+    export_args = [
+        "--normal-method", "open3d",
+        "--rgb-output-name", "rgb",
+        "--depth-output-name", "depth",
+    ]
+
+    if mode == "local":
+        return export_nerfstudio(lang, outdir, "nerfacto", "pointcloud", export_args)
+    elif mode == "slurm":
+        return export_nerfstudio_slurm(lang, outdir, "nerfacto", "pointcloud", export_args)
+
+
+def render_eval_nerfacto(lang, mode, outdir):
+    """
+    Nerfacto のレンダリング結果を用いて評価を行う．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        outdir (str): 学習結果が保存された出力ディレクトリのパス．
+
+    Returns:
+        tuple: 評価関数の戻り値．
+    """
+    if mode == "local":
+        return render_eval_nerfstudio(lang, outdir, "nerfacto", "gt-rgb", "rgb")
+    elif mode == "slurm":
+        return render_eval_nerfstudio_slurm(lang, outdir, "nerfacto", "gt-rgb", "rgb")
+
+
+# =========================
+# mip-NeRF
+# =========================    
+
+def recon_mipnerf(lang, mode, dataset, outdir, num_iters):
+    """
+    Mip-NeRF による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットのパス．
+        outdir (str): 出力先ディレクトリのパス．
+        num_iters (int): 学習反復回数．
+
+    Returns:
+        tuple: 学習関数の戻り値．
+    """
     port = 7009
-    if mode == "local":
-        train_args = ["--max-num-iterations", f"{iter}",
-                      "--viewer.websocket-port-default", f"{port}"]
-        return train_nerfstudio(dataset, out_dir, "mipnerf", train_args)
-    elif mode == "slurm":
-        return train_nerfstudio_slurm(dataset, out_dir, "mipnerf", iter, port)
-    
-# --- 点群出力メソッド ---
-def export_mipnerf(mode, outdir):
-    if mode == "local":
-        export_args = ["--normal-method", "open3d",
-                       "--rgb-output-name", "rgb_fine", 
-                       "--depth-output-name", "depth_fine"]
-        return export_nerfstudio(outdir, "mipnerf", "pointcloud", export_args)
-    elif mode == "slurm":
-        return export_nerfstudio_slurm(outdir, "mipnerf", "pointcloud", export_args)
-    
-# --- レンダリング&評価指標メソッド ---
-def render_eval_mipnerf(mode, outdir):
-    if mode == "local":
-        return render_eval_nerfstudio(outdir, "mipnerf", "rgb_fine", "gt-rgb")
-    elif mode == "slurm":
-        return render_eval_nerfstudio_slurm(outdir, "mipnerf", "rgb_fine", "gt-rgb")
 
-"""
-SeaThru-NeRF
-"""
-# --- 再構築メソッド ---
-def recon_stnerf(mode, dataset, out_dir, iter):
+    if mode == "local":
+        train_args = [
+            "--max-num-iterations", str(num_iters),
+            "--viewer.websocket-port-default", str(port),
+        ]
+        return train_nerfstudio(lang, dataset, outdir, "mipnerf", train_args)
+    elif mode == "slurm":
+        return train_nerfstudio_slurm(lang, dataset, outdir, "mipnerf", num_iters, port)
+
+
+def export_mipnerf(lang, mode, outdir):
+    """
+    Mip-NeRF の学習結果を点群としてエクスポートする．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        outdir (str): 学習結果が保存された出力ディレクトリのパス．
+
+    Returns:
+        tuple: エクスポート関数の戻り値．
+    """
+    export_args = [
+        "--normal-method", "open3d",
+        "--rgb-output-name", "rgb_fine",
+        "--depth-output-name", "depth_fine",
+    ]
+
+    if mode == "local":
+        return export_nerfstudio(lang, outdir, "mipnerf", "pointcloud", export_args)
+    elif mode == "slurm":
+        return export_nerfstudio_slurm(lang, outdir, "mipnerf", "pointcloud", export_args)
+
+
+def render_eval_mipnerf(lang, mode, outdir):
+    """
+    Mip-NeRF のレンダリング結果を用いて評価を行う．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        outdir (str): 学習結果が保存された出力ディレクトリのパス．
+
+    Returns:
+        tuple: 評価関数の戻り値．
+    """
+    if mode == "local":
+        return render_eval_nerfstudio(lang, outdir, "mipnerf", "gt-rgb", "rgb_fine")
+    elif mode == "slurm":
+        return render_eval_nerfstudio_slurm(lang, outdir, "mipnerf", "gt-rgb", "rgb_fine")
+    
+
+# =========================
+# SeaThru-NeRF
+# =========================    
+
+def recon_stnerf(lang, mode, dataset, outdir, num_iters):
+    """
+    SeaThru-NeRF による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットのパス．
+        outdir (str): 出力先ディレクトリのパス．
+        num_iters (int): 学習反復回数．
+
+    Returns:
+        tuple: 学習関数の戻り値．
+    """
     port = 7010
-    if mode == "local":
-        train_args = ["--max-num-iterations", f"{iter}",
-                      "--viewer.websocket-port-default", f"{port}"]
-        return train_nerfstudio(dataset, out_dir, "seathru-nerf", train_args)
-    elif mode == "slurm":
-        return train_nerfstudio_slurm(dataset, out_dir, "seathru-nerf", iter, port)
 
-# --- 点群出力メソッド ---
-def export_stnerf(mode, outdir):
     if mode == "local":
-        export_args = ["--normal-method", "open3d",
-                       "--rgb-output-name", "rgb", 
-                       "--depth-output-name", "depth"]
-        return export_nerfstudio(outdir, "seathru-nerf", "pointcloud", export_args)
+        train_args = [
+            "--max-num-iterations", str(num_iters),
+            "--viewer.websocket-port-default", str(port),
+        ]
+        return train_nerfstudio(lang, dataset, outdir, "seathru-nerf", train_args)
     elif mode == "slurm":
-        return export_nerfstudio_slurm(outdir, "seathru-nerf", "pointcloud", export_args)
-    
-# --- レンダリング&評価指標メソッド ---
-def render_eval_stnerf(mode, outdir):
-    if mode == "local":
-        return render_eval_nerfstudio(outdir, "seathru-nerf", "rgb", "gt-rgb")
-    elif mode == "slurm":
-        return render_eval_nerfstudio_slurm(outdir, "seathru-nerf", "rgb", "gt-rgb")
+        return train_nerfstudio_slurm(lang, dataset, outdir, "seathru-nerf", num_iters, port)
 
-"""
-Vanilla-GS
-"""
-# --- 再構築メソッド--- 
-def recon_vgs(mode, dataset, outputs_dir, save_iter):
-    # 入力ディレクトリ
-    dataset =os.path.abspath(dataset)
+
+def export_stnerf(lang, mode, outdir):
+    """
+    SeaThru-NeRF の学習結果を点群としてエクスポートする．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        outdir (str): 学習結果が保存された出力ディレクトリのパス．
+
+    Returns:
+        tuple: エクスポート関数の戻り値．
+    """
+    export_args = [
+        "--normal-method", "open3d",
+        "--rgb-output-name", "rgb",
+        "--depth-output-name", "depth",
+    ]
+
+    if mode == "local":
+        return export_nerfstudio(lang, outdir, "seathru-nerf", "pointcloud", export_args)
+    elif mode == "slurm":
+        return export_nerfstudio_slurm(lang, outdir, "seathru-nerf", "pointcloud", export_args)
+
+
+def render_eval_stnerf(lang, mode, outdir):
+    """
+    SeaThru-NeRF のレンダリング結果を用いて評価を行う．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        outdir (str): 学習結果が保存された出力ディレクトリのパス．
+
+    Returns:
+        tuple: 評価関数の戻り値．
+    """
+    if mode == "local":
+        return render_eval_nerfstudio(lang, outdir, "seathru-nerf", "gt-rgb", "rgb")
+    elif mode == "slurm":
+        return render_eval_nerfstudio_slurm(lang, outdir, "seathru-nerf", "gt-rgb", "rgb")
+
+
+# =========================
+# Vanilla-GS
+# =========================   
+
+def recon_vgs(lang, mode, dataset, outputs_dir, save_iter):
+    """
+    Vanilla-GS による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットのパス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+        save_iter (int): 保存対象の反復回数．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 学習結果ディレクトリのパス．
+    """
+    # データセットのパス
+    dataset = os.path.abspath(dataset)
+
     # 出力ディレクトリの作成
     name = os.path.basename(os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "3dgs", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
-    if mode=="local":
-        # 再構築スクリプトパス
+    if mode == "local":
         recon_script = "train.py"
 
         # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "gaussian_splatting", "python", recon_script,
+            "conda", "run", "--no-capture-output",
+            "-n", "gaussian_splatting", "python", recon_script,
             "--source_path", dataset,
             "--model_path", outdir,
             "--iterations", str(save_iter),
             "--save_iterations", str(save_iter),
-            "--eval"
+            "--eval",
         ]
 
-        # 実行ディレクトリ
+        # 作業ディレクトリ
         workdir = os.path.join("models", "gaussian-splatting")
-    elif mode=="slurm":
 
-        # sbatchスクリプトパス
+    elif mode == "slurm":
         sbatch_script = os.path.join("scripts", "recon_vanillags.sh")
-
-        # 再構築スクリプトパス
         recon_script = os.path.join("models", "gaussian-splatting", "train.py")
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, str(save_iter)]
+        workdir = "."
 
-        # 実行コマンド
-        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, save_iter]
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
-        # 実行ディレクトリ
-        workdir = "./"
+    return outdir, runtime, status, log, outdir
 
-    # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
 
-    # 再構築結果のパス
-    model_path = os.path.join(outdir, "point_cloud", f"iteration_{save_iter}", "point_cloud.ply")
+def render_eval_3dgs(lang, model_dir, skip_train, skip_test, iteration):
+    """
+    Vanilla-GS のレンダリングと評価を実行する．
 
-    return outdir, runtime, status, log, model_path
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        model_dir (str): Gaussian Splatting の学習結果ディレクトリのパス．
+        skip_train (bool): 学習用ビューのレンダリングを省略するかどうか．
+        skip_test (bool): テスト用ビューのレンダリングを省略するかどうか．
+        iteration (int | None): レンダリング対象の反復回数．
 
-# --- レンダリング&評価メソッド ---
-def render_eval_3dgs(model_path, skip_train, skip_test, iteration):
+    Returns:
+        tuple[str, str, str, str, list, list]: 以下を返す．
+            - モデルディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 評価指標の要約リスト．
+            - ギャラリー表示用の画像パスリスト．
+    """
+    # 作業ディレクトリ
     workdir = os.path.join("models", "gaussian-splatting")
 
-    # レンダリング
     render_script = "render.py"
-    render_cmd = [
-        "conda", "run", "-n", "gaussian_splatting", "python", render_script,
-        "--model_path", model_path,
-    ]
 
+    render_cmd = [
+        "conda", "run", "--no-capture-output",
+        "-n", "gaussian_splatting", "python", render_script,
+        "--model_path", model_dir,
+    ]
     if skip_train:
         render_cmd.append("--skip_train")
     if skip_test:
@@ -538,96 +1040,139 @@ def render_eval_3dgs(model_path, skip_train, skip_test, iteration):
     if iteration is not None:
         render_cmd.extend(["--iteration", str(iteration)])
 
-    runtime_r, status_r, log_r = run_subprocess_popen(render_cmd, workdir)
+    # レンダリングの実行
+    runtime_r, status_r, log_r = run_subprocess_popen(lang, render_cmd, workdir)
 
-    if status_r != "✅ Success":
-        return (
-            runtime_r,
-            "❌ Failed",
-            "レンダリングに失敗しました\n\n" + log_r,
-            [],
-            [],
+    success_status = msg(lang, "✅ 成功", "✅ Success")
+    failed_status = msg(lang, "❌ 失敗", "❌ Failed")
+
+    if status_r != success_status:
+        full_log = msg(
+            lang,
+            "レンダリングに失敗しました．\n\n" + log_r,
+            "Rendering failed.\n\n" + log_r,
         )
+        return model_dir, runtime_r, failed_status, full_log, [], []
 
-    test_dir = os.path.join(model_path, "test", f"ours_{iteration}")
+    test_dir = os.path.join(model_dir, "test", f"ours_{iteration}")
     gt_dir = os.path.join(test_dir, "gt")
     pred_dir = os.path.join(test_dir, "renders")
 
-    # 評価指標の計算
-    run_time, status, full_log, summary_list = evaluate_all_metrics("gaussian-splatting", gt_dir, pred_dir, model_path)
+    # 評価の実行
+    run_time, status, full_log, summary_list = evaluate_all_metrics(
+        lang,
+        "gaussian-splatting",
+        gt_dir,
+        pred_dir,
+        model_dir,
+    )
 
-    # ファイル名をソートして一致させる
-    gt_files = sorted([os.path.join(gt_dir, f) for f in os.listdir(gt_dir) if f.lower().endswith((".png", ".jpg", ".jpeg"))])
-    pred_files = sorted([os.path.join(pred_dir, f) for f in os.listdir(pred_dir) if f.lower().endswith((".png", ".jpg", ".jpeg"))])
+    gt_files = sorted(
+        os.path.join(gt_dir, f)
+        for f in os.listdir(gt_dir)
+        if f.lower().endswith((".png", ".jpg", ".jpeg"))
+    )
+    pred_files = sorted(
+        os.path.join(pred_dir, f)
+        for f in os.listdir(pred_dir)
+        if f.lower().endswith((".png", ".jpg", ".jpeg"))
+    )
 
-    # ギャラリーの作成
     gallery = []
-    for gt, pred in zip(gt_files, pred_files):
-        gallery.append(gt)
-        gallery.append(pred)
+    for gt_file, pred_file in zip(gt_files, pred_files):
+        gallery.append(gt_file)
+        gallery.append(pred_file)
 
-    return model_path, run_time, status, full_log, summary_list, gallery
+    return model_dir, run_time, status, full_log, summary_list, gallery
 
-"""
-Mip-Splatting
-"""
-# --- 再構築メソッド ---
-def recon_mipSplatting(mode, dataset, outputs_dir, save_iter):
-    # 入力ディレクトリ
-    dataset =os.path.abspath(dataset)
+
+# =========================
+# Mip-Splatting
+# =========================
+
+def recon_mipsplatting(lang, mode, dataset, outputs_dir, save_iter):
+    """
+    Mip-Splatting による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットのパス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+        save_iter (int): 保存対象の反復回数．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 学習結果ディレクトリのパス．
+    """
+    # データセットのパス
+    dataset = os.path.abspath(dataset)
+
     # 出力ディレクトリの作成
     name = os.path.basename(os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "mip-splatting", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
-    if mode=="local":
-        # 再構築スクリプトパス
-        recon_script ="train.py"
+    if mode == "local":
+        recon_script = "train.py"
 
-        # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "mip-splatting", "python", recon_script,
+            "conda", "run", "--no-capture-output",
+            "-n", "mip-splatting", "python", recon_script,
             "-s", dataset,
             "-m", outdir,
             "--iterations", str(save_iter),
             "--test_iterations", str(save_iter),
             "--save_iterations", str(save_iter),
-            "--eval"
-            ]
-        
-        # 実行ディレクトリ
+            "--eval",
+        ]
+
         workdir = os.path.join("models", "mip-splatting")
-    elif mode=="slurm":
-        # sbatchスクリプト
+
+    elif mode == "slurm":
         sbatch_script = os.path.join("scripts", "recon_mipsplatting.sh")
-
-        # 再構築スクリプトパス
         recon_script = os.path.join("models", "mip-splatting", "train.py")
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, str(save_iter)]
+        workdir = "."
 
-        # 実行コマンド
-        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, save_iter]
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
-        # 実行ディレクトリ
-        workdir = "./"
+    return outdir, runtime, status, log, outdir
 
-    # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
 
-    # 再構築結果のパス
-    model_path = os.path.join(outdir, "point_cloud", f"iteration_{save_iter}", "point_cloud.ply")
+def render_eval_mips(lang, model_dir, skip_train, skip_test, iteration):
+    """
+    Mip-Splatting のレンダリングと評価を実行する．
 
-    return outdir, runtime, status, log, model_path
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        model_dir (str): Mip-Splatting の学習結果ディレクトリのパス．
+        skip_train (bool): 学習用ビューのレンダリングを省略するかどうか．
+        skip_test (bool): テスト用ビューのレンダリングを省略するかどうか．
+        iteration (int | None): レンダリング対象の反復回数．
 
-# --- レンダリング&評価メソッド ---
-def render_eval_mips(model_path, skip_train, skip_test, iteration):
+    Returns:
+        tuple[str, str, str, str, list, list]: 以下を返す．
+            - モデルディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 評価指標の要約リスト．
+            - ギャラリー表示用の画像パスリスト．
+    """
     workdir = os.path.join("models", "mip-splatting")
 
-    # レンダリング
     render_script = "render.py"
     render_cmd = [
-        "conda", "run", "-n", "mip-splatting", "python", render_script,
-        "-m", model_path
+        "conda", "run", "--no-capture-output",
+        "-n", "mip-splatting", "python", render_script,
+        "-m", model_dir,
     ]
 
     if skip_train:
@@ -637,124 +1182,208 @@ def render_eval_mips(model_path, skip_train, skip_test, iteration):
     if iteration is not None:
         render_cmd.extend(["--iteration", str(iteration)])
 
-    runtime_r, status_r, log_r = run_subprocess_popen(render_cmd, workdir)
+    runtime_r, status_r, log_r = run_subprocess_popen(lang, render_cmd, workdir)
 
-    if status_r != "✅ Success":
-        return (
-            runtime_r,
-            "❌ Failed",
-            "レンダリングに失敗しました\n\n" + log_r,
-            [],
-            [],
+    success_status = msg(lang, "✅ 成功", "✅ Success")
+    failed_status = msg(lang, "❌ 失敗", "❌ Failed")
+
+    if status_r != success_status:
+        full_log = msg(
+            lang,
+            "レンダリングに失敗しました．\n\n" + log_r,
+            "Rendering failed.\n\n" + log_r,
         )
+        return model_dir, runtime_r, failed_status, full_log, [], []
 
-    test_dir = os.path.join(model_path, "test", f"ours_{iteration}")
+    test_dir = os.path.join(model_dir, "test", f"ours_{iteration}")
     gt_dir = os.path.join(test_dir, "gt_-1")
     pred_dir = os.path.join(test_dir, "test_preds_-1")
 
-    # 評価指標の計算
-    run_time, status, full_log, summary_list = evaluate_all_metrics("mip-splatting", gt_dir, pred_dir, model_path)
+    run_time, status, full_log, summary_list = evaluate_all_metrics(
+        lang,
+        "mip-splatting",
+        gt_dir,
+        pred_dir,
+        model_dir,
+    )
 
-    # ファイル名をソートして一致させる
-    gt_files = sorted([os.path.join(gt_dir, f) for f in os.listdir(gt_dir) if f.lower().endswith((".png", ".jpg", ".jpeg"))])
-    pred_files = sorted([os.path.join(pred_dir, f) for f in os.listdir(pred_dir) if f.lower().endswith((".png", ".jpg", ".jpeg"))])
+    gt_files = sorted(
+        os.path.join(gt_dir, f)
+        for f in os.listdir(gt_dir)
+        if f.lower().endswith((".png", ".jpg", ".jpeg"))
+    )
+    pred_files = sorted(
+        os.path.join(pred_dir, f)
+        for f in os.listdir(pred_dir)
+        if f.lower().endswith((".png", ".jpg", ".jpeg"))
+    )
 
-    # ギャラリーの作成
     gallery = []
-    for gt, pred in zip(gt_files, pred_files):
-        gallery.append(gt)
-        gallery.append(pred)
+    for gt_file, pred_file in zip(gt_files, pred_files):
+        gallery.append(gt_file)
+        gallery.append(pred_file)
 
-    return model_path, run_time, status, full_log, summary_list, gallery
+    return model_dir, run_time, status, full_log, summary_list, gallery
 
-"""
-Splatfacto
-"""
-# --- 再構築メソッド ---
-def recon_sfacto(mode, dataset, out_dir, iter):
+
+# =========================
+# Splatfacto
+# =========================
+
+def recon_sfacto(lang, mode, dataset, outdir, num_iters):
+    """
+    Splatfacto による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットのパス．
+        outdir (str): 出力先ディレクトリのパス．
+        num_iters (int): 学習反復回数．
+
+    Returns:
+        tuple: 学習関数の戻り値．
+    """
     port = 7011
-    if mode == "local":
-        train_args = ["--max-num-iterations", f"{iter}",
-                      "--viewer.websocket-port-default", f"{port}"]
-        return train_nerfstudio(dataset, out_dir, "splatfacto-big", train_args)
-    elif mode == "slurm":
-        return train_nerfstudio_slurm(dataset, out_dir, "splatfacto-big", iter, port)
-    
-# --- 点群出力メソッド ---
-def export_sfacto(mode, outdir):
-    if mode == "local":
-        export_args = []
-        return export_nerfstudio(outdir, "splatfacto", "gaussian-splat", export_args)
-    elif mode == "slurm":
-        return export_nerfstudio_slurm(outdir, "splatfacto", "gaussian-splat", export_args)
-    
-# --- レンダリング&評価指標メソッド ---
-def render_eval_sfacto(mode, outdir):
-    if mode == "local":
-        return render_eval_nerfstudio(outdir, "splatfacto", "rgb", "gt-rgb")
-    elif mode == "slurm":
-        return render_eval_nerfstudio_slurm(outdir, "splatfacto", "rgb", "gt-rgb")
 
-"""
-4D-Gaussians
-"""
-# --- 再構築メソッド ---
-def recon_4dGaussians(mode, dataset, outputs_dir, save_iter):
-    # 入力ディレクトリ
-    dataset =os.path.abspath(dataset)
+    if mode == "local":
+        train_args = [
+            "--max-num-iterations", str(num_iters),
+            "--viewer.websocket-port-default", str(port),
+        ]
+        return train_nerfstudio(lang, dataset, outdir, "splatfacto-big", train_args)
+    elif mode == "slurm":
+        return train_nerfstudio_slurm(lang, dataset, outdir, "splatfacto-big", num_iters, port)
+
+
+def export_sfacto(lang, mode, outdir):
+    """
+    Splatfacto の学習結果をエクスポートする．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        outdir (str): 学習結果が保存された出力ディレクトリのパス．
+
+    Returns:
+        tuple: エクスポート関数の戻り値．
+    """
+    export_args = []
+
+    if mode == "local":
+        return export_nerfstudio(lang, outdir, "splatfacto", "gaussian-splat", export_args)
+    elif mode == "slurm":
+        return export_nerfstudio_slurm(lang, outdir, "splatfacto", "gaussian-splat", export_args)
+
+
+def render_eval_sfacto(lang, mode, outdir):
+    """
+    Splatfacto のレンダリング結果を用いて評価を行う．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        outdir (str): 学習結果が保存された出力ディレクトリのパス．
+
+    Returns:
+        tuple: 評価関数の戻り値．
+    """
+    if mode == "local":
+        return render_eval_nerfstudio(lang, outdir, "splatfacto", "gt-rgb", "rgb")
+    elif mode == "slurm":
+        return render_eval_nerfstudio_slurm(lang, outdir, "splatfacto", "gt-rgb", "rgb")
+
+
+# =========================
+# 4D-Gaussians
+# =========================
+
+def recon_4dgaussians(lang, mode, dataset, outputs_dir, save_iter):
+    """
+    4D-Gaussians による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットのパス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+        save_iter (int): 保存対象の反復回数．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 学習結果ディレクトリのパス．
+    """
+    # データセットの作成
+    dataset = os.path.abspath(dataset)
+
     # 出力ディレクトリの作成
     name = os.path.basename(os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "4D-Gaussians", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
-    if mode=="local":
-        # 再構築スクリプトパス
-        recon_script ="train.py"
+    if mode == "local":
+        recon_script = "train.py"
 
-        # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "Gaussians4D", "python", recon_script,
+            "conda", "run", "--no-capture-output",
+            "-n", "Gaussians4D", "python", recon_script,
             "--source_path", dataset,
             "--model_path", outdir,
             "--iterations", str(save_iter),
             "--test_iterations", str(save_iter),
             "--save_iterations", str(save_iter),
-            "--eval"
+            "--eval",
         ]
 
-        # 実行ディレクトリ
         workdir = os.path.join("models", "4DGaussians")
-    elif mode=="slurm":
-        # sbatchスクリプト
+    elif mode == "slurm":
         sbatch_script = os.path.join("scripts", "recon_4dgaussians.sh")
-
-        # 再構築スクリプトパス
         recon_script = os.path.join("models", "4DGaussians", "train.py")
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, str(save_iter)]
+        workdir = "."
 
-        # 実行コマンド
-        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, save_iter]
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
-        # 実行ディレクトリ
-        workdir = "./"
+    return outdir, runtime, status, log, outdir
 
-    # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
 
-    # 再構築結果のパス
-    model_path = os.path.join(outdir, "point_cloud", f"iteration_{save_iter}", "point_cloud.ply")
+def render_eval_4dgs(lang, model_dir, skip_train, skip_test, iteration):
+    """
+    4D-Gaussians のレンダリングと評価を実行する．
 
-    return outdir, runtime, status, log, model_path
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        model_dir (str): 4D-Gaussians の学習結果ディレクトリのパス．
+        skip_train (bool): 学習用ビューのレンダリングを省略するかどうか．
+        skip_test (bool): テスト用ビューのレンダリングを省略するかどうか．
+        iteration (int | None): レンダリング対象の反復回数．
 
-# --- レンダリング&評価メソッド ---
-def render_eval_4dgs(model_path, skip_train, skip_test, iteration):
+    Returns:
+        tuple[str, str, str, str, list, list]: 以下を返す．
+            - モデルディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 評価指標の要約リスト．
+            - ギャラリー表示用の画像パスリスト．
+    """
     workdir = os.path.join("models", "4DGaussians")
 
-    # レンダリング
     render_script = "render.py"
+
     render_cmd = [
-        "conda", "run", "-n", "Gaussians4D", "python", render_script,
-        "-m", model_path,
+        "conda", "run", "--no-capture-output",
+        "-n", "Gaussians4D", "python", render_script,
+        "-m", model_dir,
     ]
 
     if skip_train:
@@ -764,63 +1393,106 @@ def render_eval_4dgs(model_path, skip_train, skip_test, iteration):
     if iteration is not None:
         render_cmd.extend(["--iteration", str(iteration)])
 
-    runtime_r, status_r, log_r = run_subprocess_popen(render_cmd, workdir)
+    # レンダリングの実行
+    runtime_r, status_r, log_r = run_subprocess_popen(lang, render_cmd, workdir)
 
-    if status_r != "✅ Success":
-        return (
-            runtime_r,
-            "❌ Failed",
-            "レンダリングに失敗しました\n\n" + log_r,
-            [],
-            [],
+    success_status = msg(lang, "✅ 成功", "✅ Success")
+    failed_status = msg(lang, "❌ 失敗", "❌ Failed")
+
+    if status_r != success_status:
+        full_log = msg(
+            lang,
+            "レンダリングに失敗しました．\n\n" + log_r,
+            "Rendering failed.\n\n" + log_r,
         )
+        return model_dir, runtime_r, failed_status, full_log, [], []
 
-    test_dir = os.path.join(model_path, "test", f"ours_{iteration}")
+    test_dir = os.path.join(model_dir, "test", f"ours_{iteration}")
     gt_dir = os.path.join(test_dir, "gt")
     pred_dir = os.path.join(test_dir, "renders")
 
-    # 評価指標の計算
-    run_time, status, full_log, summary_list = evaluate_all_metrics("4d-gaussians", gt_dir, pred_dir, model_path)
+    # 評価の実行
+    run_time, status, full_log, summary_list = evaluate_all_metrics(
+        lang,
+        "4d-gaussians",
+        gt_dir,
+        pred_dir,
+        model_dir,
+    )
 
-    # ファイル名をソートして一致させる
-    gt_files = sorted([os.path.join(gt_dir, f) for f in os.listdir(gt_dir) if f.lower().endswith((".png", ".jpg", ".jpeg"))])
-    pred_files = sorted([os.path.join(pred_dir, f) for f in os.listdir(pred_dir) if f.lower().endswith((".png", ".jpg", ".jpeg"))])
+    gt_files = sorted(
+        os.path.join(gt_dir, f)
+        for f in os.listdir(gt_dir)
+        if f.lower().endswith((".png", ".jpg", ".jpeg"))
+    )
+    pred_files = sorted(
+        os.path.join(pred_dir, f)
+        for f in os.listdir(pred_dir)
+        if f.lower().endswith((".png", ".jpg", ".jpeg"))
+    )
 
-    # ギャラリーの作成
     gallery = []
-    for gt, pred in zip(gt_files, pred_files):
-        gallery.append(gt)
-        gallery.append(pred)
+    for gt_file, pred_file in zip(gt_files, pred_files):
+        gallery.append(gt_file)
+        gallery.append(pred_file)
 
-    return model_path, run_time, status, full_log, summary_list, gallery
+    return model_dir, run_time, status, full_log, summary_list, gallery
 
-"""
-DUSt3R
-"""
-# --- 再構築メソッド ---
-def recon_dust3r(mode, dataset, outputs_dir, schedule, niter, min_conf_thr, as_pointcloud, mask_sky, 
-               clean_depth, transparent_cams, cam_size, scenegraph_type, winsize, refid):
-    # 入力ディレクトリ
-    dataset =os.path.abspath(dataset)
+
+# =========================
+# DUSt3R
+# =========================
+
+def recon_dust3r(lang, mode, dataset, outputs_dir, schedule, niter, min_conf_thr, as_pointcloud, mask_sky,
+                 clean_depth, transparent_cams, cam_size, scenegraph_type, winsize, refid):
+    """
+    DUSt3R による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットのパス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+        schedule (str): 最適化スケジュール．
+        niter (int): 反復回数．
+        min_conf_thr (float): 最小信頼度しきい値．
+        as_pointcloud (bool): 点群として出力するかどうか．
+        mask_sky (bool): 空領域をマスクするかどうか．
+        clean_depth (bool): 深度をクリーンアップするかどうか．
+        transparent_cams (bool): カメラを半透明表示にするかどうか．
+        cam_size (float): カメラ表示サイズ．
+        scenegraph_type (str): シーングラフの種類．
+        winsize (int): ウィンドウサイズ．
+        refid (int): 参照画像 ID．
+
+    Returns:
+        tuple[str, str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 再構築結果のパス．
+            - レンダリング画像ディレクトリのパス．
+    """
+    # データセットのパス
+    dataset = os.path.abspath(dataset)
+
     # 出力ディレクトリの作成
-    name = os.path.basename( os.path.dirname(dataset))
+    name = os.path.basename(os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "dust3r", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
-    # 使用モデル
-    model_name = "DUSt3R_ViTLarge_BaseDecoder_512_dpt"
-    # 変数の定義
+    model_name = "DUSt3R_ViTLarge_BaseDecoder_512_dpt" # 使用モデル
     image_size = 512
     device = "cuda"
 
-    if mode=="local":
-        # 再構築スクリプト
+    if mode == "local":
         recon_script = os.path.join("scripts", "recon", "recon_dust3r.py")
-
-        # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "dust3r", "python", recon_script,
+            "conda", "run", "--no-capture-output",
+            "-n", "dust3r", "python", recon_script,
+            "--lang", lang,
             "--model_name", model_name,
             "--device", device,
             "--outdir", outdir,
@@ -842,452 +1514,537 @@ def recon_dust3r(mode, dataset, outputs_dir, schedule, niter, min_conf_thr, as_p
             cmd.append("--clean_depth")
         if transparent_cams:
             cmd.append("--transparent_cams")
-
-        # 実行ディレクトリ
-        workdir = "./"
-    elif mode=="slurm":
-        # sbatchスクリプトパス
+        workdir = "."
+    elif mode == "slurm":
         sbatch_script = os.path.join("scripts", "recon_dust3r.sh")
-
-        # 再構築スクリプト
         recon_script = os.path.join("scripts", "recon_dust3r.py")
+        cmd = ["sbatch", sbatch_script, recon_script, model_name, device, outdir, str(image_size), dataset]
+        workdir = "."
 
-        # 実行コマンド
-        cmd = ["sbatch", sbatch_script, recon_script, model_name, device, outdir, image_size, dataset]
+    # 再構築の実行
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
-        # 実行ディレクトリ
-        workdir = "./"
-
-    # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
-
-    # 再構築結果のパス
+    # 3Dモデル
     model_path = os.path.join(outdir, "scene.glb")
-    # レンダリング画像のパス
+
+    # レンダリング画像
     outimgs = os.path.join(outdir, "render")
 
     return outdir, runtime, status, log, model_path, outimgs
 
-"""
-MASt3R
-"""
-# --- 再構築メソッド ---
-def recon_mast3r(mode, dataset, outputs_dir):
-    # 入力ディレクトリ
-    dataset =os.path.abspath(dataset)
+
+# =========================
+# MASt3R
+# =========================
+
+def recon_mast3r(lang, mode, dataset, outputs_dir):
+    """
+    MASt3R による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットのパス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 再構築結果のパス．
+    """
+    dataset = os.path.abspath(dataset)
+
     # 出力ディレクトリの作成
-    name = os.path.basename( os.path.dirname(dataset))
+    name = os.path.basename(os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "mast3r", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
     # 使用モデル
-    model = "MASt3R_ViTLarge_BaseDecoder_512_catmlpdpt_metric"
+    model_name = "MASt3R_ViTLarge_BaseDecoder_512_catmlpdpt_metric"
 
-    # 個々の画像のパスのリストを作成
+    # データセットのパス
     filelist = get_imagelist(dataset)
 
-    if mode=="local":
-        # 再構築スクリプトパス
+    if mode == "local":
         recon_script = os.path.join("scripts", "recon", "recon_mast3r.py")
-
-        # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "mast3r", "python", recon_script,
+            "conda", "run", "--no-capture-output",
+            "-n", "mast3r", "python", recon_script,
+            "--lang", lang,
             "--filelist", str(filelist),
             "--outdir", outdir,
-            "--model_name", model,
-            "--as_pointcloud"
+            "--model_name", model_name,
+            "--as_pointcloud",
         ]
-
-        # 実行ディレクトリ
-        workdir = "./"
-    elif mode=="slurm":
-        # sbatchスクリプトパス
+        workdir = "."
+    elif mode == "slurm":
         sbatch_script = os.path.join("scripts", "recon_mast3r.sh")
-
-        # 再構築スクリプトパス
         recon_script = os.path.join("scripts", "recon_mast3r.py")
+        cmd = ["sbatch", sbatch_script, recon_script, str(filelist), outdir, model_name]
+        workdir = "."
 
-        # 実行コマンド
-        cmd = ["sbatch", sbatch_script, recon_script, filelist, outdir, model]
+    # 再構築の実行
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
-        # 実行ディレクトリ
-        workdir = "./"
-
-    # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
-
-    # 再構築結果のパス
+    # 3Dモデル
     model_path = os.path.join(outdir, "scene.glb")
 
     return outdir, runtime, status, log, model_path
 
-"""
-MonST3R
-"""
-# --- 再構築メソッド ---
-def recon_monst3r(mode, dataset, outputs_dir):
-    # 入力ディレクトリ
-    dataset =os.path.abspath(dataset)
+
+# =========================
+# MonST3R
+# =========================
+
+def recon_monst3r(lang, mode, dataset, outputs_dir):
+    """
+    MonST3R による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットのパス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 再構築結果のパス．
+    """
+    # データセットのパス
+    dataset = os.path.abspath(dataset)
     # 出力ディレクトリの作成
-    name = os.path.basename( os.path.dirname(dataset))
+    name = os.path.basename(os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "monst3r", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
-    if mode=="local":
-        # 再構築スクリプトパス
-        recon_script ="demo.py"
+    if mode == "local":
+        recon_script = "demo.py"
 
-        # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "monst3r", "python", recon_script,
+            "conda", "run", "--no-capture-output",
+            "-n", "monst3r", "python", recon_script,
             "--input_dir", dataset,
             "--output_dir", outdir,
-            "--seq_name", name
+            "--seq_name", name,
         ]
 
-        # 実行ディレクトリ
         workdir = os.path.join("models", "monst3r")
-    elif mode=="slurm":
-        # sbatchスクリプト
+    elif mode == "slurm":
         sbatch_script = os.path.join("scripts", "recon_mast3r.sh")
-
-        # 再構築スクリプトパス
         recon_script = os.path.join("models", "monst3r", "demo.py")
-
-        # 実行コマンド
         cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, name]
+        workdir = "."
 
-        # 実行ディレクトリ
-        workdir = "./"
+    # 再構築の実行
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
-    # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
-
-    # 再構築結果のパス
+    # 3Dモデル
     model_path = os.path.join(outdir, name, "scene.glb")
 
     return outdir, runtime, status, log, model_path
 
-"""
-Easi3R
-"""
-# --- 再構築メソッド ---
-def recon_easi3r(mode, dataset, outputs_dir):
-    # 入力ディレクトリ
-    dataset =os.path.abspath(dataset)
-    # 出力ディレクトリの作成
-    name = os.path.basename( os.path.dirname(dataset))
+
+# =========================
+# Easi3R
+# =========================
+
+def recon_easi3r(lang, mode, dataset, outputs_dir):
+    """
+    Easi3R による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットのパス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 再構築結果のパス．
+    """
+    dataset = os.path.abspath(dataset)
+
+    name = os.path.basename(os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "easi3r", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
-    if mode=="local":
-        # 再構築スクリプトパス
-        recon_script ="demo.py"
-
-        # 実行コマンド
+    if mode == "local":
+        recon_script = "demo.py"
         cmd = [
-            "conda", "run", "-n", "easi3r", "python", recon_script,
+            "conda", "run", "--no-capture-output",
+            "-n", "easi3r", "python", recon_script,
             "--input_dir", dataset,
             "--output_dir", outdir,
-            "--seq_name", name
+            "--seq_name", name,
         ]
-
-        # 実行ディレクトリ
         workdir = os.path.join("models", "Easi3R")
-    elif mode=="slurm":
-        # sbatchスクリプト
+    elif mode == "slurm":
         sbatch_script = os.path.join("scripts", "recon_easi3r.sh")
-
-        # 再構築スクリプトパス
         recon_script = os.path.join("models", "Easi3R", "demo.py")
-
-        # 実行コマンド
         cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, name]
+        workdir = "."
 
-        # 実行ディレクトリ
-        workdir = "./"
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
-    # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
-
-    # 再構築結果のパス
     model_path = os.path.join(outdir, name, "scene.glb")
 
     return outdir, runtime, status, log, model_path
 
-"""
-MUSt3R
-"""
-# --- 再構築メソッド ---
-def recon_must3r(mode, dataset, outputs_dir):
-    # 入力ディレクトリ
-    dataset =os.path.abspath(dataset)
+
+# =========================
+# MUSt3R
+# =========================
+
+def recon_must3r(lang, mode, dataset, outputs_dir):
+    """
+    MUSt3R による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットのパス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 再構築結果のパス．
+    """
+    # データセットのパス
+    dataset = os.path.abspath(dataset)
+
     # 出力ディレクトリの作成
-    name = os.path.basename( os.path.dirname(dataset))
+    name = os.path.basename(os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "must3r", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
-    if mode=="local":
-        # 再構築スクリプトパス
-        recon_script ="get_reconstruction.py"
+    if mode == "local":
+        recon_script = "get_reconstruction.py"
 
-        # 実行コマンド
         cmd = [
-            "micromamba", "run", "-n", "must3r", "python", recon_script,
+            "micromamba", "run", 
+            "-n", "must3r", "python", recon_script,
             "--image_dir", dataset,
             "--output", outdir,
             "--weights", "ckpt/MUSt3R_512.pth",
             "--retrieval", "ckpt/MUSt3R_512_retrieval_trainingfree.pth",
             "--image_size", "512",
-            "--file_type", "glb"
+            "--file_type", "glb",
         ]
 
-        # 実行ディレクトリ
         workdir = os.path.join("models", "must3r")
-    elif mode=="slurm":
-        # sbatchスクリプト
+    elif mode == "slurm":
         sbatch_script = os.path.join("scripts", "recon_must3r.sh")
-
-        # 再構築スクリプトパス
         recon_script = os.path.join("models", "must3r", "get_reconstruction.py")
-
-        # 実行コマンド
         cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir]
+        workdir = "."
 
-        # 実行ディレクトリ
-        workdir = "./"
+    # 再構築の実行
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
-    # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
-
-    # 再構築結果のパス
+    # 3Dモデル
     model_path = os.path.join(outdir, "scene_1.05.glb")
 
     return outdir, runtime, status, log, model_path
 
-"""
-Fast3R
-"""
-# --- 再構築メソッド ---
-def recon_fast3r(mode, dataset, outputs_dir):
-    # 入力ディレクトリ
-    dataset =os.path.abspath(dataset)
-    # 出力ディレクトリの作成
-    name = os.path.basename( os.path.dirname(dataset))
-    outdir = os.path.join(outputs_dir, "fast3r", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
 
-    if mode=="local":
-        # 再構築スクリプトパス
+# =========================
+# Fast3R
+# =========================
+
+def recon_fast3r(lang, mode, dataset, outputs_dir):
+    """
+    Fast3R による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットのパス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 再構築結果のパス．
+    """
+    # データセットのパス
+    dataset = os.path.abspath(dataset)
+
+    # 出力ディレクトリの作成
+    name = os.path.basename(os.path.dirname(dataset))
+    outdir = os.path.join(outputs_dir, "fast3r", name)
+    os.makedirs(outdir, exist_ok=True)
+
+    if mode == "local":
         recon_script = os.path.join("scripts", "recon", "recon_fast3r.py")
 
-        # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "fast3r", "python", recon_script,
+            "conda", "run", "--no-capture-output",
+            "-n", "fast3r", "python", recon_script,
+            "--lang", lang,
             "--inpdir", dataset,
             "--outdir", outdir,
         ]
 
-        # 実行ディレクトリ
-        workdir = "./"
-    elif mode=="slurm":
-        # sbatchスクリプト
+        workdir = "."
+    elif mode == "slurm":
         sbatch_script = os.path.join("scripts", "recon_fast3r.sh")
-
-        # 再構築スクリプトパス
         recon_script = os.path.join("scripts", "recon_fast3r.py")
-
-        # 実行コマンド
         cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir]
+        workdir = "."
 
-        # 実行ディレクトリ
-        workdir = "./"
+    # 再構築の実行
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
-    # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
-
-    # 再構築結果のパス
+    # 3Dモデル
     model_path = os.path.join(outdir, "scene.glb")
 
     return outdir, runtime, status, log, model_path
 
-"""
-Splatt3R
-"""
-# --- 再構築メソッド ---
-def recon_splatt3r(mode, dataset, outputs_dir):
+
+# =========================
+# Splatt3R
+# =========================
+
+def recon_splatt3r(lang, mode, dataset, outputs_dir):
+    """
+    Splatt3R による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力画像のパス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 再構築結果のパス．
+    """
+    # データセットのパス
+    dataset = os.path.abspath(dataset)
+
     # 出力ディレクトリの作成
     name = os.path.splitext(os.path.basename(dataset))[0]
     outdir = os.path.join(outputs_dir, "splatt3r", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
-    if mode=="local":
-        # 再構築スクリプトパス
+    if mode == "local":
         recon_script = os.path.join("scripts", "recon", "recon_splatt3r.py")
 
-        # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "splatt3r", "python", recon_script,
-            "--image1", dataset, 
-            "--outdir", outdir
+            "conda", "run", "--no-capture-output",
+            "-n", "splatt3r", "python", recon_script,
+            "--lang", lang,
+            "--image1", dataset,
+            "--outdir", outdir,
         ]
 
-        # 実行ディレクトリ
-        workdir = "./"
-    elif mode=="slurm":
-        # sbatchスクリプト
+        workdir = "."
+    elif mode == "slurm":
         sbatch_script = os.path.join("scripts", "recon_splatt3r.sh")
-
-        # 再構築スクリプトパス
         recon_script = os.path.join("scripts", "recon_splatt3r.py")
-
-        # 実行コマンド
         cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir]
+        workdir = "."
 
-        # 実行ディレクトリ
-        workdir = "./"
+    # 再構築の実行
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
-    # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
+    # 3Dモデル
+    outmodel = os.path.join(outdir, "gaussians.ply")
 
-    # 再構築結果のパス
-    model_path = os.path.join(outdir, "gaussians.ply") 
+    return outdir, runtime, status, log, outmodel
 
-    return outdir, runtime, status, log, model_path
 
-"""
-CUT3R
-"""
-# --- 再構築メソッド ---
-def recon_cut3r(mode, dataset, outputs_dir):
-    # 入力ディレクトリ
-    dataset =os.path.abspath(dataset)
+# =========================
+# CUT3R
+# =========================
+
+def recon_cut3r(lang, mode, dataset, outputs_dir):
+    """
+    CUT3R による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットのパス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 再構築結果のパス．
+    """
+    # データセットのパス
+    dataset = os.path.abspath(dataset)
+
     # 出力ディレクトリの作成
-    name = os.path.basename( os.path.dirname(dataset))
+    name = os.path.basename(os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "cutt3r", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
-    # 使用モデルパス
-    model_path = os.path.join("models", "CUT3R", "src", "cut3r_512_dpt_4_64.pth")
+    # 学習済みモデル
+    model_ckpt = os.path.join("models", "CUT3R", "src", "cut3r_512_dpt_4_64.pth")
 
-    if mode=="local":
-        # 再構築スクリプトパス
+    if mode == "local":
         recon_script = os.path.join("scripts", "recon", "recon_cut3r.py")
-
-        # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "cut3r", "python", recon_script,
-            "--inpdir", dataset, 
+            "conda", "run", "--no-capture-output",
+            "-n", "cut3r", "python", recon_script,
+            "--lang", lang,
+            "--inpdir", dataset,
             "--outdir", outdir,
-            "--model_path", model_path,
+            "--model_path", model_ckpt,
             "--image_size", "512",
             "--vis_threshold", "1.5",
-            "--device", "cuda"
+            "--device", "cuda",
         ]
-
-        # 実行ディレクトリ
-        workdir = "./"
-    elif mode=="slurm":
-        # sbatchスクリプト
+        workdir = "."
+    elif mode == "slurm":
         sbatch_script = os.path.join("scripts", "recon_cut3r.sh")
-
-        # 再構築スクリプトパス
         recon_script = os.path.join("scripts", "recon_cut3r.py")
+        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, model_ckpt]
+        workdir = "."
 
-        # 実行コマンド
-        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, model_path]
+    # 再構築の実行
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
-        # 実行ディレクトリ
-        workdir = "./"
+    # 3Dモデル
+    outmodel = os.path.join(outdir, "scene.glb")
 
-    # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
+    return outdir, runtime, status, log, outmodel
 
-    # 再構築結果のパス
-    model_path = os.path.join(outdir, "scene.glb") 
 
-    return outdir, runtime, status, log, model_path
+# =========================
+# WinT3R
+# =========================
 
-"""
-WinT3R
-"""
-# --- 再構築メソッド ---
-def recon_wint3r(mode, dataset, outputs_dir):
-    # 入力ディレクトリ
-    dataset =os.path.abspath(dataset)
+def recon_wint3r(lang, mode, dataset, outputs_dir):
+    """
+    WinT3R による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットのパス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 再構築結果のパス．
+    """
+    # データセットのパス
+    dataset = os.path.abspath(dataset)
+
     # 出力ディレクトリの作成
-    name = os.path.basename( os.path.dirname(dataset))
+    name = os.path.basename(os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "wint3r", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
-    # checkpointパス
+    # 学習済みモデル
     ckpt_path = os.path.join("checkpoints", "pytorch_model.bin")
 
-    if mode=="local":
-        # 再構築スクリプトパス
+    if mode == "local":
         recon_script = "recon.py"
-
-        # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "wint3r", "python", recon_script,
-            "--data_path", dataset, 
+            "conda", "run", "--no-capture-output",
+            "-n", "wint3r", "python", recon_script,
+            "--data_path", dataset,
             "--save_dir", outdir,
             "--inference_mode", "offline",
-            "--ckpt", ckpt_path
+            "--ckpt", ckpt_path,
         ]
-
-        # 実行ディレクトリ
         workdir = os.path.join("models", "WinT3R")
-    elif mode=="slurm":
-        # sbatchスクリプト
+    elif mode == "slurm":
         sbatch_script = os.path.join("scripts", "recon_wint3r.sh")
-
-        # 再構築スクリプトパス
         recon_script = os.path.join("models", "WinT3R", "recon.py")
-
-        # 実行コマンド
         cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, ckpt_path]
+        workdir = "."
 
-        # 実行ディレクトリ
-        workdir = "./"
+    # 再構築の実行
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
-    # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
+    # 3Dモデル
+    outmodel = os.path.join(outdir, "recon.ply")
 
-    # 再構築結果のパス
-    model_path = os.path.join(outdir, "recon.ply") 
+    return outdir, runtime, status, log, outmodel
 
-    return outdir, runtime, status, log, model_path
 
-"""
-VGGT
-"""
-# --- 再構築メソッド ---
-def recon_vggt(mode, dataset, outputs_dir):
+# =========================
+# VGGT
+# =========================
+
+def recon_vggt(lang, mode, dataset, outputs_dir):
+    """
+    VGGT による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットまたは画像パス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 再構築結果のパス．
+    """
     # 入力ディレクトリ
     dataset = os.path.dirname(os.path.abspath(dataset))
+
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "vggt", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
-    if mode=="local":
+    if mode == "local":
         # 再構築スクリプトパス
         recon_script = os.path.join("scripts", "recon", "recon_vggt.py")
 
         # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "vggt", "python", recon_script,
+            "conda", "run", "--no-capture-output",
+            "-n", "vggt", "python", recon_script,
+            "--lang", lang,
             "--image-dir", dataset,
             "--out-dir", outdir,
             "--conf-thres", "3.0",
@@ -1295,11 +2052,12 @@ def recon_vggt(mode, dataset, outputs_dir):
             "--prediction-mode", "Pointmap Regression",
             "--mode", "crop",
             "--device", "cuda",
-            "--show-cam"
+            "--show-cam",
         ]
+
         # 実行ディレクトリ
-        workdir = "./"
-    elif mode=="slurm":
+        workdir = "."
+    elif mode == "slurm":
         # sbatchスクリプト
         sbatch_script = os.path.join("scripts", "recon_vggt.sh")
 
@@ -1310,36 +2068,58 @@ def recon_vggt(mode, dataset, outputs_dir):
         cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir]
 
         # 実行ディレクトリ
-        workdir = "./"
+        workdir = "."
 
     # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
     # 再構築結果のパス
-    model_path = os.path.join(outdir, "scene.glb")
+    outmodel = os.path.join(outdir, "scene.glb")
 
-    return outdir, runtime, status, log, model_path
+    return outdir, runtime, status, log, outmodel
 
-"""
-VGGSfM
-"""
-# --- 再構築メソッド ---
-def recon_vggsfm(mode, dataset):
-    dataset = os.path.dirname(dataset)
+
+# =========================
+# VGGSfM
+# =========================
+
+def recon_vggsfm(lang, mode, dataset):
+    """
+    VGGSfM による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットまたは画像パス．
+
+    Returns:
+        tuple[str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+    """
+    # 入力ディレクトリ
+    dataset = os.path.dirname(os.path.abspath(dataset))
+
     # 出力先のパス
     outdir = os.path.join(dataset, "sparse")
 
-    if mode=="local":
+    if mode == "local":
         # 再構築スクリプトパス
         recon_script = "demo.py"
 
         # 実行コマンド
-        cmd = ["conda", "run", "-n", "vggsfm_tmp", "python", recon_script,
-               f"SCENE_DIR={dataset}"]
+        cmd = [
+            "conda", "run", "--no-capture-output",
+            "-n", "vggsfm_tmp", "python", recon_script,
+            f"SCENE_DIR={dataset}",
+        ]
 
         # 実行ディレクトリ
         workdir = os.path.join("models", "vggsfm")
-    elif mode=="slurm":
+    elif mode == "slurm":
         # sbatchスクリプト
         sbatch_script = os.path.join("scripts", "recon_vggsfm.sh")
 
@@ -1350,74 +2130,111 @@ def recon_vggsfm(mode, dataset):
         cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir]
 
         # 実行ディレクトリ
-        workdir = "./"
+        workdir = "."
 
     # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
     return outdir, runtime, status, log
-         
-# --- 点群出力メソッド ---
-def export_vggsfm(dataset, outputs_dir): # 軽量なのでlocalのみ
+
+
+def export_vggsfm(lang, dataset, outputs_dir):  # 軽量なのでlocalのみ
+    """
+    VGGSfM の再構築結果を PLY 形式へエクスポートする．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        dataset (str): 入力データセットまたは画像パス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 出力モデルファイルのパス．
+    """
     # 出力ディレクトリの作成
-    dirname = os.path.abspath(dataset)
-    name = os.path.basename(os.path.dirname(dirname))
+    dataset = os.path.abspath(dataset)
+    name = os.path.basename(os.path.dirname(dataset))
     outdir = os.path.join(outputs_dir, "vggsfm", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
-    
+    os.makedirs(outdir, exist_ok=True)
+
     # データセットのパス
-    dataset = os.path.join(dataset, "sparse")
+    sparse_dir = os.path.join(dataset, "sparse")
 
     # 出力ファイル
-    model_path = os.path.join(outdir, "scene.ply")
+    outmodel = os.path.join(outdir, "scene.ply")
 
     # 実行コマンド
-    cmd = ["colmap",
-           "model_converter",
-           "--input_path", dataset,
-           "--output_path", model_path,
-           "--output_type", "ply"]
-    
+    cmd = [
+        "colmap",
+        "model_converter",
+        "--input_path", sparse_dir,
+        "--output_path", outmodel,
+        "--output_type", "ply",
+    ]
+
     # 実行ディレクトリ
-    workdir = "./"
+    workdir = "."
 
     # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
-    return outdir, runtime, status, log, model_path
+    return outdir, runtime, status, log, outmodel
 
 
-"""
-VGGT-SLAM
-"""
-# --- 再構築メソッド ---
-def recon_vggtslam(mode, dataset, outputs_dir):
+# =========================
+# VGGT-SLAM
+# =========================
+
+def recon_vggtslam(lang, mode, dataset, outputs_dir):
+    """
+    VGGT-SLAM による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットまたは画像パス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+
+    Returns:
+        tuple[str, str, str, str, None]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 再構築結果のパス．現状は `None` ．
+    """
     # 入力ディレクトリ
     dataset = os.path.dirname(os.path.abspath(dataset))
+
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "vggt-slam", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
-    if mode=="local":
+    if mode == "local":
         # データセットのパス
-        dataset = os.path.join(dataset, "images")
+        image_dir = os.path.join(dataset, "images")
 
         # 再構築スクリプトパス
         recon_script = "main.py"
 
         # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "vggt-slam", "python", recon_script,
-            "--image_folder", dataset,
-            "--vis_map"
+            "conda", "run", "--no-capture-output",
+            "-n", "vggt-slam", "python", recon_script,
+            "--image_folder", image_dir,
+            "--vis_map",
         ]
 
         # 実行ディレクトリ
         workdir = os.path.join("models", "VGGT-SLAM")
-    elif mode=="slurm":
+    elif mode == "slurm":
         # sbatchスクリプト
         sbatch_script = os.path.join("scripts", "recon_vggtslam.sh")
 
@@ -1428,43 +2245,64 @@ def recon_vggtslam(mode, dataset, outputs_dir):
         cmd = ["sbatch", sbatch_script, recon_script, dataset]
 
         # 実行ディレクトリ
-        workdir = "./"
+        workdir = "."
 
     # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
     # 再構築結果のパス
-    model_path = None
+    outmodel = None
 
-    return outdir, runtime, status, log, model_path
+    return outdir, runtime, status, log, outmodel
 
-"""
-StreamVGGT
-"""
-# --- 再構築メソッド ---
-def recon_stmvggt(mode, dataset, outputs_dir):
+# =========================
+# StreamVGGT
+# =========================
+
+def recon_stmvggt(lang, mode, dataset, outputs_dir):
+    """
+    StreamVGGT による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットまたは画像パス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 再構築結果のパス．
+    """
     # 入力ディレクトリ
     dataset = os.path.dirname(os.path.abspath(dataset))
+
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "stmvggt", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
-    if mode=="local":
+    if mode == "local":
         # 再構築スクリプトパス
         recon_script = os.path.join("scripts", "recon", "recon_streamvggt.py")
 
         # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "streamvggt", "python", recon_script,
+            "conda", "run", "--no-capture-output",
+            "-n", "streamvggt", "python", recon_script,
+            "--lang", lang,
             "--input_dir", dataset,
             "--output_dir", outdir,
-            "--show_cam"
+            "--show_cam",
         ]
+
         # 実行ディレクトリ
-        workdir = "./"
-    elif mode=="slurm":
+        workdir = "."
+    elif mode == "slurm":
         # sbatchスクリプト
         sbatch_script = os.path.join("scripts", "recon_streamvggt.sh")
 
@@ -1475,51 +2313,71 @@ def recon_stmvggt(mode, dataset, outputs_dir):
         cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir]
 
         # 実行ディレクトリ
-        workdir = "./"
+        workdir = "."
 
     # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
     # 再構築結果のパス
-    model_path = os.path.join(outdir, "scene.glb")
+    outmodel = os.path.join(outdir, "scene.glb")
 
-    return outdir, runtime, status, log, model_path
+    return outdir, runtime, status, log, outmodel
 
-"""
-FastVGGT
-"""
-# --- 再構築メソッド ---
-def recon_fastvggt(mode, dataset, outputs_dir):
+
+# =========================
+# FastVGGT
+# =========================
+
+def recon_fastvggt(lang, mode, dataset, outputs_dir):
+    """
+    FastVGGT による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットまたは画像パス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 再構築結果のパス．
+    """
     # 入力ディレクトリ
     dataset = os.path.dirname(os.path.abspath(dataset))
+
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "fastvggt", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
     # データセット
-    dataset = os.path.join(dataset, "images")
+    image_dir = os.path.join(dataset, "images")
 
     # check pointのパス
     ckpt_path = os.path.join("ckpt", "model_tracker_fixed_e20.pt")
 
-    if mode=="local":
-    # 再構築スクリプトパス
+    if mode == "local":
+        # 再構築スクリプトパス
         recon_script = os.path.join("eval", "eval_custom.py")
 
         # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "fastvggt", "python", recon_script,
-            "--data_path", dataset,
+            "conda", "run", "--no-capture-output",
+            "-n", "fastvggt", "python", recon_script,
+            "--data_path", image_dir,
             "--output_path", outdir,
             "--ckpt_path", ckpt_path,
-            "--plot"
+            "--plot",
         ]
 
         # 実行ディレクトリ
         workdir = os.path.join("models", "FastVGGT")
-    elif mode=="slurm":
+    elif mode == "slurm":
         # sbatchスクリプト
         sbatch_script = os.path.join("scripts", "recon_fastvggt.sh")
 
@@ -1527,52 +2385,72 @@ def recon_fastvggt(mode, dataset, outputs_dir):
         recon_script = os.path.join("models", "FastVGGT", "eval", "eval_custom.py")
 
         # 実行コマンド
-        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, ckpt_path]
+        cmd = ["sbatch", sbatch_script, recon_script, image_dir, outdir, ckpt_path]
 
         # 実行ディレクトリ
-        workdir = "./"
+        workdir = "."
 
     # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
     # 再構築結果のパス
-    model_path = os.path.join(outdir, "custom_dataset", "reconstructed_points.ply")
+    outmodel = os.path.join(outdir, "custom_dataset", "reconstructed_points.ply")
 
-    return outdir, runtime, status, log, model_path
+    return outdir, runtime, status, log, outmodel
 
-"""
-Pi3
-"""
-# --- 再構築メソッド ---
-def recon_pi3(mode, dataset, outputs_dir):
+
+# =========================
+# Pi3
+# =========================
+
+def recon_pi3(lang, mode, dataset, outputs_dir):
+    """
+    Pi3 による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットまたは画像パス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 再構築結果のパス．
+    """
     # 入力ディレクトリ
     dataset = os.path.dirname(os.path.abspath(dataset))
+
     # 出力ディレクトリの作成
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "pi3", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
     # データセットパス
-    dataset = os.path.join(dataset, "images")
+    image_dir = os.path.join(dataset, "images")
 
     # 再構築結果のパス
-    model_path = os.path.join(outdir, "recon.ply")
+    outmodel = os.path.join(outdir, "recon.ply")
 
-    if mode=="local":
+    if mode == "local":
         # 再構築スクリプトパス
         recon_script = "example.py"
 
         # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "Pi3", "python", recon_script,
-            "--data_path", dataset,
-            "--save_path", model_path
+            "conda", "run", "--no-capture-output",
+            "-n", "Pi3", "python", recon_script,
+            "--data_path", image_dir,
+            "--save_path", outmodel,
         ]
 
         # 実行ディレクトリ
         workdir = os.path.join("models", "Pi3")
-    elif mode=="slurm":
+    elif mode == "slurm":
         # sbatchスクリプト
         sbatch_script = os.path.join("scripts", "recon_pi3.sh")
 
@@ -1580,47 +2458,71 @@ def recon_pi3(mode, dataset, outputs_dir):
         recon_script = os.path.join("models", "Pi3", "example.py")
 
         # 実行コマンド
-        cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir]
+        cmd = ["sbatch", sbatch_script, recon_script, image_dir, outdir]
 
         # 実行ディレクトリ
-        workdir = "./"
+        workdir = "."
 
     # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
-    return outdir, runtime, status, log, model_path
+    return outdir, runtime, status, log, outmodel
 
-"""
-MoGe
-"""
-# --- 再構築メソッド ---
-def recon_moge2(mode, dataset, outputs_dir, img_type):
+
+# =========================
+# MoGe
+# =========================
+
+def recon_moge2(lang, mode, dataset, outputs_dir, img_type):
+    """
+    MoGe による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力画像のパス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+        img_type (str): 画像種別．`"標準画像"`，`"Standard Image"`，
+            `"パノラマ画像"`，`"Panorama Image"` を想定する．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 再構築結果のパス．
+    """
+    # 入力画像のパス
+    dataset = os.path.abspath(dataset)
+
     # 出力ディレクトリの作成
     name = os.path.splitext(os.path.basename(dataset))[0]
     outdir = os.path.join(outputs_dir, "moge")
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
     # 再構築スクリプトパス
-    if img_type=="標準画像" or img_type=="Standard Image":
+    if img_type == "標準画像" or img_type == "Standard Image":
         recon_script = os.path.join("models", "MoGe", "moge", "scripts", "infer.py")
-    elif img_type=="パノラマ画像" or img_type=="Panorama Image":
+    elif img_type == "パノラマ画像" or img_type == "Panorama Image":
         recon_script = os.path.join("models", "MoGe", "moge", "scripts", "infer_panorama.py")
 
-    if mode=="local":
+    if mode == "local":
         # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "MoGe", "python", recon_script,
-            "-i", dataset, 
+            "conda", "run", "--no-capture-output", 
+            "-n", "MoGe", "python", recon_script,
+            "-i", dataset,
             "-o", outdir,
             "--maps",
             "--glb",
-            "--ply"
+            "--ply",
         ]
 
         # 実行ディレクトリ
-        workdir = "./"
-    elif mode=="slurm":
+        workdir = "."
+    elif mode == "slurm":
         # sbatchスクリプト
         sbatch_script = os.path.join("scripts", "recon_moge.sh")
 
@@ -1628,44 +2530,66 @@ def recon_moge2(mode, dataset, outputs_dir, img_type):
         cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir]
 
         # 実行ディレクトリ
-        workdir = "./"
+        workdir = "."
 
     # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
     # 再構築結果のパス
-    model_path = os.path.join(outdir, name, "mesh.glb") 
+    outmodel = os.path.join(outdir, name, "mesh.glb")
 
-    return outdir, runtime, status, log, model_path
+    return outdir, runtime, status, log, outmodel
 
-"""
-UniK3D
-"""
-# --- 再構築メソッド ---
-def recon_unik3d(mode, dataset, outputs_dir):
+
+# =========================
+# UniK3D
+# =========================
+
+def recon_unik3d(lang, mode, dataset, outputs_dir):
+    """
+    UniK3D による再構築を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力画像のパス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 再構築結果のパス．
+    """
+    # 入力画像のパス
+    dataset = os.path.abspath(dataset)
+
     # 出力ディレクトリの作成
     name = os.path.splitext(os.path.basename(dataset))[0]
     outdir = os.path.join(outputs_dir, "unik3d")
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
-    if mode=="local":
+    if mode == "local":
         # 再構築スクリプトパス
         recon_script = os.path.join("scripts", "infer.py")
 
         # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "UniK3D", "python", recon_script,
-            "--input", dataset, 
+            "conda", "run", "--no-capture-output",
+            "-n", "UniK3D", "python", recon_script,
+            "--input", dataset,
             "--output", outdir,
             "--config-file", "configs/eval/vitl.json",
             "--save",
-            "--save-ply"
+            "--save-ply",
         ]
 
         # 実行ディレクトリ
         workdir = os.path.join("models", "UniK3D")
-    elif mode=="slurm":
+    elif mode == "slurm":
         # sbatchスクリプト
         sbatch_script = os.path.join("scripts", "recon_unik3d.sh")
 
@@ -1676,42 +2600,65 @@ def recon_unik3d(mode, dataset, outputs_dir):
         cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir]
 
         # 実行ディレクトリ
-        workdir = "./"
+        workdir = "."
 
     # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
     # 再構築結果のパス
-    model_path = os.path.join(outdir, f"{name}.ply") 
+    outmodel = os.path.join(outdir, f"{name}.ply")
 
-    return outdir, runtime, status, log, model_path
+    return outdir, runtime, status, log, outmodel
 
-"""
-Depth-Anything-V2
-"""
-# --- 画像推論メソッド ---
-def run_image_da2(mode, dataset, outputs_dir, encoder):
+
+# =========================
+# Depth-Anything-V2
+# =========================
+
+def run_image_da2(lang, mode, dataset, outputs_dir, encoder):
+    """
+    Depth-Anything-V2 で画像の深度推論を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力画像のパス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+        encoder (str): 使用するエンコーダ名．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 出力ディレクトリのパス．
+    """
+    # 入力画像のパス
+    dataset = os.path.abspath(dataset)
+
     # 出力ディレクトリの作成
     name = os.path.splitext(os.path.basename(dataset))[0]
     outdir = os.path.join(outputs_dir, "Depth-Anything-V2", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
-    if mode=="local":
-        # 再構築スクリプトパス
-        recon_script = "run.py"
+    if mode == "local":
+        # 推論スクリプトパス
+        infer_script = "run.py"
 
         # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "DA2", "python", recon_script,
-            "--img-path", dataset, 
+            "conda", "run", "--no-capture-output",
+            "-n", "DA2", "python", infer_script,
+            "--img-path", dataset,
             "--outdir", outdir,
-            "--encoder", encoder
+            "--encoder", encoder,
         ]
 
         # 実行ディレクトリ
         workdir = os.path.join("models", "Depth-Anything-V2")
-    elif mode=="slurm":
+    elif mode == "slurm":
         # sbatchスクリプト
         sbatch_script = os.path.join("scripts", "recon_da2.sh")
 
@@ -1722,36 +2669,58 @@ def run_image_da2(mode, dataset, outputs_dir, encoder):
         cmd = ["sbatch", sbatch_script, infer_script, dataset, outdir]
 
         # 実行ディレクトリ
-        workdir = "./"
+        workdir = "."
 
     # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
     return outdir, runtime, status, log, outdir
 
-# --- 動画推論メソッド ---
-def run_video_da2(mode, dataset, outputs_dir, encoder):
+
+def run_video_da2(lang, mode, dataset, outputs_dir, encoder):
+    """
+    Depth-Anything-V2 で動画の深度推論を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力動画のパス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+        encoder (str): 使用するエンコーダ名．
+
+    Returns:
+        tuple[str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 出力動画のパス．
+    """
+    # 入力動画のパス
+    dataset = os.path.abspath(dataset)
+
     # 出力ディレクトリの作成
     name = os.path.splitext(os.path.basename(dataset))[0]
     outdir = os.path.join(outputs_dir, "Depth-Anything-V2", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
-    if mode=="local":
-        # 再構築スクリプトパス
+    if mode == "local":
+        # 推論スクリプトパス
         infer_script = "run_video.py"
 
         # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "DA2", "python", infer_script,
-            "--video-path", dataset, 
+            "conda", "run", "--no-capture-output",
+            "-n", "DA2", "python", infer_script,
+            "--video-path", dataset,
             "--outdir", outdir,
-            "--encoder", encoder
+            "--encoder", encoder,
         ]
 
         # 実行ディレクトリ
         workdir = os.path.join("models", "Depth-Anything-V2")
-    elif mode=="slurm":
+    elif mode == "slurm":
         # sbatchスクリプト
         sbatch_script = os.path.join("scripts", "recon_da2.sh")
 
@@ -1762,43 +2731,77 @@ def run_video_da2(mode, dataset, outputs_dir, encoder):
         cmd = ["sbatch", sbatch_script, infer_script, dataset, outdir]
 
         # 実行ディレクトリ
-        workdir = "./"
+        workdir = "."
 
     # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
     # 出力動画
-    outvideo_path = os.path.join(outdir, f"{name}.mp4")
+    outvideo = os.path.join(outdir, f"{name}.mp4")
 
-    return outdir, runtime, status, log, outvideo_path
+    return outdir, runtime, status, log, outvideo
 
-"""
-Depth-Anything-3
-"""
-def recon_da3(mode, dataset, outputs_dir):
+
+# =========================
+# Depth-Anything-3
+# =========================
+
+def recon_da3(lang, mode, dataset, outputs_dir):
+    """
+    Depth-Anything-3 による推論を実行する．
+
+    Args:
+        lang (str): ログ出力に使用する言語コード．
+            `"jp"` のとき日本語，それ以外は英語を用いる．
+        mode (str): 実行モード．`"local"` または `"slurm"` を指定する．
+        dataset (str): 入力データセットまたは画像パス．
+        outputs_dir (str): 出力先ルートディレクトリのパス．
+
+    Returns:
+        tuple[str, str, str, str, str, str, str, str]: 以下を返す．
+            - 出力ディレクトリのパス．
+            - 実行時間．
+            - 実行ステータス．
+            - 実行ログ全文．
+            - 再構築結果のパス．
+            - 出力画像ディレクトリのパス．
+            - 出力動画のパス．
+            - 出力 GS 動画のパス．
+    """
     # 出力ディレクトリの作成
-    dataset = os.path.dirname(dataset)
+    dataset = os.path.dirname(os.path.abspath(dataset))
     name = os.path.basename(dataset)
     outdir = os.path.join(outputs_dir, "Depth-Anything-3", name)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    os.makedirs(outdir, exist_ok=True)
 
     # 内部関数（depth画像 → mp4生成）
     def images_to_video(image_dir, output_path, fps=5):
+        """
+        画像列から mp4 動画を生成する．
+
+        Args:
+            image_dir (str): 入力画像ディレクトリのパス．
+            output_path (str): 出力動画ファイルのパス．
+            fps (int, optional): 動画のフレームレート．
+        """
         if not os.path.exists(image_dir):
             return
+
         images = sorted([
             f for f in os.listdir(image_dir)
             if f.lower().endswith((".png", ".jpg", ".jpeg"))
         ])
         if not images:
             return
+
         first = cv2.imread(os.path.join(image_dir, images[0]))
         if first is None:
             return
+
         h, w = first.shape[:2]
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         out = cv2.VideoWriter(output_path, fourcc, fps, (w, h))
+
         for img in images:
             frame = cv2.imread(os.path.join(image_dir, img))
             if frame is None:
@@ -1806,23 +2809,26 @@ def recon_da3(mode, dataset, outputs_dir):
             if frame.shape[:2] != (h, w):
                 frame = cv2.resize(frame, (w, h))
             out.write(frame)
+
         out.release()
 
-    if mode=="local":
-        # 再構築スクリプトパス
+    if mode == "local":
+        # 推論スクリプトパス
         infer_script = os.path.join("scripts", "recon", "recon_da3.py")
 
         # 実行コマンド
         cmd = [
-            "conda", "run", "-n", "DA3", "python", infer_script,
-            "--input_dir", dataset, 
+            "conda", "run", "--no-capture-output",
+            "-n", "DA3", "python", infer_script,
+            "--lang", lang,
+            "--input_dir", dataset,
             "--output_dir", outdir,
-            "--infer_gs"
+            "--infer_gs",
         ]
 
         # 実行ディレクトリ
-        workdir = "./"
-    elif mode=="slurm":
+        workdir = "."
+    elif mode == "slurm":
         # sbatchスクリプト
         sbatch_script = os.path.join("scripts", "recon_da3.sh")
 
@@ -1833,22 +2839,22 @@ def recon_da3(mode, dataset, outputs_dir):
         cmd = ["sbatch", sbatch_script, infer_script, dataset, outdir]
 
         # 実行ディレクトリ
-        workdir = "./"
+        workdir = "."
 
     # 推論実行
-    runtime, status, log = run_subprocess_popen(cmd, workdir)
+    runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
     # 再構築結果のパス
     outmodel = os.path.join(outdir, "scene.glb")
 
     # 出力画像ディレクトリ
-    outimages_path = os.path.join(outdir, "depth_vis")
+    outimages = os.path.join(outdir, "depth_vis")
 
     # depth画像 → mp4生成
-    outvideo_path = os.path.join(outdir, "scene.mp4")
-    images_to_video(outimages_path, outvideo_path)
+    outvideo = os.path.join(outdir, "scene.mp4")
+    images_to_video(outimages, outvideo)
 
     # 出力gs動画ディレクトリ
-    outGSvideo_path = os.path.join(outdir, "gs_video", "gs.mp4")
+    outgsvideo = os.path.join(outdir, "gs_video", "gs.mp4")
 
-    return outdir, runtime, status, log, outmodel, outimages_path, outvideo_path, outGSvideo_path
+    return outdir, runtime, status, log, outmodel, outimages, outvideo, outgsvideo

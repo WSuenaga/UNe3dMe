@@ -62,14 +62,31 @@ from nerfstudio.viewer_legacy.server.viewer_state import ViewerLegacyState
 # GUI customized Viewer
 # ----------------------------
 class CustomViewer(NsViewer):
-    """Nerfstudio Viewer with custom GUI (rendering untouched)."""
+    """
+    Nerfstudio の Viewer を継承し，独自 GUI を追加したカスタム Viewer．
+
+    レンダリング処理そのものは Nerfstudio 本体の実装をそのまま利用し，
+    Viser 上の GUI だけを追加・調整する．
+    """
 
     def __init__(self, *args, **kwargs):
+        """
+        CustomViewer を初期化し，独自 GUI を構築する．
+
+        Args:
+            *args: 親クラスへ渡す位置引数．
+            **kwargs: 親クラスへ渡すキーワード引数．
+        """
         super().__init__(*args, **kwargs)  # ✅ Nerfstudio does everything (render, statemachine, etc.)
         self._install_custom_gui()
 
     def _hide_default_gui_bits(self) -> None:
-        """Hide some default handles if they exist. (Safe across versions)"""
+        """
+        利用可能な場合に限り，Nerfstudio 標準 GUI の一部を非表示にする．
+
+        バージョン差異により対象ハンドルが存在しない場合があるため，
+        安全に無視できるようにしている．
+        """
         for name in [
             "pause_train",
             "resume_train",
@@ -85,17 +102,26 @@ class CustomViewer(NsViewer):
                 pass
 
     def _safe_sigint_shutdown(self) -> None:
-        """Shutdown by sending SIGINT to our own process (Ctrl+C equivalent)."""
+        """
+        自プロセスへ SIGINT を送信し，Viewer の停止を試みる．
+
+        Ctrl+C 相当の停止を行うための補助メソッドである．
+        """
         print("[INFO] Shutting down server (SIGINT)...")
         os.kill(os.getpid(), signal.SIGINT)
 
     @staticmethod
     def _safe_set_label(handle, value: str) -> None:
         """
-        viser version differences:
-        - Some handles allow changing `.label` after creation
-        - Some use `.text`
-        - Some disallow changes (then we just ignore)
+        GUI ハンドルのラベル文字列を安全に更新する．
+
+        viser のバージョン差異により，`.label` または `.text` を
+        用いる場合があるため，利用可能な属性へ設定する．
+        更新できない場合は例外を無視する．
+
+        Args:
+            handle: ラベル更新対象の GUI ハンドル．
+            value: 設定する文字列．
         """
         for attr in ("label", "text"):
             try:
@@ -106,6 +132,12 @@ class CustomViewer(NsViewer):
                 pass
 
     def _install_custom_gui(self) -> None:
+        """
+        独自タブと各種 GUI 部品を追加し，イベントコールバックを登録する．
+
+        言語切り替え，再レンダリング，学習カメラ表示切り替え，
+        最大解像度変更，サーバー停止などの UI を構築する．
+        """
         gui = self.viser_server.gui
 
         # Hide some default widgets (tabs themselves may remain; safest approach)
@@ -167,6 +199,15 @@ class CustomViewer(NsViewer):
         lang_state = {"lang": "ja"}  # default
 
         def t(key: str) -> str:
+            """
+            現在の言語状態に応じた UI 文字列を返す．
+
+            Args:
+                key: I18N 辞書のキー．
+
+            Returns:
+                対応する UI 文字列．
+            """
             return I18N.get(lang_state["lang"], I18N["en"]).get(key, key)
 
         # Add a new tab group for your UI
@@ -209,18 +250,27 @@ class CustomViewer(NsViewer):
 
             # ---- callbacks ----
             def _update_step(_=None):
+                """
+                現在の step 情報を GUI 表示へ反映する．
+                """
                 try:
                     step_md.content = f"Step: {int(getattr(self, 'step', 0))}"
                 except Exception:
                     pass
 
             def _rerender(_):
+                """
+                再レンダリングを実行し，step 表示を更新する．
+                """
                 self._trigger_rerender()
                 _update_step()
 
             rerender_btn.on_click(_rerender)
 
             def _toggle_traincams(_):
+                """
+                学習カメラの表示・非表示を切り替える．
+                """
                 try:
                     self.set_camera_visibility(bool(show_train_chk.value))
                 except Exception:
@@ -230,6 +280,9 @@ class CustomViewer(NsViewer):
 
             if slider is not None:
                 def _set_res(_):
+                    """
+                    最大解像度を更新し，再レンダリングを行う．
+                    """
                     try:
                         self.control_panel.max_res = int(slider.value)
                         self._trigger_rerender()
@@ -239,13 +292,22 @@ class CustomViewer(NsViewer):
                 slider.on_update(_set_res)
 
             def _update_enabled(_):
+                """
+                確認チェックボックスの状態に応じて停止ボタンの有効状態を切り替える．
+                """
                 shutdown_btn.disabled = not bool(confirm_chk.value)
 
             confirm_chk.on_update(_update_enabled)
 
             def _shutdown(_):
+                """
+                少し遅延させた別スレッドでサーバー停止処理を呼び出す．
+                """
                 # Avoid killing inside GUI callback: do it shortly later on a daemon thread
                 def worker():
+                    """
+                    短時間待機してから SIGINT による停止を行うワーカースレッド．
+                    """
                     time.sleep(0.1)
                     self._safe_sigint_shutdown()
 
@@ -255,6 +317,9 @@ class CustomViewer(NsViewer):
 
             # ---- language switch: update what we can safely update ----
             def _on_lang_change(_):
+                """
+                カスタム UI の表示言語を切り替え，更新可能なラベルを再設定する．
+                """
                 lang_state["lang"] = "ja" if lang_sel.value == I18N["ja"]["language_ja"] else "en"
 
                 # Update markdown 
@@ -285,21 +350,36 @@ class CustomViewer(NsViewer):
 # ----------------------------
 @dataclass
 class ViewerConfigWithoutNumRays(ViewerConfig):
-    """Same as Nerfstudio but hides num_rays_per_chunk in CLI"""
+    """
+    CLI から `num_rays_per_chunk` を隠すための ViewerConfig 派生クラス．
+    """
     num_rays_per_chunk: tyro.conf.Suppress[int] = -1
 
     def as_viewer_config(self):
+        """
+        現在の設定値から通常の ViewerConfig を生成して返す．
+
+        Returns:
+            ViewerConfig に変換した設定オブジェクト．
+        """
         return ViewerConfig(**{x.name: getattr(self, x.name) for x in fields(self)})
 
 
 @dataclass
 class RunViewer:
-    """Load checkpoint and start viewer (eval mode), with custom GUI."""
+    """
+    チェックポイントを読み込み，eval モードで Viewer を起動するための設定クラス．
+
+    カスタム GUI を用いた viewer と legacy viewer の両方を扱える．
+    """
     load_config: Path
     viewer: ViewerConfigWithoutNumRays = field(default_factory=ViewerConfigWithoutNumRays)
     vis: Literal["viewer", "viewer_legacy"] = "viewer"
 
     def main(self) -> None:
+        """
+        設定ファイルを読み込み，必要な Viewer 設定を補正したうえで Viewer を起動する．
+        """
         config, pipeline, _, step = eval_setup(
             self.load_config,
             eval_num_rays_per_chunk=None,
@@ -315,10 +395,25 @@ class RunViewer:
         _start_viewer(config, pipeline, step)
 
     def save_checkpoint(self, *args, **kwargs):
+        """
+        Trainer 互換のために用意されたダミーメソッド．
+
+        Args:
+            *args: 未使用の位置引数．
+            **kwargs: 未使用のキーワード引数．
+        """
         pass
 
 
 def _start_viewer(config: TrainerConfig, pipeline: Pipeline, step: int):
+    """
+    設定とパイプラインを受け取り，Viewer を初期化して実行し続ける．
+
+    Args:
+        config: Trainer 全体の設定．
+        pipeline: 評価用に初期化済みのパイプライン．
+        step: 現在の学習ステップ数．
+    """
     base_dir = config.get_base_dir()
     viewer_log_path = base_dir / config.viewer.relative_log_filename
     viewer_callback_lock = Lock()
@@ -363,6 +458,11 @@ def _start_viewer(config: TrainerConfig, pipeline: Pipeline, step: int):
 
 
 def entrypoint():
+    """
+    CLI エントリポイント．
+
+    tyro の見た目設定を行い，RunViewer を CLI から実行する．
+    """
     tyro.extras.set_accent_color("bright_yellow")
     tyro.cli(tyro.conf.FlagConversionOff[RunViewer]).main()
 

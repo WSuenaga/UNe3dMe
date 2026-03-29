@@ -103,6 +103,16 @@ I18N = {
 
 
 class SplatFile(TypedDict):
+    """
+    Gaussian splat を描画するための整形済みデータを表す辞書型．
+
+    Attributes:
+        centers: Gaussian の中心座標配列．
+        rgbs: Gaussian の色配列．
+        opacities: Gaussian の不透明度配列．
+        covariances: Gaussian の共分散行列配列．
+    """
+
     centers: npt.NDArray[np.floating]
     rgbs: npt.NDArray[np.floating]
     opacities: npt.NDArray[np.floating]
@@ -110,6 +120,17 @@ class SplatFile(TypedDict):
 
 
 class RawGaussianData(TypedDict):
+    """
+    PLY ファイルから読み込んだ生の Gaussian データを表す辞書型．
+
+    Attributes:
+        positions: Gaussian の位置配列．
+        scales: Gaussian のスケール配列．
+        quaternions: Gaussian のクォータニオン配列．
+        colors: Gaussian の色配列．
+        opacities: Gaussian の不透明度配列．
+    """
+
     positions: npt.NDArray[np.floating]
     scales: npt.NDArray[np.floating]
     quaternions: npt.NDArray[np.floating]
@@ -118,6 +139,16 @@ class RawGaussianData(TypedDict):
 
 
 def _safe_set_label(handle: object, value: str) -> None:
+    """
+    GUI ハンドルのラベル文字列を安全に更新する．
+
+    指定したハンドルに `label` または `text` 属性が存在する場合に，
+    その属性へ値を設定する．設定に失敗した場合は例外を握りつぶす．
+
+    Args:
+        handle: ラベル更新対象の GUI ハンドル．
+        value: 設定する文字列．
+    """
     for attr in ("label", "text"):
         try:
             if hasattr(handle, attr):
@@ -128,25 +159,60 @@ def _safe_set_label(handle: object, value: str) -> None:
 
 
 def _safe_sigint_shutdown() -> None:
+    """
+    現在のプロセスに SIGINT を送ってサーバー停止を試みる．
+    """
     print("[INFO] Shutting down server (SIGINT)...")
     os.kill(os.getpid(), signal.SIGINT)
 
 
 def _sigmoid(x: npt.NDArray[np.float32]) -> npt.NDArray[np.float32]:
+    """
+    入力配列に sigmoid 関数を適用する．
+
+    Args:
+        x: 入力配列．
+
+    Returns:
+        sigmoid 適用後の配列．
+    """
     return (1.0 / (1.0 + np.exp(-x))).astype(np.float32)
 
 
 def _normalize_quaternions(quats: npt.NDArray[np.float32]) -> npt.NDArray[np.float32]:
+    """
+    クォータニオン配列を正規化する．
+
+    ノルムが極端に小さい要素は 1.0 とみなしてゼロ除算を防ぐ．
+
+    Args:
+        quats: 正規化対象のクォータニオン配列．
+
+    Returns:
+        正規化後のクォータニオン配列．
+    """
     norms = np.linalg.norm(quats, axis=1, keepdims=True)
     norms = np.where(norms < 1e-12, 1.0, norms)
     return (quats / norms).astype(np.float32)
 
 
 def _rotation_x_180() -> npt.NDArray[np.float32]:
+    """
+    X 軸周りに 180 度回転する回転行列を返す．
+
+    Returns:
+        3×3 の回転行列．
+    """
     return tf.SO3.from_x_radians(np.pi).as_matrix().astype(np.float32)
 
 
 def _rotation_z_180() -> npt.NDArray[np.float32]:
+    """
+    Z 軸周りに 180 度回転する回転行列を返す．
+
+    Returns:
+        3×3 の回転行列．
+    """
     return tf.SO3.from_z_radians(np.pi).as_matrix().astype(np.float32)
 
 
@@ -154,6 +220,18 @@ def _apply_rotation_to_splat(
     splat: SplatFile,
     rotation: npt.NDArray[np.float32],
 ) -> SplatFile:
+    """
+    Gaussian splat データに回転を適用する．
+
+    中心座標と共分散行列に同じ回転を適用し，新しい splat データを返す．
+
+    Args:
+        splat: 回転対象の splat データ．
+        rotation: 3×3 の回転行列．
+
+    Returns:
+        回転後の splat データ．
+    """
     centers = (splat["centers"] @ rotation.T).astype(np.float32)
     covariances = np.einsum(
         "ij,njk,lk->nil",
@@ -171,6 +249,23 @@ def _apply_rotation_to_splat(
 
 
 def load_raw_ply_file(ply_file_path: Path, center: bool = False) -> RawGaussianData:
+    """
+    Gaussian splat 用の PLY ファイルを読み込み，raw データを返す．
+
+    必須フィールドの存在を確認し，位置，スケール，クォータニオン，
+    色，不透明度を NumPy 配列として抽出する．
+
+    Args:
+        ply_file_path: 読み込む PLY ファイルのパス．
+        center: True のとき，位置座標を重心基準で原点周りに平行移動する．
+
+    Returns:
+        読み込んだ raw の Gaussian データ．
+
+    Raises:
+        ValueError: `vertex` 要素が存在しない場合．
+        ValueError: 必須フィールドが不足している場合．
+    """
     sh_c0 = 0.28209479177387814
     start_time = time.time()
 
@@ -223,6 +318,25 @@ def make_splat_file(
     max_points: int,
     random_seed: int,
 ) -> SplatFile:
+    """
+    raw の Gaussian データを viewer 描画用の splat データへ変換する．
+
+    クォータニオンの並び替え，正規化，スケールのクリップ，不透明度による
+    フィルタリング，必要に応じたダウンサンプリングを行い，
+    共分散行列を計算する．
+
+    Args:
+        raw: raw の Gaussian データ．
+        quat_order: クォータニオンの並び順．`"wxyz"` または `"xyzw"`．
+        scale_multiplier: スケール倍率．
+        max_scale_percentile: スケールの上限を決めるパーセンタイル値．
+        opacity_threshold: 描画対象として残す不透明度の閾値．
+        max_points: 使用する最大点数．
+        random_seed: ランダムサンプリングに用いるシード値．
+
+    Returns:
+        viewer 描画用に整形された splat データ．
+    """
     positions = raw["positions"].astype(np.float32).copy()
     scales = raw["scales"].astype(np.float32).copy()
     quats = raw["quaternions"].astype(np.float32).copy()
@@ -275,10 +389,30 @@ def make_splat_file(
 
 
 def _camera_rotation(camera: viser.CameraHandle) -> np.ndarray:
+    """
+    カメラのクォータニオンから回転行列を取得する．
+
+    Args:
+        camera: 対象カメラ．
+
+    Returns:
+        3×3 の回転行列．
+    """
     return tf.SO3(np.asarray(camera.wxyz, dtype=np.float32)).as_matrix().astype(np.float32)
 
 
 def _camera_forward(camera: viser.CameraHandle) -> np.ndarray:
+    """
+    カメラの forward ベクトルを返す．
+
+    注視点と位置の差分から forward 方向を求め，正規化して返す．
+
+    Args:
+        camera: 対象カメラ．
+
+    Returns:
+        正規化済み forward ベクトル．
+    """
     pos = np.asarray(camera.position, dtype=np.float32)
     look = np.asarray(camera.look_at, dtype=np.float32)
     forward = look - pos
@@ -289,6 +423,13 @@ def _camera_forward(camera: viser.CameraHandle) -> np.ndarray:
 
 
 def _move_camera_world(client: viser.ClientHandle, delta: np.ndarray) -> None:
+    """
+    カメラ位置と注視点をワールド座標系で平行移動する．
+
+    Args:
+        client: 対象クライアント．
+        delta: 移動量ベクトル．
+    """
     pos = np.asarray(client.camera.position, dtype=np.float32)
     look = np.asarray(client.camera.look_at, dtype=np.float32)
     with client.atomic():
@@ -297,6 +438,13 @@ def _move_camera_world(client: viser.ClientHandle, delta: np.ndarray) -> None:
 
 
 def _set_camera_direction(client: viser.ClientHandle, forward: np.ndarray) -> None:
+    """
+    カメラ位置を維持したまま注視方向を更新する．
+
+    Args:
+        client: 対象クライアント．
+        forward: 新しい forward ベクトル．
+    """
     pos = np.asarray(client.camera.position, dtype=np.float32)
     look = np.asarray(client.camera.look_at, dtype=np.float32)
     distance = float(np.linalg.norm(look - pos))
@@ -308,12 +456,26 @@ def _set_camera_direction(client: viser.ClientHandle, forward: np.ndarray) -> No
 
 
 def _yaw_camera_world_z(client: viser.ClientHandle, yaw_deg: float) -> None:
+    """
+    カメラの forward 方向をワールド Z 軸周りに yaw 回転させる．
+
+    Args:
+        client: 対象クライアント．
+        yaw_deg: 回転角度［deg］．
+    """
     forward = _camera_forward(client.camera)
     yaw = tf.SO3.from_z_radians(np.deg2rad(yaw_deg)).as_matrix().astype(np.float32)
     _set_camera_direction(client, yaw @ forward)
 
 
 def _pitch_camera_local(client: viser.ClientHandle, pitch_deg: float) -> None:
+    """
+    カメラのローカル右軸周りに pitch 回転を適用する．
+
+    Args:
+        client: 対象クライアント．
+        pitch_deg: 回転角度［deg］．
+    """
     forward = _camera_forward(client.camera)
     rotation = _camera_rotation(client.camera)
     right = rotation[:, 0]
@@ -327,6 +489,13 @@ def _pitch_camera_local(client: viser.ClientHandle, pitch_deg: float) -> None:
 
 
 def _roll_camera_local(client: viser.ClientHandle, roll_deg: float) -> None:
+    """
+    カメラの forward 軸周りに roll 回転を適用する．
+
+    Args:
+        client: 対象クライアント．
+        roll_deg: 回転角度［deg］．
+    """
     pos = np.asarray(client.camera.position, dtype=np.float32)
     look = np.asarray(client.camera.look_at, dtype=np.float32)
     wxyz = np.asarray(client.camera.wxyz, dtype=np.float32)
@@ -349,6 +518,25 @@ def main(
     max_points: int = 200000,
     random_seed: int = 0,
 ) -> None:
+    """
+    Gaussian splat PLY を読み込み，Viser ベースの viewer を起動する．
+
+    読み込んだ PLY を Gaussian splat として表示し，
+    GUI から再レンダリング，反転補正，カメラ移動，姿勢変更，
+    サーバー停止などの操作を行えるようにする．
+
+    Args:
+        input: 入力 PLY ファイル群．
+        host: サーバーのホスト名または IP アドレス．
+        port: サーバーのポート番号．
+        center: True のとき，点群を重心基準で中心化する．
+        quat_order: クォータニオンの並び順．`"wxyz"` または `"xyzw"`．
+        scale_multiplier: Gaussian スケール倍率．
+        max_scale_percentile: Gaussian スケールの上限パーセンタイル．
+        opacity_threshold: 描画対象とする不透明度の閾値．
+        max_points: 描画に使用する最大点数．
+        random_seed: ランダムサンプリングに用いるシード値．
+    """
     server = viser.ViserServer(host=host, port=port)
     server.scene.set_up_direction("+z")
     server.scene.configure_fog(near=1.0, far=2.0, enabled=False)
@@ -357,6 +545,15 @@ def main(
     view_state = {"flip_updown": False, "flip_leftright": False}
 
     def t(key: str) -> str:
+        """
+        現在の言語設定に対応する UI 文字列を返す．
+
+        Args:
+            key: I18N 辞書のキー．
+
+        Returns:
+            対応する UI 文字列．
+        """
         return I18N[lang_state["lang"]][key]
 
     lang_dropdown = server.gui.add_dropdown(
@@ -403,6 +600,9 @@ def main(
         raw_data_list.append(load_raw_ply_file(ply_path, center=center))
 
     def render_all() -> None:
+        """
+        現在の GUI 設定に基づいて全 Gaussian splat を再描画する．
+        """
         nonlocal handles
 
         for h in handles:
@@ -438,6 +638,12 @@ def main(
             handles.append(handle)
 
     def _client_or_broadcast() -> list[viser.ClientHandle]:
+        """
+        現在接続中のクライアント一覧を返す．
+
+        Returns:
+            接続中クライアントのリスト．
+        """
         return list(server.get_clients().values())
 
     @lang_dropdown.on_update
@@ -492,6 +698,9 @@ def main(
     @shutdown_button.on_click
     def _on_shutdown(_event: viser.GuiEvent) -> None:
         def worker() -> None:
+            """
+            少し待機してから SIGINT による停止処理を呼び出す．
+            """
             time.sleep(0.1)
             _safe_sigint_shutdown()
 

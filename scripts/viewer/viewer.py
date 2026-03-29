@@ -88,6 +88,16 @@ I18N = {
 
 
 def _safe_set_label(handle: object, value: str) -> None:
+    """
+    GUI ハンドルのラベル文字列を安全に更新する．
+
+    `label` または `text` 属性が存在する場合にのみ値を設定し，
+    失敗時は例外を握りつぶす．
+
+    Args:
+        handle: 更新対象の GUI ハンドル．
+        value: 設定する文字列．
+    """
     for attr in ("label", "text"):
         try:
             if hasattr(handle, attr):
@@ -98,11 +108,24 @@ def _safe_set_label(handle: object, value: str) -> None:
 
 
 def _safe_sigint_shutdown() -> None:
+    """
+    現在のプロセスへ SIGINT を送り，サーバー停止を試みる．
+    """
     print("[INFO] Shutting down server (SIGINT)...")
     os.kill(os.getpid(), signal.SIGINT)
 
 
 def _compute_transform(bounds: np.ndarray, target_size: float = 1.5) -> tuple[np.ndarray, float]:
+    """
+    境界ボックスから中心移動量とスケール倍率を計算する．
+
+    Args:
+        bounds: 最小座標と最大座標を含む 2×3 配列．
+        target_size: 正規化後に収めたい最大サイズ．
+
+    Returns:
+        原点付近へ移動するための平行移動量と，正規化スケール倍率の組．
+    """
     mins = bounds[0]
     maxs = bounds[1]
     center = (mins + maxs) / 2.0
@@ -112,6 +135,15 @@ def _compute_transform(bounds: np.ndarray, target_size: float = 1.5) -> tuple[np
 
 
 def _normalize_scene_geometry(scene: trimesh.Scene) -> trimesh.Scene:
+    """
+    シーン全体をコピーし，中心化とスケーリングを行う．
+
+    Args:
+        scene: 正規化対象のシーン．
+
+    Returns:
+        正規化後のシーン．
+    """
     scene = scene.copy()
     translation, scale = _compute_transform(scene.bounds)
 
@@ -123,6 +155,15 @@ def _normalize_scene_geometry(scene: trimesh.Scene) -> trimesh.Scene:
 
 
 def _rotate_scene_x_180(scene: trimesh.Scene) -> trimesh.Scene:
+    """
+    シーンを X 軸周りに 180 度回転させる．
+
+    Args:
+        scene: 回転対象のシーン．
+
+    Returns:
+        回転後のシーン．
+    """
     scene = scene.copy()
     transform = np.eye(4, dtype=np.float32)
     transform[:3, :3] = tf.SO3.from_x_radians(np.pi).as_matrix().astype(np.float32)
@@ -131,6 +172,15 @@ def _rotate_scene_x_180(scene: trimesh.Scene) -> trimesh.Scene:
 
 
 def _rotate_scene_z_180(scene: trimesh.Scene) -> trimesh.Scene:
+    """
+    シーンを Z 軸周りに 180 度回転させる．
+
+    Args:
+        scene: 回転対象のシーン．
+
+    Returns:
+        回転後のシーン．
+    """
     scene = scene.copy()
     transform = np.eye(4, dtype=np.float32)
     transform[:3, :3] = tf.SO3.from_z_radians(np.pi).as_matrix().astype(np.float32)
@@ -139,6 +189,19 @@ def _rotate_scene_z_180(scene: trimesh.Scene) -> trimesh.Scene:
 
 
 def load_asset(path: Path) -> trimesh.Trimesh | trimesh.Scene:
+    """
+    メッシュまたはシーンアセットをファイルから読み込む．
+
+    Args:
+        path: 読み込むファイルのパス．
+
+    Returns:
+        読み込まれた `trimesh.Trimesh` または `trimesh.Scene`．
+
+    Raises:
+        FileNotFoundError: ファイルが存在しない場合．
+        ValueError: 読み込みに失敗した場合．
+    """
     if not path.exists():
         raise FileNotFoundError(f"File not found: {path}")
 
@@ -154,6 +217,18 @@ def add_asset_to_viser(
     flip_updown: bool = False,
     flip_leftright: bool = False,
 ) -> None:
+    """
+    アセットを Viser シーンへ追加する．
+
+    必要に応じてシーンの正規化と上下左右反転を行ったうえで，
+    Viser 上へメッシュを登録する．
+
+    Args:
+        server: 追加先の Viser サーバー．
+        asset: 追加するメッシュまたはシーン．
+        flip_updown: True のとき上下反転補正を適用する．
+        flip_leftright: True のとき左右反転補正を適用する．
+    """
     server.scene.set_up_direction("+z")
     server.scene.add_frame("/world", axes_length=0.25, axes_radius=0.01)
 
@@ -169,10 +244,28 @@ def add_asset_to_viser(
 
 
 def _camera_rotation(camera: viser.CameraHandle) -> np.ndarray:
+    """
+    カメラのクォータニオンから回転行列を取得する．
+
+    Args:
+        camera: 対象カメラ．
+
+    Returns:
+        3×3 の回転行列．
+    """
     return tf.SO3(np.asarray(camera.wxyz, dtype=np.float32)).as_matrix().astype(np.float32)
 
 
 def _camera_forward(camera: viser.CameraHandle) -> np.ndarray:
+    """
+    カメラの forward ベクトルを返す．
+
+    Args:
+        camera: 対象カメラ．
+
+    Returns:
+        正規化済みの forward ベクトル．
+    """
     pos = np.asarray(camera.position, dtype=np.float32)
     look = np.asarray(camera.look_at, dtype=np.float32)
     forward = look - pos
@@ -183,6 +276,13 @@ def _camera_forward(camera: viser.CameraHandle) -> np.ndarray:
 
 
 def _move_camera_world(client: viser.ClientHandle, delta: np.ndarray) -> None:
+    """
+    カメラ位置と注視点をワールド座標系で平行移動する．
+
+    Args:
+        client: 対象クライアント．
+        delta: 移動量ベクトル．
+    """
     pos = np.asarray(client.camera.position, dtype=np.float32)
     look = np.asarray(client.camera.look_at, dtype=np.float32)
     with client.atomic():
@@ -191,6 +291,13 @@ def _move_camera_world(client: viser.ClientHandle, delta: np.ndarray) -> None:
 
 
 def _set_camera_direction(client: viser.ClientHandle, forward: np.ndarray) -> None:
+    """
+    カメラ位置を維持したまま注視方向を更新する．
+
+    Args:
+        client: 対象クライアント．
+        forward: 新しい forward ベクトル．
+    """
     pos = np.asarray(client.camera.position, dtype=np.float32)
     look = np.asarray(client.camera.look_at, dtype=np.float32)
     distance = float(np.linalg.norm(look - pos))
@@ -202,12 +309,26 @@ def _set_camera_direction(client: viser.ClientHandle, forward: np.ndarray) -> No
 
 
 def _yaw_camera_world_z(client: viser.ClientHandle, yaw_deg: float) -> None:
+    """
+    カメラの注視方向をワールド Z 軸周りに yaw 回転させる．
+
+    Args:
+        client: 対象クライアント．
+        yaw_deg: 回転角度［deg］．
+    """
     forward = _camera_forward(client.camera)
     yaw = tf.SO3.from_z_radians(np.deg2rad(yaw_deg)).as_matrix().astype(np.float32)
     _set_camera_direction(client, yaw @ forward)
 
 
 def _pitch_camera_local(client: viser.ClientHandle, pitch_deg: float) -> None:
+    """
+    カメラのローカル右軸周りに pitch 回転を適用する．
+
+    Args:
+        client: 対象クライアント．
+        pitch_deg: 回転角度［deg］．
+    """
     forward = _camera_forward(client.camera)
     rotation = _camera_rotation(client.camera)
     right = rotation[:, 0]
@@ -221,6 +342,13 @@ def _pitch_camera_local(client: viser.ClientHandle, pitch_deg: float) -> None:
 
 
 def _roll_camera_local(client: viser.ClientHandle, roll_deg: float) -> None:
+    """
+    カメラの forward 軸周りに roll 回転を適用する．
+
+    Args:
+        client: 対象クライアント．
+        roll_deg: 回転角度［deg］．
+    """
     pos = np.asarray(client.camera.position, dtype=np.float32)
     look = np.asarray(client.camera.look_at, dtype=np.float32)
     wxyz = np.asarray(client.camera.wxyz, dtype=np.float32)
@@ -232,6 +360,12 @@ def _roll_camera_local(client: viser.ClientHandle, roll_deg: float) -> None:
 
 
 def main() -> None:
+    """
+    メッシュまたは GLB などの 3D アセットを表示する簡易 Viser viewer を起動する．
+
+    CLI 引数を解釈してアセットを読み込み，GUI から再読み込み，
+    反転補正，カメラ移動，姿勢変更，サーバー停止などを行えるようにする．
+    """
     parser = argparse.ArgumentParser(description="Simple viser viewer for polygon meshes or GLB files.")
     parser.add_argument("--input", type=Path, help="Path to a mesh file (.glb, .gltf, .obj, .ply, .stl, etc.)")
     parser.add_argument("--host", default="0.0.0.0", help="Host to bind the viser server")
@@ -245,9 +379,21 @@ def main() -> None:
     view_state = {"flip_updown": False, "flip_leftright": False}
 
     def t(key: str) -> str:
+        """
+        現在の言語設定に対応する UI 文字列を返す．
+
+        Args:
+            key: I18N 辞書のキー．
+
+        Returns:
+            対応する UI 文字列．
+        """
         return I18N[lang_state["lang"]][key]
 
     def _reload_asset() -> None:
+        """
+        入力アセットを再読み込みし，現在の反転設定を適用して再登録する．
+        """
         try:
             reloaded = load_asset(args.input)
             add_asset_to_viser(
@@ -300,10 +446,22 @@ def main() -> None:
         shutdown_button.disabled = True
 
     def _client_or_broadcast() -> list[viser.ClientHandle]:
+        """
+        現在接続中のクライアント一覧を返す．
+
+        Returns:
+            接続中クライアントのリスト．
+        """
         return list(server.get_clients().values())
 
     @lang_dropdown.on_update
     def _on_lang_change(_event: viser.GuiEvent) -> None:
+        """
+        UI の表示言語を切り替え，更新可能なラベルを再設定する．
+
+        Args:
+            _event: GUI 更新イベント．
+        """
         lang_state["lang"] = "ja" if lang_dropdown.value == I18N["ja"]["lang_ja"] else "en"
 
         help_md.content = t("help_md")
@@ -332,21 +490,48 @@ def main() -> None:
 
     @reload_fix_ud_button.on_click
     def _on_reload_fix_ud(_event: viser.GuiEvent) -> None:
+        """
+        上下反転フラグを切り替えてアセットを再読み込みする．
+
+        Args:
+            _event: ボタンクリックイベント．
+        """
         view_state["flip_updown"] = not view_state["flip_updown"]
         _reload_asset()
 
     @reload_fix_lr_button.on_click
     def _on_reload_fix_lr(_event: viser.GuiEvent) -> None:
+        """
+        左右反転フラグを切り替えてアセットを再読み込みする．
+
+        Args:
+            _event: ボタンクリックイベント．
+        """
         view_state["flip_leftright"] = not view_state["flip_leftright"]
         _reload_asset()
 
     @confirm_shutdown.on_update
     def _on_confirm_shutdown(_event: viser.GuiEvent) -> None:
+        """
+        確認チェックボックスの状態に応じて停止ボタンの有効状態を切り替える．
+
+        Args:
+            _event: GUI 更新イベント．
+        """
         shutdown_button.disabled = not bool(confirm_shutdown.value)
 
     @shutdown_button.on_click
     def _on_shutdown(_event: viser.GuiEvent) -> None:
+        """
+        別スレッドで少し遅延してからサーバー停止処理を呼び出す．
+
+        Args:
+            _event: ボタンクリックイベント．
+        """
         def worker() -> None:
+            """
+            短時間待機したあとに SIGINT による停止を実行する．
+            """
             time.sleep(0.1)
             _safe_sigint_shutdown()
 
@@ -354,6 +539,12 @@ def main() -> None:
 
     @x_axis_buttons.on_click
     def _on_x_axis(event: viser.GuiEvent) -> None:
+        """
+        カメラを X 軸方向へ平行移動する．
+
+        Args:
+            event: ボタングループのクリックイベント．
+        """
         step = np.float32(move_speed_gui.value)
         delta = np.array([step, 0.0, 0.0], dtype=np.float32) if event.target.value == "+X" else np.array([-step, 0.0, 0.0], dtype=np.float32)
         for client in _client_or_broadcast():
@@ -361,6 +552,12 @@ def main() -> None:
 
     @y_axis_buttons.on_click
     def _on_y_axis(event: viser.GuiEvent) -> None:
+        """
+        カメラを Y 軸方向へ平行移動する．
+
+        Args:
+            event: ボタングループのクリックイベント．
+        """
         step = np.float32(move_speed_gui.value)
         delta = np.array([0.0, step, 0.0], dtype=np.float32) if event.target.value == "+Y" else np.array([0.0, -step, 0.0], dtype=np.float32)
         for client in _client_or_broadcast():
@@ -368,6 +565,12 @@ def main() -> None:
 
     @z_axis_buttons.on_click
     def _on_z_axis(event: viser.GuiEvent) -> None:
+        """
+        カメラを Z 軸方向へ平行移動する．
+
+        Args:
+            event: ボタングループのクリックイベント．
+        """
         step = np.float32(move_speed_gui.value)
         delta = np.array([0.0, 0.0, step], dtype=np.float32) if event.target.value == "+Z" else np.array([0.0, 0.0, -step], dtype=np.float32)
         for client in _client_or_broadcast():
@@ -375,6 +578,12 @@ def main() -> None:
 
     @yaw_buttons.on_click
     def _on_yaw(event: viser.GuiEvent) -> None:
+        """
+        カメラに yaw 回転を適用する．
+
+        Args:
+            event: ボタングループのクリックイベント．
+        """
         for client in _client_or_broadcast():
             if event.target.value in (I18N["ja"]["yaw_left"], I18N["en"]["yaw_left"]):
                 _yaw_camera_world_z(client, yaw_speed_gui.value)
@@ -383,6 +592,12 @@ def main() -> None:
 
     @pitch_buttons.on_click
     def _on_pitch(event: viser.GuiEvent) -> None:
+        """
+        カメラに pitch 回転を適用する．
+
+        Args:
+            event: ボタングループのクリックイベント．
+        """
         for client in _client_or_broadcast():
             if event.target.value in (I18N["ja"]["pitch_up"], I18N["en"]["pitch_up"]):
                 _pitch_camera_local(client, -pitch_speed_gui.value)
@@ -391,6 +606,12 @@ def main() -> None:
 
     @roll_buttons.on_click
     def _on_roll(event: viser.GuiEvent) -> None:
+        """
+        カメラに roll 回転を適用する．
+
+        Args:
+            event: ボタングループのクリックイベント．
+        """
         for client in _client_or_broadcast():
             if event.target.value in (I18N["ja"]["roll_left"], I18N["en"]["roll_left"]):
                 _roll_camera_local(client, roll_speed_gui.value)
