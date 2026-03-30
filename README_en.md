@@ -111,7 +111,7 @@ Select `🎥 Video` as the file type.
 <img src="src/qs_en_01.png">
 
 Provide a video file to create an image dataset.  
-Select **example01.mp4** inside **example/**.
+Select **video.mp4** inside **sample/**.
 
 <img src="src/qs_en_02.png">
 

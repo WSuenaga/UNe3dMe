@@ -112,7 +112,7 @@ python main.py
 <img src="src/qs_jp_01.png">
 
 画像データセットを作成するための動画を入力します．  
-**example/** 内にある **example01.mp4** を選択してください．
+**sample/** 内にある **video.mp4** を選択してください．
 
 <img src="src/qs_jp_02.png">
 
