@@ -49,7 +49,7 @@ This system targets Ubuntu. Some methods may not work on Windows.
 Please install torch and torchvision versions that match the CUDA version of the Web UI runtime environment.  
 In the example below, the environment uses CUDA 12.1.  
 ```
-git clone https://github.com/WSuenaga/UNe3dMe.git
+git clone --recursive https://github.com/WSuenaga/UNe3dMe.git
 cd UNe3dMe
 
 conda create -n UNe3dMe python=3.11 -y

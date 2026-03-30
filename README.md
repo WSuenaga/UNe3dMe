@@ -48,7 +48,7 @@
 
 `torch`，`torchvision`は起動環境の CUDA に合わせたものをインストールしてください．下記の例の実行環境には CUDA 12.1が入っています．
 ```
-git clone https://github.com/WSuenaga/UNe3dMe.git
+git clone --recursive https://github.com/WSuenaga/UNe3dMe.git
 cd UNe3dMe
 
 conda create -n UNe3dMe python=3.11 -y
