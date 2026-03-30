@@ -997,9 +997,13 @@ def recon_vgs(lang, mode, dataset, outputs_dir, save_iter):
         cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, str(save_iter)]
         workdir = "."
 
+    # 学習の実行
     runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
-    return outdir, runtime, status, log, outdir
+    # 3D モデル
+    outmodel = os.path.join(outdir, "point_cloud", f"iteration_{save_iter}", "point_cloud.ply")
+
+    return outdir, runtime, status, log, outmodel
 
 
 def render_eval_3dgs(lang, model_dir, skip_train, skip_test, iteration):
@@ -1140,9 +1144,13 @@ def recon_mipsplatting(lang, mode, dataset, outputs_dir, save_iter):
         cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, str(save_iter)]
         workdir = "."
 
+    # 学習の実行
     runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
-    return outdir, runtime, status, log, outdir
+    # 3D モデル
+    outmodel = os.path.join(outdir, "point_cloud", f"iteration_{save_iter}", "point_cloud.ply")
+
+    return outdir, runtime, status, log, outmodel
 
 
 def render_eval_mips(lang, model_dir, skip_train, skip_test, iteration):
@@ -1350,9 +1358,13 @@ def recon_4dgaussians(lang, mode, dataset, outputs_dir, save_iter):
         cmd = ["sbatch", sbatch_script, recon_script, dataset, outdir, str(save_iter)]
         workdir = "."
 
+    # 学習の実行
     runtime, status, log = run_subprocess_popen(lang, cmd, workdir)
 
-    return outdir, runtime, status, log, outdir
+    # 3D モデル
+    outmodel = os.path.join(outdir, "point_cloud", f"iteration_{save_iter}", "point_cloud.ply")
+
+    return outdir, runtime, status, log, outmodel
 
 
 def render_eval_4dgs(lang, model_dir, skip_train, skip_test, iteration):

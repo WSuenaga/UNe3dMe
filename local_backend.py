@@ -1122,7 +1122,7 @@ def viewer(lang, viewer, outmodel, host="127.0.0.1", port=8080):
 
     # 実行コマンドを構築する．
     cmd = [
-        "python3",
+        "python",
         viewer_script,
         "--input", outmodel,
         "--host", str(host),
@@ -1184,7 +1184,7 @@ def viewer(lang, viewer, outmodel, host="127.0.0.1", port=8080):
     display_host = "127.0.0.1" if host == "0.0.0.0" else host
 
     # 起動確認の待機条件を設定する．
-    wait_timeout = 15      # 最大待機時間．
+    wait_timeout = 30      # 最大待機時間．
     stable_seconds = 3.0   # 連続接続が必要な秒数．
     start = time.time()    # 待機開始時刻．
     connected_since = None
@@ -1288,12 +1288,14 @@ def viewer_nerfstudio(lang, outdir, method_name, host="127.0.0.1", port=8080):
             f"スクリプトが見つかりません: {viewer_script}",
             f"Script not found: {viewer_script}",
         )
-
+    
     # 実行コマンドを構築する．
     cmd = [
         "conda", "run", "--no-capture-output",
         "-n", "nerfstudio", "python", viewer_script,
         "--load-config", config_path,
+        "--viewer.websocket-host", host,
+        "--viewer.websocket-port", port,
     ]
 
     start_time = time.time()
@@ -1346,7 +1348,7 @@ def viewer_nerfstudio(lang, outdir, method_name, host="127.0.0.1", port=8080):
     display_host = "127.0.0.1" if host == "0.0.0.0" else host
 
     # 起動確認の待機条件を設定する．
-    wait_timeout = 15      # 最大待機時間．
+    wait_timeout = 30      # 最大待機時間．
     stable_seconds = 3.0   # 連続接続が必要な秒数．
     start = time.time()    # 待機開始時刻．
     connected_since = None
