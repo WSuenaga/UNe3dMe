@@ -1,12 +1,12 @@
-# Integrated 3D Reconstruction System (Draft)
+# UNe3dMe: A Unified Interface for Neural 3D Reconstruction Methods
 
 <table>
-<thead>
-<tr>
-<th style="text-align:center"><a href="README.md">日本語</a></th>
-<th style="text-align:center">English</th>
-</tr>
-</thead>
+    <thead>
+        <tr>
+            <th style="text-align:center"><a href="README.md">日本語</a></th>
+            <th style="text-align:center">English</th>
+        </tr>
+    </thead>
 </table>
 
 # 1. Overview
@@ -72,7 +72,7 @@ This system uses **FFmpeg** and **COLMAP** for preprocessing.
 Please install each reconstruction method individually.
 
 # 3. Quick Start
-This section explains the workflow from installing Mip-Splatting to dataset creation, 3D reconstruction, and evaluation.
+This section explains the workflow, from installing Mip-Splatting to dataset creation, training, visualization of the 3D reconstruction results, and rendering and evaluation.
 
 ## 3.1. Installing Mip-Splatting
 Set up the Mip-Splatting environment.  
@@ -99,7 +99,7 @@ Access the local URL from your browser.
 conda activate demo
 python main.py
 ```
-<img src="src/Example of system startup.png" alt="Example of system startup">  
+<img src="src/qs_en_00.png" alt="Example of system startup">  
 
 ## 3.3. Creating an Image Dataset
 Create a dataset.  
@@ -124,30 +124,42 @@ A COLMAP-format dataset (**COLMAP dataset**) can be generated from the image dat
 
 Go to the `📸 COLMAP` tab and click the `🚀 Run COLMAP` button.
 
-If `🎉 🎉 🎉 All DONE 🎉 🎉 🎉` appears in the execution log and the path is displayed under `🗂️ Currently Selected COLMAP Dataset`, the process is successful.
+If **🎉 🎉 🎉 All DONE 🎉 🎉 🎉** appears in the execution log and the path is displayed under `🗂️ Currently Selected COLMAP Dataset`, the process is successful.
 
 <img src="src/qs_en_04.png">
 
 ## 3.5. Training Mip-Splatting
-Mip-Splatting is a GS-based method.  
-Go to the `🌐 GS` tab.  
-Select Mip-Splatting from within the `🌐 GS` tab.  
+Mip-Splatting is a GS-based method. Go to the `🌐 GS` tab.  
+Then select Mip-Splatting from within the `🌐 GS` tab.
 
-Training cannot be interrupted.  
-Before starting, confirm that `🗂️ Currently Selected COLMAP Dataset` is correct.  
+Training cannot be interrupted. Before starting training, make sure that `🗂️ Currently Selected COLMAP Dataset` is correct.
 
-Click the `🚀 Start Training` button to begin training Mip-Splatting.  
+Click the `🚀 Start Training` button to begin training Mip-Splatting.
 
 <img src="src/qs_en_05.png">
 
-When training is completed or interrupted, execution results and 3D reconstruction results will be displayed.  
-If the process fails, check the `📝 Execution Log`.  
+When training is completed or interrupted, the execution results and 3D reconstruction results will be displayed.
+If the process fails, check the `📝 Execution Log`.
 
-<img src="src/qs_en_06.png"> 
+<img src="src/qs_en_06.png">
+
+## 3.6. Visualizing the 3D Reconstruction Results
+This system uses **viser** to visualize the 3D reconstruction results. You can start the server by clicking the `🚀 Launch Viewer` button.
+If a URL appears under Viewer URL, the viewer has started successfully. Please access it from your browser.
+
 <img src="src/qs_en_07.png">
 
-## 3.6. Evaluating Mip-Splatting
-Click the `🚀 Run Rendering & Evaluation` button to render test images from the 3D reconstruction results and perform quantitative evaluation against the test images.  
+For instructions on how to operate the viewer, refer to the right-side control panel.
 
 <img src="src/qs_en_08.png">
+
+To close the viewer, check the checkbox under Server Settings at the bottom of the side panel, then click the `Shutdown Server` button.
+
 <img src="src/qs_en_09.png">
+
+
+## 3.7. Rendering and Evaluation
+By clicking the `🚀 Run Rendering & Evaluation` button, you can render test images from the 3D reconstruction results and perform quantitative evaluation on the test images.
+
+<img src="src/qs_en_10.png">
+<img src="src/qs_en_11.png">

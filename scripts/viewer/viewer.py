@@ -29,7 +29,7 @@ I18N = {
         "reload_fix_ud": "上下反転を補正して再読み込み",
         "reload_fix_lr": "左右反転を補正して再読み込み",
         "camera_folder": "カメラ設定",
-        "server_folder": "サーバー設定",
+        "server_folder": "サーバ設定",
         "move_speed": "移動量",
         "yaw_deg": "yaw角度",
         "pitch_deg": "pitch角度",
@@ -46,8 +46,8 @@ I18N = {
         "pitch_down": "pitch 下",
         "roll_left": "roll 左",
         "roll_right": "roll 右",
-        "confirm_shutdown": "サーバーを停止する",
-        "shutdown_button": "サーバー停止",
+        "confirm_shutdown": "サーバを停止する",
+        "shutdown_button": "サーバ停止",
     },
     "en": {
         "lang_label": "言語 / Language",
@@ -109,7 +109,7 @@ def _safe_set_label(handle: object, value: str) -> None:
 
 def _safe_sigint_shutdown() -> None:
     """
-    現在のプロセスへ SIGINT を送り，サーバー停止を試みる．
+    現在のプロセスへ SIGINT を送り，サーバ停止を試みる．
     """
     print("[INFO] Shutting down server (SIGINT)...")
     os.kill(os.getpid(), signal.SIGINT)
@@ -224,7 +224,7 @@ def add_asset_to_viser(
     Viser 上へメッシュを登録する．
 
     Args:
-        server: 追加先の Viser サーバー．
+        server: 追加先の Viser サーバ．
         asset: 追加するメッシュまたはシーン．
         flip_updown: True のとき上下反転補正を適用する．
         flip_leftright: True のとき左右反転補正を適用する．
@@ -364,7 +364,7 @@ def main() -> None:
     メッシュまたは GLB などの 3D アセットを表示する簡易 Viser viewer を起動する．
 
     CLI 引数を解釈してアセットを読み込み，GUI から再読み込み，
-    反転補正，カメラ移動，姿勢変更，サーバー停止などを行えるようにする．
+    反転補正，カメラ移動，姿勢変更，サーバ停止などを行えるようにする．
     """
     parser = argparse.ArgumentParser(description="Simple viser viewer for polygon meshes or GLB files.")
     parser.add_argument("--input", type=Path, help="Path to a mesh file (.glb, .gltf, .obj, .ply, .stl, etc.)")
@@ -523,7 +523,7 @@ def main() -> None:
     @shutdown_button.on_click
     def _on_shutdown(_event: viser.GuiEvent) -> None:
         """
-        別スレッドで少し遅延してからサーバー停止処理を呼び出す．
+        別スレッドで少し遅延してからサーバ停止処理を呼び出す．
 
         Args:
             _event: ボタンクリックイベント．

@@ -33,7 +33,7 @@ I18N = {
         "reload_fix_lr": "左右反転を補正して再レンダリング",
         "camera_folder": "カメラ設定",
         "render_folder": "レンダリング設定",
-        "server_folder": "サーバー設定",
+        "server_folder": "サーバ設定",
         "move_speed": "移動量",
         "yaw_deg": "yaw角度",
         "pitch_deg": "pitch角度",
@@ -55,8 +55,8 @@ I18N = {
         "opacity_threshold": "Gaussian削除閾値",
         "quat_order": "PLYクォータニオン読み込み順",
         "rerender_button": "再レンダリング",
-        "confirm_shutdown": "サーバーを停止する",
-        "shutdown_button": "サーバー停止",
+        "confirm_shutdown": "サーバを停止する",
+        "shutdown_button": "サーバ停止",
     },
     "en": {
         "lang_label": "言語 / Language",
@@ -160,7 +160,7 @@ def _safe_set_label(handle: object, value: str) -> None:
 
 def _safe_sigint_shutdown() -> None:
     """
-    現在のプロセスに SIGINT を送ってサーバー停止を試みる．
+    現在のプロセスに SIGINT を送ってサーバ停止を試みる．
     """
     print("[INFO] Shutting down server (SIGINT)...")
     os.kill(os.getpid(), signal.SIGINT)
@@ -523,12 +523,12 @@ def main(
 
     読み込んだ PLY を Gaussian splat として表示し，
     GUI から再レンダリング，反転補正，カメラ移動，姿勢変更，
-    サーバー停止などの操作を行えるようにする．
+    サーバ停止などの操作を行えるようにする．
 
     Args:
         input: 入力 PLY ファイル群．
-        host: サーバーのホスト名または IP アドレス．
-        port: サーバーのポート番号．
+        host: サーバのホスト名または IP アドレス．
+        port: サーバのポート番号．
         center: True のとき，点群を重心基準で中心化する．
         quat_order: クォータニオンの並び順．`"wxyz"` または `"xyzw"`．
         scale_multiplier: Gaussian スケール倍率．

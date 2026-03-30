@@ -136,7 +136,7 @@ class CustomViewer(NsViewer):
         独自タブと各種 GUI 部品を追加し，イベントコールバックを登録する．
 
         言語切り替え，再レンダリング，学習カメラ表示切り替え，
-        最大解像度変更，サーバー停止などの UI を構築する．
+        最大解像度変更，サーバ停止などの UI を構築する．
         """
         gui = self.viser_server.gui
 
@@ -172,9 +172,9 @@ class CustomViewer(NsViewer):
                 "max_res_unavailable": "> この環境では最大解像度の変更は利用できません。",
                 "step_unknown": "Step: (不明)",
 
-                "server_control": "### サーバー停止",
-                "confirm_shutdown": "サーバーを停止する",
-                "shutdown": "サーバー停止",
+                "server_control": "### サーバ停止",
+                "confirm_shutdown": "サーバを停止する",
+                "shutdown": "サーバ停止",
             },
             "en": {
                 "tab_title": "拡張機能 / Extensions",
@@ -301,7 +301,7 @@ class CustomViewer(NsViewer):
 
             def _shutdown(_):
                 """
-                少し遅延させた別スレッドでサーバー停止処理を呼び出す．
+                少し遅延させた別スレッドでサーバ停止処理を呼び出す．
                 """
                 # Avoid killing inside GUI callback: do it shortly later on a daemon thread
                 def worker():
