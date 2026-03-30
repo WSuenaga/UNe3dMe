@@ -15,13 +15,13 @@ You can easily perform preprocessing, 3D reconstruction with multiple methods, v
 
 ## Supported Methods
 - [Nerfstudio](https://github.com/nerfstudio-project/nerfstudio/)
-- [Vanilla NeRF（Nerfstudio）](https://github.com/bmild/nerf)
-- [Nerfacto（Nerfstudio）](https://github.com/nerfstudio-project/nerfstudio/)
-- [mip-NeRF（Nerfstudio）](https://github.com/google/mipnerf)
-- [SeaThru-NeRF（Nerfstudio）](https://github.com/deborahLevy130/seathru_NeRF)
+- [Vanilla NeRF (Nerfstudio)](https://github.com/bmild/nerf)
+- [Nerfacto (Nerfstudio)](https://github.com/nerfstudio-project/nerfstudio/)
+- [mip-NeRF (Nerfstudio)](https://github.com/google/mipnerf)
+- [SeaThru-NeRF (Nerfstudio)](https://github.com/deborahLevy130/seathru_NeRF)
 - [Vanilla GS](https://github.com/graphdeco-inria/gaussian-splatting)
 - [Mip-Splatting](https://github.com/autonomousvision/mip-splatting)
-- [Splatfacto（Nerfstudio）](https://github.com/nerfstudio-project/nerfstudio/)
+- [Splatfacto (Nerfstudio)](https://github.com/nerfstudio-project/nerfstudio/)
 - [4D-Gaussians](https://github.com/hustvl/4DGaussians)
 - [DUSt3R](https://github.com/naver/dust3r)
 - [MASt3R](https://github.com/naver/mast3r)
@@ -49,11 +49,11 @@ This system targets Ubuntu. Some methods may not work on Windows.
 Please install torch and torchvision versions that match the CUDA version of the Web UI runtime environment.  
 In the example below, the environment uses CUDA 12.1.  
 ```
-git clone https://github.com/WSuenaga/Demo.git
-cd Demo
+git clone https://github.com/WSuenaga/UNe3dMe.git
+cd UNe3dMe
 
-conda create -n demo python=3.11 -y
-conda activate demo
+conda create -n UNe3dMe python=3.11 -y
+conda activate UNe3dMe
 
 pip install torch==2.1.0+cu121 torchvision==0.16.0+cu121 --index-url https://download.pytorch.org/whl/cu121
 
@@ -78,7 +78,7 @@ This section explains the workflow, from installing Mip-Splatting to dataset cre
 Set up the Mip-Splatting environment.  
 Move to **models/mip-splatting/** in this repository and execute the following commands:
 ```
-cd Demo/models/mip-splatting
+cd models/mip-splatting
 
 conda create -y -n mip-splatting python=3.10
 conda activate mip-splatting
@@ -90,13 +90,15 @@ pip install "numpy<2.0" open3d plyfile ninja GPUtil opencv-python lpips
 
 pip install submodules/diff-gaussian-rasterization
 pip install submodules/simple-knn
+
+cd ../..
 ```
 
 ## 3.2. Launching the Web UI
 Activate the conda environment and run **main.py** to launch the Web UI.  
-Access the local URL from your browser.
+Open the local URL in your browser.
 ```
-conda activate demo
+conda activate UNe3dMe
 python main.py
 ```
 <img src="src/qs_en_00.png" alt="Example of system startup">  
@@ -108,19 +110,19 @@ Select `🎥 Video` as the file type.
 
 <img src="src/qs_en_01.png">
 
-Provide a video file to generate **the image dataset**.  
+Provide a video file to create an image dataset.  
 Select **example01.mp4** inside **example/**.
 
 <img src="src/qs_en_02.png">
 
-Click `🚀 Create Dataset` to generate the image dataset.  
-If the path is displayed under `🗂️ Currently Selected Image Dataset`, the process is successful.
+Click `🚀 Create Dataset` to create an image dataset.  
+If a path is displayed under `🗂️ Currently Selected Image Dataset`, the dataset was created successfully.
 
 <img src="src/qs_en_03.png">
 
 ## 3.4. Creating a COLMAP Dataset
 Mip-Splatting requires a dataset in COLMAP format.  
-A COLMAP-format dataset (**COLMAP dataset**) can be generated from the image dataset created in the previous step.
+A COLMAP-format dataset (**COLMAP dataset**) can be created from the image dataset created in the previous step.
 
 Go to the `📸 COLMAP` tab and click the `🚀 Run COLMAP` button.
 
@@ -130,7 +132,7 @@ If **🎉 🎉 🎉 All DONE 🎉 🎉 🎉** appears in the execution log and t
 
 ## 3.5. Training Mip-Splatting
 Mip-Splatting is a GS-based method. Go to the `🌐 GS` tab.  
-Then select Mip-Splatting from within the `🌐 GS` tab.
+Then select `Mip-Splatting` from within the `🌐 GS` tab.
 
 Training cannot be interrupted. Before starting training, make sure that `🗂️ Currently Selected COLMAP Dataset` is correct.
 
@@ -138,22 +140,22 @@ Click the `🚀 Start Training` button to begin training Mip-Splatting.
 
 <img src="src/qs_en_05.png">
 
-When training is completed or interrupted, the execution results and 3D reconstruction results will be displayed.
+When training completes or fails, the execution results will be displayed.  
 If the process fails, check the `📝 Execution Log`.
 
 <img src="src/qs_en_06.png">
 
 ## 3.6. Visualizing the 3D Reconstruction Results
-This system uses **viser** to visualize the 3D reconstruction results. You can start the server by clicking the `🚀 Launch Viewer` button.
-If a URL appears under Viewer URL, the viewer has started successfully. Please access it from your browser.
+This system uses **viser** to visualize the 3D reconstruction results. You can start the server by clicking the `🚀 Launch Viewer` button.  
+If a URL appears under `Viewer URL`, the viewer has started successfully. Please open it in your browser.
 
 <img src="src/qs_en_07.png">
 
-For instructions on how to operate the viewer, refer to the right-side control panel.
+For viewer controls, refer to the right-side control panel.
 
 <img src="src/qs_en_08.png">
 
-To close the viewer, check the checkbox under Server Settings at the bottom of the side panel, then click the `Shutdown Server` button.
+To close the viewer, check the checkbox under **Server Settings** at the bottom of the side panel, then click the `Shutdown Server` button.
 
 <img src="src/qs_en_09.png">
 
