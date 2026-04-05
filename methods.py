@@ -356,6 +356,7 @@ def normalize_render_output(base_dir, name, exts=(".png", ".jpg", ".jpeg")):
     レンダリング出力を必ず `test/<name>/` 配下に統一する．
 
     想定する出力形式は以下の 2 通りである．
+    
     1. 複数枚出力:
        `test/<name>/*.jpg`
     2. 単一ファイル出力:

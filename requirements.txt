@@ -19,3 +19,5 @@ torch-fidelity
 viser
 trimesh
 
+sphinx
+sphinx-rtd-theme
