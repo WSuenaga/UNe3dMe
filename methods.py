@@ -65,7 +65,6 @@ def run_subprocess_popen(lang, cmd, workdir, log_dir=None):
     # ログ保存ディレクトリを決定する
     if log_dir is None:
         log_dir = os.path.join(TMPDIR, "logs")
-    os.makedirs(log_dir, exist_ok=True)
 
     # 実行開始時刻をもとにログファイル名を決定する
     timestamp = time.strftime("%Y%m%d_%H%M%S", time.localtime(start_time))

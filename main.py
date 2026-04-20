@@ -17,11 +17,13 @@ if __name__ == '__main__':
         path_line = GREEN + f" {tmpdir.ljust(max_width)} " + RESET
         print(f"\n{top_bottom}\n{title_line}\n{path_line}\n{top_bottom}\n")
 
-        # 入力・出力を保存するディレクトリの作成
+        # 入力，出力，ログを保存するディレクトリの作成
         datasets = os.path.join(tmpdir, "datasets")
         os.mkdir(datasets)
         outputs = os.path.join(tmpdir, "outputs")
         os.mkdir(outputs)
+        log_dir = os.path.join(tmpdir, "logs")
+        os.mkdir(log_dir)
 
         # 作業ディレクトリの場所を教える
         local_backend.TMPDIR = methods.TMPDIR = tmpdir
