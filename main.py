@@ -1,11 +1,17 @@
 import os
 import tempfile
+import argparse
 
 import local_backend
 import methods
 from demo import main_demo
 
 if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(description="Gradio Demo Setup")
+    parser.add_argument('--share', action='store_true', help="Gradioの公開URLを発行する")
+    args = parser.parse_args()
+
     with tempfile.TemporaryDirectory(prefix='GradioDemo_') as tmpdir:
         # 作業ディレクトリの表示
         title = "Working Directory"
@@ -29,4 +35,4 @@ if __name__ == '__main__':
         local_backend.TMPDIR = methods.TMPDIR = tmpdir
         
         # Web UI 起動
-        main_demo(tmpdir, datasets, outputs)
+        main_demo(tmpdir, datasets, outputs, share=args.share)

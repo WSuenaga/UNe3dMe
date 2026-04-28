@@ -777,7 +777,7 @@ def update_method_metrics(table, values, save_dir):
 # UI 定義
 # =========================
 
-def main_demo(tmpdir, datasetsdir, outputsdir):
+def main_demo(tmpdir, datasetsdir, outputsdir, share):
 
     # デフォルト言語（日本語）
     lang = load_translations("jp")
@@ -2159,4 +2159,4 @@ def main_demo(tmpdir, datasetsdir, outputsdir):
                                  outputs=[method_metrics, download_csv])
         
     # UI の起動  
-    demo.launch()
+    demo.launch(share=share)
